@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · M · M06 SEO pages batch 2 · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/11
+  5 pages: restaurant break-even guide, E-2 visa projections (B2B), AI generators vs verified model, projections for accountants (B2B), 20-point model review checklist.
+  All cafe-backed; pages needing SaaS/services/rental/retail/DCF templates wait for E03–E07. Sources: 9 FAM 402.9-6(E), Ankura (Apr 2026), quoted verbatim.
+  For Henry: HUMAN_TODO D8 (pack validity, branding/white-label in delivered files).
 - 2026-10-16 · M · M05 SEO pages batch 1 · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/10
   5 pages in `content/seo/` (hub, SBA loan, restaurant/coffee shop, bank-loan guide, restaurant pro forma), 1,060–1,220 words each; index + E16 notes in `docs/marketing/seo-pages.md`.
   SaaS/services pages deferred (templates not built), break-even page deferred (E07). Henry closed D6 (no volumes) and D7 (no brand risk).

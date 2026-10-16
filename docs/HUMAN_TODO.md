@@ -28,6 +28,10 @@ the answer next to the item (agents read this file every run).
       nearly identical to StartupModel (different from the inactive startupmodels.co). Check
       whether it is active and holds a mark; decide keep / adjust the brand.)
 
+- [ ] D8 Accountant pack details (from M06, `content/seo/financial-projections-for-accountants.md`):
+      (a) how long the 5-model pack credits stay valid (M02 suggested 12 months);
+      (b) delivered files: StartupModel branding inside the workbook or none / white-label for firms?
+
 ## Accounts & keys (put keys only into the hosting provider's env vars, never in chat or the repo)
 - [ ] A1 Anthropic API key with a monthly spend limit (for the brief builder).
 - [ ] A2 Stripe account, test-mode keys first (put them only into Railway env vars).
