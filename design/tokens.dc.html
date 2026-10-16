@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tokens and components</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 1200px; height: 1900px; box-sizing: border-box; padding: 64px; background: #FFFFFF; font-family: 'DM Sans', sans-serif; color: #111827; display: flex; flex-direction: column; gap: 48px;">
+
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #2563EB;">Reference for the build</span>
+<h1 style="margin: 0; font-size: 40px; font-weight: 700; letter-spacing: -0.02em; color: #1F3864;">Tokens &amp; components</h1>
+<p style="margin: 0; font-size: 16px; color: #6B7280;">Measured from the reference page. Use these exact values as CSS custom properties.</p>
+</div>
+
+<!-- Colors -->
+<div style="display: flex; flex-direction: column; gap: 16px;">
+<h2 style="margin: 0; font-size: 22px; font-weight: 700; color: #1F3864;">Color</h2>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 14px;">
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #1F3864;"></span><strong style="font-size: 13px;">--navy</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#1F3864</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #142647;"></span><strong style="font-size: 13px;">--navy-deep</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#142647</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #2563EB;"></span><strong style="font-size: 13px;">--accent</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#2563EB</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #1D4ED8;"></span><strong style="font-size: 13px;">--accent-hover</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#1D4ED8</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #059669;"></span><strong style="font-size: 13px;">--green</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#059669</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #217346;"></span><strong style="font-size: 13px;">--excel</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#217346</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #B91C1C;"></span><strong style="font-size: 13px;">--danger-text</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#B91C1C</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #111827;"></span><strong style="font-size: 13px;">--text-primary</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#111827</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #6B7280;"></span><strong style="font-size: 13px;">--text-secondary</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#6B7280</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #E5E7EB;"></span><strong style="font-size: 13px;">--border-light</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#E5E7EB</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #F3F4F6; border: 1px solid #E5E7EB;"></span><strong style="font-size: 13px;">--bg-card</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#F3F4F6</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #F9FAFB; border: 1px solid #E5E7EB;"></span><strong style="font-size: 13px;">--bg-light</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#F9FAFB</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #EFF6FF; border: 1px solid #E5E7EB;"></span><strong style="font-size: 13px;">--accent-tint</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#EFF6FF</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><span style="height: 72px; border-radius: 10px; background: #ECFDF5; border: 1px solid #E5E7EB;"></span><strong style="font-size: 13px;">--green-light</strong><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">#ECFDF5</span></div>
+</div>
+</div>
+
+<!-- Type -->
+<div style="display: flex; flex-direction: column; gap: 16px;">
+<h2 style="margin: 0; font-size: 22px; font-weight: 700; color: #1F3864;">Type — DM Sans / JetBrains Mono</h2>
+<div style="display: flex; flex-direction: column; border-top: 1px solid #E5E7EB;">
+<div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid #E5E7EB;"><span style="width: 200px; flex: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">H1 · 51.2/1.15 · 700 · -0.02em</span><span style="font-size: 51.2px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; color: #1F3864;">Working <span style="color: #2563EB;">Excel</span> models</span></div>
+<div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid #E5E7EB;"><span style="width: 200px; flex: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">H2 · 35.2/1.2 · 700 · -0.015em</span><span style="font-size: 35.2px; line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; color: #1F3864;">Section heading</span></div>
+<div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid #E5E7EB;"><span style="width: 200px; flex: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">H3 · 20.8/1.3 · 600</span><span style="font-size: 20.8px; line-height: 1.3; font-weight: 600; color: #1F3864;">Card or step title</span></div>
+<div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid #E5E7EB;"><span style="width: 200px; flex: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">Lead · 17.6/1.7 · 400</span><span style="font-size: 17.6px; line-height: 1.7; color: #6B7280;">Hero subtitle in secondary gray.</span></div>
+<div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid #E5E7EB;"><span style="width: 200px; flex: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">Body · 16/1.6 · 400</span><span style="font-size: 16px; line-height: 1.6;">Body copy, card text 14–15px.</span></div>
+<div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid #E5E7EB;"><span style="width: 200px; flex: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">Eyebrow · 11–12 · 700 · caps</span><span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #047857;">Our main difference</span></div>
+<div style="display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid #E5E7EB;"><span style="width: 200px; flex: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6B7280;">Mono · 12.5 · numbers</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 14px;">$298,000  ($116,220)  15.0%</span></div>
+</div>
+</div>
+
+<!-- Components -->
+<div style="display: flex; flex-direction: column; gap: 16px;">
+<h2 style="margin: 0; font-size: 22px; font-weight: 700; color: #1F3864;">Components</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;">
+<div style="display: flex; flex-direction: column; gap: 14px; align-items: flex-start;">
+<span style="font-size: 12px; font-weight: 600; color: #6B7280;">Buttons</span>
+<a href="#p" style="background: #2563EB; color: #FFFFFF; text-decoration: none; font-weight: 600; padding: 15px 30px; border-radius: 10px; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">Primary · lg</a>
+<a href="#p" style="background: #2563EB; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 500; padding: 10px 22px; border-radius: 10px; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">Primary · sm (nav)</a>
+<a href="#p" style="border: 1.5px solid #2563EB; color: #2563EB; text-decoration: none; font-size: 14px; font-weight: 600; padding: 9px 16px; border-radius: 8px;">Outline · download</a>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6B7280;">hover: bg --accent-hover, translateY(-1px)</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px; align-items: flex-start;">
+<span style="font-size: 12px; font-weight: 600; color: #6B7280;">Badges</span>
+<span style="width: 40px; height: 40px; border-radius: 8px; background: #2563EB; color: #FFFFFF; font-weight: 700; display: flex; align-items: center; justify-content: center;">1</span>
+<span style="background: #1F3864; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px;">VS</span>
+<span style="font-size: 11px; background: #F3F4F6; color: #4B5563; padding: 2px 8px; border-radius: 4px;">5 sheets</span>
+<span style="display: flex; align-items: center; gap: 8px; background: #ECFDF5; color: #047857; border: 2px solid #059669; border-radius: 10px; padding: 8px 14px; font-size: 13px; font-weight: 600;">Checks passed</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<span style="font-size: 12px; font-weight: 600; color: #6B7280;">Card · radius 12 · border 1px #E5E7EB</span>
+<div style="border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 8px;"><strong style="color: #1F3864;">Default card</strong><span style="font-size: 14px; color: #6B7280;">padding 32/24, no shadow</span></div>
+<div style="border: 1px solid #059669; background: #ECFDF5; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 8px;"><strong style="color: #1F3864;">Highlight card</strong><span style="font-size: 14px; color: #374151;">green-light bg, green border</span></div>
+</div>
+</div>
+</div>
+
+<!-- Spacing / shadows / motion -->
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;">
+<div style="display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-size: 22px; font-weight: 700; color: #1F3864;">Layout</h2>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.9; color: #374151; white-space: pre-line;">container  max 1200, pad 0 24
+section    pad 72 0 (48 at ≤480)
+hero       pad 120 0 80 (under fixed nav)
+nav        height 68, fixed, blur 12
+grid gap   20 (cards), 48–56 (split)
+radius     12 / 20 (pricing) / 8 / 4</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-size: 22px; font-weight: 700; color: #1F3864;">Shadows</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;">
+<div style="height: 64px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; font-size: 12px;">sm</div>
+<div style="height: 64px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 4px 16px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; font-size: 12px;">md</div>
+<div style="height: 64px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 12px 40px rgba(0,0,0,0.12); display: flex; align-items: center; justify-content: center; font-size: 12px;">lg</div>
+<div style="height: 64px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: 12px;">xl</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-size: 22px; font-weight: 700; color: #1F3864;">Motion</h2>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.9; color: #374151; white-space: pre-line;">.reveal  opacity 0 → 1
+         translateY 28px → 0
+         .6s cubic-bezier(.4,0,.2,1)
+.d1/.d2/.d3  delay .08/.16/.24s
+trigger  IntersectionObserver
+reduced-motion: no transform</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":1900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+# finmodel-app — instructions for every Claude session
+
+You are one of several autonomous sessions building this product. No human is
+watching your run. Read this file, then `docs/BACKLOG.md`, then do exactly one
+task (protocol below). Owner: Henry Sheykin (CFO, 20+ years, ~200 financial
+models built). Reports to him are in **Russian**; code, comments, commits and
+product copy are in **English**.
+
+## Product
+
+A web app that sells custom Excel financial models. The customer answers a
+short wizard (business type, goal, stage, horizon, granularity, a few key
+numbers), pays once, and receives an `.xlsx` with live formulas, a Low / Base /
+High scenario switch and a Checks sheet. Reference competitor:
+getdraftplan.com — see `docs/research/draftplan.md`. Never copy its name, logo,
+texts or files. Working brand name is **Ledgerline** (placeholder until Henry
+picks one, see `docs/HUMAN_TODO.md`).
+
+## The core idea (do not change without an ADR)
+
+The LLM never writes workbook code. It only fills a validated **brief** (JSON:
+drivers with Low/Base/High values). Deterministic Python **templates** build
+the workbook. LibreOffice recalculates it. An independent **challenger**
+recomputes the numbers in plain Python and must match every scenario-year
+within $1, and the in-file Checks sheet must not FAIL. A model that fails is
+never delivered. The prototype of all three is in `poc/` (cafe template: 894
+formulas, 0 errors, all 9 scenario-years match).
+
+## Stack (ADR-001 in docs/DECISIONS.md)
+
+- Python 3.12, FastAPI, Jinja2 server-rendered pages + vanilla JS (no SPA framework).
+- SQLAlchemy 2; SQLite in dev/tests, Postgres in prod. Alembic migrations.
+- Worker = separate process polling a `jobs` table (no Redis).
+- openpyxl to write, LibreOffice headless (`soffice`) to recalculate.
+- Adapters with a fake/console implementation for tests: payments (Stripe
+  Checkout first), email (Resend or Postmark), storage (local disk / S3),
+  LLM (Anthropic SDK; tests use recorded fixtures, never the live API).
+- pytest, ruff; GitHub Actions CI installs LibreOffice and runs everything.
+- One Docker image (app + worker commands), deployable to any Docker host.
+
+Repo layout target: `engine/` (templates, brief schema, recalc, challenger),
+`app/` (web, API, wizard, admin), `worker/`, `adapters/`, `web/` (landing,
+static), `content/` (copy, SEO pages, emails, legal), `tests/`, `docs/`.
+
+## Excel rules (also load the `xlsx` skill before touching workbooks)
+
+Arial; blue font = input, black = formula, green = cross-sheet link; yellow
+fill only on the scenario selector. Formats `$#,##0;($#,##0);-`,
+`0.0%;(0.0%);-`. Every assumption in its own labelled cell; same formula across
+every period; guard every denominator. Only Excel-2007-era functions (INDEX,
+MATCH, SUMIF(S), SUMPRODUCT, IFERROR, CHOOSE, IRR, NPV) — never XLOOKUP,
+FILTER, SORT, UNIQUE, SEQUENCE, LET, LAMBDA. Zero formula errors after recalc.
+
+## Design source
+
+- `design/landing.dc.html` and `design/tokens.dc.html` — the approved landing
+  design (copy, layout, exact CSS values). Canvas link:
+  https://claude.ai/artifact/4qNJgJzUU633rZ9A7vhQJj
+- Landing build spec (Russian, 12 sections): Claude Docs
+  https://claude.ai/code/artifact/73230182-c0f4-4cb1-a600-8551781f182c — export
+  it with the Claude Docs connector to `docs/SPEC_LANDING.md` the first time you
+  need it; if the connector is unavailable, work from the two design files.
+
+## Run protocol (every scheduled session)
+
+1. Your prompt names your **track** (E = engineering, M = marketing, P = PM).
+2. `git pull`. In `docs/BACKLOG.md` pick the first task of your track whose
+   status is `TODO` (or `IN_PROGRESS` with a `continue:` note left by a
+   previous run) and whose `depends` are all `DONE`. Tasks marked
+   `NEEDS_HENRY` or `BLOCKED` are skipped. If nothing is ready, write one
+   line to `docs/RUNLOG.md`, report it, and stop.
+3. Set it to `IN_PROGRESS` with today's date, commit, push (claims the task).
+4. Load every skill the task lists (Skill tool). If a listed skill is not
+   available, continue without it and note that in the run log.
+5. Work on a branch `<task-id>-<slug>`. Small commits. Tests for all code.
+6. Definition of done = the task's `done when` + `ruff` clean + all tests green
+   locally. Open a PR, wait for CI; when green, squash-merge it yourself
+   (Henry approved auto-merge on green CI). Red CI you cannot fix → leave the
+   PR open, set the task `BLOCKED` with the reason.
+7. Too big for one run? Finish a coherent slice, merge it, keep the task
+   `IN_PROGRESS` and add `continue: <what is left>`.
+8. Anything only Henry can do (accounts, keys, money, legal, brand, CFO
+   sign-off on a template) → add it to `docs/HUMAN_TODO.md`, set the task
+   `NEEDS_HENRY` if it cannot proceed, and move on to the next ready task.
+9. Finish: set status `DONE`, append a 3–5 line entry to `docs/RUNLOG.md`
+   (date, track, task, what changed, PR link, anything for Henry), push.
+10. Last step: a short report to Henry in Russian via `SendUserMessage`
+    (what was done, PR link, what needs him). No essays.
+
+## Hard rules
+
+- Never ask for or store secrets in the repo, chat or logs. Code reads them
+  from environment variables; `.env.example` lists names only.
+- Never create accounts, enter payment details, accept terms, buy anything,
+  send email to real people, or deploy to production. Payments only in Stripe
+  **test mode** on localhost.
+- Never weaken a check, a test or the challenger to make something pass.
+- Never edit another track's tasks in BACKLOG.md except to read status.
+  Always `git pull --rebase` before pushing; on conflict, re-apply your edit.
+- Do not invent facts in marketing copy (no fake testimonials, user counts,
+  awards). Unknown numbers stay as placeholders like `[PRICE]`.
+- Don't change the core idea, stack or brand without an ADR in
+  `docs/DECISIONS.md` and a note to Henry.
