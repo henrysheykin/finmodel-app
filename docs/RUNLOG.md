@@ -2,6 +2,8 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · M · prices final (Henry) · PR https://github.com/henrysheykin/finmodel-app/pull/7
+  Light $149, Full $349, pack 5 × Full $1,250, refund 7 days: recorded in landing copy, HUMAN_TODO D3, ADR-002 addendum 2.
 - 2026-10-16 · M · M03 landing copy (EN) · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/5
   `content/landing.md`: all design sections, meta/OG, 6 FAQ, notes for E13 (placeholders, corrected claims, JSON-LD).
   Removed the design's "three AI agents build it" claim (contradicts the core idea); Sheets/Numbers compatibility marked [VERIFY].
