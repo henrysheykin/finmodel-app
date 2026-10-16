@@ -13,8 +13,9 @@ short wizard (business type, goal, stage, horizon, granularity, a few key
 numbers), pays once, and receives an `.xlsx` with live formulas, a Low / Base /
 High scenario switch and a Checks sheet. Reference competitor:
 getdraftplan.com — see `docs/research/draftplan.md`. Never copy its name, logo,
-texts or files. Working brand name is **Ledgerline** (placeholder until Henry
-picks one, see `docs/HUMAN_TODO.md`).
+texts or files. Brand is **StartupModel**, domain **startup-model.com** (ADR-002; replaces the
+old working name Ledgerline). Kept separate from Henry's FinModelsLab: never
+mention or link it.
 
 ## The core idea (do not change without an ADR)
 

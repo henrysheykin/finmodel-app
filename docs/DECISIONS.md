@@ -53,3 +53,47 @@ enough that a fresh session can pick up any task from the backlog.
   the formula whitelist (Excel-2007-era functions) is the guard.
 - Revisit: if build volume needs parallelism beyond one worker, run more
   worker containers against the same jobs table before adding a broker.
+
+## ADR-002 — Brand, domain, pricing, FinModelsLab separation (2026-10-16)
+
+**Status:** Accepted (Full price pending) · **Deciders:** Henry (domain list, price, brands), M track (pick from the list)
+
+### Context
+M01/M02 (`docs/marketing/competitors.md`, `docs/marketing/positioning.md`) showed
+the working name Ledgerline is weak (crowded "ledger" root, an existing "Ledgerline CPA"
+template). Henry supplied six domains he can use: financial-model.net,
+financialmodeltemplates.com, financialmodelstartup.com, startup-model.com,
+startupfinancialmodels.com, startupfinancialprojection.com — and asked the agent to pick one
+and derive the name from it.
+
+### Decision
+- **Domain: startup-model.com. Brand: StartupModel** (one word, camel case; "StartupModel.com"
+  in the logo lock-up is acceptable). Replaces Ledgerline everywhere.
+- **Brands are separate:** no FinModelsLab name, links, copy or cross-promotion on
+  StartupModel, and no FinModelsLab -> StartupModel upgrade credit.
+- **Light = $149.** Bundles: yes (accountant/advisor credit pack; Light -> Full upgrade
+  = pay the difference). **Full price: pending Henry** (M02 recommends $349).
+
+### Why startup-model.com
+| Domain | Verdict |
+|---|---|
+| startup-model.com | **Chosen.** Shortest .com; "model" names exactly what we deliver; "startup" matches all three ICPs (startup SBA/bank loans, E-2/visa new businesses, pre-seed founders); no "templates" in the name, which keeps it distinct from FinModelsLab and from template marketplaces. |
+| financial-model.net | Runner-up. Broadest, but .net + hyphen leak traffic to the .com, and it reads close to the existing marketplace eFinancialModels. |
+| financialmodeltemplates.com | Rejected: "templates" contradicts "built on your numbers" and competes head-on with FinModelsLab. |
+| startupfinancialmodels.com | Rejected: long; plural reads like a template catalogue. |
+| startupfinancialprojection.com | Rejected as primary: 30 characters, singular; usable later as a redirect for loan/visa campaigns. |
+| financialmodelstartup.com | Rejected: unnatural word order. |
+
+### Consequences
+- The name is descriptive, so a word-mark is hard to register; protection comes from a
+  logo/stylised mark and from the product. Henry: check TMview / USPTO for "StartupModel" in
+  classes 9, 35, 36, 42 and, if affordable, also get startupmodel.com (no hyphen) as a redirect.
+- **Collision to check (CAUTION):** a financial-model seller "Startup Models" exists
+  (startupmodels.co, not fetchable — robots; press: https://siliconprairienews.com/?p=2966).
+  Plural/.co vs our singular/.com, but same field. Henry: check whether it is active and
+  whether it holds a mark before spending on the brand. Fallback: financial-model.net.
+- Copy must not imply the product is only for startups: the wizard covers established
+  businesses too ("for new and growing businesses").
+- E track: replace "Ledgerline" in `app/` and the landing build (E13) with StartupModel;
+  `design/landing.dc.html` keeps the old name until E13 rebuilds it.
+- Prices come from config (E11); tier names stay Light / Full.
