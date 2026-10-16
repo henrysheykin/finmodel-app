@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · M · M07 email copy · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/15
+  `content/email/`: 7 emails (order received, model ready, build failed, refund issued, day-1 how-to, day-7 feedback, one abandoned-checkout reminder) + README with variables/triggers for E12.
+  For Henry: HUMAN_TODO D9 (failed-build policy; support email address). marketing:email-sequence not installed.
+  Note for M track: E03 (SaaS) and E04 (retail) templates now exist — deferred SEO pages #4, #12, #13 can be written in a later batch.
 - 2026-10-16 · E · E04 Retail / e-commerce template · DONE · https://github.com/henrysheykin/finmodel-app/pull/14
   Online (visits × conversion + paid orders via CAC, repeat multiplier, AOV) and stores (stores × sq ft × sales/sq ft,
   yearly openings + fit-out capex); Nov–Dec seasonality keeping the year; returns, product cost, fulfilment, payment fees,
