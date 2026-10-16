@@ -2,6 +2,8 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · M · decisions D2/D4 recorded · PR https://github.com/henrysheykin/finmodel-app/pull/8
+  ADR-004: Stripe Checkout; Railway (web + worker + Postgres). Vercel not used (no persistent worker / LibreOffice container). VAT handling flagged for Henry.
 - 2026-10-16 · E · E02 engine framework · DONE · https://github.com/henrysheykin/finmodel-app/pull/6
   Strict Brief schema (values only), Template base + formula line language, shared core (headcount, P&L tail, fixed assets,
   working capital, loan, cash flow, balance sheet) with a Python twin; Light/Full × monthly/annual × 1/3/5 all build, 0 errors,
