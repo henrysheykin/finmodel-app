@@ -103,6 +103,11 @@ Henry checked startupmodels.co: not active, not a concern. The startup-model.com
 StartupModel choice stands; financial-model.net is no longer needed as a fallback.
 Full price is still open, so copy uses `[PRICE_FULL]`.
 
+### ADR-002 addendum 2 (2026-10-16)
+Henry approved the M02 prices: **Light $149, Full $349, accountant/adviser pack 5 × Full for
+$1,250**; Light -> Full upgrade = pay the difference. **Refund window: 7 days.** E11 reads
+prices from config; M08 legal drafts use the 7-day refund window.
+
 ## ADR-003 — Engine framework (2026-10-16, E02)
 
 **Status:** Accepted · **Deciders:** E02 run; economics choices flagged for Henry's CFO review (R1)

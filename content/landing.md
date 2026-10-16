@@ -1,7 +1,8 @@
 # Landing page copy — StartupModel (EN)
 
 Source of structure: `design/landing.dc.html` (same sections, same order, similar lengths).
-Decisions used: ADR-002 (brand StartupModel, domain startup-model.com, Light $149, bundles,
+Decisions used: ADR-002 (brand StartupModel, domain startup-model.com, Light $149, Full $349,
+5-Full pack $1,250, refund within 7 days,
 FinModelsLab never mentioned). Positioning: `docs/marketing/positioning.md`.
 Placeholders in `[CAPS]` must stay until Henry decides; see "Notes for E13" at the end.
 
@@ -148,7 +149,7 @@ Placeholders in `[CAPS]` must stay until Henry decides; see "Notes for E13" at t
 **Card 1 — Light — $149**
 Single-sheet P&L with inputs and checks. Monthly or annual, 1, 3 or 5 years.
 
-**Card 2 — Full — $[PRICE_FULL]**
+**Card 2 — Full — $349**
 Full workbook: dashboard, inputs, monthly detail, P&L, cash flow, balance sheet, headcount and checks.
 
 **Included in both:**
@@ -157,11 +158,11 @@ Full workbook: dashboard, inputs, monthly detail, P&L, cash flow, balance sheet,
 - ✓ Live formulas throughout
 - ✓ Check report included
 - ✓ Download link by email
-- ✓ Refund within [REFUND_WINDOW]
+- ✓ Refund within 7 days
 
 **Upgrade line:** Started with Light? Upgrade to Full by paying the difference.
 
-**Pack line:** For accountants and advisers: 5 Full models for $[PACK_PRICE].
+**Pack line:** For accountants and advisers: 5 Full models for $1,250.
 
 **CTA:** Build my model — from $149
 
@@ -178,7 +179,7 @@ Full workbook: dashboard, inputs, monthly detail, P&L, cash flow, balance sheet,
 **Lead:** The short version of what people ask before ordering.
 
 1. **What does a model cost?**
-   $149 for Light, a single-sheet P&L, and $[PRICE_FULL] for Full, a complete workbook with dashboard, cash flow and balance sheet. One payment, no subscription.
+   $149 for Light, a single-sheet P&L, and $349 for Full, a complete workbook with dashboard, cash flow and balance sheet. One payment, no subscription.
 2. **Is the output a real Excel file?**
    Yes. A standard .xlsx with working formulas across sheets, not a chat answer or a screenshot.
 3. **How do you know the numbers are right?**
@@ -188,7 +189,7 @@ Full workbook: dashboard, inputs, monthly detail, P&L, cash flow, balance sheet,
 5. **Can I open it in Google Sheets?**
    It is built for Microsoft Excel and uses only long-established functions. [VERIFY BEFORE LAUNCH: open a sample in Google Sheets and Numbers; keep only what passes.]
 6. **What if it doesn't fit my business?**
-   Write to us within [REFUND_WINDOW] and we refund the full amount.
+   Write to us within 7 days and we refund the full amount.
 
 **CTA:** Build my model — from $149
 
@@ -207,9 +208,6 @@ Full workbook: dashboard, inputs, monthly detail, P&L, cash flow, balance sheet,
 
 | Placeholder | Meaning | Owner |
 |---|---|---|
-| `[PRICE_FULL]` | Full price (M02 recommends $349) | Henry, HUMAN_TODO D3 |
-| `[PACK_PRICE]` | 5 × Full pack (M02 recommends $1,250) | Henry, HUMAN_TODO D3 |
-| `[REFUND_WINDOW]` | Refund period | Henry, plus the legal draft (M08) |
 | `[DELIVERY_TIME]` | Promised time from payment to email | E track: set after E09/E12 measure real end-to-end time |
 | `[N]` in "Step 1 of [N]" | Number of wizard steps | E10 |
 
@@ -224,7 +222,7 @@ Full workbook: dashboard, inputs, monthly detail, P&L, cash flow, balance sheet,
 
 **SEO/structured data (for E13)**
 - One H1 (the hero). The H2s follow the sections above.
-- JSON-LD: `Organization` (name StartupModel, url https://startup-model.com/), a `Product` with two `Offer`s (Light 149 USD; add Full once `[PRICE_FULL]` is set), and `FAQPage` from the six FAQ items, using the same wording as the page.
+- JSON-LD: `Organization` (name StartupModel, url https://startup-model.com/), a `Product` with two `Offer`s (Light 149 USD, Full 349 USD), and `FAQPage` from the six FAQ items, using the same wording as the page.
 - Keep the copy in server-rendered HTML, not injected by JS, so crawlers read it.
 - robots.txt should allow the AI crawlers (GPTBot, ClaudeBot, PerplexityBot). Add a short `llms.txt` with these facts only: what it is, the tiers and prices, what's in the file, and a contact `[SUPPORT_EMAIL]`.
 - Never mention FinModelsLab (ADR-002).
