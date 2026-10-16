@@ -60,7 +60,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: as E03.
 
 ### E05 — Template: Real estate (rental property investment)
-- status: TODO
+- status: IN_PROGRESS (2026-10-16)
 - depends: E02
 - skills: xlsx
 - do: purchase price, closing costs, LTV/rate/term loan with amortisation
