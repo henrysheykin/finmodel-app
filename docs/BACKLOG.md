@@ -12,7 +12,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 ## Track E — Engineering (daily)
 
 ### E01 — Repo scaffold, CI, port the prototype
-- status: IN_PROGRESS (2026-10-16)
+- status: DONE (2026-10-16, https://github.com/henrysheykin/finmodel-app/pull/1)
 - depends: —
 - skills: engineering:architecture, engineering:testing-strategy, xlsx
 - do: pyproject (Python 3.12, ruff, pytest), layout from CLAUDE.md, `.env.example`,
