@@ -54,13 +54,20 @@ FILTER, SORT, UNIQUE, SEQUENCE, LET, LAMBDA. Zero formula errors after recalc.
 
 ## Design source
 
-- `design/landing.dc.html` and `design/tokens.dc.html` — the approved landing
-  design (copy, layout, exact CSS values). Canvas link:
-  https://claude.ai/artifact/4qNJgJzUU633rZ9A7vhQJj
-- Landing build spec (Russian, 12 sections): Claude Docs
-  https://claude.ai/code/artifact/73230182-c0f4-4cb1-a600-8551781f182c — export
-  it with the Claude Docs connector to `docs/SPEC_LANDING.md` the first time you
-  need it; if the connector is unavailable, work from the two design files.
+- **Design v2 (2026-10-16) is the source of truth** for look, copy and section
+  order: `design/landing.dc.html` and `design/tokens.dc.html` (exact colours,
+  type, components). Identity: accountant's analysis pad — ink #1B2A2F, pine
+  #0F6E56, pad paper #F7F8F3 with 32 px ruling, red auditor tick marks
+  #B8322A, double-underlined totals; Schibsted Grotesk + IBM Plex Sans with
+  tabular figures. Canvas: https://claude.ai/artifact/4qNJgJzUU633rZ9A7vhQJj
+- The v1 look copied the competitor's visual language too closely and was
+  replaced (ADR-005). Never reintroduce their palette (navy #1F3864 + blue
+  #2563EB), DM Sans, quote cards, "VS" cards or single price card.
+- Landing build spec (Russian): Claude Docs
+  https://claude.ai/code/artifact/73230182-c0f4-4cb1-a600-8551781f182c —
+  export it to `docs/SPEC_LANDING.md` when needed. Its sections 3–5 and 7 are
+  superseded by design v2; sections 6 and 8–11 (mockup logic, responsive,
+  SEO, accessibility, config, acceptance) still apply.
 
 ## Run protocol (every scheduled session)
 

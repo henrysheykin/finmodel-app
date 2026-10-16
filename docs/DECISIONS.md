@@ -170,3 +170,23 @@ app for little gain.
 - E15 `docs/DEPLOY.md` targets Railway first (other Docker hosts stay as alternatives).
 - E11 Stripe webhook URL will be the Railway domain / startup-model.com.
 - Henry owns VAT / sales-tax handling (Stripe Tax or own registration) — HUMAN_TODO D2.
+
+## ADR-005 — Own visual identity for the landing, design v2 (2026-10-16)
+
+**Status:** Accepted · **Deciders:** Henry (asked for a distinct look and texts), setup session
+
+- Decision: replace design v1 (same palette, font, section order and signature blocks as
+  getdraftplan.com) with design v2 in `design/`, now carrying the StartupModel brand, the
+  approved prices (ADR-002) and the M02 positioning ("proof, not AI", three ICPs).
+- Why: v1 copy was ours, but its visual language was close enough to read as a copy.
+- v2: accountant's analysis-pad identity (ink #1B2A2F, pine #0F6E56, pad paper #F7F8F3
+  with ruling, red auditor tick marks, double-underlined totals), Schibsted Grotesk +
+  IBM Plex Sans with tabular figures; a dark "checks" section as the differentiator;
+  tables instead of cards for the sheet list and the comparison; Light and Full side by
+  side; no scroll-reveal animation. Never reintroduce navy #1F3864 + blue #2563EB, DM Sans,
+  quote cards, "VS" cards or a single price card.
+- Copy: v2 copy follows M02/M03 messaging and guardrails (no Google Sheets/Numbers claim
+  until verified, `[DELIVERY_TIME]` placeholder, templates described neutrally). Where
+  `content/landing.md` (written for v1 sections) and the design disagree on structure,
+  the design wins; `content/landing.md` still owns meta, SEO/JSON-LD notes and placeholders.
+- Consequence: SPEC_LANDING sections 3–5 and 7 are superseded; E13 builds from `design/`.

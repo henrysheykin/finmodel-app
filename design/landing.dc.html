@@ -2,412 +2,320 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Ledgerline landing page</title>
+<title>StartupModel landing page</title>
 <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700;800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
 <style>
 body{margin:0;background:#FFFFFF}
-a{color:#2563EB}a:hover{color:#1D4ED8}
+a{color:#0F6E56}a:hover{color:#0B5743}
 </style>
 </helmet>
-<div style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; color: #111827; background: #FFFFFF; font-size: 16px; line-height: 1.6;">
+<div style="font-family: 'IBM Plex Sans', -apple-system, 'Segoe UI', sans-serif; color: #1B2A2F; background: #FFFFFF; font-size: 16px; line-height: 1.6; font-variant-numeric: tabular-nums;">
 
 <!-- NAV -->
-<nav aria-label="Main" style="position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid #E5E7EB;">
-<div style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
-<a href="#top" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #1F3864; font-weight: 700; font-size: 20px;">
-<span style="width: 30px; height: 30px; border-radius: 8px; background: #1F3864; display: flex; align-items: center; justify-content: center;">
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="M8 15l4-4 3 3 5-6"></path></svg>
-</span>
-Ledgerline
+<nav aria-label="Main" style="position: sticky; top: 0; z-index: 10; background: #FFFFFF; border-bottom: 1px solid #DCE9E0;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+<a href="#top" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #1B2A2F; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 800; font-size: 21px; letter-spacing: -0.01em;">
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect x="1" y="1" width="26" height="26" rx="5" stroke="#1B2A2F" stroke-width="2"></rect><path d="M6 10h16M6 15h16M6 20h9" stroke="#0F6E56" stroke-width="2" stroke-linecap="round"></path><path d="M17 20l2 2 4-5" stroke="#B8322A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+StartupModel
 </a>
-<div style="display: flex; align-items: center; gap: 28px; flex-wrap: wrap;">
-<a href="#how" style="color: #4B5563; text-decoration: none; font-size: 14px; font-weight: 500;">How it works</a>
-<a href="#inside" style="color: #4B5563; text-decoration: none; font-size: 14px; font-weight: 500;">What's inside</a>
-<a href="#pricing" style="color: #4B5563; text-decoration: none; font-size: 14px; font-weight: 500;">Pricing</a>
-<a href="#faq" style="color: #4B5563; text-decoration: none; font-size: 14px; font-weight: 500;">FAQ</a>
-<a href="#pricing" style="background: #2563EB; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 500; padding: 10px 22px; border-radius: 10px; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">Start my model</a>
+<div style="display: flex; align-items: center; gap: 26px; flex-wrap: wrap;">
+<a href="#how" style="color: #33464C; text-decoration: none; font-size: 15px;">How it works</a>
+<a href="#checks" style="color: #33464C; text-decoration: none; font-size: 15px;">Checks</a>
+<a href="#pricing" style="color: #33464C; text-decoration: none; font-size: 15px;">Pricing</a>
+<a href="#faq" style="color: #33464C; text-decoration: none; font-size: 15px;">Questions</a>
+<a href="#pricing" style="background: #0F6E56; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600; padding: 10px 18px; border-radius: 6px;">Start a model</a>
 </div>
 </div>
 </nav>
 
 <!-- HERO -->
-<section id="top" style="background: linear-gradient(180deg, #F8FAFF 0%, #FFFFFF 100%); padding: 72px 0 80px;">
-<div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 56px; align-items: center;">
-<div style="display: flex; flex-direction: column; gap: 22px;">
-<h1 style="margin: 0; font-size: clamp(34px, 4vw, 51px); line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; color: #1F3864;">Your business plan as a working <em style="font-style: normal; color: #2563EB;">Excel</em> model, ready today</h1>
-<p style="margin: 0; font-size: 17.6px; line-height: 1.7; color: #6B7280; max-width: 520px;">Answer a short questionnaire and download an editable spreadsheet with live formulas, three scenarios and a quality report. Built for founders, cafés, restaurants, property deals and valuations.</p>
-<div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start;">
-<a href="#pricing" style="background: #2563EB; color: #FFFFFF; text-decoration: none; font-size: 16px; font-weight: 600; padding: 15px 30px; border-radius: 10px; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">Build my model</a>
-<span style="font-size: 13px; color: #6B7280;">Startup forecasts · Café and restaurant plans · Real estate · DCF</span>
-<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #047857; font-weight: 500;">
-<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>
-Money-back guarantee within [REFUND WINDOW]
-</span>
+<section id="top" style="background-color: #F7F8F3; background-image: repeating-linear-gradient(180deg, transparent 0, transparent 31px, #E6EFE8 31px, #E6EFE8 32px); padding: 72px 0 88px; border-bottom: 1px solid #DCE9E0;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 52px;">
+<div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-end; justify-content: space-between;">
+<div style="flex: 1 1 560px; min-width: 0; max-width: 680px; display: flex; flex-direction: column; gap: 22px;">
+<h1 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: clamp(38px, 5vw, 64px); line-height: 1.04; font-weight: 800; letter-spacing: -0.03em; color: #1B2A2F;">A financial model built on your numbers, with the maths proven before you get it</h1>
+<p style="margin: 0; font-size: 19px; line-height: 1.6; color: #3E5157; max-width: 600px;">Answer a short brief and get an Excel workbook with live formulas, low, base and high cases, and a Checks sheet your lender, investor or client can read. For loan applications, fundraising and client work.</p>
+<div style="display: flex; align-items: center; gap: 22px; flex-wrap: wrap;">
+<a href="#pricing" style="background: #0F6E56; color: #FFFFFF; text-decoration: none; font-size: 17px; font-weight: 600; padding: 15px 26px; border-radius: 6px;">Start a model</a>
+<a href="#samples" style="color: #0F6E56; font-size: 16px; font-weight: 600; text-underline-offset: 4px;">Open a sample file</a>
+</div>
+<span style="font-size: 14px; color: #56676C;">From $149, one payment per model. Full refund within 7 days if it doesn't fit your business.</span>
+</div>
+<div style="flex: 0 1 340px; min-width: 260px; background: #FFFFFF; border: 1px solid #CFE0D4; border-radius: 8px; padding: 20px 22px;">
+<h2 style="margin: 0 0 10px; font-family: 'Schibsted Grotesk', sans-serif; font-size: 17px; font-weight: 700; color: #1B2A2F;">What the brief asks</h2>
+<ol style="margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.85; color: #33464C;">
+<li>What kind of business it is</li>
+<li>What the model should answer</li>
+<li>Where the business is today</li>
+<li>Years to plan, monthly or annual</li>
+<li>A few key numbers, or sample data</li>
+<li>Light or Full workbook</li>
+</ol>
 </div>
 </div>
 
-<!-- Excel mockup -->
-<div style="position: relative;">
-<div style="border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15); border: 1px solid #E5E7EB; background: #FFFFFF;">
-<div style="background: #217346; padding: 10px 14px; display: flex; align-items: center; gap: 12px;">
-<span style="display: flex; gap: 6px;" aria-hidden="true"><span style="width: 10px; height: 10px; border-radius: 50%; background: #FF5F57;"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #FEBC2E;"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #28C840;"></span></span>
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #FFFFFF;">bakery-cafe-plan.xlsx — Excel</span>
-<span style="margin-left: auto; background: #111827; color: #FFFFFF; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 8px; border-radius: 4px;">Live preview — switch scenario &amp; tabs</span>
+<!-- The sheet -->
+<div style="background: #FFFFFF; border: 1px solid #C7DACD; border-radius: 10px; box-shadow: 0 1px 0 #C7DACD, 0 18px 40px -24px rgba(27,42,47,0.35); overflow: hidden;">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 14px 18px; border-bottom: 1px solid #DCE9E0;">
+<div style="display: flex; flex-direction: column;">
+<strong style="font-family: 'Schibsted Grotesk', sans-serif; font-size: 17px; color: #1B2A2F;">Corner bakery, four-year plan</strong>
+<span style="font-size: 13px; color: #56676C;">Live preview of a generated workbook. Switch the case or the sheet.</span>
 </div>
-<div style="background: #217346; padding: 0 14px; display: flex; gap: 4px; font-size: 12px;">
-<span style="background: #FFFFFF; color: #217346; padding: 6px 12px; border-radius: 6px 6px 0 0; font-weight: 600;">Home</span>
-<span style="color: #E6F2EA; padding: 6px 12px;">Formulas</span>
-<span style="color: #E6F2EA; padding: 6px 12px;">Data</span>
-<span style="color: #E6F2EA; padding: 6px 12px;">View</span>
+<div role="group" aria-label="Scenario" style="display: flex; border: 1px solid #C7DACD; border-radius: 6px; overflow: hidden;">
+<sc-for list="{{scenarios}}" as="s" hint-placeholder-count="3">
+<button type="button" onClick="{{s.pick}}" aria-pressed="{{s.pressed}}" style="{{s.style}}">{{s.label}}</button>
+</sc-for>
 </div>
-<div style="display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-bottom: 1px solid #E5E7EB; background: #F9FAFB; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #374151;">
-<span style="border: 1px solid #D1D5DB; background: #FFFFFF; padding: 1px 10px; border-radius: 3px;">{{formulaCell}}</span>
-<span style="color: #6B7280; font-style: italic;">fx</span>
+</div>
+<div role="tablist" aria-label="Sheets" style="display: flex; gap: 2px; padding: 0 12px; border-bottom: 1px solid #DCE9E0; background: #FBFCF9; overflow-x: auto;">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+<button type="button" role="tab" aria-selected="{{t.selected}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 7px 18px; border-bottom: 1px solid #EEF4EF; font-size: 13px; color: #3E5157;">
+<span style="font-weight: 600; color: #0F6E56;">{{formulaCell}}</span>
 <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{formula}}</span>
 </div>
 <div style="overflow-x: auto;">
-<div style="min-width: 520px; font-size: 12.5px;">
-<div style="display: grid; grid-template-columns: 34px minmax(0,1.5fr) repeat(4, minmax(0,1fr)); background: #F3F4F6; color: #6B7280; font-size: 11px; text-align: center; border-bottom: 1px solid #E5E7EB;">
-<span style="padding: 4px 0; border-right: 1px solid #E5E7EB;"></span><span style="padding: 4px 0; border-right: 1px solid #E5E7EB;">A</span><span style="padding: 4px 0; border-right: 1px solid #E5E7EB;">B</span><span style="padding: 4px 0; border-right: 1px solid #E5E7EB;">C</span><span style="padding: 4px 0; border-right: 1px solid #E5E7EB;">D</span><span style="padding: 4px 0;">E</span>
-</div>
-<sc-for list="{{rows}}" as="r" hint-placeholder-count="11">
+<div style="min-width: 640px; font-size: 14px;">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="10">
 <div style="{{r.rowStyle}}">
-<span style="padding: 5px 0; text-align: center; background: #F3F4F6; color: #6B7280; font-size: 11px; border-right: 1px solid #E5E7EB;">{{r.n}}</span>
 <span style="{{r.labelStyle}}">{{r.label}}</span>
 <sc-for list="{{r.cells}}" as="c" hint-placeholder-count="4">
-<span style="{{c.style}}">{{c.v}}</span>
+<span style="{{c.style}}">{{c.v}}<span style="{{c.tickStyle}}" aria-hidden="true">{{c.tick}}</span></span>
 </sc-for>
 </div>
 </sc-for>
-<sc-if value="{{showScenario}}" hint-placeholder-val="{{true}}">
-<div style="display: flex; align-items: center; gap: 8px; padding: 8px 10px 8px 44px; background: #FFF7F0; border-top: 1px solid #F3E2D4; font-size: 12px; color: #1F3864;">
-<span style="font-weight: 600;">Scenario:</span>
-<sc-for list="{{scenarios}}" as="s" hint-placeholder-count="3">
-<button type="button" onClick="{{s.pick}}" style="{{s.style}}">{{s.label}}</button>
-</sc-for>
-</div>
-</sc-if>
 </div>
 </div>
-<div style="display: flex; border-top: 1px solid #E5E7EB; background: #F9FAFB; font-size: 12px; overflow-x: auto;">
-<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
-<button type="button" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
-</sc-for>
-</div>
-</div>
-<span style="position: absolute; right: -10px; bottom: -18px; display: flex; align-items: center; gap: 8px; background: #ECFDF5; color: #047857; border: 2px solid #059669; border-radius: 10px; padding: 8px 14px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg>
-Checks passed
-</span>
-</div>
-</div>
-</section>
-
-<!-- PROBLEM -->
-<section style="background: #F9FAFB; padding: 72px 0;">
-<div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 40px;">
-<div style="text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center;">
-<h2 style="margin: 0; font-size: clamp(26px, 3vw, 35px); line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; color: #1F3864;">Projections shouldn't eat your month</h2>
-<p style="margin: 0; font-size: 16px; color: #6B7280;">Every usual route to a financial model has a catch.</p>
-</div>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 20px;">
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 32px 24px; display: flex; flex-direction: column; gap: 12px; align-items: center; text-align: center;">
-<span style="width: 40px; height: 40px; border-radius: 10px; background: #FEF3C7; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>
-<h3 style="margin: 0; font-size: 17px; line-height: 1.4; font-weight: 600; color: #1F3864;">"My spreadsheet still breaks after three weekends."</h3>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">Starting from a blank sheet means days of setup, circular references and numbers you can't defend.</p>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 32px 24px; display: flex; flex-direction: column; gap: 12px; align-items: center; text-align: center;">
-<span style="width: 40px; height: 40px; border-radius: 10px; background: #EFF6FF; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"></path><path d="M16 7.5c0-1.7-1.8-2.5-4-2.5s-4 1-4 3 2 2.6 4 3 4 1.2 4 3.2-1.8 2.8-4 2.8-4-.9-4-2.6"></path></svg></span>
-<h3 style="margin: 0; font-size: 17px; line-height: 1.4; font-weight: 600; color: #1F3864;">"The consultant's quote cost more than my launch budget."</h3>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">Hiring an analyst is the safe option, but rarely an affordable one for an early-stage business.</p>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 32px 24px; display: flex; flex-direction: column; gap: 12px; align-items: center; text-align: center;">
-<span style="width: 40px; height: 40px; border-radius: 10px; background: #ECFDF5; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7"></path><path d="M12 17h.01"></path></svg></span>
-<h3 style="margin: 0; font-size: 17px; line-height: 1.4; font-weight: 600; color: #1F3864;">"Templates assume I already know finance."</h3>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">Generic files are full of jargon and need heavy rework before they describe your business.</p>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 12px 18px; background: #FBFCF9; border-top: 1px solid #DCE9E0; font-size: 13px; color: #3E5157;">
+<span><span style="color: #B8322A; font-weight: 700;">✓</span> marks a total the independent recalculation agreed with, to the dollar.</span>
+<a href="#checks" style="font-weight: 600;">How the checks work</a>
 </div>
 </div>
 </div>
 </section>
 
 <!-- HOW IT WORKS -->
-<section id="how" style="background: #FFFFFF; padding: 72px 0;">
-<div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 56px;">
-<div style="text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center;">
-<h2 style="margin: 0; font-size: clamp(26px, 3vw, 35px); line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; color: #1F3864;">How it works</h2>
-<p style="margin: 0; font-size: 16px; color: #6B7280;">Three steps from questions to a spreadsheet you can present.</p>
-</div>
-
-<!-- step 1 -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 48px; align-items: center; padding-bottom: 48px; border-bottom: 1px solid #E5E7EB;">
-<div style="display: flex; flex-direction: column; gap: 12px;">
-<span style="width: 40px; height: 40px; border-radius: 8px; background: #2563EB; color: #FFFFFF; font-weight: 700; font-size: 17.6px; display: flex; align-items: center; justify-content: center;">1</span>
-<h3 style="margin: 0; font-size: 21px; font-weight: 600; color: #1F3864;">Tell us about the business</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.7; color: #6B7280;">A guided form asks about revenue, costs and goals in plain language. Sensible defaults fill the gaps, and a sample-data switch lets you explore before sharing real numbers.</p>
-</div>
-<div style="border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.12); background: #FFFFFF;">
-<div style="background: #1F3864; color: #FFFFFF; padding: 14px 18px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
-<span style="display: flex; flex-direction: column;"><strong style="font-size: 14px;">Set up your model</strong><span style="font-size: 12px; color: #C7D2E6;">Step 1 of 4 — About your business</span></span>
-<span style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #C7D2E6; align-self: center;">Product preview</span>
-</div>
-<div style="height: 4px; background: #E5E7EB;"><div style="width: 25%; height: 4px; background: #2563EB;"></div></div>
-<div style="padding: 20px 18px; display: flex; flex-direction: column; gap: 14px;">
-<label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: #1F3864;">Business type
-<select style="font-family: inherit; font-size: 14px; padding: 10px 12px; border: 1px solid #E5E7EB; border-radius: 8px; color: #374151; background: #FFFFFF;"><option>Café / restaurant</option><option>SaaS startup</option><option>Rental property</option></select>
-</label>
-<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px;">
-<legend style="font-size: 13px; font-weight: 600; color: #1F3864; margin-bottom: 6px;">What should the model answer?</legend>
-<label style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #93C5FD; background: #EFF6FF; border-radius: 8px; font-size: 14px; color: #1F3864;"><input type="radio" name="goal" checked="checked">Revenue and profit forecast</label>
-<label style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 14px; color: #374151;"><input type="radio" name="goal">Launch costs and break-even</label>
-<label style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 14px; color: #374151;"><input type="radio" name="goal">Valuation (DCF)</label>
-</fieldset>
-<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
-<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #374151;"><input type="checkbox" checked="checked">Fill with sample data</label>
-<button type="button" style="font-family: inherit; background: #2563EB; color: #FFFFFF; border: 0; border-radius: 8px; padding: 10px 18px; font-size: 14px; font-weight: 600;">Continue →</button>
-</div>
-</div>
-</div>
-</div>
-
-<!-- step 2 (mirrored) -->
-<div style="display: flex; flex-wrap: wrap-reverse; gap: 48px; align-items: center; padding-bottom: 48px; border-bottom: 1px solid #E5E7EB;">
-<div style="flex: 1 1 420px; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
-<div style="width: 104px; border: 2px solid #2563EB; border-radius: 10px; padding: 14px 10px; text-align: center; background: #FFFFFF; box-shadow: 0 4px 16px rgba(37,99,235,0.15);">
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F3864" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 21V9"></path></svg>
-<div style="font-size: 13px; font-weight: 600; color: #1F3864;">Planner</div>
-<div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #6B7280;">maps the structure</div>
-</div>
-<span style="color: #9CA3AF;" aria-hidden="true">→</span>
-<div style="width: 104px; border: 1px solid #E5E7EB; border-radius: 10px; padding: 14px 10px; text-align: center; background: #FFFFFF;">
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F3864" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l6-5-6-5"></path><path d="M12 19h8"></path></svg>
-<div style="font-size: 13px; font-weight: 600; color: #1F3864;">Builder</div>
-<div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #6B7280;">writes the formulas</div>
-</div>
-<span style="color: #9CA3AF;" aria-hidden="true">→</span>
-<div style="width: 104px; border: 1px solid #E5E7EB; border-radius: 10px; padding: 14px 10px; text-align: center; background: #FFFFFF;">
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F3864" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>
-<div style="font-size: 13px; font-weight: 600; color: #1F3864;">Reviewer</div>
-<div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #6B7280;">tries to break it</div>
-</div>
-<span style="color: #9CA3AF;" aria-hidden="true">→</span>
-<span style="width: 30px; height: 30px; border-radius: 50%; background: #059669; color: #FFFFFF; display: flex; align-items: center; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Passed"><path d="M5 12l5 5 9-10"></path></svg></span>
-</div>
-<div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 12px;">
-<span style="width: 40px; height: 40px; border-radius: 8px; background: #2563EB; color: #FFFFFF; font-weight: 700; font-size: 17.6px; display: flex; align-items: center; justify-content: center;">2</span>
-<h3 style="margin: 0; font-size: 21px; font-weight: 600; color: #1F3864;">Three AI agents assemble it</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.7; color: #6B7280;">One agent plans the tabs and logic, a second writes the workbook, and a third audits every formula and scenario link before anything reaches you.</p>
-</div>
-</div>
-
-<!-- step 3 -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 48px; align-items: center;">
-<div style="display: flex; flex-direction: column; gap: 12px;">
-<span style="width: 40px; height: 40px; border-radius: 8px; background: #2563EB; color: #FFFFFF; font-weight: 700; font-size: 17.6px; display: flex; align-items: center; justify-content: center;">3</span>
-<h3 style="margin: 0; font-size: 21px; font-weight: 600; color: #1F3864;">Download, adjust, present</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.7; color: #6B7280;">You get an .xlsx with live formulas, a low / base / high scenario switch and a written check report. Change any input and the whole file follows.</p>
-</div>
-<div style="border: 1px solid #E5E7EB; border-radius: 12px; padding: 20px; display: flex; gap: 16px; align-items: center; box-shadow: 0 4px 16px rgba(0,0,0,0.1); background: #FFFFFF;">
-<span style="width: 56px; height: 56px; flex: none; border-radius: 8px; background: #217346; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; line-height: 1;">X<span style="font-size: 8px; font-weight: 600; margin-top: 3px;">.XLSX</span></span>
-<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
-<strong style="font-size: 15px; color: #1F3864;">bakery-cafe-plan.xlsx</strong>
-<span style="font-size: 12.5px; color: #6B7280;">5 sheets · 3 scenarios · check report included</span>
-<span style="display: flex; gap: 6px; flex-wrap: wrap;">
-<span style="font-size: 11px; background: #F3F4F6; color: #4B5563; padding: 2px 8px; border-radius: 4px;">Dashboard</span>
-<span style="font-size: 11px; background: #F3F4F6; color: #4B5563; padding: 2px 8px; border-radius: 4px;">Inputs</span>
-<span style="font-size: 11px; background: #F3F4F6; color: #4B5563; padding: 2px 8px; border-radius: 4px;">P&amp;L</span>
-<span style="font-size: 11px; background: #F3F4F6; color: #4B5563; padding: 2px 8px; border-radius: 4px;">Checks</span>
-</span>
-</div>
-</div>
-</div>
+<section id="how" style="background: #FFFFFF; padding: 88px 0;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 40px;">
+<h2 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; max-width: 720px;">From brief to workbook in three steps</h2>
+<ol style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 0; border-top: 2px solid #1B2A2F;">
+<li style="padding: 22px 28px 8px 0; display: flex; flex-direction: column; gap: 10px;">
+<span style="font-family: 'Schibsted Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: #0F6E56;">Step 1</span>
+<h3 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: 22px; font-weight: 700;">Answer the brief</h3>
+<p style="margin: 0; font-size: 16px; color: #3E5157;">Plain questions about how you sell, what it costs and what you need to decide. No finance terms. Not ready to share numbers? Start from sample data and change it later.</p>
+</li>
+<li style="padding: 22px 28px 8px 0; display: flex; flex-direction: column; gap: 10px;">
+<span style="font-family: 'Schibsted Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: #0F6E56;">Step 2</span>
+<h3 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: 22px; font-weight: 700;">We build it, then check it</h3>
+<p style="margin: 0; font-size: 16px; color: #3E5157;">Your answers become a structured brief. Tested templates write every formula. A separate program then rebuilds every total from your inputs and compares, in all three cases.</p>
+</li>
+<li style="padding: 22px 28px 8px 0; display: flex; flex-direction: column; gap: 10px;">
+<span style="font-family: 'Schibsted Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: #0F6E56;">Step 3</span>
+<h3 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: 22px; font-weight: 700;">Download and make it yours</h3>
+<p style="margin: 0; font-size: 16px; color: #3E5157;">Open it in Excel. Change any input and every sheet follows. The file is yours to keep, edit and send to your lender or investor.</p>
+</li>
+</ol>
 </div>
 </section>
 
-<!-- WHAT'S INSIDE -->
-<section id="inside" style="background: #F9FAFB; padding: 72px 0;">
-<div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 40px;">
-<div style="text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center;">
-<h2 style="margin: 0; font-size: clamp(26px, 3vw, 35px); line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; color: #1F3864;">What every model includes</h2>
-<p style="margin: 0; font-size: 16px; color: #6B7280;">Built around your inputs, not adapted from a template.</p>
+<!-- CHECKS (the one bold section) -->
+<section id="checks" style="background: #1B2A2F; color: #E9F1EC; padding: 88px 0;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; gap: 56px;">
+<div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 18px;">
+<h2 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; color: #FFFFFF;">We check the maths before you see it</h2>
+<p style="margin: 0; font-size: 17px; line-height: 1.7; color: #C5D6CC;">After the workbook is built, an independent program recalculates it from your inputs. If any annual total differs by more than one dollar, or any check fails, the file is held back and fixed. The same checks stay in your workbook as live formulas, so they keep working after you edit it.</p>
 </div>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 20px;">
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 32px 28px; display: flex; gap: 16px; align-items: flex-start;">
-<span style="width: 36px; height: 36px; flex: none; border-radius: 8px; background: #EFF6FF; display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 20V10M12 20V4M18 20v-7"></path></svg></span>
-<div style="display: flex; flex-direction: column; gap: 6px;"><h3 style="margin: 0; font-size: 18px; font-weight: 600; color: #1F3864;">Three scenarios, one switch</h3><p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">Low, base and high cases live in the same file. Flip one cell and every sheet recalculates.</p></div>
+<ul style="flex: 1 1 460px; min-width: 0; list-style: none; margin: 0; padding: 0; border-top: 1px solid #3B4F55;">
+<li style="display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid #3B4F55; font-size: 16px;"><span style="color: #F07F6E; font-weight: 700;" aria-hidden="true">✓</span>Annual figures tie to the monthly build</li>
+<li style="display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid #3B4F55; font-size: 16px;"><span style="color: #F07F6E; font-weight: 700;" aria-hidden="true">✓</span>Cash rolls forward from one month to the next</li>
+<li style="display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid #3B4F55; font-size: 16px;"><span style="color: #F07F6E; font-weight: 700;" aria-hidden="true">✓</span>The balance sheet balances in every period</li>
+<li style="display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid #3B4F55; font-size: 16px;"><span style="color: #F07F6E; font-weight: 700;" aria-hidden="true">✓</span>EBITDA equals gross profit less operating costs</li>
+<li style="display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid #3B4F55; font-size: 16px;"><span style="color: #F07F6E; font-weight: 700;" aria-hidden="true">✓</span>The case switch resolves low, base and high</li>
+<li style="display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid #3B4F55; font-size: 16px;"><span style="color: #F07F6E; font-weight: 700;" aria-hidden="true">✓</span>No error values anywhere in the file</li>
+<li style="display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid #3B4F55; font-size: 16px;"><span style="color: #F07F6E; font-weight: 700;" aria-hidden="true">✓</span>A funding gap is flagged if cash goes below zero</li>
+</ul>
 </div>
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 32px 28px; display: flex; gap: 16px; align-items: flex-start;">
-<span style="width: 36px; height: 36px; flex: none; border-radius: 8px; background: #EEF2FF; display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4338CA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"></path></svg></span>
-<div style="display: flex; flex-direction: column; gap: 6px;"><h3 style="margin: 0; font-size: 18px; font-weight: 600; color: #1F3864;">Formulas you can read</h3><p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">No pasted values. Inputs are blue, calculations are black, so anyone can trace a number to its source.</p></div>
+</section>
+
+<!-- WHAT'S IN THE FILE -->
+<section id="inside" style="background: #FFFFFF; padding: 88px 0;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 32px;">
+<div style="display: flex; flex-direction: column; gap: 10px; max-width: 720px;">
+<h2 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;">What's in the workbook</h2>
+<p style="margin: 0; font-size: 17px; color: #3E5157;">Inputs are blue, formulas are black, links between sheets are green. Nothing is pasted as a value.</p>
 </div>
-<div style="background: #ECFDF5; border: 1px solid #059669; border-radius: 12px; padding: 32px 28px; display: flex; gap: 16px; align-items: flex-start;">
-<span style="width: 36px; height: 36px; flex: none; border-radius: 8px; background: #FFFFFF; display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg></span>
-<div style="display: flex; flex-direction: column; gap: 6px;"><h3 style="margin: 0; font-size: 18px; font-weight: 600; color: #1F3864;">Audited before delivery</h3><p style="margin: 0; font-size: 14px; line-height: 1.6; color: #374151;">An independent reviewer agent checks links, totals and scenario wiring, and you receive the report.</p><span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #047857;">Our main difference</span></div>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 32px 28px; display: flex; gap: 16px; align-items: flex-start;">
-<span style="width: 36px; height: 36px; flex: none; border-radius: 8px; background: #FEF3C7; display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3L5 14h6l-1 7 8-11h-6z"></path></svg></span>
-<div style="display: flex; flex-direction: column; gap: 6px;"><h3 style="margin: 0; font-size: 18px; font-weight: 600; color: #1F3864;">Same-day turnaround</h3><p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">The file is ready minutes after you finish the questions, not days after a kickoff call.</p></div>
-</div>
+<div style="overflow-x: auto;">
+<table style="width: 100%; min-width: 620px; border-collapse: collapse; font-size: 16px;">
+<thead>
+<tr style="border-bottom: 2px solid #1B2A2F; text-align: left;">
+<th scope="col" style="padding: 10px 16px 10px 0; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700;">Sheet</th>
+<th scope="col" style="padding: 10px 16px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700;">What it shows</th>
+<th scope="col" style="padding: 10px 16px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700; text-align: center;">Light</th>
+<th scope="col" style="padding: 10px 0 10px 16px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700; text-align: center;">Full</th>
+</tr>
+</thead>
+<tbody style="color: #33464C;">
+<tr style="border-bottom: 1px solid #DCE9E0;"><th scope="row" style="padding: 13px 16px 13px 0; text-align: left; font-weight: 600; color: #1B2A2F;">Inputs</th><td style="padding: 13px 16px;">Every assumption in one place, with low, base and high side by side</td><td style="text-align: center; color: #0F6E56; font-weight: 700;">✓</td><td style="text-align: center; color: #0F6E56; font-weight: 700;">✓</td></tr>
+<tr style="border-bottom: 1px solid #DCE9E0;"><th scope="row" style="padding: 13px 16px 13px 0; text-align: left; font-weight: 600; color: #1B2A2F;">P&amp;L</th><td style="padding: 13px 16px;">Profit and loss by year, with margins</td><td style="text-align: center; color: #0F6E56; font-weight: 700;">✓</td><td style="text-align: center; color: #0F6E56; font-weight: 700;">✓</td></tr>
+<tr style="border-bottom: 1px solid #DCE9E0;"><th scope="row" style="padding: 13px 16px 13px 0; text-align: left; font-weight: 600; color: #1B2A2F;">Checks</th><td style="padding: 13px 16px;">Each test with its live result</td><td style="text-align: center; color: #0F6E56; font-weight: 700;">✓</td><td style="text-align: center; color: #0F6E56; font-weight: 700;">✓</td></tr>
+<tr style="border-bottom: 1px solid #DCE9E0;"><th scope="row" style="padding: 13px 16px 13px 0; text-align: left; font-weight: 600; color: #1B2A2F;">Dashboard</th><td style="padding: 13px 16px;">Key results for the selected case, and the case switch</td><td style="text-align: center; color: #8A989C;">–</td><td style="text-align: center; color: #0F6E56; font-weight: 700;">✓</td></tr>
+<tr style="border-bottom: 1px solid #DCE9E0;"><th scope="row" style="padding: 13px 16px 13px 0; text-align: left; font-weight: 600; color: #1B2A2F;">Monthly</th><td style="padding: 13px 16px;">Month-by-month build of revenue, costs and cash</td><td style="text-align: center; color: #8A989C;">–</td><td style="text-align: center; color: #0F6E56; font-weight: 700;">✓</td></tr>
+<tr style="border-bottom: 1px solid #DCE9E0;"><th scope="row" style="padding: 13px 16px 13px 0; text-align: left; font-weight: 600; color: #1B2A2F;">Cash flow</th><td style="padding: 13px 16px;">Operating, investing and financing cash, and runway</td><td style="text-align: center; color: #8A989C;">–</td><td style="text-align: center; color: #0F6E56; font-weight: 700;">✓</td></tr>
+<tr style="border-bottom: 1px solid #DCE9E0;"><th scope="row" style="padding: 13px 16px 13px 0; text-align: left; font-weight: 600; color: #1B2A2F;">Balance sheet</th><td style="padding: 13px 16px;">Assets, liabilities and equity, balanced every period</td><td style="text-align: center; color: #8A989C;">–</td><td style="text-align: center; color: #0F6E56; font-weight: 700;">✓</td></tr>
+<tr style="border-bottom: 1px solid #DCE9E0;"><th scope="row" style="padding: 13px 16px 13px 0; text-align: left; font-weight: 600; color: #1B2A2F;">Headcount</th><td style="padding: 13px 16px;">Roles, start dates and payroll cost</td><td style="text-align: center; color: #8A989C;">–</td><td style="text-align: center; color: #0F6E56; font-weight: 700;">✓</td></tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
 
 <!-- SAMPLES -->
-<section style="background: #FFFFFF; padding: 72px 0;">
-<div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 40px; align-items: center;">
-<div style="text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center; max-width: 640px;">
-<h2 style="margin: 0; font-size: clamp(26px, 3vw, 35px); line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; color: #1F3864;">Open a real sample</h2>
-<p style="margin: 0; font-size: 16px; color: #6B7280;">Download a generated file and inspect every formula before you buy.</p>
+<section id="samples" style="background: #F7F8F3; padding: 72px 0; border-top: 1px solid #DCE9E0; border-bottom: 1px solid #DCE9E0;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start;">
+<div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: clamp(26px, 2.8vw, 34px); line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;">Open a sample before you pay</h2>
+<p style="margin: 0; font-size: 16px; color: #3E5157;">Real files from the same generator. Click into any cell and read the formula.</p>
 </div>
-<div style="width: 100%; max-width: 880px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 20px;">
-<div style="border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 12px; background: #FFFFFF;">
-<span style="width: 48px; height: 48px; border-radius: 8px; background: #217346; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; line-height: 1;">X<span style="font-size: 7px; margin-top: 3px;">.XLSX</span></span>
-<h3 style="margin: 0; font-size: 17px; font-weight: 600; color: #1F3864;">Bakery-café plan</h3>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">Three-year forecast with traffic and ticket drivers, cost structure and the scenario switch.</p>
-<span style="display: flex; gap: 6px; flex-wrap: wrap;"><span style="font-size: 11px; background: #F3F4F6; color: #4B5563; padding: 2px 8px; border-radius: 4px;">5 sheets</span><span style="font-size: 11px; background: #F3F4F6; color: #4B5563; padding: 2px 8px; border-radius: 4px;">3 scenarios</span><span style="font-size: 11px; background: #F3F4F6; color: #4B5563; padding: 2px 8px; border-radius: 4px;">Checked</span></span>
-<a href="#samples" style="align-self: flex-start; display: flex; align-items: center; gap: 8px; border: 1.5px solid #2563EB; color: #2563EB; text-decoration: none; border-radius: 8px; padding: 9px 16px; font-size: 14px; font-weight: 600;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Download .xlsx</a>
+<div style="flex: 2 1 560px; min-width: 0; display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #CFE0D4; border-radius: 8px;">
+<div style="display: flex; align-items: center; gap: 18px; padding: 18px 20px; border-bottom: 1px solid #DCE9E0; flex-wrap: wrap;">
+<div style="flex: 1 1 260px; min-width: 0;"><strong style="font-size: 17px;">Corner bakery</strong><div style="font-size: 14px; color: #56676C;">Full workbook, four years, monthly detail</div></div>
+<a href="#samples" style="display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid #0F6E56; border-radius: 6px; padding: 9px 14px; font-size: 15px; font-weight: 600; text-decoration: none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Download .xlsx</a>
 </div>
-<div style="border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 12px; background: #FFFFFF;">
-<span style="width: 48px; height: 48px; border-radius: 8px; background: #217346; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; line-height: 1;">X<span style="font-size: 7px; margin-top: 3px;">.XLSX</span></span>
-<h3 style="margin: 0; font-size: 17px; font-weight: 600; color: #1F3864;">Rental property deal</h3>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">Cash flow, cap rate, IRR and debt coverage for a buy-to-let purchase, with all three cases.</p>
-<span style="display: flex; gap: 6px; flex-wrap: wrap;"><span style="font-size: 11px; background: #F3F4F6; color: #4B5563; padding: 2px 8px; border-radius: 4px;">Multi-sheet</span><span style="font-size: 11px; background: #F3F4F6; color: #4B5563; padding: 2px 8px; border-radius: 4px;">3 scenarios</span><span style="font-size: 11px; background: #F3F4F6; color: #4B5563; padding: 2px 8px; border-radius: 4px;">Checked</span></span>
-<a href="#samples" style="align-self: flex-start; display: flex; align-items: center; gap: 8px; border: 1.5px solid #2563EB; color: #2563EB; text-decoration: none; border-radius: 8px; padding: 9px 16px; font-size: 14px; font-weight: 600;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Download .xlsx</a>
+<div style="display: flex; align-items: center; gap: 18px; padding: 18px 20px; flex-wrap: wrap;">
+<div style="flex: 1 1 260px; min-width: 0;"><strong style="font-size: 17px;">Rental property purchase</strong><div style="font-size: 14px; color: #56676C;">Full workbook with loan schedule, cap rate, DSCR and IRR</div></div>
+<a href="#samples" style="display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid #0F6E56; border-radius: 6px; padding: 9px 14px; font-size: 15px; font-weight: 600; text-decoration: none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Download .xlsx</a>
 </div>
 </div>
 </div>
 </section>
 
 <!-- COMPARISON -->
-<section style="background: #F9FAFB; padding: 72px 0;">
-<div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 40px;">
-<div style="text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center;">
-<h2 style="margin: 0; font-size: clamp(26px, 3vw, 35px); line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; color: #1F3864;">Compared with the alternatives</h2>
-<p style="margin: 0; font-size: 16px; color: #6B7280;">What you'd otherwise reach for, and where it falls short.</p>
+<section style="background: #FFFFFF; padding: 88px 0;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 32px;">
+<h2 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; max-width: 720px;">Other ways to get a model</h2>
+<div style="overflow-x: auto;">
+<table style="width: 100%; min-width: 720px; border-collapse: collapse; font-size: 16px;">
+<thead>
+<tr style="border-bottom: 2px solid #1B2A2F; text-align: left;">
+<th scope="col" style="padding: 10px 16px 10px 0; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700;"></th>
+<th scope="col" style="padding: 10px 16px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700;">First usable draft</th>
+<th scope="col" style="padding: 10px 16px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700;">Fits your business</th>
+<th scope="col" style="padding: 10px 16px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700;">Maths checked</th>
+<th scope="col" style="padding: 10px 0 10px 16px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700;">Cost</th>
+</tr>
+</thead>
+<tbody style="color: #33464C;">
+<tr style="border-bottom: 1px solid #DCE9E0;"><th scope="row" style="padding: 14px 16px 14px 0; text-align: left; font-weight: 600; color: #1B2A2F;">Blank spreadsheet</th><td style="padding: 14px 16px;">Several weekends</td><td style="padding: 14px 16px;">Yes, if you get it right</td><td style="padding: 14px 16px;">Only by you</td><td style="padding: 14px 0 14px 16px;">Your time</td></tr>
+<tr style="border-bottom: 1px solid #DCE9E0;"><th scope="row" style="padding: 14px 16px 14px 0; text-align: left; font-weight: 600; color: #1B2A2F;">Ready-made template</th><td style="padding: 14px 16px;">Fast if your business matches the file</td><td style="padding: 14px 16px;">After you adapt it</td><td style="padding: 14px 16px;">Your changes are on you</td><td style="padding: 14px 0 14px 16px;">Low</td></tr>
+<tr style="border-bottom: 1px solid #DCE9E0;"><th scope="row" style="padding: 14px 16px 14px 0; text-align: left; font-weight: 600; color: #1B2A2F;">AI spreadsheet assistant</th><td style="padding: 14px 16px;">Minutes</td><td style="padding: 14px 16px;">As good as your prompts</td><td style="padding: 14px 16px;">You audit every formula</td><td style="padding: 14px 0 14px 16px;">Monthly subscription</td></tr>
+<tr style="border-bottom: 1px solid #DCE9E0;"><th scope="row" style="padding: 14px 16px 14px 0; text-align: left; font-weight: 600; color: #1B2A2F;">Freelance modeller</th><td style="padding: 14px 16px;">Days to weeks</td><td style="padding: 14px 16px;">Yes</td><td style="padding: 14px 16px;">Depends on the person</td><td style="padding: 14px 0 14px 16px;">Highest</td></tr>
+<tr style="border-bottom: 2px solid #0F6E56; background: #F2F8F4;"><th scope="row" style="padding: 14px 16px 14px 12px; text-align: left; font-weight: 700; color: #0F6E56;">StartupModel</th><td style="padding: 14px 16px; color: #1B2A2F;">[DELIVERY_TIME]</td><td style="padding: 14px 16px; color: #1B2A2F;">Built from your answers</td><td style="padding: 14px 16px; color: #1B2A2F;">Every file, before delivery</td><td style="padding: 14px 12px 14px 16px; color: #1B2A2F;">$149 or $349, once</td></tr>
+</tbody>
+</table>
 </div>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 20px;">
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 14px;">
-<span style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #4B5563;"><span style="background: #1F3864; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px;">VS</span>Ready-made templates</span>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">One size fits nobody. Expect <strong style="color: #B91C1C; font-weight: 600;">long evenings rewiring formulas</strong> and doubts about the logic.</p>
-<div style="height: 1px; background: #E5E7EB;"></div>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1F3864; font-weight: 600;">Ledgerline starts from your answers, so the structure already fits.</p>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 14px;">
-<span style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #4B5563;"><span style="background: #1F3864; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px;">VS</span>General chatbots</span>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">Great for explaining concepts, but they usually <strong style="color: #B91C1C; font-weight: 600;">hand back text, not a linked workbook</strong>.</p>
-<div style="height: 1px; background: #E5E7EB;"></div>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1F3864; font-weight: 600;">You get a multi-sheet .xlsx with working links and a scenario switch.</p>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 14px;">
-<span style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #4B5563;"><span style="background: #1F3864; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px;">VS</span>Freelance analysts</span>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">Solid work when budget allows, but <strong style="color: #B91C1C; font-weight: 600;">priced in the hundreds and delivered in days</strong>.</p>
-<div style="height: 1px; background: #E5E7EB;"></div>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1F3864; font-weight: 600;">A custom, checked model for $[PRICE], delivered right away.</p>
-</div>
-</div>
-<p style="margin: 0; text-align: center; font-size: 14px; color: #6B7280;">Pay once and keep the file.</p>
 </div>
 </section>
 
-<!-- PERSONAS -->
-<section style="background: #FFFFFF; padding: 72px 0;">
-<div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 40px;">
-<div style="text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center;">
-<h2 style="margin: 0; font-size: clamp(26px, 3vw, 35px); line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; color: #1F3864;">Made for people without a finance team</h2>
-<p style="margin: 0; font-size: 16px; color: #6B7280;">You bring the business knowledge. We handle the workbook.</p>
-</div>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 20px;">
-<div style="border: 1px solid #E5E7EB; border-radius: 12px; padding: 32px 24px; display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;">
-<span style="width: 44px; height: 44px; border-radius: 50%; background: #EFF6FF; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F3864" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg></span>
-<h3 style="margin: 0; font-size: 18px; font-weight: 600; color: #1F3864;">Founders raising money</h3>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">Turn assumptions into a forecast you can drop into a deck and defend in a meeting.</p>
-</div>
-<div style="border: 1px solid #E5E7EB; border-radius: 12px; padding: 32px 24px; display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;">
-<span style="width: 44px; height: 44px; border-radius: 50%; background: #EFF6FF; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F3864" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10l8-6 8 6v10H4z"></path><path d="M10 20v-6h4v6"></path></svg></span>
-<h3 style="margin: 0; font-size: 18px; font-weight: 600; color: #1F3864;">Cafés, shops and local services</h3>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">Plan an opening or a second location with clear numbers for the bank or landlord.</p>
-</div>
-<div style="border: 1px solid #E5E7EB; border-radius: 12px; padding: 32px 24px; display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;">
-<span style="width: 44px; height: 44px; border-radius: 50%; background: #EFF6FF; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F3864" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M9 7V5h6v2"></path></svg></span>
-<h3 style="margin: 0; font-size: 18px; font-weight: 600; color: #1F3864;">Analysts and consultants</h3>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280;">Skip the scaffolding and start from a clean, checked structure you then refine.</p>
-</div>
+<!-- WHO -->
+<section style="background: #FFFFFF; padding: 0 0 88px;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 28px;">
+<h2 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;">Who uses it</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 32px;">
+<div style="border-top: 2px solid #1B2A2F; padding-top: 16px; display: flex; flex-direction: column; gap: 8px;"><h3 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: 20px; font-weight: 700;">Business loan applicants</h3><p style="margin: 0; color: #3E5157;">Three years of projections, monthly in year one, with a cash flow and a balance sheet that balances. The package a bank or SBA lender asks for.</p></div>
+<div style="border-top: 2px solid #1B2A2F; padding-top: 16px; display: flex; flex-direction: column; gap: 8px;"><h3 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: 20px; font-weight: 700;">Founders talking to investors</h3><p style="margin: 0; color: #3E5157;">Runway, burn and unit economics with downside and upside cases, ready when an investor asks for the model.</p></div>
+<div style="border-top: 2px solid #1B2A2F; padding-top: 16px; display: flex; flex-direction: column; gap: 8px;"><h3 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: 20px; font-weight: 700;">Accountants and advisers</h3><p style="margin: 0; color: #3E5157;">Start each client forecast from a checked structure you can put your name to. Five Full models for $1,250.</p></div>
 </div>
 </div>
 </section>
 
 <!-- PRICING -->
-<section id="pricing" style="background: #F9FAFB; padding: 72px 0;">
-<div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 40px; align-items: center;">
-<div style="text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center;">
-<h2 style="margin: 0; font-size: clamp(26px, 3vw, 35px); line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; color: #1F3864;">Simple pricing</h2>
-<p style="margin: 0; font-size: 16px; color: #6B7280;">One payment per model. No subscription.</p>
+<section id="pricing" style="background: #F7F8F3; padding: 88px 0; border-top: 1px solid #DCE9E0;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 32px;">
+<div style="display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;">One payment per model</h2>
+<p style="margin: 0; font-size: 17px; color: #3E5157;">No subscription. The file is yours. Full refund within 7 days if it doesn't fit your business.</p>
 </div>
-<div style="width: 100%; max-width: 460px; border: 1.6px solid #1F3864; border-radius: 20px; overflow: hidden; background: #FFFFFF; box-shadow: 0 12px 40px rgba(0,0,0,0.12);">
-<div style="background: #1F3864; color: #FFFFFF; padding: 32px 36px; text-align: center; display: flex; flex-direction: column; gap: 6px;">
-<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #C7D2E6;">Per model</span>
-<span style="font-size: 44px; font-weight: 700; line-height: 1.1;">$[XX] – $[YY]</span>
-<span style="font-size: 13px; color: #C7D2E6;">Single-sheet $[XX] · Full workbook with dashboard $[YY]</span>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; max-width: 900px;">
+<div style="background: #FFFFFF; border: 1px solid #CFE0D4; border-radius: 10px; padding: 28px; display: flex; flex-direction: column; gap: 16px;">
+<div><h3 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: 22px; font-weight: 700;">Light</h3><p style="margin: 4px 0 0; color: #56676C; font-size: 15px;">For a quick answer or an early conversation</p></div>
+<span style="font-family: 'Schibsted Grotesk', sans-serif; font-size: 44px; font-weight: 800; letter-spacing: -0.02em;">$149</span>
+<ul style="margin: 0; padding-left: 20px; color: #33464C; line-height: 1.9;">
+<li>Inputs, P&amp;L and Checks</li>
+<li>Low, base and high cases</li>
+<li>Monthly or annual, 1, 3 or 5 years</li>
+<li>Upgrade to Full later by paying the difference</li>
+</ul>
+<a href="#checkout" style="margin-top: auto; text-align: center; border: 1.5px solid #0F6E56; border-radius: 6px; padding: 13px; font-weight: 600; text-decoration: none;">Choose Light</a>
 </div>
-<div style="padding: 28px 36px 32px; display: flex; flex-direction: column; gap: 0;">
-<span style="display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid #F3F4F6; font-size: 15px;"><span style="color: #059669; font-weight: 700;" aria-hidden="true">✓</span>Editable Excel workbook</span>
-<span style="display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid #F3F4F6; font-size: 15px;"><span style="color: #059669; font-weight: 700;" aria-hidden="true">✓</span>Low / base / high scenarios</span>
-<span style="display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid #F3F4F6; font-size: 15px;"><span style="color: #059669; font-weight: 700;" aria-hidden="true">✓</span>Live formulas throughout</span>
-<span style="display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid #F3F4F6; font-size: 15px;"><span style="color: #059669; font-weight: 700;" aria-hidden="true">✓</span>Check report included</span>
-<span style="display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid #F3F4F6; font-size: 15px;"><span style="color: #059669; font-weight: 700;" aria-hidden="true">✓</span>Instant download</span>
-<span style="display: flex; gap: 10px; padding: 11px 0; font-size: 15px;"><span style="color: #059669; font-weight: 700;" aria-hidden="true">✓</span>Refund within [REFUND WINDOW]</span>
-<a href="#checkout" style="margin-top: 22px; text-align: center; background: #2563EB; color: #FFFFFF; text-decoration: none; font-size: 16px; font-weight: 600; padding: 15px 24px; border-radius: 10px; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">Build my model — from $[XX]</a>
-<span style="margin-top: 12px; text-align: center; font-size: 13px; color: #6B7280;">Yours to keep after one payment.</span>
+<div style="background: #FFFFFF; border: 2px solid #0F6E56; border-radius: 10px; padding: 28px; display: flex; flex-direction: column; gap: 16px;">
+<div><h3 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: 22px; font-weight: 700;">Full</h3><p style="margin: 4px 0 0; color: #56676C; font-size: 15px;">For investors, lenders and real decisions</p></div>
+<span style="font-family: 'Schibsted Grotesk', sans-serif; font-size: 44px; font-weight: 800; letter-spacing: -0.02em;">$349</span>
+<ul style="margin: 0; padding-left: 20px; color: #33464C; line-height: 1.9;">
+<li>Everything in Light</li>
+<li>Monthly detail, cash flow, balance sheet and headcount</li>
+<li>Dashboard with the case switch</li>
+<li>Advisers: 5 Full models for $1,250</li>
+</ul>
+<a href="#checkout" style="margin-top: auto; text-align: center; background: #0F6E56; color: #FFFFFF; border-radius: 6px; padding: 14px; font-weight: 600; text-decoration: none;">Choose Full</a>
 </div>
 </div>
-<p style="margin: 0; max-width: 620px; text-align: center; font-size: 13px; line-height: 1.6; color: #6B7280;">[Optional price-anchor line: what an analyst or a template typically costs — add only with a sourced figure.]</p>
 </div>
 </section>
 
 <!-- FAQ -->
-<section id="faq" style="background: #FFFFFF; padding: 72px 0;">
-<div style="max-width: 760px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 14px;">
-<div style="text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center; margin-bottom: 26px;">
-<h2 style="margin: 0; font-size: clamp(26px, 3vw, 35px); line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; color: #1F3864;">Questions, answered</h2>
-<p style="margin: 0; font-size: 16px; color: #6B7280;">The short version of what people ask before ordering.</p>
+<section id="faq" style="background: #FFFFFF; padding: 88px 0;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 28px;">
+<h2 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;">Questions</h2>
+<dl style="margin: 0; border-top: 2px solid #1B2A2F;">
+<div style="display: flex; flex-wrap: wrap; gap: 8px 40px; padding: 20px 0; border-bottom: 1px solid #DCE9E0;"><dt style="flex: 1 1 280px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700; font-size: 18px;">Is it a real Excel file?</dt><dd style="flex: 2 1 420px; margin: 0; color: #3E5157;">Yes. A standard .xlsx with working formulas across sheets, not a chat answer or a screenshot. It uses only long-established Excel functions.</dd></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 40px; padding: 20px 0; border-bottom: 1px solid #DCE9E0;"><dt style="flex: 1 1 280px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700; font-size: 18px;">Do I need a finance background?</dt><dd style="flex: 2 1 420px; margin: 0; color: #3E5157;">No. The questions are in plain language, and you can start from sample data and replace it with your numbers later.</dd></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 40px; padding: 20px 0; border-bottom: 1px solid #DCE9E0;"><dt style="flex: 1 1 280px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700; font-size: 18px;">How is it different from a template?</dt><dd style="flex: 2 1 420px; margin: 0; color: #3E5157;">A template is the same file for everyone. Your workbook is built from your answers, so the line items, drivers and cases already match how your business earns and spends.</dd></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 40px; padding: 20px 0; border-bottom: 1px solid #DCE9E0;"><dt style="flex: 1 1 280px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700; font-size: 18px;">What exactly is checked?</dt><dd style="flex: 2 1 420px; margin: 0; color: #3E5157;">Totals, cash roll-forward, balance sheet, the case switch and error values. An independent recalculation must agree with the workbook to the dollar before it is sent.</dd></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 40px; padding: 20px 0; border-bottom: 1px solid #DCE9E0;"><dt style="flex: 1 1 280px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700; font-size: 18px;">How long does it take?</dt><dd style="flex: 2 1 420px; margin: 0; color: #3E5157;">The questions take a few minutes. The file arrives by email once it passes the checks, usually within [DELIVERY_TIME].</dd></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 40px; padding: 20px 0; border-bottom: 1px solid #DCE9E0;"><dt style="flex: 1 1 280px; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 700; font-size: 18px;">What if it doesn't fit?</dt><dd style="flex: 2 1 420px; margin: 0; color: #3E5157;">Write to us within 7 days and we refund the full amount.</dd></div>
+</dl>
 </div>
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 8px;"><h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1F3864;">What does a model cost?</h3><p style="margin: 0; font-size: 14.5px; line-height: 1.65; color: #4B5563;">$[XX] for a single-sheet model, $[YY] for a full workbook with a dashboard. One payment, no subscription.</p></div>
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 8px;"><h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1F3864;">Is the output a real Excel file?</h3><p style="margin: 0; font-size: 14.5px; line-height: 1.65; color: #4B5563;">Yes — a standard .xlsx with working formulas across sheets, not a chat answer or a screenshot.</p></div>
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 8px;"><h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1F3864;">What goes into a startup model?</h3><p style="margin: 0; font-size: 14.5px; line-height: 1.65; color: #4B5563;">A revenue build, costs, P&amp;L and cash flow, monthly detail for the early period and a scenario switch.</p></div>
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 8px;"><h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1F3864;">Do I need a finance background?</h3><p style="margin: 0; font-size: 14.5px; line-height: 1.65; color: #4B5563;">No. Questions are in plain language, and you can start from sample data and edit later.</p></div>
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 8px;"><h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1F3864;">Can I open it in Google Sheets?</h3><p style="margin: 0; font-size: 14.5px; line-height: 1.65; color: #4B5563;">Yes. It works in Excel, Google Sheets and Numbers, and every input stays editable.</p></div>
-<div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 8px;"><h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1F3864;">What if it doesn't fit my business?</h3><p style="margin: 0; font-size: 14.5px; line-height: 1.65; color: #4B5563;">Write to us within [REFUND WINDOW] and we refund the full amount.</p></div>
-<a href="#pricing" style="align-self: center; margin-top: 26px; background: #2563EB; color: #FFFFFF; text-decoration: none; font-size: 16px; font-weight: 600; padding: 15px 30px; border-radius: 10px; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">Build my model — from $[XX]</a>
+</section>
+
+<!-- FINAL CTA -->
+<section style="background-color: #F7F8F3; background-image: repeating-linear-gradient(180deg, transparent 0, transparent 31px, #E6EFE8 31px, #E6EFE8 32px); padding: 72px 0; border-top: 1px solid #DCE9E0;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between;">
+<h2 style="margin: 0; font-family: 'Schibsted Grotesk', sans-serif; font-size: clamp(26px, 3vw, 36px); line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; max-width: 640px;">A short brief now. A checked workbook in your inbox.</h2>
+<a href="#pricing" style="background: #0F6E56; color: #FFFFFF; text-decoration: none; font-size: 17px; font-weight: 600; padding: 15px 26px; border-radius: 6px;">Start a model</a>
 </div>
 </section>
 
 <!-- FOOTER -->
-<footer style="background: #142647; color: #C7D2E6; padding: 36px 0;">
-<div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 13px;">
-<span style="display: flex; align-items: center; gap: 10px; color: #FFFFFF; font-weight: 700; font-size: 16px;"><span style="width: 26px; height: 26px; border-radius: 7px; background: #2563EB; display: flex; align-items: center; justify-content: center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="M8 15l4-4 3 3 5-6"></path></svg></span>Ledgerline</span>
+<footer style="background: #1B2A2F; color: #B9CBC1; padding: 32px 0;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 14px;">
+<span style="display: flex; align-items: center; gap: 10px; color: #FFFFFF; font-family: 'Schibsted Grotesk', sans-serif; font-weight: 800; font-size: 18px;"><svg width="22" height="22" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect x="1" y="1" width="26" height="26" rx="5" stroke="#FFFFFF" stroke-width="2"></rect><path d="M6 10h16M6 15h16M6 20h9" stroke="#6FC4A6" stroke-width="2" stroke-linecap="round"></path><path d="M17 20l2 2 4-5" stroke="#F07F6E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>StartupModel</span>
 <span style="display: flex; gap: 22px; flex-wrap: wrap;">
-<a href="#guide" style="color: #C7D2E6; text-decoration: none;">Modeling guide</a>
-<a href="#cafe" style="color: #C7D2E6; text-decoration: none;">Café model</a>
-<a href="#privacy" style="color: #C7D2E6; text-decoration: none;">Privacy</a>
-<a href="#terms" style="color: #C7D2E6; text-decoration: none;">Terms</a>
+<a href="#guide" style="color: #B9CBC1; text-decoration: none;">Modelling guides</a>
+<a href="#privacy" style="color: #B9CBC1; text-decoration: none;">Privacy</a>
+<a href="#terms" style="color: #B9CBC1; text-decoration: none;">Terms</a>
+<a href="#refunds" style="color: #B9CBC1; text-decoration: none;">Refund policy</a>
+<a href="#contact" style="color: #B9CBC1; text-decoration: none;">Contact</a>
 </span>
-<span>© 2026 Ledgerline</span>
+<span>© 2026 StartupModel</span>
 </div>
 </footer>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":9200}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":7600}}'>
 class Component extends DCLogic {
-  constructor(props) { super(props); this.state = { tab: 'dash', sc: 2 }; }
+  constructor(props) { super(props); this.state = { tab: 'sum', sc: 2 }; }
   renderVals() {
     var self = this;
     var tab = this.state.tab, sc = this.state.sc;
-    var S = { 1: { label: 'Low', k: 0.86, d: 0.03 }, 2: { label: 'Base', k: 1, d: 0 }, 3: { label: 'High', k: 1.17, d: -0.03 } }[sc];
+    var S = { 1: { k: 0.86, d: 0.03 }, 2: { k: 1, d: 0 }, 3: { k: 1.17, d: -0.03 } }[sc];
     var base = [298000, 343000, 389000, 428000];
     var opexR = [0.48, 0.44, 0.41, 0.39];
     function money(n) { var s = '$' + Math.round(Math.abs(n)).toLocaleString('en-US'); return n < 0 ? '(' + s + ')' : s; }
@@ -417,101 +325,94 @@ class Component extends DCLogic {
     var gp = rev.map(function (r, i) { return r + cogs[i]; });
     var opex = rev.map(function (r, i) { return -r * (opexR[i] + S.d); });
     var ebitda = gp.map(function (g, i) { return g + opex[i]; });
-    var margin = ebitda.map(function (e, i) { return e / rev[i]; });
     var rent = [-57600, -57600, -59300, -59300];
     var mkt = rev.map(function (r) { return -r * 0.03; });
     var payroll = opex.map(function (o, i) { return o - rent[i] - mkt[i]; });
     var net = ebitda.map(function (e) { return e * 0.79; });
 
-    var gridRow = 'display: grid; grid-template-columns: 34px minmax(0,1.5fr) repeat(4, minmax(0,1fr)); border-bottom: 1px solid #EEF0F3;';
-    var cellBase = 'padding: 5px 8px; text-align: right; font-family: \'JetBrains Mono\', monospace; border-right: 1px solid #EEF0F3; white-space: nowrap;';
-    var lab = 'padding: 5px 8px; border-right: 1px solid #EEF0F3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
-    function cells(arr, extra) { return arr.map(function (v) { return { v: v, style: cellBase + (extra || '') }; }); }
-    function blank(n) { var a = []; for (var i = 0; i < n; i++) a.push(''); return a; }
-    function head(n, label, bg) { return { n: n, label: label, rowStyle: gridRow + 'background:' + bg + '; color: #FFFFFF; font-weight: 600;', labelStyle: lab + 'grid-column: span 5; text-align: center;', cells: [] }; }
-    function sub(n, label) { return { n: n, label: label, rowStyle: gridRow + 'background: #2F5597; color: #FFFFFF; font-weight: 600;', labelStyle: lab + 'grid-column: span 5;', cells: [] }; }
-    function line(n, label, vals, kind) {
-      var rs = gridRow, ex = '', ls = lab + 'color: #374151;';
-      if (kind === 'bold') { ex = 'font-weight: 700; color: #111827;'; ls = lab + 'font-weight: 700; color: #111827;'; }
-      if (kind === 'green') { rs += 'background: #E2EFDA;'; ex = 'color: #375623; font-weight: 600;'; ls = lab + 'font-weight: 700; color: #111827;'; }
-      if (kind === 'yellow') { rs += 'background: #FFF2CC;'; ex = 'font-weight: 700; color: #111827;'; ls = lab + 'color: #374151;'; }
-      if (kind === 'years') { ex = 'text-align: center; font-family: inherit; color: #374151;'; }
-      if (kind === 'pass') { ex = 'color: #047857; font-weight: 700; text-align: left; font-family: inherit;'; }
-      return { n: n, label: label, rowStyle: rs, labelStyle: ls, cells: cells(vals, ex) };
+    var grid = 'display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(0, 1fr)); align-items: center;';
+    var lab = 'padding: 9px 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
+    var num = 'padding: 9px 18px; text-align: right; white-space: nowrap;';
+    var noTick = 'display: none;';
+    var tick = 'display: inline-block; width: 14px; margin-left: 4px; color: #B8322A; font-weight: 700; text-align: left;';
+    var pad = 'display: inline-block; width: 14px; margin-left: 4px;';
+    function cells(arr, extra, ticked) {
+      return arr.map(function (v) { return { v: v, style: num + (extra || ''), tick: ticked ? '✓' : '', tickStyle: ticked ? tick : pad }; });
     }
+    function line(label, vals, kind) {
+      var rs = grid + 'border-bottom: 1px solid #EEF4EF;';
+      var ls = lab + 'color: #33464C;';
+      var ex = 'color: #1B2A2F;';
+      var ticked = false;
+      if (kind === 'head') { rs = grid + 'border-bottom: 1px solid #1B2A2F;'; ls = lab + 'font-weight: 600; color: #56676C; font-size: 13px;'; ex = 'font-weight: 600; color: #56676C; font-size: 13px;'; }
+      if (kind === 'sub') { rs = grid + 'border-bottom: 1px solid #1B2A2F;'; ls = lab + 'font-weight: 700; color: #1B2A2F;'; ex = 'font-weight: 700;'; ticked = true; }
+      if (kind === 'total') { rs = grid + 'border-bottom: 3px double #1B2A2F;'; ls = lab + 'font-weight: 700; color: #1B2A2F;'; ex = 'font-weight: 700;'; ticked = true; }
+      if (kind === 'pct') { ls = lab + 'color: #56676C; font-style: italic;'; ex = 'color: #56676C; font-style: italic;'; }
+      if (kind === 'input') { ex = 'color: #1F4FD1;'; }
+      if (kind === 'pass') { ex = 'color: #0F6E56; font-weight: 700; text-align: left;'; }
+      if (kind === 'note') { ex = 'color: #56676C; text-align: left;'; }
+      return { label: label, rowStyle: rs, labelStyle: ls, cells: cells(vals, ex, ticked) };
+    }
+    var Y = ['Year 1', 'Year 2', 'Year 3', 'Year 4'];
     var rows;
-    if (tab === 'dash') {
+    if (tab === 'sum') {
       rows = [
-        head(1, 'Bakery-café — Dashboard', '#1F3864'),
-        { n: 2, label: 'Scenario', rowStyle: gridRow, labelStyle: lab + 'background: #FCE4D6; color: #1F3864; font-weight: 600;', cells: [{ v: String(sc), style: cellBase + 'background: #FCE4D6; text-align: center; color: #1F3864; font-weight: 700;' }, { v: S.label, style: cellBase + 'background: #FCE4D6; text-align: center; color: #C55A11; font-family: inherit; font-weight: 600;' }, { v: '', style: cellBase }, { v: '', style: cellBase }] },
-        line(3, '', blank(4)),
-        sub(4, 'Key metrics'),
-        line(5, '', ['Year 1', 'Year 2', 'Year 3', 'Year 4'], 'years'),
-        line(6, 'Revenue', rev.map(money)),
-        line(7, 'COGS', cogs.map(money)),
-        line(8, 'Gross profit', gp.map(money), 'bold'),
-        line(9, 'OpEx', opex.map(money)),
-        line(10, 'EBITDA', ebitda.map(money), 'green'),
-        line(11, 'EBITDA margin', margin.map(pct), 'yellow')
+        line('', Y, 'head'),
+        line('Revenue', rev.map(money)),
+        line('Cost of goods', cogs.map(money)),
+        line('Gross profit', gp.map(money), 'sub'),
+        line('Operating costs', opex.map(money)),
+        line('EBITDA', ebitda.map(money), 'total'),
+        line('EBITDA margin', ebitda.map(function (e, i) { return pct(e / rev[i]); }), 'pct'),
+        line('Net income', net.map(money), 'total')
       ];
     } else if (tab === 'inp') {
       rows = [
-        head(1, 'Inputs', '#1F3864'),
-        line(2, '', ['Low', 'Base', 'High', ''], 'years'),
-        sub(3, 'Revenue drivers'),
-        line(4, 'Guests per day', ['135', '155', '185', ''], ''),
-        line(5, 'Average ticket', ['$5.80', '$6.40', '$7.10', '']),
-        line(6, 'Annual growth', ['9%', '14%', '19%', '']),
-        sub(7, 'Cost drivers'),
-        line(8, 'COGS % of sales', ['41%', '39%', '37%', '']),
-        line(9, 'Monthly rent', ['$4,800', '$4,800', '$4,800', '']),
-        line(10, 'Staff (FTE)', ['4', '5', '6', '']),
-        line(11, 'Salary per FTE', ['$33,000', '$35,500', '$38,000', ''])
+        line('', ['Low', 'Base', 'High', ''], 'head'),
+        line('Guests per day', ['135', '155', '185', ''], 'input'),
+        line('Average ticket', ['$5.80', '$6.40', '$7.10', ''], 'input'),
+        line('Annual growth', ['9%', '14%', '19%', ''], 'input'),
+        line('Cost of goods, % of sales', ['41%', '39%', '37%', ''], 'input'),
+        line('Monthly rent', ['$4,800', '$4,800', '$4,800', ''], 'input'),
+        line('Staff, full-time equivalent', ['4', '5', '6', ''], 'input'),
+        line('Salary per person', ['$33,000', '$35,500', '$38,000', ''], 'input')
       ];
     } else if (tab === 'pl') {
       rows = [
-        head(1, 'Profit & loss', '#1F3864'),
-        line(2, '', ['Year 1', 'Year 2', 'Year 3', 'Year 4'], 'years'),
-        line(3, 'Revenue', rev.map(money)),
-        line(4, 'Cost of goods', cogs.map(money)),
-        line(5, 'Gross profit', gp.map(money), 'bold'),
-        line(6, 'Rent', rent.map(money)),
-        line(7, 'Payroll', payroll.map(money)),
-        line(8, 'Marketing', mkt.map(money)),
-        line(9, 'Net income', net.map(money), 'green'),
-        line(10, 'Net margin', net.map(function (n, i) { return pct(n / rev[i]); }), 'yellow'),
-        line(11, '', blank(4))
+        line('', Y, 'head'),
+        line('Revenue', rev.map(money)),
+        line('Cost of goods', cogs.map(money)),
+        line('Gross profit', gp.map(money), 'sub'),
+        line('Rent', rent.map(money)),
+        line('Payroll', payroll.map(money)),
+        line('Marketing', mkt.map(money)),
+        line('Net income', net.map(money), 'total')
       ];
     } else {
       rows = [
-        head(1, 'Check report', '#1F3864'),
-        line(2, 'Check', ['Result', 'Notes', '', ''], 'years'),
-        line(3, 'Formula integrity', ['PASS', 'all cells traced', '', ''], 'pass'),
-        line(4, 'Scenario switch', ['PASS', '3 of 3 resolve', '', ''], 'pass'),
-        line(5, 'Cross-sheet links', ['PASS', 'links verified', '', ''], 'pass'),
-        line(6, 'Balance check', ['PASS', 'difference $0', '', ''], 'pass'),
-        line(7, 'Divide-by-zero guards', ['PASS', 'guards present', '', ''], 'pass'),
-        line(8, 'Input ranges', ['PASS', 'within bounds', '', ''], 'pass'),
-        line(9, 'Verdict', ['PASS', 'ready to use', '', ''], 'green'),
-        line(10, '', blank(4)),
-        line(11, '', blank(4))
+        line('', ['Result', 'What it tests', '', ''], 'head'),
+        line('Annual ties to monthly', ['PASS', 'every year, every case', '', ''], 'pass'),
+        line('Cash roll-forward', ['PASS', 'month to month', '', ''], 'pass'),
+        line('Balance sheet balances', ['PASS', 'every period', '', ''], 'pass'),
+        line('Case switch', ['PASS', 'low, base, high', '', ''], 'pass'),
+        line('Error values', ['PASS', 'none found', '', ''], 'pass'),
+        line('Independent recalculation', ['PASS', 'agrees to $1', '', ''], 'pass'),
+        line('Verdict', ['PASS', 'ready to send', '', ''], 'pass')
       ];
     }
-    var tabDefs = [['dash', 'Dashboard'], ['inp', 'Inputs'], ['pl', 'P&L'], ['chk', 'Checks ✓']];
+    var tabDefs = [['sum', 'Summary'], ['inp', 'Inputs'], ['pl', 'P&L'], ['chk', 'Checks']];
     var tabs = tabDefs.map(function (t) {
       var on = t[0] === tab;
-      var green = t[0] === 'chk';
-      return { label: t[1], pick: function () { self.setState({ tab: t[0] }); },
-        style: 'font-family: inherit; font-size: 12px; border: 0; border-right: 1px solid #E5E7EB; padding: 8px 16px; cursor: pointer; white-space: nowrap; ' + (on ? 'background: #FFFFFF; color: #217346; font-weight: 600; box-shadow: inset 0 -2px 0 #217346;' : 'background: transparent; color: ' + (green ? '#047857' : '#4B5563') + ';') };
+      return { label: t[1], selected: on ? 'true' : 'false', pick: function () { self.setState({ tab: t[0] }); },
+        style: 'font-family: inherit; font-size: 14px; border: 0; background: transparent; padding: 10px 14px; cursor: pointer; white-space: nowrap; min-height: 44px; ' + (on ? 'color: #1B2A2F; font-weight: 600; box-shadow: inset 0 -2px 0 #0F6E56;' : 'color: #56676C;') };
     });
-    var scenarios = [1, 2, 3].map(function (n) {
-      var on = n === sc;
-      var lbl = { 1: '1 · Low', 2: '2 · Base', 3: '3 · High' }[n];
-      return { label: lbl, pick: function () { self.setState({ sc: n }); },
-        style: 'font-family: inherit; font-size: 12px; padding: 4px 10px; border-radius: 6px; cursor: pointer; ' + (on ? 'background: #1F3864; color: #FFFFFF; border: 1px solid #1F3864;' : 'background: #FFFFFF; color: #1F3864; border: 1px solid #D1D5DB;') };
+    var scenarios = [[1, 'Low'], [2, 'Base'], [3, 'High']].map(function (p) {
+      var on = p[0] === sc;
+      return { label: p[1], pressed: on ? 'true' : 'false', pick: function () { self.setState({ sc: p[0] }); },
+        style: 'font-family: inherit; font-size: 14px; border: 0; padding: 9px 16px; min-height: 40px; cursor: pointer; ' + (on ? 'background: #1B2A2F; color: #FFFFFF; font-weight: 600;' : 'background: #FFFFFF; color: #33464C;') };
     });
-    var formulas = { dash: ['C2', '=CHOOSE(B2,"Low","Base","High")'], inp: ['C4', '=INDEX(B4:D4, Dashboard!B2)'], pl: ['B9', '=B5+SUM(B6:B8)-B5*Tax_Rate'], chk: ['B9', '=IF(COUNTIF(B3:B8,"PASS")=6,"PASS","FAIL")'] }[tab];
-    return { rows: rows, tabs: tabs, scenarios: scenarios, showScenario: tab === 'dash' || tab === 'pl', formulaCell: formulas[0], formula: formulas[1] };
+    var f = { sum: ['Summary!B6', '=SUMIF(Monthly!$C$4:$AX$4, B$3, Monthly!$C$19:$AX$19)'], inp: ['Inputs!E5', '=CHOOSE(Summary!$C$2, B5, C5, D5)'], pl: ['P&L!B11', '=B6+SUM(B7:B9)-B6*Tax_Rate'], chk: ['Checks!B10', '=IF(COUNTIF(B3:B9,"FAIL")>0,"FAIL","PASS")'] }[tab];
+    return { rows: rows, tabs: tabs, scenarios: scenarios, formulaCell: f[0], formula: f[1] };
   }
 }
 </script>
