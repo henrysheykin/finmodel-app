@@ -34,8 +34,7 @@ explains break-even by hand and does not claim a break-even sheet (E07 not built
 replace plan pages that need templates not yet built (SaaS #4, services #5, rental #8, investors
 #11, e-commerce #12, retail #13, DCF #14). Those come once E03–E07 ship samples.
 
-Open placeholders in batch 2: `[CONFIRM WITH E TRACK: branding / white-label]` (visa and
-accountants pages) and `[PACK_VALIDITY]` (accountants page). The pack checkout ("Buy a 5-model
+Branding and pack validity were decided by Henry (ADR-002 addendum 3): no StartupModel branding in delivered files, pack credits valid 12 months. The pack checkout ("Buy a 5-model
 pack") needs E11 support.
 
 ## Notes for E16 / E10
