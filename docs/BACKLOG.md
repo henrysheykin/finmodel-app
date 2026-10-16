@@ -254,7 +254,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: 5 files merged, each 900–1400 words.
 
 ### M06 — SEO pages, batch 2 (5 pages)
-- status: TODO
+- status: IN_PROGRESS (2026-10-16)
 - depends: M05
 - skills: same as M05
 - done when: 5 more files merged.
