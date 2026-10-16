@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · E · E02 engine framework · DONE · https://github.com/henrysheykin/finmodel-app/pull/6
+  Strict Brief schema (values only), Template base + formula line language, shared core (headcount, P&L tail, fixed assets,
+  working capital, loan, cash flow, balance sheet) with a Python twin; Light/Full × monthly/annual × 1/3/5 all build, 0 errors,
+  BS balances, challenger PASS (12-combo matrix in CI, 83 tests). Cafe migrated: revenue/EBITDA equal the prototype. ADR-003.
+  For Henry: HUMAN_TODO R0 (non-blocking) — glance at shared economics defaults (tax loss carry-forward, loan timing, WC days).
 - 2026-10-16 · M · prices final (Henry) · PR https://github.com/henrysheykin/finmodel-app/pull/7
   Light $149, Full $349, pack 5 × Full $1,250, refund 7 days: recorded in landing copy, HUMAN_TODO D3, ADR-002 addendum 2.
 - 2026-10-16 · M · M03 landing copy (EN) · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/5

@@ -45,7 +45,7 @@ jobs:
       - name: Smoke test inside the image (generate, recalc, challenge)
         run: |
           docker run --rm finmodel-app:ci sh -c '
-            python -m engine.templates.cafe engine/briefs/cafe.json /tmp/cafe.xlsx &&
+            python -m engine.build engine/briefs/cafe.json /tmp/cafe.xlsx &&
             python -m engine.recalc /tmp/cafe.xlsx &&
             python -m engine.challenger engine/briefs/cafe.json /tmp/cafe.xlsx > /tmp/report.json &&
             grep -q "\"verdict\": \"PASS\"" /tmp/report.json'
