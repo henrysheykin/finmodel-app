@@ -4,11 +4,15 @@ Things only Henry can do. Agents add items here; Henry ticks them and writes
 the answer next to the item (agents read this file every run).
 
 ## Decisions
-- [ ] D1 Brand name and domain — options will come from M02 (`docs/marketing/positioning.md`).
+- [ ] D1 Pick name + domain — 8 screened candidates in `docs/marketing/positioning.md`
+      (Ledgerline = CAUTION; suggested legal-search order: Modelproof, Sheetproof, Balanceproof).
+      Web screening only: check TMview / USPTO / WIPO in classes 9, 35, 36, 42, domains and handles yourself.
 - [ ] D2 Payment provider: Stripe (you handle VAT/sales tax yourself) or a merchant of
       record such as Lemon Squeezy or Paddle (they handle tax, higher fee). Code
       supports Stripe first, adapter for the other.
-- [ ] D3 Prices for Light and Full tiers (M02 will recommend).
+- [ ] D3 Pick price — M02 recommends Light $149 (floor $129, never $99), Full $349 (fallback $299,
+      max $399), Light->Full upgrade = pay the difference, accountant pack 5 Full for $1,250.
+      Reasoning in `docs/marketing/positioning.md`.
 - [ ] D5 FinModelsLab vs Ledgerline (from M01, `docs/marketing/competitors.md`): FinModelsLab
       sells 2,000 templates at $99 with the same headline features. Decide (a) keep the brands
       separate or linked, (b) whether to offer a FinModelsLab -> Ledgerline "built on your
