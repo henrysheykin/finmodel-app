@@ -235,7 +235,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: file merged; E13 can consume it.
 
 ### M04 — SEO keyword plan
-- status: IN_PROGRESS (2026-10-16)
+- status: DONE (2026-10-16, PR #9)
 - depends: M01
 - skills: small-business:seo-ai-visibility, marketing:seo-audit (opt)
 - do: use the Ahrefs connector if available (keywords-explorer tools), else web

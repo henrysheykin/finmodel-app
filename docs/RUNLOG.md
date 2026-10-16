@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · M · M04 SEO keyword plan · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/9
+  `docs/marketing/seo-plan.md`: 15 pages in 3 waves; wave 1 = custom-model hub, SBA loan projections, restaurant/coffee shop for bank loan, SaaS with scenarios, professional services.
+  Ahrefs returned "Insufficient plan" → no volumes measured; difficulty is qualitative from ranking domains. HUMAN_TODO D6 (volumes), D7 (startupmodels.io brand risk).
+  marketing:seo-audit not installed; seo-ai-visibility + deep-research used.
 - 2026-10-16 · setup · design v2 (ADR-005): own visual identity replacing the v1 look that was too close to the competitor; StartupModel brand, prices $149/$349, 7-day refund and M02 ICPs applied in `design/`. E13 builds from design v2; content/landing.md keeps meta/SEO notes.
 - 2026-10-16 · M · decisions D2/D4 recorded · PR https://github.com/henrysheykin/finmodel-app/pull/8
   ADR-004: Stripe Checkout; Railway (web + worker + Postgres). Vercel not used (no persistent worker / LibreOffice container). VAT handling flagged for Henry.
