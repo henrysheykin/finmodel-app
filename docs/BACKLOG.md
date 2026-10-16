@@ -40,7 +40,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   with 0 errors, balance sheet balances, challenger PASS; golden tests in CI.
 
 ### E03 — Template: SaaS / Software
-- status: TODO
+- status: IN_PROGRESS (2026-10-16)
 - depends: E02
 - skills: xlsx, engineering:testing-strategy
 - do: subscription build (new customers by channel, CAC, churn, ARPA, expansion,
