@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · E · E04 Retail / e-commerce template · DONE · https://github.com/henrysheykin/finmodel-app/pull/14
+  Online (visits × conversion + paid orders via CAC, repeat multiplier, AOV) and stores (stores × sq ft × sales/sq ft,
+  yearly openings + fit-out capex); Nov–Dec seasonality keeping the year; returns, product cost, fulfilment, payment fees,
+  inventory days in WC; retail metrics; stage defaults ×4. Monthly = annual exactly. 177 tests. Sample samples/retail-full.xlsx.
+  For Henry: HUMAN_TODO R1 — CFO review of retail (memo docs/templates/retail.md); not blocking. Note: full suite now ~3 min in CI.
 - 2026-10-16 · M · decision D8 recorded · PR https://github.com/henrysheykin/finmodel-app/pull/13
   No StartupModel branding in delivered workbooks (all customers); 5-model pack valid 12 months. ADR-002 addendum 3; accountants/E-2 pages updated.
 - 2026-10-16 · E · E03 SaaS template · DONE · https://github.com/henrysheykin/finmodel-app/pull/12
