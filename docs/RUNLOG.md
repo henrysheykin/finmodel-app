@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · M · M05 SEO pages batch 1 · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/10
+  5 pages in `content/seo/` (hub, SBA loan, restaurant/coffee shop, bank-loan guide, restaurant pro forma), 1,060–1,220 words each; index + E16 notes in `docs/marketing/seo-pages.md`.
+  SaaS/services pages deferred (templates not built), break-even page deferred (E07). Henry closed D6 (no volumes) and D7 (no brand risk).
+  marketing:content-creation not installed; seo-ai-visibility used.
 - 2026-10-16 · M · M04 SEO keyword plan · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/9
   `docs/marketing/seo-plan.md`: 15 pages in 3 waves; wave 1 = custom-model hub, SBA loan projections, restaurant/coffee shop for bank loan, SaaS with scenarios, professional services.
   Ahrefs returned "Insufficient plan" → no volumes measured; difficulty is qualitative from ranking domains. HUMAN_TODO D6 (volumes), D7 (startupmodels.io brand risk).
