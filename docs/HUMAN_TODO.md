@@ -7,8 +7,7 @@ the answer next to the item (agents read this file every run).
 - [x] D1 Name + domain — **startup-model.com, brand StartupModel** (Henry gave 6 domains,
       agent picked; ADR-002). Still for Henry: TMview / USPTO check for "StartupModel" (classes
       9, 35, 36, 42); optionally buy startupmodel.com as a redirect.
-      CAUTION: a model seller "Startup Models" (startupmodels.co) exists — check it is not an
-      active mark holder; fallback domain financial-model.net.
+      "Startup Models" (startupmodels.co) — Henry 2026-10-16: site not active, not a concern.
 - [ ] D2 Payment provider: Stripe (you handle VAT/sales tax yourself) or a merchant of
       record such as Lemon Squeezy or Paddle (they handle tax, higher fee). Code
       supports Stripe first, adapter for the other.

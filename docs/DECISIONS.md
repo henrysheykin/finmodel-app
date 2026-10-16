@@ -97,3 +97,8 @@ and derive the name from it.
 - E track: replace "Ledgerline" in `app/` and the landing build (E13) with StartupModel;
   `design/landing.dc.html` keeps the old name until E13 rebuilds it.
 - Prices come from config (E11); tier names stay Light / Full.
+
+### ADR-002 addendum (2026-10-16)
+Henry checked startupmodels.co: not active, not a concern. The startup-model.com /
+StartupModel choice stands; financial-model.net is no longer needed as a fallback.
+Full price is still open, so copy uses `[PRICE_FULL]`.

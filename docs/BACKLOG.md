@@ -221,7 +221,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: `docs/marketing/positioning.md`; HUMAN_TODO gets "pick name + price".
 
 ### M03 — Final landing copy (EN)
-- status: TODO
+- status: IN_PROGRESS (2026-10-16)
 - depends: M02
 - skills: small-business:seo-ai-visibility, marketing:content-creation (opt)
 - do: `content/landing.md`, one heading per landing section in the design, same
