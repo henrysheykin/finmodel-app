@@ -49,6 +49,7 @@ the answer next to the item (agents read this file every run).
       sample file and assumption memo). Launch is blocked until the launch
       templates are signed off.
       - [ ] SaaS: sample `samples/saas-full.xlsx`, memo `docs/templates/saas.md` (questions at the end).
+      - [ ] Retail / e-commerce: sample `samples/retail-full.xlsx`, memo `docs/templates/retail.md` (questions at the end).
 - [ ] R2 Lawyer review of legal drafts (after M08).
 
 ## Go-live

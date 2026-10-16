@@ -43,11 +43,12 @@ def test_light_and_full_show_identical_numbers(build, cafe_brief):
                 assert light[k] == full[k], (s, y, k)
 
 
+@pytest.mark.parametrize("template", ["saas", "retail"])
 @pytest.mark.parametrize("stage", ["planning", "early", "growing", "established"])
-def test_saas_stage_defaults_pass(build, stage):
+def test_stage_defaults_pass(build, template, stage):
     from engine.templates import get_template
 
-    brief = get_template("saas").default_brief(stage)
+    brief = get_template(template).default_brief(stage)
     report = challenge(brief, build(brief))
     assert report["problems"] == []
     assert any(k.startswith("kpi:") for k in report["scenarios"][2]["years"][1])
