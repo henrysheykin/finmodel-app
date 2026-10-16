@@ -190,3 +190,12 @@ app for little gain.
   `content/landing.md` (written for v1 sections) and the design disagree on structure,
   the design wins; `content/landing.md` still owns meta, SEO/JSON-LD notes and placeholders.
 - Consequence: SPEC_LANDING sections 3–5 and 7 are superseded; E13 builds from `design/`.
+
+### ADR-003 addendum (2026-10-16, E03)
+- Template hooks added: `liability_lines` (working-capital liabilities such as deferred revenue —
+  they flow into operating cash flow, the cash flow statement and the balance sheet),
+  `extra_lines` (helper rows), `kpi_rows` (annual KPI table on the Dashboard in Full, on the P&L
+  sheet in Light), `kpi_checked` (KPIs the challenger recomputes), `default_brief(stage)`.
+- Every headcount role gets a fourth driver `<role>_fte_g` (headcount growth per year, applied in
+  yearly steps), so staff can grow with the business. Cafe brief sets it to 0 (numbers unchanged).
+

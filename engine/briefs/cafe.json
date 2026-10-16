@@ -26,6 +26,7 @@
     {"key": "staff_fte", "low": 3.0, "base": 3.5, "high": 4.0},
     {"key": "staff_salary", "low": 30000, "base": 32000, "high": 34000},
     {"key": "staff_start", "low": 1, "base": 1, "high": 1},
+    {"key": "staff_fte_g", "low": 0, "base": 0, "high": 0},
     {"key": "payroll_tax", "low": 0.12, "base": 0.12, "high": 0.12},
     {"key": "wage_g", "low": 0.03, "base": 0.03, "high": 0.03},
     {"key": "equity", "low": 140000, "base": 140000, "high": 140000},

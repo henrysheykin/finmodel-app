@@ -2,8 +2,9 @@
 
 from engine.templates.base import Template
 from engine.templates.cafe import CafeTemplate
+from engine.templates.saas import SaasTemplate
 
-TEMPLATES: dict[str, Template] = {t.key: t for t in (CafeTemplate(),)}
+TEMPLATES: dict[str, Template] = {t.key: t for t in (CafeTemplate(), SaasTemplate())}
 
 
 def get_template(key: str) -> Template:

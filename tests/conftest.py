@@ -42,3 +42,20 @@ def build(tmp_path):
 @pytest.fixture
 def cafe_xlsx(build, cafe_brief) -> Path:
     return build(cafe_brief, "cafe.xlsx")
+
+
+@pytest.fixture(params=["cafe", "saas"])
+def any_brief(request, cafe_brief) -> Brief:
+    """The cafe sample brief and the SaaS 'early' default brief."""
+    if request.param == "cafe":
+        return cafe_brief
+    from engine.templates import get_template
+
+    return get_template("saas").default_brief("early")
+
+
+@pytest.fixture
+def saas_brief() -> Brief:
+    from engine.templates import get_template
+
+    return get_template("saas").default_brief("early")

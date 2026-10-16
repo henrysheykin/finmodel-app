@@ -41,8 +41,8 @@ def test_sheets_per_tier(build, cafe_brief):
 
 
 @pytest.mark.parametrize("tier,g,years", COMBOS)
-def test_excel_rules(build, cafe_brief, tier, g, years):
-    brief = cafe_brief.with_options(tier=tier, granularity=g, horizon_years=years)
+def test_excel_rules(build, any_brief, tier, g, years):
+    brief = any_brief.with_options(tier=tier, granularity=g, horizon_years=years)
     wb = load_workbook(build(brief))
     yellow, formulas = [], 0
     for ws in wb.worksheets:
@@ -78,10 +78,10 @@ def _shape(formula: str, col: int) -> str:
 
 
 @pytest.mark.parametrize("g", ["monthly", "annual"])
-def test_same_formula_across_periods(build, cafe_brief, g):
-    brief = cafe_brief.with_options(granularity=g, horizon_years=5)
+def test_same_formula_across_periods(build, any_brief, g):
+    brief = any_brief.with_options(granularity=g, horizon_years=5)
     wb = load_workbook(build(brief))
-    pl = plan(brief, get_template("cafe"))
+    pl = plan(brief, get_template(brief.template))
     n = pl.t.periods
     for key, (sheet, row) in pl.line_at.items():
         ws = wb[sheet]
@@ -89,9 +89,9 @@ def test_same_formula_across_periods(build, cafe_brief, g):
         assert len(shapes) == 1, (key, shapes)
 
 
-def test_denominators_guarded(cafe_brief):
+def test_denominators_guarded(any_brief):
     """Every division is by a constant, a timing token, or MAX(1, ...) — never a bare input."""
-    pl = plan(cafe_brief, get_template("cafe"))
+    pl = plan(any_brief, get_template(any_brief.template))
     allowed = ("MAX(1,", "{mpp}", "{ppy}", "{dpp}")
     for ln in pl.lines.values():
         for text in filter(None, (ln.formula, ln.first)):
@@ -118,3 +118,14 @@ def test_payroll_links_green_in_full(build, cafe_brief):
     c = wb[sheet].cell(row=row, column=FIRST_COL)
     assert c.value.startswith("=Headcount!")
     assert c.font.color.rgb.endswith("008000")
+
+
+def test_saas_sheets_and_kpis(build, saas_brief):
+    wb = load_workbook(build(saas_brief))
+    dash = wb["Dashboard"]
+    labels = [dash.cell(row=r, column=1).value for r in range(1, dash.max_row + 1)]
+    assert "SaaS metrics" in labels and "ARR (year-end MRR × 12)" in labels and "LTV ÷ CAC" in labels
+    bs = [c.value for c in wb["Balance Sheet"]["A"]]
+    assert "Deferred revenue (annual plans, ~6 months unearned)" in bs
+    light = load_workbook(build(saas_brief.with_options(tier="light"), "l.xlsx"))
+    assert "SaaS metrics" in [c.value for c in light["P&L"]["A"]]

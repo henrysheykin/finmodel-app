@@ -21,6 +21,7 @@ pip install -e ".[dev]"          # LibreOffice (`soffice`) must be on PATH for e
 ruff check . && ruff format --check . && pytest -q
 
 python -m engine.build engine/briefs/cafe.json /tmp/cafe.xlsx [--tier light --granularity annual --years 5]
+python -m engine.build default:saas:early /tmp/saas.xlsx --recalc                   # template stage defaults
 python -m engine.recalc /tmp/cafe.xlsx                                   # recalc + error scan
 python -m engine.challenger engine/briefs/cafe.json /tmp/cafe.xlsx       # independent check
 uvicorn app.main:app --reload                                            # web (/healthz)

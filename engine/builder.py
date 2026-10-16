@@ -21,11 +21,18 @@ from openpyxl.worksheet.datavalidation import DataValidation
 
 from engine import style as st
 from engine.brief import Brief
-from engine.core import balance_sheet_lines, headcount_lines, pnl_head_lines, pnl_tail_lines
-from engine.spec import FORMATS, DriverSpec, Line, Timing
+from engine.core import (
+    balance_sheet_lines,
+    headcount_lines,
+    liability_delta_lines,
+    pnl_head_lines,
+    pnl_tail_lines,
+)
+from engine.spec import FORMATS, DriverSpec, Line, StmtRow, Timing
 from engine.templates.base import Template
 
 FIRST_COL = 3  # period 1 is column C on every grid sheet
+DASH_KPI_ROW = 25  # template KPI table on the Dashboard starts here (below Health)
 TOKEN = re.compile(r"\{([^{}]+)\}")
 PURE_LINK = re.compile(r"^=(?:'[^']+'|[A-Za-z0-9_]+)!\$?[A-Z]{1,3}\$?\d+$")
 
@@ -35,18 +42,6 @@ def q(sheet: str) -> str:
 
 
 # --------------------------------------------------------------------------- plan types
-@dataclass
-class StmtRow:
-    key: str
-    label: str
-    kind: str  # line | formula | link | section
-    src: str | tuple[str, str] = ""
-    fmt: str = "usd"
-    bold: bool = False
-    total: bool = False
-    neg: bool = False
-
-
 @dataclass
 class Block:
     name: str
@@ -158,13 +153,17 @@ class Plan:
 # --------------------------------------------------------------------------- planning
 def _calc_lines(tpl: Template, brief: Brief, t: Timing) -> tuple[list[Line], list[Line], list[Line]]:
     top = tpl.revenue_lines(t) + pnl_head_lines() + tpl.opex_lines(t)
-    core = pnl_tail_lines(tpl.opex_keys(t))
+    liabs = tpl.liability_lines(t)
+    liab_keys = [ln.key for ln in liabs]
+    core = pnl_tail_lines(tpl.opex_keys(t), liab_keys)
     capex = tpl.capex_lines(t)
     capex[0] = replace(capex[0], section="Fixed assets & capital spending")
     at = next(i for i, ln in enumerate(core) if ln.key == "ppe_gross")
     core = core[:at] + capex + core[at:]
+    at = next(i for i, ln in enumerate(core) if ln.key == "d_ap") + 1
+    core = core[:at] + liabs + liability_delta_lines(liabs) + core[at:]
     hc = headcount_lines(brief.roles)
-    return top + core, hc, balance_sheet_lines()
+    return top + core + tpl.extra_lines(t), hc, balance_sheet_lines(liab_keys)
 
 
 def _layout_grid(g: GridPlan) -> None:
@@ -214,13 +213,19 @@ def _pl_rows(tpl: Template, t: Timing, lines: dict[str, Line]) -> list[StmtRow]:
     return rows
 
 
-def _cf_rows() -> list[StmtRow]:
-    return [
+def _cf_rows(liabs: list[Line]) -> list[StmtRow]:
+    rows = [
         StmtRow("ni", "Net income", "line", "ni"),
         StmtRow("dep", "Add back depreciation", "line", "dep", neg=True),
         StmtRow("d_ar", "(Increase) / decrease in receivables", "line", "d_ar"),
         StmtRow("d_inv", "(Increase) / decrease in inventory", "line", "d_inv"),
         StmtRow("d_ap", "Increase / (decrease) in payables", "line", "d_ap"),
+        *[
+            StmtRow(
+                f"d_{ln.key}", f"Increase / (decrease) in {ln.label[0].lower() + ln.label[1:]}", "line", f"d_{ln.key}"
+            )
+            for ln in liabs
+        ],
         StmtRow("cfo", "Operating cash flow", "line", "cfo", bold=True, total=True),
         StmtRow("cfi", "Capital spending", "line", "cfi"),
         StmtRow("equity_in", "Equity raised", "line", "equity_in"),
@@ -231,9 +236,10 @@ def _cf_rows() -> list[StmtRow]:
         StmtRow("cash_open", "Opening cash", "line", "cash_open"),
         StmtRow("cash_close", "Closing cash", "line", "cash_close", bold=True, total=True),
     ]
+    return rows
 
 
-def _bs_rows() -> list[StmtRow]:
+def _bs_rows(liabs: list[Line]) -> list[StmtRow]:
     return [
         StmtRow("cash", "Cash", "line", "cash_close"),
         StmtRow("ar", "Accounts receivable", "line", "ar"),
@@ -241,6 +247,7 @@ def _bs_rows() -> list[StmtRow]:
         StmtRow("ppe_net", "Net fixed assets", "line", "ppe_net"),
         StmtRow("total_assets", "Total assets", "line", "total_assets", bold=True, total=True),
         StmtRow("ap", "Accounts payable", "line", "ap"),
+        *[StmtRow(ln.key, ln.label, "line", ln.key) for ln in liabs],
         StmtRow("loan", "Loan", "line", "loan_close"),
         StmtRow("total_liab", "Total liabilities", "line", "total_liab", total=True),
         StmtRow("paid_in", "Paid-in capital", "line", "paid_in"),
@@ -283,17 +290,27 @@ def plan(brief: Brief, tpl: Template) -> Plan:
         sheets = ["Dashboard", "Inputs", grid_name, "P&L", "Cash Flow", "Balance Sheet", "Headcount", "Checks"]
         grids = [GridPlan(grid_name, 3, calc + bs), GridPlan("Headcount", 3, hc)]
         blocks["pl"] = Block("pl", "P&L", 3, _pl_rows(tpl, t, lines), "Annual profit & loss")
-        blocks["cf"] = Block("cf", "Cash Flow", 3, _cf_rows(), "Annual cash flow statement")
-        blocks["bs"] = Block("bs", "Balance Sheet", 3, _bs_rows(), "Balance sheet at year end")
+        liabs = tpl.liability_lines(t)
+        blocks["cf"] = Block("cf", "Cash Flow", 3, _cf_rows(liabs), "Annual cash flow statement")
+        blocks["bs"] = Block("bs", "Balance Sheet", 3, _bs_rows(liabs), "Balance sheet at year end")
+        kpis = tpl.kpi_rows(t)
+        if kpis:
+            blocks["kpi"] = Block("kpi", "Dashboard", DASH_KPI_ROW, kpis, tpl.kpi_title)
         selector = ("Dashboard", "B4")
         calc_sheet = grid_name
     else:
         sheets = ["Inputs", "P&L", "Checks"]
         summary = Block("sum", "P&L", 3, _summary_rows(), "Annual summary")
         _layout_block(summary)
-        start = max(summary.placed.values()) + 3
-        grids = [GridPlan("P&L", start, calc + hc)]
         blocks["sum"] = summary
+        start = max(summary.placed.values()) + 3
+        kpis = tpl.kpi_rows(t)
+        if kpis:
+            kb = Block("kpi", "P&L", start, kpis, tpl.kpi_title)
+            _layout_block(kb)
+            blocks["kpi"] = kb
+            start = max(kb.placed.values()) + 3
+        grids = [GridPlan("P&L", start, calc + hc)]
         selector = ("Inputs", "B3")
         calc_sheet = "P&L"
     for g in grids:
@@ -436,6 +453,8 @@ def _write_block(wb: Workbook, pl: Plan, b: Block, sub: str | None) -> None:
             sub,
             1 + years,
         )
+    elif b.title:
+        st.section(ws, b.start_row - 1, b.title, max(3, 1 + years))
     ws.cell(row=b.year_row, column=1, value="Year #").font = st.font(st.GREY, size=9)
     for y in range(1, years + 1):
         ws.cell(row=b.year_row, column=1 + y, value=y).font = st.font(st.GREY, size=9)
@@ -675,6 +694,8 @@ def manifest_for(pl: Plan, verdict: str) -> Manifest:
             "cash": ("sum", "cash"),
             "loan": ("sum", "loan"),
         }
+    if "kpi" in pl.blocks:
+        src.update({f"kpi:{k}": ("kpi", k) for k in pl.template.kpi_checked})
     metrics = {m: {y: pl.stmt_cell(b, k, y) for y in years} for m, (b, k) in src.items()}
     sheet, cell = pl.selector
     return Manifest(
