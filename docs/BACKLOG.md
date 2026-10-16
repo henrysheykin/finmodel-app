@@ -245,7 +245,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: `docs/marketing/seo-plan.md` with the 15 pages and target keywords.
 
 ### M05 — SEO pages, batch 1 (5 pages)
-- status: TODO
+- status: IN_PROGRESS (2026-10-16)
 - depends: M04
 - skills: small-business:seo-ai-visibility, marketing:content-creation (opt)
 - do: 5 pages in `content/seo/` (front matter: slug, title, description, keyword,
