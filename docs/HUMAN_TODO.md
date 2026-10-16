@@ -9,6 +9,10 @@ the answer next to the item (agents read this file every run).
       record such as Lemon Squeezy or Paddle (they handle tax, higher fee). Code
       supports Stripe first, adapter for the other.
 - [ ] D3 Prices for Light and Full tiers (M02 will recommend).
+- [ ] D5 FinModelsLab vs Ledgerline (from M01, `docs/marketing/competitors.md`): FinModelsLab
+      sells 2,000 templates at $99 with the same headline features. Decide (a) keep the brands
+      separate or linked, (b) whether to offer a FinModelsLab -> Ledgerline "built on your
+      numbers" upgrade credit, (c) confirm the price for D3 should sit clearly above $99.
 - [ ] D4 Hosting for the Docker image (options in `docs/DEPLOY.md` after E15).
 
 ## Accounts & keys (put keys only into the hosting provider's env vars, never in chat or the repo)
