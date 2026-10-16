@@ -199,3 +199,10 @@ app for little gain.
 - Every headcount role gets a fourth driver `<role>_fte_g` (headcount growth per year, applied in
   yearly steps), so staff can grow with the business. Cafe brief sets it to 0 (numbers unchanged).
 
+
+### ADR-002 addendum 3 (2026-10-16)
+Henry decided: **delivered workbooks carry no StartupModel branding** (no name or logo in any
+sheet, file properties or footer), for all customers, so firms can pass files on as their own
+work. **The 5 × Full pack ($1,250) is valid for 12 months** from purchase. E-track consequences:
+the builder must not write the brand into workbooks or document properties; E11/E14 track pack
+credits with a 12-month expiry.

@@ -2,6 +2,8 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · M · decision D8 recorded · PR https://github.com/henrysheykin/finmodel-app/pull/13
+  No StartupModel branding in delivered workbooks (all customers); 5-model pack valid 12 months. ADR-002 addendum 3; accountants/E-2 pages updated.
 - 2026-10-16 · E · E03 SaaS template · DONE · https://github.com/henrysheykin/finmodel-app/pull/12
   Customers by channel (organic + paid/CAC), churn, ARPA, expansion, MRR waterfall, hosting/support COGS, role payroll,
   simplified deferred revenue, SaaS metrics (ARR, CAC, LTV/CAC, payback, runway); stage defaults ×4. Framework: liability
