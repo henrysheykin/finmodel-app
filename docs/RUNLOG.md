@@ -2,6 +2,9 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · M · decisions from Henry recorded · PR https://github.com/henrysheykin/finmodel-app/pull/4
+  ADR-002: domain startup-model.com, brand StartupModel (picked from Henry's 6 domains); Light $149 + bundles; separate from FinModelsLab.
+  Open for Henry: Full price, pack price; check "Startup Models" (startupmodels.co) collision + TMview/USPTO. E13 must replace Ledgerline in app/ and landing.
 - 2026-10-16 · M · M02 ICP, positioning, names, price · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/3
   `docs/marketing/positioning.md`: 3 ICPs (SBA/bank loan applicants, pre-seed SaaS founders, small advisory firms + E-2 plan writers), positioning, message house, 8 screened names, price recommendation.
   Ledgerline = CAUTION (Framer "Ledgerline CPA" template, crowded "ledger" root); Tickmark, Provable rejected. Recommended Light $149 / Full $349 / accountant pack 5 for $1,250.
