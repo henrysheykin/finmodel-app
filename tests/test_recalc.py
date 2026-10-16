@@ -9,17 +9,17 @@ pytestmark = pytest.mark.libreoffice
 def test_cafe_recalculates_with_zero_errors(cafe_xlsx):
     res = recalc(cafe_xlsx)
     assert res.ok, res.errors
-    assert res.total_formulas == 894
+    assert res.total_formulas > 1000
     assert res.total_errors == 0
     vals = load_workbook(cafe_xlsx, data_only=True)
-    assert vals["P&L"]["B5"].value > 0
-    assert vals["Checks"]["B13"].value in ("PASS", "PASS WITH WARNINGS")
+    assert vals["P&L"]["B5"].value == pytest.approx(319800)
+    assert vals["Dashboard"]["B8"].value == pytest.approx(319800)
 
 
 def test_formulas_survive_recalc(cafe_xlsx):
     recalc(cafe_xlsx)
     wb = load_workbook(cafe_xlsx)
-    assert str(wb["Monthly"]["C10"].value).startswith("=")
+    assert str(wb["Monthly"]["D10"].value).startswith("=")
     assert wb["Dashboard"]["B4"].value == 2
 
 

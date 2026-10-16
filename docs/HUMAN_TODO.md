@@ -27,6 +27,10 @@ the answer next to the item (agents read this file every run).
 - [ ] A5 Domain (after D1).
 
 ## Reviews
+- [ ] R0 (non-blocking) CFO glance at the shared engine economics in `docs/DECISIONS.md` ADR-002
+      "Economics defaults": tax loss carry-forward, straight-line depreciation, loan drawn in period 1
+      with straight-line repayment, AR/inventory/AP days. Sample: run
+      `python -m engine.build engine/briefs/cafe.json cafe.xlsx` (or ask an agent for the file).
 - [ ] R1 CFO sign-off for each template (agents add one line per template with the
       sample file and assumption memo). Launch is blocked until the launch
       templates are signed off.

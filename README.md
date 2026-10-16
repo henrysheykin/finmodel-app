@@ -20,7 +20,7 @@ python3.12 -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"          # LibreOffice (`soffice`) must be on PATH for engine tests
 ruff check . && ruff format --check . && pytest -q
 
-python -m engine.templates.cafe engine/briefs/cafe.json /tmp/cafe.xlsx   # build
+python -m engine.build engine/briefs/cafe.json /tmp/cafe.xlsx [--tier light --granularity annual --years 5]
 python -m engine.recalc /tmp/cafe.xlsx                                   # recalc + error scan
 python -m engine.challenger engine/briefs/cafe.json /tmp/cafe.xlsx       # independent check
 uvicorn app.main:app --reload                                            # web (/healthz)
