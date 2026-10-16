@@ -4,19 +4,18 @@ Things only Henry can do. Agents add items here; Henry ticks them and writes
 the answer next to the item (agents read this file every run).
 
 ## Decisions
-- [ ] D1 Pick name + domain — 8 screened candidates in `docs/marketing/positioning.md`
-      (Ledgerline = CAUTION; suggested legal-search order: Modelproof, Sheetproof, Balanceproof).
-      Web screening only: check TMview / USPTO / WIPO in classes 9, 35, 36, 42, domains and handles yourself.
+- [x] D1 Name + domain — **startup-model.com, brand StartupModel** (Henry gave 6 domains,
+      agent picked; ADR-002). Still for Henry: TMview / USPTO check for "StartupModel" (classes
+      9, 35, 36, 42); optionally buy startupmodel.com as a redirect.
+      "Startup Models" (startupmodels.co) — Henry 2026-10-16: site not active, not a concern.
 - [ ] D2 Payment provider: Stripe (you handle VAT/sales tax yourself) or a merchant of
       record such as Lemon Squeezy or Paddle (they handle tax, higher fee). Code
       supports Stripe first, adapter for the other.
-- [ ] D3 Pick price — M02 recommends Light $149 (floor $129, never $99), Full $349 (fallback $299,
-      max $399), Light->Full upgrade = pay the difference, accountant pack 5 Full for $1,250.
-      Reasoning in `docs/marketing/positioning.md`.
-- [ ] D5 FinModelsLab vs Ledgerline (from M01, `docs/marketing/competitors.md`): FinModelsLab
-      sells 2,000 templates at $99 with the same headline features. Decide (a) keep the brands
-      separate or linked, (b) whether to offer a FinModelsLab -> Ledgerline "built on your
-      numbers" upgrade credit, (c) confirm the price for D3 should sit clearly above $99.
+- [ ] D3 Price — Henry 2026-10-16: **Light $149, bundles yes** (accountant pack; Light->Full
+      upgrade = pay the difference). **Open: Full price** (recommended $349) and the pack price
+      (recommended 5 Full for $1,250).
+- [x] D5 FinModelsLab vs StartupModel — Henry 2026-10-16: **separate brands**. No links,
+      copy or upgrade credit between them (ADR-002).
 - [ ] D4 Hosting for the Docker image (options in `docs/DEPLOY.md` after E15).
 
 ## Accounts & keys (put keys only into the hosting provider's env vars, never in chat or the repo)
@@ -27,7 +26,7 @@ the answer next to the item (agents read this file every run).
 - [ ] A5 Domain (after D1).
 
 ## Reviews
-- [ ] R0 (non-blocking) CFO glance at the shared engine economics in `docs/DECISIONS.md` ADR-002
+- [ ] R0 (non-blocking) CFO glance at the shared engine economics in `docs/DECISIONS.md` ADR-003
       "Economics defaults": tax loss carry-forward, straight-line depreciation, loan drawn in period 1
       with straight-line repayment, AR/inventory/AP days. Sample: run
       `python -m engine.build engine/briefs/cafe.json cafe.xlsx` (or ask an agent for the file).
