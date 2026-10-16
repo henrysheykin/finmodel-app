@@ -1,5 +1,11 @@
 # Landing page copy — StartupModel (EN)
 
+> **Update 2026-10-16 (ADR-005):** the landing moved to design v2 (`design/landing.dc.html`),
+> which has different sections (no Problem quotes, no "VS" cards; adds a Checks section,
+> a sheet table and a comparison table) and already carries this file's messaging, brand
+> and prices. For page copy, the design wins. This file still owns Meta, the SEO/JSON-LD
+> notes, llms.txt/robots notes and the placeholders below.
+
 Source of structure: `design/landing.dc.html` (same sections, same order, similar lengths).
 Decisions used: ADR-002 (brand StartupModel, domain startup-model.com, Light $149, Full $349,
 5-Full pack $1,250, refund within 7 days,

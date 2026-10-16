@@ -145,13 +145,18 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - status: TODO
 - depends: E01
 - skills: frontend-design, small-business:seo-ai-visibility
-- do: build the landing exactly per `docs/SPEC_LANDING.md` (export it first — see
-  CLAUDE.md) and `design/landing.dc.html`, served by the app; copy from
-  `content/landing.md` if M03 is DONE, else from the design file. Privacy /
-  Terms / Refund pages render `content/legal/*.md` when present. SEO tech
-  (meta, OG, JSON-LD, sitemap, robots). Interactive Excel mockup.
-- done when: Lighthouse mobile ≥ 95 on all four categories (run headless
-  Chromium), axe 0 critical, no horizontal scroll at 360 px.
+- do: build the landing from **design v2**: `design/landing.dc.html` (layout,
+  copy, interactive sheet logic) and `design/tokens.dc.html` (exact tokens),
+  served by the app. Page copy comes from the design file (v2 already carries
+  StartupModel, the approved prices and the M02/M03 messaging); take meta,
+  JSON-LD, robots/llms.txt notes and placeholders from `content/landing.md`
+  (ADR-005). Use `docs/SPEC_LANDING.md` only for sections 6, 8–11
+  (see CLAUDE.md). No scroll-reveal animation. Privacy / Terms / Refund pages
+  render `content/legal/*.md` when present. SEO tech (meta, OG, JSON-LD,
+  sitemap, robots).
+- done when: matches design v2 at 1440 and 360 px; Lighthouse mobile ≥ 95 on
+  all four categories (run headless Chromium), axe 0 critical, no horizontal
+  scroll at 360 px; `grep -ri "1F3864\|2563EB\|DM Sans"` in web/ is empty.
 
 ### E14 — Admin panel
 - status: TODO

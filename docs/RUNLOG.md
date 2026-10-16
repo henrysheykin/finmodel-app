@@ -2,6 +2,7 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · setup · design v2 (ADR-005): own visual identity replacing the v1 look that was too close to the competitor; StartupModel brand, prices $149/$349, 7-day refund and M02 ICPs applied in `design/`. E13 builds from design v2; content/landing.md keeps meta/SEO notes.
 - 2026-10-16 · M · decisions D2/D4 recorded · PR https://github.com/henrysheykin/finmodel-app/pull/8
   ADR-004: Stripe Checkout; Railway (web + worker + Postgres). Vercel not used (no persistent worker / LibreOffice container). VAT handling flagged for Henry.
 - 2026-10-16 · E · E02 engine framework · DONE · https://github.com/henrysheykin/finmodel-app/pull/6
