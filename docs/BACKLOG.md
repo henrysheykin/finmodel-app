@@ -51,7 +51,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   add "CFO review: SaaS template" to HUMAN_TODO (does not block next tasks).
 
 ### E04 — Template: Retail / E-commerce
-- status: TODO
+- status: IN_PROGRESS (2026-10-16)
 - depends: E02
 - skills: xlsx
 - do: traffic × conversion × AOV (e-com) or stores × sales/sqft (retail), returns,
