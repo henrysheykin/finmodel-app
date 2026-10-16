@@ -71,7 +71,7 @@ You still review the assumptions with the client; that's where your judgement ma
 | Pack of 5 Full models | $1,250 | $250 |
 | Light model (P&L only) | $149 | $149 |
 
-How long pack credits stay valid: [PACK_VALIDITY — to be confirmed].
+Pack credits stay valid for 12 months from purchase.
 
 ## Which client businesses are covered
 
@@ -87,7 +87,7 @@ Café, coffee shop, restaurant and bakery are available today; other industries 
 Yes. It's a standard .xlsx with live formulas. Change any blue input and every sheet follows.
 
 **Is there StartupModel branding in the file, and can we add our own?**
-[CONFIRM WITH E TRACK: branding and white-label options in delivered files.]
+Delivered models carry no StartupModel name or logo. Add your firm's name or logo yourself if you want to; it's a normal Excel file.
 
 **Who enters the numbers, us or the client?**
 Either. The questionnaire is short and in plain language, with defaults for anything left blank.

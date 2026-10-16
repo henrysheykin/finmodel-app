@@ -91,7 +91,7 @@ Yes. Choose monthly or annual when ordering. Many E-2 plans present annual figur
 Yes. It's a standard Excel file with live formulas.
 
 **Is there StartupModel branding in the file?**
-[CONFIRM WITH E TRACK: branding and white-label options in delivered files.]
+No. Delivered models carry no StartupModel name or logo, so you can hand the file to the client and the attorney as part of your own work.
 
 **Refunds?**
 If a model doesn't fit the business, write to us within 7 days for a full refund.
