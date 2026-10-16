@@ -62,6 +62,20 @@ class Line:
     section: str | None = None  # starts a new section header before this line
 
 
+@dataclass
+class StmtRow:
+    """One row of an annual statement / KPI table (kind: line | formula)."""
+
+    key: str
+    label: str
+    kind: str  # line | formula | link | section
+    src: str | tuple[str, str] = ""
+    fmt: str = "usd"
+    bold: bool = False
+    total: bool = False
+    neg: bool = False
+
+
 @dataclass(frozen=True)
 class Timing:
     granularity: str
@@ -112,6 +126,7 @@ def role_driver_specs(role_key: str, title: str) -> list[DriverSpec]:
     return [
         DriverSpec(f"{role_key}_fte", f"{title}: headcount (FTE)", "FTE", "dec1", 0, 10000, "asc", sec),
         DriverSpec(f"{role_key}_salary", f"{title}: salary per FTE per year", "$", "usd", 0, 5e6, section=sec),
+        DriverSpec(f"{role_key}_fte_g", f"{title}: headcount growth per year", "%", "pct", -0.5, 3, "asc", sec),
         DriverSpec(
             f"{role_key}_start", f"{title}: first month on payroll", "month #", "int", 1, 60, section=sec, integer=True
         ),

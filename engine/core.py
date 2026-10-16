@@ -10,7 +10,7 @@ Templates supply ``rev``, ``cogs`` (negative), opex lines (negative) and
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from engine.brief import Role
 from engine.spec import DriverSpec, Line, Timing
@@ -33,8 +33,12 @@ def headcount_lines(roles: list[Role]) -> list[Line]:
                 group="headcount",
                 fmt="dec1",
                 agg="last",
-                # FTE on payroll in the period (average over the period for annual columns)
-                formula=f"={{in:{k}_fte}}*MAX(0,MIN({{mpp}},{{p}}*{{mpp}}-{{in:{k}_start}}+1))/{{mpp}}",
+                # FTE on payroll in the period (average over the period for annual columns),
+                # stepping up by the role's growth rate each year
+                formula=(
+                    f"={{in:{k}_fte}}*(1+{{in:{k}_fte_g}})^({{y}}-1)"
+                    f"*MAX(0,MIN({{mpp}},{{p}}*{{mpp}}-{{in:{k}_start}}+1))/{{mpp}}"
+                ),
                 section="Headcount (FTE)" if i == 0 else None,
             )
         )
@@ -62,8 +66,9 @@ def pnl_head_lines() -> list[Line]:
     return [Line("gp", "Gross profit", "={rev}+{cogs}", "core", bold=True, total=True)]
 
 
-def pnl_tail_lines(opex_keys: list[str]) -> list[Line]:
+def pnl_tail_lines(opex_keys: list[str], liab_keys: list[str] = ()) -> list[Line]:
     opex_sum = "+".join(f"{{{k}}}" for k in opex_keys) or "0"
+    liab_terms = "".join(f"+{{d_{k}}}" for k in liab_keys)
     return [
         Line("opex_total", "Total operating expenses", f"={opex_sum}", "core", bold=True, total=True),
         Line("ebitda", "EBITDA", "={gp}+{opex_total}", "core", bold=True, total=True),
@@ -128,7 +133,14 @@ def pnl_tail_lines(opex_keys: list[str]) -> list[Line]:
         Line("d_ar", "(Increase) / decrease in receivables", "={ar[-1]}-{ar}", "core", first="=-{ar}"),
         Line("d_inv", "(Increase) / decrease in inventory", "={inv[-1]}-{inv}", "core", first="=-{inv}"),
         Line("d_ap", "Increase / (decrease) in payables", "={ap}-{ap[-1]}", "core", first="={ap}"),
-        Line("cfo", "Operating cash flow", "={ni}-{dep}+{d_ar}+{d_inv}+{d_ap}", "core", bold=True, section="Cash flow"),
+        Line(
+            "cfo",
+            "Operating cash flow",
+            f"={{ni}}-{{dep}}+{{d_ar}}+{{d_inv}}+{{d_ap}}{liab_terms}",
+            "core",
+            bold=True,
+            section="Cash flow",
+        ),
         Line("cfi", "Investing cash flow (capex)", "=-{capex}", "core"),
         Line("equity_in", "Equity raised", "=IF({p}=1,{in:equity},0)", "core"),
         Line("cff", "Financing cash flow", "={equity_in}+{loan_draw}+{loan_repay}", "core"),
@@ -139,7 +151,22 @@ def pnl_tail_lines(opex_keys: list[str]) -> list[Line]:
     ]
 
 
-def balance_sheet_lines() -> list[Line]:
+def liability_delta_lines(liabs: list[Line]) -> list[Line]:
+    """Cash-flow effect of template working-capital liabilities (e.g. deferred revenue)."""
+    return [
+        Line(
+            f"d_{ln.key}",
+            f"Increase / (decrease) in {ln.label[0].lower() + ln.label[1:]}",
+            f"={{{ln.key}}}-{{{ln.key}[-1]}}",
+            "core",
+            first=f"={{{ln.key}}}",
+        )
+        for ln in liabs
+    ]
+
+
+def balance_sheet_lines(liab_keys: list[str] = ()) -> list[Line]:
+    liab = "".join(f"+{{{k}}}" for k in liab_keys)
     return [
         Line(
             "paid_in",
@@ -152,7 +179,7 @@ def balance_sheet_lines() -> list[Line]:
         ),
         Line("retained", "Retained earnings", "={retained[-1]}+{ni}", "bs", first="={ni}", agg="last"),
         Line("total_assets", "Total assets", "={cash_close}+{ar}+{inv}+{ppe_net}", "bs", agg="last", bold=True),
-        Line("total_liab", "Total liabilities", "={ap}+{loan_close}", "bs", agg="last"),
+        Line("total_liab", "Total liabilities", f"={{ap}}+{{loan_close}}{liab}", "bs", agg="last"),
         Line("total_equity", "Total equity", "={paid_in}+{retained}", "bs", agg="last"),
         Line("total_le", "Total liabilities & equity", "={total_liab}+{total_equity}", "bs", agg="last", bold=True),
         Line("bs_diff", "Check: assets − liabilities − equity", "={total_assets}-{total_le}", "bs", agg="last"),
@@ -161,23 +188,33 @@ def balance_sheet_lines() -> list[Line]:
 
 # --------------------------------------------------------------------------- python twin
 @dataclass
+class HC:
+    """Headcount results the framework hands to a template's reference model."""
+
+    payroll: float  # negative, total payroll cost in the period
+    fte: float  # total FTE on payroll in the period
+
+
+@dataclass
 class Top:
     """What a template's reference model returns for one period."""
 
     rev: float
     cogs: float  # negative
-    opex: dict[str, float]  # negative, excluding payroll unless the template adds it
+    opex: dict[str, float]  # negative
     capex: float  # positive
+    liabilities: dict[str, float] = field(default_factory=dict)  # working-capital balances, e.g. deferred revenue
+    kpis: dict[str, float] = field(default_factory=dict)  # extra series checked by the challenger
 
 
-TopFn = Callable[[dict, int, int, Timing, float], Top]
+TopFn = Callable[[dict, int, int, Timing, HC], Top]
 
 
 def reference_run(d: dict, roles: list[Role], t: Timing, top: TopFn) -> dict[str, list[float]]:
     """Run the whole model in plain Python. Returns per-period series (index 0 = period 1).
 
-    ``top(d, p, y, timing, payroll)`` is the template's own revenue/cost logic;
-    ``payroll`` (negative) is computed here from the roles.
+    ``top(d, p, y, timing, hc)`` is the template's own revenue/cost logic;
+    ``hc`` (payroll cost and FTE) is computed here from the roles.
     """
     s: dict[str, list[float]] = {
         k: []
@@ -213,15 +250,16 @@ def reference_run(d: dict, roles: list[Role], t: Timing, top: TopFn) -> dict[str
     }
     ppe_gross = acc_dep = loan = cash = cum_ebt = peak = paid_in = retained = 0.0
     ar0 = inv0 = ap0 = 0.0
+    liab0: dict[str, float] = {}
     for p in range(1, t.periods + 1):
         y = t.year_of(p)
         fte_total = payroll = 0.0
         for r in roles:
             months_on = max(0.0, min(t.mpp, p * t.mpp - d[f"{r.key}_start"] + 1))
-            fte = d[f"{r.key}_fte"] * months_on / t.mpp
+            fte = d[f"{r.key}_fte"] * (1 + d[f"{r.key}_fte_g"]) ** (y - 1) * months_on / t.mpp
             fte_total += fte
             payroll -= fte * d[f"{r.key}_salary"] / 12 * t.mpp * (1 + d["payroll_tax"]) * (1 + d["wage_g"]) ** (y - 1)
-        tp = top(d, p, y, t, payroll)
+        tp = top(d, p, y, t, HC(payroll, fte_total))
         gp = tp.rev + tp.cogs
         opex = sum(tp.opex.values())
         ebitda = gp + opex
@@ -244,7 +282,9 @@ def reference_run(d: dict, roles: list[Role], t: Timing, top: TopFn) -> dict[str
         ar = tp.rev * d["ar_days"] / t.dpp
         inv = -tp.cogs * d["inv_days"] / t.dpp
         ap = -tp.cogs * d["ap_days"] / t.dpp
-        cfo = ni - dep + (ar0 - ar) + (inv0 - inv) + (ap - ap0)
+        d_liab = sum(v - liab0.get(k, 0.0) for k, v in tp.liabilities.items())
+        liab0 = dict(tp.liabilities)
+        cfo = ni - dep + (ar0 - ar) + (inv0 - inv) + (ap - ap0) + d_liab
         ar0, inv0, ap0 = ar, inv, ap
         equity_in = d["equity"] if p == 1 else 0.0
         cfi = -tp.capex
@@ -275,15 +315,17 @@ def reference_run(d: dict, roles: list[Role], t: Timing, top: TopFn) -> dict[str
             "paid_in": paid_in,
             "retained": retained,
             "total_assets": cash + ar + inv + ppe_net,
-            "total_le": ap + loan + paid_in + retained,
+            "total_le": ap + loan + sum(tp.liabilities.values()) + paid_in + retained,
             "payroll_total": payroll,
             "fte_total": fte_total,
             "cfo": cfo,
             "cfi": cfi,
             "cff": cff,
         }
+        row.update(tp.liabilities)
+        row.update(tp.kpis)
         for k, v in row.items():
-            s[k].append(v)
+            s.setdefault(k, []).append(v)
     return s
 
 
@@ -307,12 +349,13 @@ FLOW_KEYS = {
 }
 
 
-def annualise(series: dict[str, list[float]], t: Timing) -> dict[str, dict[int, float]]:
+def annualise(series: dict[str, list[float]], t: Timing, extra_flows=()) -> dict[str, dict[int, float]]:
     """Per-year values: flows summed, balances taken at year end."""
+    flows = FLOW_KEYS | set(extra_flows)
     out: dict[str, dict[int, float]] = {}
     for k, vals in series.items():
         out[k] = {}
         for y in range(1, t.years + 1):
             chunk = vals[(y - 1) * t.ppy : y * t.ppy]
-            out[k][y] = sum(chunk) if k in FLOW_KEYS else chunk[-1]
+            out[k][y] = sum(chunk) if k in flows else chunk[-1]
     return out

@@ -49,7 +49,7 @@ def python_model(brief: Brief, scenario: int) -> dict[str, dict[int, float]]:
     tpl = get_template(brief.template)
     t = Timing(brief.granularity, brief.horizon_years)
     series = reference_run(brief.values(scenario), brief.roles, t, tpl.reference_top)
-    return annualise(series, t)
+    return annualise(series, t, tpl.kpi_flows)
 
 
 def _num(v) -> bool:
@@ -111,7 +111,8 @@ def challenge(brief: Brief | dict, model_path: str | Path) -> dict:
                         report["problems"].append(f"scenario {scen} year {y} {metric}: workbook value {v!r}")
                         got[metric] = None
                         continue
-                    exp = expected[METRIC_SOURCE[metric]][y]
+                    src = tpl.kpi_checked[metric[4:]] if metric.startswith("kpi:") else METRIC_SOURCE[metric]
+                    exp = expected[src][y]
                     if abs(v - exp) > TOLERANCE_USD:
                         report["problems"].append(
                             f"scenario {scen} year {y} {metric}: workbook {v:,.2f} vs python {exp:,.2f}"

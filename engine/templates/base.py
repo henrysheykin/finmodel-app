@@ -9,7 +9,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 
 from engine.brief import Brief, Role
-from engine.core import HEADCOUNT_DRIVERS, Top
+from engine.core import HC, HEADCOUNT_DRIVERS, Top
 from engine.spec import STANDARD_DRIVERS, DriverSpec, Line, Timing, role_driver_specs, validate_against
 
 
@@ -36,8 +36,31 @@ class Template(ABC):
         """Capital spending per period. Must define ``capex`` (positive)."""
 
     @abstractmethod
-    def reference_top(self, d: dict, p: int, y: int, t: Timing, payroll: float) -> Top:
+    def reference_top(self, d: dict, p: int, y: int, t: Timing, hc: HC) -> Top:
         """Plain-Python twin of revenue/opex/capex lines for period ``p`` (no openpyxl, no formulas)."""
+
+    # -- optional hooks ------------------------------------------------------
+    def liability_lines(self, t: Timing) -> list[Line]:
+        """Extra working-capital liabilities (balances, agg="last"), e.g. deferred revenue."""
+        return []
+
+    def extra_lines(self, t: Timing) -> list[Line]:
+        """Helper lines appended to the period grid (e.g. burn for runway); not part of the P&L."""
+        return []
+
+    def kpi_rows(self, t: Timing) -> list:
+        """Annual KPI table (``StmtRow`` list) shown on the Dashboard (Full) or P&L (Light)."""
+        return []
+
+    kpi_title: str = "Key metrics"
+    #: KPI rows the challenger recomputes: kpi row key -> reference series key
+    kpi_checked: dict[str, str] = {}
+    #: reference ``kpis`` series that are flows (summed per year), the rest are balances
+    kpi_flows: tuple[str, ...] = ()
+
+    def default_brief(self, stage: str) -> Brief:
+        """Illustrative starting brief for a wizard stage (used by the sample-data path)."""
+        raise NotImplementedError(f"template {self.key!r} has no stage defaults")
 
     # -- provided ----------------------------------------------------------
     def all_specs(self, roles: list[Role]) -> list[DriverSpec]:

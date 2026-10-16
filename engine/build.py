@@ -1,7 +1,8 @@
 """Build a model from a brief.
 
 Usage: python -m engine.build brief.json out.xlsx [--tier light|full]
-       [--granularity monthly|annual] [--years 1|3|5]
+       [--granularity monthly|annual] [--years 1|3|5] [--recalc]
+       python -m engine.build default:saas:early out.xlsx ...   (template stage defaults)
 """
 
 from __future__ import annotations
@@ -26,12 +27,23 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--tier", choices=["light", "full"])
     ap.add_argument("--granularity", choices=["monthly", "annual"])
     ap.add_argument("--years", type=int, choices=[1, 3, 5])
+    ap.add_argument("--recalc", action="store_true", help="recalculate in LibreOffice so values show on open")
     a = ap.parse_args(argv)
-    brief = Brief.load(a.brief)
+    if a.brief.startswith("default:"):
+        _, tkey, stage = a.brief.split(":")
+        brief = get_template(tkey).default_brief(stage)
+    else:
+        brief = Brief.load(a.brief)
     opts = {k: v for k, v in (("tier", a.tier), ("granularity", a.granularity), ("horizon_years", a.years)) if v}
     if opts:
         brief = brief.with_options(**opts)
     man = build_model(brief, a.out)
+    if a.recalc:
+        from engine.recalc import recalc
+
+        res = recalc(a.out)
+        if not res.ok:
+            raise SystemExit(f"recalc found errors: {res.errors}")
     print(json.dumps({"written": str(a.out), "sheets": man.sheets, "selector": man.selector}))
     return 0
 

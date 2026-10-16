@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from engine.core import Top
+from engine.core import HC, Top
 from engine.spec import DriverSpec, Line, Timing
 from engine.templates.base import Template
 
@@ -89,7 +89,7 @@ class CafeTemplate(Template):
     def capex_lines(self, t: Timing) -> list[Line]:
         return [Line("capex", "Capital spending", "=IF({p}=1,{in:capex},0)", "top", section="Capital spending")]
 
-    def reference_top(self, d: dict, p: int, y: int, t: Timing, payroll: float) -> Top:
+    def reference_top(self, d: dict, p: int, y: int, t: Timing, hc: HC) -> Top:
         a, r = d["open_pct"], max(1, d["ramp_months"])
         if t.granularity == "monthly":
             ramp = min(1, a + (1 - a) * (p - 1) / r)
@@ -103,7 +103,7 @@ class CafeTemplate(Template):
             cogs=-rev * d["cogs_pct"],
             opex={
                 "rent": -d["rent"] * t.mpp,
-                "payroll": payroll,
+                "payroll": hc.payroll,
                 "mkt": -rev * d["mkt_pct"],
                 "other": -d["other_opex"] * t.mpp,
             },

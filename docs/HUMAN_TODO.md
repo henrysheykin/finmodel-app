@@ -43,6 +43,7 @@ the answer next to the item (agents read this file every run).
 - [ ] R1 CFO sign-off for each template (agents add one line per template with the
       sample file and assumption memo). Launch is blocked until the launch
       templates are signed off.
+      - [ ] SaaS: sample `samples/saas-full.xlsx`, memo `docs/templates/saas.md` (questions at the end).
 - [ ] R2 Lawyer review of legal drafts (after M08).
 
 ## Go-live

@@ -1,4 +1,4 @@
-"""Golden matrix: cafe light+full × monthly+annual × 1/3/5 years.
+"""Golden matrix: every template × light+full × monthly+annual × 1/3/5 years.
 
 Every combination must generate, recalculate with zero errors, balance (full
 tier) and pass the challenger in all three scenarios.
@@ -18,8 +18,8 @@ COMBOS = list(itertools.product(["light", "full"], ["monthly", "annual"], [1, 3,
 
 
 @pytest.mark.parametrize("tier,g,years", COMBOS, ids=[f"{t}-{g}-{y}y" for t, g, y in COMBOS])
-def test_cafe_matrix(build, cafe_brief, tier, g, years):
-    brief = cafe_brief.with_options(tier=tier, granularity=g, horizon_years=years)
+def test_matrix(build, any_brief, tier, g, years):
+    brief = any_brief.with_options(tier=tier, granularity=g, horizon_years=years)
     path = build(brief)
     res = recalc(path)
     assert res.ok, res.errors
@@ -41,3 +41,13 @@ def test_light_and_full_show_identical_numbers(build, cafe_brief):
             full, light = reports["full"]["scenarios"][s]["years"][y], reports["light"]["scenarios"][s]["years"][y]
             for k in light:
                 assert light[k] == full[k], (s, y, k)
+
+
+@pytest.mark.parametrize("stage", ["planning", "early", "growing", "established"])
+def test_saas_stage_defaults_pass(build, stage):
+    from engine.templates import get_template
+
+    brief = get_template("saas").default_brief(stage)
+    report = challenge(brief, build(brief))
+    assert report["problems"] == []
+    assert any(k.startswith("kpi:") for k in report["scenarios"][2]["years"][1])
