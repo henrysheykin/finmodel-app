@@ -1,0 +1,30 @@
+{
+  "model_name": "Neighborhood Cafe — 3-Year Plan",
+  "business_type": "cafe",
+  "stage": "planning",
+  "horizon_years": 3,
+  "granularity": "monthly",
+  "default_scenario": 2,
+  "assumption_note": "Illustrative assumptions for a demo — replace with your own numbers.",
+  "drivers": [
+    {"key": "cust_full",   "label": "Customers per day at full traffic", "unit": "#",      "low": 120,    "base": 160,    "high": 210,    "fmt": "int",  "order": "asc"},
+    {"key": "ramp_months", "label": "Months to reach full traffic",      "unit": "months", "low": 9,      "base": 6,      "high": 4,      "fmt": "int"},
+    {"key": "open_pct",    "label": "Opening traffic, % of full",        "unit": "%",      "low": 0.40,   "base": 0.50,   "high": 0.60,   "fmt": "pct"},
+    {"key": "traffic_g",   "label": "Traffic growth per year (after Y1)", "unit": "%",     "low": 0.03,   "base": 0.06,   "high": 0.09,   "fmt": "pct"},
+    {"key": "ticket",      "label": "Average ticket",                    "unit": "$",      "low": 5.50,   "base": 6.50,   "high": 7.50,   "fmt": "usd2", "order": "asc"},
+    {"key": "price_g",     "label": "Price growth per year",             "unit": "%",      "low": 0.02,   "base": 0.03,   "high": 0.04,   "fmt": "pct"},
+    {"key": "days",        "label": "Operating days per month",          "unit": "days",   "low": 30,     "base": 30,     "high": 30,     "fmt": "int"},
+    {"key": "cogs_pct",    "label": "COGS, % of revenue",                "unit": "%",      "low": 0.36,   "base": 0.33,   "high": 0.30,   "fmt": "pct"},
+    {"key": "rent",        "label": "Rent per month",                    "unit": "$",      "low": 4500,   "base": 4500,   "high": 4500,   "fmt": "usd"},
+    {"key": "fte",         "label": "Staff (full-time equivalents)",     "unit": "FTE",    "low": 3.0,    "base": 3.5,    "high": 4.0,    "fmt": "dec1"},
+    {"key": "salary",      "label": "Salary per FTE per year",           "unit": "$",      "low": 30000,  "base": 32000,  "high": 34000,  "fmt": "usd"},
+    {"key": "payroll_tax", "label": "Payroll taxes & benefits",          "unit": "% of salary", "low": 0.12, "base": 0.12, "high": 0.12,  "fmt": "pct"},
+    {"key": "wage_g",      "label": "Wage growth per year",              "unit": "%",      "low": 0.03,   "base": 0.03,   "high": 0.03,   "fmt": "pct"},
+    {"key": "mkt_pct",     "label": "Marketing, % of revenue",           "unit": "%",      "low": 0.04,   "base": 0.03,   "high": 0.03,   "fmt": "pct"},
+    {"key": "other_opex",  "label": "Utilities & other per month",       "unit": "$",      "low": 2200,   "base": 2000,   "high": 2000,   "fmt": "usd"},
+    {"key": "capex",       "label": "Start-up capex (fit-out, equipment)", "unit": "$",    "low": 180000, "base": 160000, "high": 150000, "fmt": "usd"},
+    {"key": "start_cash",  "label": "Starting funding (equity + loans)", "unit": "$",      "low": 220000, "base": 220000, "high": 220000, "fmt": "usd"},
+    {"key": "dep_years",   "label": "Depreciation period",               "unit": "years",  "low": 7,      "base": 7,      "high": 7,      "fmt": "int"},
+    {"key": "tax_rate",    "label": "Income tax rate",                   "unit": "%",      "low": 0.21,   "base": 0.21,   "high": 0.21,   "fmt": "pct"}
+  ]
+}

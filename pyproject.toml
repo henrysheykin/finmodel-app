@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "finmodel-app"
+version = "0.0.1"
+description = "Custom Excel financial models from a validated brief"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "openpyxl>=3.1,<3.2",
+    "pydantic>=2.7,<3",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5", "httpx>=0.27"]
+
+[tool.setuptools.packages.find]
+include = ["engine*", "app*", "worker*", "adapters*"]
+
+[tool.setuptools.package-data]
+engine = ["briefs/*.json"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["poc"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["libreoffice: needs soffice (LibreOffice) on PATH"]
