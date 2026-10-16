@@ -1,9 +1,10 @@
-import json
 import os
 import shutil
 from pathlib import Path
 
 import pytest
+
+from engine.brief import Brief
 
 ROOT = Path(__file__).resolve().parents[1]
 CAFE_BRIEF = ROOT / "engine" / "briefs" / "cafe.json"
@@ -22,14 +23,22 @@ def pytest_collection_modifyitems(config, items):
 
 
 @pytest.fixture
-def cafe_brief() -> dict:
-    return json.loads(CAFE_BRIEF.read_text(encoding="utf-8"))
+def cafe_brief() -> Brief:
+    return Brief.load(CAFE_BRIEF)
 
 
 @pytest.fixture
-def cafe_xlsx(tmp_path, cafe_brief) -> Path:
-    from engine.templates import cafe
+def build(tmp_path):
+    from engine.build import build_model
 
-    out = tmp_path / "cafe.xlsx"
-    cafe.build(cafe_brief, str(out))
-    return out
+    def _build(brief: Brief, name: str = "model.xlsx") -> Path:
+        out = tmp_path / name
+        build_model(brief, out)
+        return out
+
+    return _build
+
+
+@pytest.fixture
+def cafe_xlsx(build, cafe_brief) -> Path:
+    return build(cafe_brief, "cafe.xlsx")

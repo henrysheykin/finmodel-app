@@ -18,6 +18,6 @@ def test_cli_usage():
 
 def test_scan_counts_formulas_without_libreoffice(cafe_xlsx):
     res = rc.scan_errors(cafe_xlsx)
-    assert res.total_formulas == 894
+    assert res.total_formulas > 1000
     assert res.total_errors == 0
     assert res.ok

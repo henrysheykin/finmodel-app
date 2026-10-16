@@ -1,0 +1,120 @@
+"""Workbook structure and Excel rules — no LibreOffice needed."""
+
+import itertools
+import re
+
+import pytest
+from openpyxl import load_workbook
+from openpyxl.utils import get_column_letter
+
+from engine.builder import FIRST_COL, plan
+from engine.spec import Line
+from engine.templates import get_template
+
+FORBIDDEN = re.compile(r"\b(XLOOKUP|XMATCH|FILTER|SORT|UNIQUE|SEQUENCE|LET|LAMBDA)\s*\(", re.I)
+COMBOS = list(itertools.product(["light", "full"], ["monthly", "annual"], [1, 3, 5]))
+
+
+def variants(brief):
+    for tier, g, y in COMBOS:
+        yield (tier, g, y), brief.with_options(tier=tier, granularity=g, horizon_years=y)
+
+
+def test_sheets_per_tier(build, cafe_brief):
+    full = load_workbook(build(cafe_brief.with_options(tier="full"), "f.xlsx"))
+    assert full.sheetnames == [
+        "Dashboard",
+        "Inputs",
+        "Monthly",
+        "P&L",
+        "Cash Flow",
+        "Balance Sheet",
+        "Headcount",
+        "Checks",
+    ]
+    annual = load_workbook(build(cafe_brief.with_options(granularity="annual"), "a.xlsx"))
+    assert annual.sheetnames[2] == "Annual"
+    light = load_workbook(build(cafe_brief.with_options(tier="light"), "l.xlsx"))
+    assert light.sheetnames == ["Inputs", "P&L", "Checks"]
+    assert light["Inputs"]["B3"].value == 2
+    assert full["Dashboard"]["B4"].value == 2
+
+
+@pytest.mark.parametrize("tier,g,years", COMBOS)
+def test_excel_rules(build, cafe_brief, tier, g, years):
+    brief = cafe_brief.with_options(tier=tier, granularity=g, horizon_years=years)
+    wb = load_workbook(build(brief))
+    yellow, formulas = [], 0
+    for ws in wb.worksheets:
+        for row in ws.iter_rows():
+            for c in row:
+                if c.fill.fill_type == "solid" and c.fill.fgColor.rgb.endswith("FFFF00"):
+                    yellow.append(f"{ws.title}!{c.coordinate}")
+                if c.value is None:
+                    continue
+                assert c.font.name == "Arial", f"{ws.title}!{c.coordinate}"
+                if isinstance(c.value, str) and c.value.startswith("="):
+                    formulas += 1
+                    assert not FORBIDDEN.search(c.value), f"{ws.title}!{c.coordinate}: {c.value}"
+                    assert "{" not in c.value, f"unrendered token in {ws.title}!{c.coordinate}: {c.value}"
+                    color = c.font.color.rgb if c.font.color else ""
+                    assert not color.endswith("0000FF"), f"formula in blue at {ws.title}!{c.coordinate}"
+    expected_sel = "Dashboard!B4" if tier == "full" else "Inputs!B3"
+    assert yellow == [expected_sel]
+    assert formulas > 50
+    inp = wb["Inputs"]
+    pl = plan(brief, get_template(brief.template))
+    for key, r in pl.input_row.items():
+        for col in "BCD":
+            assert inp[f"{col}{r}"].font.color.rgb.endswith("0000FF"), key
+        assert inp[f"E{r}"].value.startswith("=CHOOSE(")
+
+
+def _shape(formula: str, col: int) -> str:
+    """Replace this/previous column letters so equal-shaped formulas compare equal."""
+    cur, prev = get_column_letter(col), get_column_letter(col - 1)
+    f = re.sub(rf"(?<![A-Z$]){cur}(?=\$?\d)", "<C>", formula)
+    return re.sub(rf"(?<![A-Z$]){prev}(?=\$?\d)", "<P>", f)
+
+
+@pytest.mark.parametrize("g", ["monthly", "annual"])
+def test_same_formula_across_periods(build, cafe_brief, g):
+    brief = cafe_brief.with_options(granularity=g, horizon_years=5)
+    wb = load_workbook(build(brief))
+    pl = plan(brief, get_template("cafe"))
+    n = pl.t.periods
+    for key, (sheet, row) in pl.line_at.items():
+        ws = wb[sheet]
+        shapes = {_shape(ws.cell(row=row, column=FIRST_COL + p - 1).value, FIRST_COL + p - 1) for p in range(2, n + 1)}
+        assert len(shapes) == 1, (key, shapes)
+
+
+def test_denominators_guarded(cafe_brief):
+    """Every division is by a constant, a timing token, or MAX(1, ...) — never a bare input."""
+    pl = plan(cafe_brief, get_template("cafe"))
+    allowed = ("MAX(1,", "{mpp}", "{ppy}", "{dpp}")
+    for ln in pl.lines.values():
+        for text in filter(None, (ln.formula, ln.first)):
+            for i, ch in enumerate(text):
+                if ch == "/":
+                    rest = text[i + 1 :]
+                    assert rest[:1].isdigit() or rest.startswith(allowed), (ln.key, text)
+
+
+def test_render_errors(cafe_brief):
+    pl = plan(cafe_brief, get_template("cafe"))
+    sheet = pl.calc_sheet
+    with pytest.raises(KeyError, match="unknown line"):
+        pl.render(Line("x", "x", "={nope}", "top"), 2, sheet)
+    with pytest.raises(ValueError, match="before period 1"):
+        pl.render(Line("x", "x", "={rev[-1]}", "top"), 1, sheet)
+    assert pl.render(Line("x", "x", "={rev[-1]}*{mpp}", "top"), 2, sheet).endswith("*1")
+
+
+def test_payroll_links_green_in_full(build, cafe_brief):
+    wb = load_workbook(build(cafe_brief))
+    pl = plan(cafe_brief, get_template("cafe"))
+    sheet, row = pl.line_at["payroll"]
+    c = wb[sheet].cell(row=row, column=FIRST_COL)
+    assert c.value.startswith("=Headcount!")
+    assert c.font.color.rgb.endswith("008000")

@@ -107,3 +107,44 @@ Full price is still open, so copy uses `[PRICE_FULL]`.
 Henry approved the M02 prices: **Light $149, Full $349, accountant/adviser pack 5 × Full for
 $1,250**; Light -> Full upgrade = pay the difference. **Refund window: 7 days.** E11 reads
 prices from config; M08 legal drafts use the 7-day refund window.
+
+## ADR-003 — Engine framework (2026-10-16, E02)
+
+**Status:** Accepted · **Deciders:** E02 run; economics choices flagged for Henry's CFO review (R1)
+
+### Decision
+- **Brief carries values only.** `engine/brief.py` (pydantic, `extra="forbid"`): template, business type,
+  goal, stage, horizon 1/3/5, granularity, tier, default scenario, roles, and drivers as
+  `{key, low, base, high, note?}`. Labels, units, formats, bounds and Low/Base/High ordering live in
+  the template's `DriverSpec`s, so an LLM cannot change presentation or slip past a bound.
+- **Template = top half only.** A template supplies driver specs, revenue/COGS lines, opex lines,
+  capex lines (in a small formula language, `engine/spec.py`) and a plain-Python twin
+  (`reference_top`). The framework (`engine/core.py`) adds headcount by role, P&L tail, fixed assets,
+  working capital, debt, cash flow and balance sheet — in both formula and Python form.
+- **One formula text per line for every period** (optional `first` for period 1), rendered per
+  column — the "same formula across periods" rule holds by construction and is tested.
+- **Tiers differ in presentation only.** Light = Inputs (with scenario selector) + P&L (annual summary
+  + period detail) + Checks. Full = Dashboard, Inputs, Monthly/Annual, P&L, Cash Flow, Balance Sheet,
+  Headcount, Checks. Same calculation lines ⇒ identical numbers (tested), so a Light→Full upgrade
+  never changes a figure.
+- **Annual granularity computes on annual columns**, with formulas that give the same yearly revenue,
+  gross profit, EBITDA and payroll as the monthly model (e.g. the cafe traffic ramp uses the exact
+  average of the monthly ramp). Debt timing and tax differ slightly by design (repayments start the
+  period after drawdown; tax is assessed per period).
+- **Challenger** recomputes every scenario-year from the brief with `reference_run` + the template's
+  `reference_top` (no shared code with the formula builder) and requires: 0 formula errors, ≤ $1
+  difference on revenue, gross profit, EBITDA, net income, year-end cash and loan (+ total assets and
+  CFO in full tier), assets = liabilities + equity, in-file verdict PASS, revenue Low < Base < High.
+
+### Economics defaults (for CFO review)
+- Tax: losses carried forward without limit (tax paid when cumulative pre-tax income reaches a new
+  high); no tax refunds, no tax payable timing.
+- Depreciation: straight line on cumulative capex over `dep_years`, never below zero net book value.
+- Loan: drawn in period 1, straight-line principal from period 2 over the term; interest on the
+  average balance after drawdown.
+- Working capital: AR = revenue × days / 30 (or 360); inventory and AP on COGS days.
+- Funding: equity and loan both arrive in period 1; opening balance sheet is empty.
+
+### Consequences
+- A new template (E03–E06) is ~150 lines: specs, top-half lines, Python twin, default brief.
+- Revisit: multi-vintage depreciation, tax payable timing, revolving credit, and goal modules (E07).
