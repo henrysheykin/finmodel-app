@@ -11,9 +11,8 @@ the answer next to the item (agents read this file every run).
 - [ ] D2 Payment provider: Stripe (you handle VAT/sales tax yourself) or a merchant of
       record such as Lemon Squeezy or Paddle (they handle tax, higher fee). Code
       supports Stripe first, adapter for the other.
-- [ ] D3 Price — Henry 2026-10-16: **Light $149, bundles yes** (accountant pack; Light->Full
-      upgrade = pay the difference). **Open: Full price** (recommended $349) and the pack price
-      (recommended 5 Full for $1,250).
+- [x] D3 Price — Henry 2026-10-16: **Light $149, Full $349, pack 5 × Full $1,250**, Light->Full
+      upgrade = pay the difference. **Refund window: 7 days.**
 - [x] D5 FinModelsLab vs StartupModel — Henry 2026-10-16: **separate brands**. No links,
       copy or upgrade credit between them (ADR-002).
 - [ ] D4 Hosting for the Docker image (options in `docs/DEPLOY.md` after E15).
