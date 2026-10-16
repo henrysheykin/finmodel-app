@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · M · M03 landing copy (EN) · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/5
+  `content/landing.md`: all design sections, meta/OG, 6 FAQ, notes for E13 (placeholders, corrected claims, JSON-LD).
+  Removed the design's "three AI agents build it" claim (contradicts the core idea); Sheets/Numbers compatibility marked [VERIFY].
+  Henry cleared startupmodels.co (inactive). Open for Henry: [PRICE_FULL], [PACK_PRICE], [REFUND_WINDOW]. marketing:content-creation not installed.
 - 2026-10-16 · M · decisions from Henry recorded · PR https://github.com/henrysheykin/finmodel-app/pull/4
   ADR-002: domain startup-model.com, brand StartupModel (picked from Henry's 6 domains); Light $149 + bundles; separate from FinModelsLab.
   Open for Henry: Full price, pack price; check "Startup Models" (startupmodels.co) collision + TMview/USPTO. E13 must replace Ledgerline in app/ and landing.
