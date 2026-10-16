@@ -260,7 +260,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: 5 more files merged.
 
 ### M07 — Email copy
-- status: TODO
+- status: IN_PROGRESS (2026-10-16)
 - depends: M02
 - skills: marketing:email-sequence (opt)
 - do: `content/email/`: order received, model ready, build failed, refund issued,
