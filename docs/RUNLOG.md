@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · E · E03 SaaS template · DONE · https://github.com/henrysheykin/finmodel-app/pull/12
+  Customers by channel (organic + paid/CAC), churn, ARPA, expansion, MRR waterfall, hosting/support COGS, role payroll,
+  simplified deferred revenue, SaaS metrics (ARR, CAC, LTV/CAC, payback, runway); stage defaults ×4. Framework: liability
+  and KPI hooks, per-role headcount growth. 131 tests (SaaS 12-combo + 4-stage LibreOffice matrix). Sample samples/saas-full.xlsx.
+  For Henry: HUMAN_TODO R1 — CFO review of SaaS (memo docs/templates/saas.md, questions at the end); not blocking.
 - 2026-10-16 · M · M06 SEO pages batch 2 · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/11
   5 pages: restaurant break-even guide, E-2 visa projections (B2B), AI generators vs verified model, projections for accountants (B2B), 20-point model review checklist.
   All cafe-backed; pages needing SaaS/services/rental/retail/DCF templates wait for E03–E07. Sources: 9 FAM 402.9-6(E), Ankura (Apr 2026), quoted verbatim.
