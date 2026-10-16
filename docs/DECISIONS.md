@@ -148,3 +148,25 @@ prices from config; M08 legal drafts use the 7-day refund window.
 ### Consequences
 - A new template (E03–E06) is ~150 lines: specs, top-half lines, Python twin, default brief.
 - Revisit: multi-vintage depreciation, tax payable timing, revolving credit, and goal modules (E07).
+
+## ADR-004 — Payments: Stripe; hosting: Railway (2026-10-16)
+
+**Status:** Accepted · **Deciders:** Henry ("stripe", "vercel/railway"), M track (recorded, picked Railway)
+
+### Decision
+- **Payments: Stripe Checkout** (test mode until go-live). No merchant of record, so the
+  Lemon Squeezy / Paddle adapter stub in E11 is optional, not required.
+- **Hosting: Railway** — the one Docker image from ADR-001 deployed as two services (web,
+  `python -m worker.main`) plus a Railway Postgres; secrets only in Railway variables.
+
+### Why Railway, not Vercel
+Vercel runs serverless functions and static sites; it does not run a persistent worker
+process polling the jobs table, and the LibreOffice recalculation needs a full container.
+Railway runs our Dockerfile as-is, including a long-running worker, and offers managed
+Postgres. Splitting the landing onto Vercel would break ADR-001's single server-rendered
+app for little gain.
+
+### Consequences
+- E15 `docs/DEPLOY.md` targets Railway first (other Docker hosts stay as alternatives).
+- E11 Stripe webhook URL will be the Railway domain / startup-model.com.
+- Henry owns VAT / sales-tax handling (Stripe Tax or own registration) — HUMAN_TODO D2.
