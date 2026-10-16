@@ -33,6 +33,11 @@ the answer next to the item (agents read this file every run).
       (a) how long the 5-model pack credits stay valid (M02 suggested 12 months);
       (b) delivered files: StartupModel branding inside the workbook or none / white-label for firms?)
 
+- [ ] D9 Failed-build policy (from M07, `content/email/build-failed.md`): when a model fails the
+      checks, what does the customer get? Option A: automatic full refund at once. Option B: we fix
+      and deliver within N business days (e.g. 2), or refund if they prefer. Also: support email
+      address for all emails (`[SUPPORT_EMAIL]`).
+
 ## Accounts & keys (put keys only into the hosting provider's env vars, never in chat or the repo)
 - [ ] A1 Anthropic API key with a monthly spend limit (for the brief builder).
 - [ ] A2 Stripe account, test-mode keys first (put them only into Railway env vars).
