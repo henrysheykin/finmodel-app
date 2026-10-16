@@ -212,7 +212,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: `docs/marketing/competitors.md` with a comparison table + 5 gaps we can own.
 
 ### M02 — ICP, positioning, brand name options
-- status: TODO
+- status: IN_PROGRESS (2026-10-16)
 - depends: M01
 - skills: deep-research, marketing:brand-review (opt)
 - do: 2–3 ICPs, positioning statement, message house, 8 name candidates with
