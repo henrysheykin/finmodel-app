@@ -25,7 +25,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   (0 errors) and the challenger passes all 3 scenarios.
 
 ### E02 — Engine framework: brief schema, template base, tiers, 3 statements
-- status: IN_PROGRESS (2026-10-16)
+- status: DONE (2026-10-16, https://github.com/henrysheykin/finmodel-app/pull/6)
 - depends: E01
 - skills: xlsx, engineering:system-design, engineering:testing-strategy
 - do: pydantic `Brief` schema (business_type, goal, stage, horizon 1/3/5,
