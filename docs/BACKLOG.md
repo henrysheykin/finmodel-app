@@ -203,7 +203,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 ## Track M — Marketing & content (weekdays)
 
 ### M01 — Competitor & market map
-- status: IN_PROGRESS (2026-10-16)
+- status: DONE (2026-10-16, PR #2)
 - depends: —
 - skills: deep-research, marketing:competitive-brief (opt)
 - do: AI model builders, template marketplaces, planning SaaS, freelancers. Note

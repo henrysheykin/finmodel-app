@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-16 · M · M01 competitor & market map · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/2
+  `docs/marketing/competitors.md`: table of AI builders, templates, planning SaaS, freelancers; FinModelsLab overlap; 5 gaps; price bands.
+  Main finding: nobody combines the buyer's own numbers, a live-formula .xlsx, a one-cell scenario switch, a Checks sheet and an independent recompute at a one-off price.
+  FinModelsLab ($99 x 2,000 templates) overlaps on headline features: price Ledgerline clearly above $99. New HUMAN_TODO D5.
+  Skill marketing:competitive-brief not installed; deep-research used. Reddit/G2 review text could not be fetched (blocked).
 - 2026-10-16 · E · E01 · DONE · https://github.com/henrysheykin/finmodel-app/pull/1
   Scaffold (pyproject 3.12, ruff, pytest, app/worker skeletons, .env.example), own headless LibreOffice
   recalc `engine/recalc.py`, cafe template + challenger ported to `engine/` (output identical to poc, challenger
