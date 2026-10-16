@@ -18,6 +18,13 @@ the answer next to the item (agents read this file every run).
 - [x] D4 Hosting — Henry 2026-10-16: "Vercel/Railway" → **Railway** for app + worker + Postgres
       (ADR-004). Vercel is not used: it runs serverless functions, not our Docker image with
       LibreOffice and a long-running worker.
+- [ ] D6 SEO volumes (from M04, `docs/marketing/seo-plan.md`): the Ahrefs connector returned
+      "Insufficient plan", so no keyword volumes were measured. Either upgrade the Ahrefs API plan,
+      or export volumes from Google Keyword Planner (your Google Ads account) for the keywords in
+      seo-plan.md, then drop the CSV into `docs/marketing/`.
+- [ ] D7 Brand risk (from M04): **startupmodels.io** ranks for "SaaS financial model" with a name
+      nearly identical to StartupModel (different from the inactive startupmodels.co). Check
+      whether it is active and holds a mark; decide keep / adjust the brand.
 
 ## Accounts & keys (put keys only into the hosting provider's env vars, never in chat or the repo)
 - [ ] A1 Anthropic API key with a monthly spend limit (for the brief builder).
