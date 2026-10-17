@@ -10,14 +10,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from app.briefing import TEMPLATE_FOR, Answers, PrefillBriefSource
-from engine.templates import get_template
+from engine.templates import TEMPLATES, get_template, planned
 
-BUSINESS_TYPES = [
-    ("saas", "SaaS / software"),
-    ("restaurant_cafe", "Restaurant / cafe"),
-    ("retail_ecommerce", "Retail / e-commerce"),
-    ("professional_services", "Professional services"),
-    ("real_estate", "Real estate (coming soon)"),
+#: wizard choices from the template catalog (ADR-009): live templates in their order, then announced ones
+BUSINESS_TYPES = [(bt, t.title) for t in TEMPLATES.values() for bt in t.business_types] + [
+    (bt, f"{label} (coming soon)") for bt, label in planned().items()
 ]
 GOALS = [
     ("revenue_profit", "Revenue and profit projections"),
@@ -42,12 +39,7 @@ PLANS = {
     },
 }
 
-KEY_NUMBERS: dict[str, list[str]] = {
-    "saas": ["start_customers", "arpa", "churn_m", "organic_new", "mkt_budget", "cac", "equity"],
-    "cafe": ["cust_full", "ticket", "days", "cogs_pct", "rent", "capex", "equity"],
-    "retail": ["visits", "conv", "aov", "ad_budget", "cogs_pct", "stores", "equity"],
-    "services": ["senior_rate", "staff_rate", "staff_util", "contractor_hours", "ar_days", "equity"],
-}
+KEY_NUMBERS: dict[str, list[str]] = {key: list(t.key_numbers) for key, t in TEMPLATES.items()}
 
 
 @dataclass(frozen=True)

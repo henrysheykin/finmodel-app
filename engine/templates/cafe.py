@@ -11,6 +11,20 @@ class CafeTemplate(Template):
     key = "cafe"
     title = "Restaurant / cafe"
     business_types = ("restaurant_cafe",)
+    order = 20
+    key_numbers = ("cust_full", "ticket", "days", "cogs_pct", "rent", "capex", "equity")
+    sample_title = "Neighborhood cafe"
+    sample_desc = "Full workbook, three years, monthly detail"
+    sample_stage = "early"
+
+    def default_brief(self, stage: str = "planning", **opts):
+        """The cafe has one illustrative brief (engine/briefs/cafe.json) for every stage."""
+        from pathlib import Path
+
+        from engine.brief import Brief
+
+        brief = Brief.load(Path(__file__).resolve().parents[1] / "briefs" / "cafe.json")
+        return brief.with_options(stage=stage, **opts) if stage else brief
 
     def driver_specs(self) -> list[DriverSpec]:
         return [

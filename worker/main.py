@@ -6,7 +6,6 @@ Usage: python -m worker.main [--once]
 from __future__ import annotations
 
 import argparse
-import logging
 import os
 import socket
 import time
@@ -33,7 +32,9 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--once", action="store_true", help="process at most one job and exit")
     a = ap.parse_args(argv)
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    from app.logs import configure_logging
+
+    configure_logging()
     pipe = make_pipeline()
     if a.once:
         pipe.run_once()

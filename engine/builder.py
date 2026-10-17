@@ -471,7 +471,13 @@ def _write_block(wb: Workbook, pl: Plan, b: Block, sub: str | None) -> None:
                 if row.neg:
                     f = "=-" + f[1:]
             elif row.kind == "formula":
-                f = TOKEN.sub(lambda m, col=col: f"{col}{b.placed[m.group(1)]}", row.src)
+                # {key} = another row of this table in the same year; {in:driver} = the live input cell
+                f = TOKEN.sub(
+                    lambda m, col=col: (
+                        pl.input_ref(m.group(1)[3:]) if m.group(1).startswith("in:") else f"{col}{b.placed[m.group(1)]}"
+                    ),
+                    row.src,
+                )
             else:
                 raise ValueError(row.kind)
             c = ws.cell(row=r, column=1 + y, value=f)

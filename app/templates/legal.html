@@ -1,0 +1,18 @@
+{% extends "site_base.html" %}
+{% block title %}{{ title }} | StartupModel{% endblock %}
+{% block meta %}
+{% if body %}<link rel="canonical" href="{{ base_url }}/{{ page }}">{% else %}<meta name="robots" content="noindex">{% endif %}
+{% endblock %}
+{% block main %}
+<section class="doc">
+  <div class="wrap">
+    <h1>{{ title }}</h1>
+    {% if body %}
+      {{ body }}
+    {% else %}
+      <p class="notice">This page is being prepared and will be published before we take payments.
+      {% if support_email %}Questions in the meantime: <a href="mailto:{{ support_email }}">{{ support_email }}</a>.{% endif %}</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

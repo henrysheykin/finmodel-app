@@ -18,6 +18,17 @@ class Template(ABC):
     title: str = ""
     business_types: tuple[str, ...] = ()
 
+    # -- catalog (ADR-009): read by the wizard, the landing page and scripts/build_samples.py ----------
+    #: position in the wizard's business-type list
+    order: int = 100
+    #: drivers the customer can type in the wizard's "key numbers" step (must exist in all_specs)
+    key_numbers: tuple[str, ...] = ()
+    #: landing page sample row; empty title = not listed
+    sample_title: str = ""
+    sample_desc: str = ""
+    #: stage defaults used for samples/<key>-full.xlsx
+    sample_stage: str = "growing"
+
     # -- what a template must provide ------------------------------------
     @abstractmethod
     def driver_specs(self) -> list[DriverSpec]:

@@ -253,3 +253,53 @@ E19 sessions will be DB-backed, download links stay stateless).
 
 **Consequences.** Throughput is bounded by LibreOffice (~15–20 s per Light build incl. challenger);
 E17 load-tests 50 concurrent builds. Customer-facing failure messages wait for D9 / E12.
+
+## ADR-008 — Deploy shape: one Railway service running web + worker (2026-10-17, E15)
+
+**Context.** Henry wants the site live within days on accounts he already has (Railway,
+Cloudflare, Stripe). The web app and the worker share built files; on Railway a volume attaches to
+one service only, and Railway's `railway.json` (config as code) is deprecated for new services.
+
+**Decision.**
+- One Railway service from the repo `Dockerfile`. `deploy/start.sh` (the image `CMD`) fixes the
+  volume ownership as root, drops to the `app` user, runs `python -m app.manage check` and
+  `migrate`, then starts `worker.main` and uvicorn (`--proxy-headers`) in the same container. If
+  either process exits, the container exits and Railway restarts it.
+- Railway Postgres; a volume mounted at `/data` (`STORAGE_DIR=/data/storage`, set in the image).
+- No `railway.json`: healthcheck path and volume are set once in the Railway UI (`docs/DEPLOY.md`),
+  so nothing depends on the deprecated format.
+- Cloudflare: registrar + DNS, apex CNAME (flattened) to Railway, proxied, SSL mode Full.
+- `DATABASE_URL` from Railway (`postgresql://`) is normalised to `postgresql+psycopg://`.
+- App and worker log through `app.logs.configure_logging` (uvicorn alone drops app INFO events).
+
+**Options considered.** Separate web and worker services with Cloudflare R2 for files (cleaner
+scaling, but one more account and keys to set up before launch — the S3 adapter already exists, so
+this is a later switch of env vars); Vercel (no long-running worker or LibreOffice).
+
+**Consequences.** One container builds models and serves pages; a long build cannot block requests
+(separate processes), but scaling out means moving files to R2 first. Worker and web restart together.
+
+## ADR-009 — Template catalog: one file per industry (2026-10-17, E20)
+
+**Context.** Henry wants new models added over time. Adding an industry used to touch seven places
+(template file, registry tuple, `BusinessType` literal, briefing map, wizard list, wizard key numbers,
+landing samples), which invites drift between the wizard, the schema and the site.
+
+**Decision.**
+- `engine/templates/__init__.py` discovers every concrete `Template` subclass in the package; the
+  registry is sorted by the template's `order`.
+- Catalog data lives on the template: `title` (wizard and landing label), `business_types`, `order`,
+  `key_numbers` (wizard step 5), `sample_title` / `sample_desc` / `sample_stage` (landing samples,
+  `scripts/build_samples.py`).
+- `PLANNED` announces industries before their template exists ("(coming soon)" in the wizard); an entry
+  disappears automatically once a template serves its business type.
+- `Brief.business_type` is a snake_case string validated against the catalog (served + planned +
+  `other`) instead of a hand-written `Literal`.
+- The cafe template's `default_brief(stage)` returns `engine/briefs/cafe.json` (the briefing special case
+  is gone).
+- `tests/test_catalog.py` checks every registered template automatically (discovery, key numbers exist,
+  stage defaults validate, wizard/briefing/landing consistency, samples present).
+
+**Consequences.** A new industry is its template file + tests + sample + memo
+(`docs/templates/ADDING_A_TEMPLATE.md`). E08's LLM brief builder must take the business-type enum from
+`known_business_types()` when it builds its JSON schema.

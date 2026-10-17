@@ -134,6 +134,11 @@ class SaasTemplate(Template):
     key = "saas"
     title = "SaaS / software"
     business_types = ("saas",)
+    order = 10
+    key_numbers = ("start_customers", "arpa", "churn_m", "organic_new", "mkt_budget", "cac", "equity")
+    sample_title = "SaaS startup"
+    sample_desc = "Full workbook with MRR, churn, CAC payback and runway"
+    sample_stage = "early"
     kpi_title = "SaaS metrics"
     kpi_checked = {"cust_end": "cust_close", "mrr_end": "mrr_close", "new_cust": "new_total"}
     kpi_flows = ("new_total",)

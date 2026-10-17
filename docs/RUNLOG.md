@@ -2,6 +2,13 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · interactive session with Henry (go-live request) · PR https://github.com/henrysheykin/finmodel-app/pull/25
+  E15 slice: Railway deploy — one container (migrations + worker + web), Postgres URL, logging, security headers, docs/DEPLOY.md, ADR-008;
+  verified on Postgres 16 with a volume (full customer path). E13: landing from design v2 with a live preview of real engine output,
+  legal pages from content/legal, samples, robots/sitemap/llms.txt, self-hosted fonts; Lighthouse mobile 98/100/100/100, axe 0.
+  E20: template catalog (ADR-009) — a new industry is one file. E21 home services and E22 fitness templates (samples, memos).
+  E05 real estate left for the E track with the framework extensions it needs (note in BACKLOG). Priority: E05 → E07 → E17 → E18.
+  For Henry: merge #25; Railway/Stripe/Resend per docs/DEPLOY.md; L1 legal texts; R1 CFO reviews (now 5 templates); D9, D11.
 - 2026-10-17 · E · E14 admin panel · DONE · https://github.com/henrysheykin/finmodel-app/pull/23
   /admin: env credentials (off when unset, 12+ chars), per-IP login limit, signed 12 h cookie (Strict, /admin), CSRF on every action;
   orders list/filters/counters, detail (timeline, jobs, answers, brief, check report), download, re-send, re-build, refund with confirmation.

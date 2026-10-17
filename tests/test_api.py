@@ -25,12 +25,12 @@ def test_unsupported_or_invalid_answers(client):
     assert r.status_code == 422
     r = client.post("/api/orders", json={"email": "nope", "answers": ANSWERS})
     assert r.status_code == 422
-    assert client.get("/api/business-types").json()["available"] == [
-        "professional_services",
-        "restaurant_cafe",
-        "retail_ecommerce",
-        "saas",
-    ]
+    from engine.templates import planned, template_for_business_type
+
+    available = client.get("/api/business-types").json()["available"]
+    assert available == sorted(template_for_business_type())  # every catalog template (ADR-009)
+    assert {"saas", "restaurant_cafe", "retail_ecommerce", "professional_services"} <= set(available)
+    assert not set(planned()) & set(available)  # "coming soon" industries cannot be ordered
 
 
 def _ready(client, services, notifier):

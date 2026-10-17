@@ -57,11 +57,20 @@ class Settings:
             raise RuntimeError("production needs EMAIL_PROVIDER (resend|postmark), EMAIL_FROM and SUPPORT_EMAIL")
 
 
+def normalize_database_url(url: str) -> str:
+    """Hosting providers (Railway, Heroku, Render) hand out ``postgres://`` / ``postgresql://`` URLs;
+    SQLAlchemy needs the driver named explicitly to use psycopg 3."""
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg://" + url[len(prefix) :]
+    return url
+
+
 def load_settings() -> Settings:
     env = os.environ.get
     s = Settings(
         app_env=env("APP_ENV", "dev") or "dev",
-        database_url=env("DATABASE_URL", "") or "sqlite:///./dev.db",
+        database_url=normalize_database_url(env("DATABASE_URL", "") or "sqlite:///./dev.db"),
         # dev-only fallback so local runs work; prod refuses it in check()
         secret_key=env("SECRET_KEY", "") or "dev-insecure-secret-key-change-me",
         public_base_url=(env("PUBLIC_BASE_URL", "") or "http://localhost:8000").rstrip("/"),

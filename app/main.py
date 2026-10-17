@@ -47,6 +47,9 @@ def create_app(services: Services | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         if getattr(app.state, "services", None) is None:
+            from app.logs import configure_logging
+
+            configure_logging()
             cfg = load_settings()
             if not cfg.is_prod:
                 migrate(cfg.database_url)  # prod runs migrations as a deploy step (E15)
@@ -72,14 +75,30 @@ def create_app(services: Services | None = None) -> FastAPI:
 
     app = FastAPI(title="StartupModel", docs_url=None, redoc_url=None, lifespan=lifespan)
     app.state.services = services
+
+    @app.middleware("http")
+    async def security_headers(request: Request, call_next):
+        resp = await call_next(request)
+        h = resp.headers
+        h.setdefault("X-Content-Type-Options", "nosniff")
+        h.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        h.setdefault("X-Frame-Options", "DENY")
+        h.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+        sv = request.app.state.services
+        if sv is not None and sv.cfg.is_prod:
+            h.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+        return resp
+
     app.mount("/static", StaticFiles(directory=str(STATIC)), name="static")
     from app.account_web import router as account_router
     from app.admin import router as admin_router
+    from app.landing import router as landing_router
     from app.web import router as web_router
 
     app.include_router(web_router)
     app.include_router(account_router)
     app.include_router(admin_router)
+    app.include_router(landing_router)
 
     def svc(request: Request) -> Services:
         return request.app.state.services
