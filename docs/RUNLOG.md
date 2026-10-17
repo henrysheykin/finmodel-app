@@ -119,3 +119,8 @@ Newest first. One entry per scheduled run: date · track · task · result · PR
 - How it works: interactive 3-question demo brief that opens a prefilled /start; pipeline and sample file card.
 - PR https://github.com/henrysheykin/finmodel-app/pull/27 (571 tests green).
 - For Henry: "how-to" guide pages are E16 (SEO pages engine), still TODO.
+
+## 2026-10-17 — interactive session (Henry) — stale CSS after deploy
+- Returning visitors saw hero v3 unstyled: Cloudflare cached /static/site.css for 4 h under a fixed URL.
+- Fix: asset() adds a content hash (?v=…) to CSS/JS links; versioned static files are immutable, plain ones revalidate.
+- PR https://github.com/henrysheykin/finmodel-app/pull/28 (575 tests green), verified live.
