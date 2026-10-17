@@ -151,7 +151,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: tests render every template and send through the console adapter.
 
 ### E13 — Landing page and static pages
-- status: TODO
+- status: IN_PROGRESS (2026-10-17, interactive session with Henry)
 - depends: E01
 - skills: frontend-design, small-business:seo-ai-visibility
 - do: build the landing from **design v2**: `design/landing.dc.html` (layout,
@@ -192,7 +192,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: tests for auth and every action.
 
 ### E15 — Ops: logging, health, backups, deploy docs
-- status: TODO
+- status: IN_PROGRESS (2026-10-17, interactive session with Henry)
 - depends: E09
 - skills: engineering:deploy-checklist, engineering:documentation
 - do: structured logs, `/healthz`, error alert email to admin, DB backup script,
