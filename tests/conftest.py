@@ -73,3 +73,51 @@ def services_brief() -> Brief:
     from engine.templates import get_template
 
     return get_template("services").default_brief("growing")
+
+
+# --------------------------------------------------------------------------- app / pipeline
+@pytest.fixture
+def services(tmp_path):
+    """Fresh migrated SQLite DB, local storage in tmp, test settings."""
+    from adapters.storage import LocalStorage
+    from app.briefing import PrefillBriefSource
+    from app.config import Settings
+    from app.db import make_engine, make_sessionmaker, migrate
+    from app.main import Services
+
+    url = f"sqlite:///{tmp_path / 'test.db'}"
+    migrate(url)
+    cfg = Settings(
+        database_url=url,
+        secret_key="test-secret-key-0123456789abcdef0123456789",
+        public_base_url="http://testserver",
+        storage_dir=str(tmp_path / "storage"),
+        job_backoff_seconds=30,
+    )
+    return Services(cfg, make_sessionmaker(make_engine(url)), LocalStorage(cfg.storage_dir), PrefillBriefSource())
+
+
+@pytest.fixture
+def notifier():
+    from adapters.notify import RecordingNotifier
+
+    return RecordingNotifier()
+
+
+@pytest.fixture
+def client(services):
+    from fastapi.testclient import TestClient
+
+    from app.main import create_app
+
+    with TestClient(create_app(services)) as c:
+        yield c
+
+
+ANSWERS = {
+    "business_type": "professional_services",
+    "stage": "early",
+    "tier": "light",
+    "horizon_years": 1,
+    "business_name": "Acme Advisory",
+}
