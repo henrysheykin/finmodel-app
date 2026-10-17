@@ -242,7 +242,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: tests for auth and every action.
 
 ### E15 — Ops: logging, health, backups, deploy docs
-- status: IN_PROGRESS (2026-10-17, interactive session with Henry)
+- status: IN_PROGRESS (2026-10-17, scheduled E run — rate limits + docker compose)
 - continue: done in PR #24 — one Railway container (deploy/start.sh: migrations + worker + web), Postgres URL,
   logging, security headers/HSTS, docs/DEPLOY.md, verified on Postgres 16 with a volume (ADR-008).
   Left: rate limiting on `/start` POST and `/api/orders`, `docker-compose.yml` (app + postgres) for local runs
