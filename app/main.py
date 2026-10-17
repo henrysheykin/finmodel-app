@@ -4,9 +4,11 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import Response
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, ValidationError
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -18,6 +20,8 @@ from app.db import make_engine, make_sessionmaker, migrate, session_scope
 from app.models import Artifact, Order
 from app.orders import OrderError, create_order
 from engine.brief import BriefError
+
+STATIC = Path(__file__).resolve().parents[1] / "web" / "static"
 
 
 @dataclass
@@ -50,6 +54,10 @@ def create_app(services: Services | None = None) -> FastAPI:
 
     app = FastAPI(title="StartupModel", docs_url=None, redoc_url=None, lifespan=lifespan)
     app.state.services = services
+    app.mount("/static", StaticFiles(directory=str(STATIC)), name="static")
+    from app.web import router as web_router
+
+    app.include_router(web_router)
 
     def svc(request: Request) -> Services:
         return request.app.state.services

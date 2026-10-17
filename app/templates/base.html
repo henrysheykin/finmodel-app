@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}StartupModel{% endblock %}</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap top__row">
+    <a class="brand" href="/">StartupModel</a>
+    <span class="top__note">One payment per model · refund within 7 days</span>
+  </div>
+</header>
+<main id="main" class="wrap">
+{% block main %}{% endblock %}
+</main>
+<footer class="foot"><div class="wrap">© StartupModel · <a href="/#privacy">Privacy</a> · <a href="/#terms">Terms</a> · <a href="/#refunds">Refunds</a></div></footer>
+{% block scripts %}{% endblock %}
+</body>
+</html>

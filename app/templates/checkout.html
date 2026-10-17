@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Checkout — StartupModel{% endblock %}
+{% block main %}
+<div class="narrow">
+  <h1>Review and pay</h1>
+  <table class="ledger">
+    <caption class="sr-only">Order summary</caption>
+    <tbody>
+      <tr><th scope="row">Business</th><td>{{ s.business }}</td></tr>
+      <tr><th scope="row">Goal</th><td>{{ s.goal }}</td></tr>
+      <tr><th scope="row">Stage</th><td>{{ s.stage }}</td></tr>
+      <tr><th scope="row">Period</th><td>{{ s.period }}</td></tr>
+      <tr><th scope="row">Plan</th><td>{{ s.plan }}</td></tr>
+      <tr><th scope="row">Send to</th><td>{{ s.email }}</td></tr>
+      <tr class="total"><th scope="row">Total</th><td>{{ s.price }}</td></tr>
+    </tbody>
+  </table>
+  {% if s.status == "awaiting_payment" %}
+  <form method="post" action="/checkout/{{ s.order_id }}/pay">
+    <button class="btn" type="submit">Pay {{ s.price }}</button>
+  </form>
+  <p class="hint">Secure payment by Stripe. After payment your model is built, recalculated and checked, then the download link is emailed to you.</p>
+  {% else %}
+  <p class="status">Order status: <strong>{{ s.status_label }}</strong></p>
+  {% endif %}
+  <p><a href="/start">Start over</a></p>
+</div>
+{% endblock %}
