@@ -69,7 +69,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: as E03; challenger checks IRR within 0.01 pp.
 
 ### E06 — Template: Professional services
-- status: TODO
+- status: IN_PROGRESS (2026-10-17)
 - depends: E02
 - skills: xlsx
 - do: billable headcount, utilisation, rate card, retainer vs project mix,
