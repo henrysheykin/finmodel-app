@@ -1,0 +1,55 @@
+# Local stack: the production image (web + worker in one container, deploy/start.sh) on Postgres 16.
+#   docker compose up --build --wait      # then open http://localhost:8000
+#   COMPOSE_BASE_URL=http://localhost:8000 pytest -m compose tests/test_compose_e2e.py
+#   docker compose down -v                # stop and delete the local data
+# LOCAL USE ONLY: fake payments (/dev/pay page), emails printed to the log (`docker compose logs app`),
+# throwaway credentials below. Production settings live in the hosting provider (docs/DEPLOY.md).
+name: startupmodel
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: startupmodel
+      POSTGRES_PASSWORD: local-only
+      POSTGRES_DB: startupmodel
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U startupmodel -d startupmodel"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: dev
+      DATABASE_URL: postgresql://startupmodel:local-only@db:5432/startupmodel
+      SECRET_KEY: ${SECRET_KEY:-local-compose-only-not-a-secret-0123456789}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:8000}
+      STORAGE_BACKEND: local
+      STORAGE_DIR: /data/storage
+      PAYMENT_PROVIDER: fake
+      EMAIL_PROVIDER: console
+      SUPPORT_EMAIL: support@example.com
+      ADMIN_USER: ${ADMIN_USER:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-local-admin-only}
+      LOG_LEVEL: INFO
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    volumes:
+      - app-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3)"]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+      start_period: 5s
+
+volumes:
+  db-data:
+  app-data:
