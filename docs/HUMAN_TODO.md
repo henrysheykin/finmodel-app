@@ -43,7 +43,8 @@ the answer next to the item (agents read this file every run).
 
 ## Accounts & keys (put keys only into the hosting provider's env vars, never in chat or the repo)
 - [ ] A1 Anthropic API key with a monthly spend limit (for the brief builder).
-- [ ] A2 Stripe account, test-mode keys first (put them only into Railway env vars).
+- [ ] A2 Stripe account, test-mode keys first (put them only into Railway env vars). Exact steps (keys, webhook
+      endpoint `/webhooks/stripe` and its 3 events, local test with the Stripe CLI): `docs/PAYMENTS.md`.
 - [ ] A3 Email provider (Resend or Postmark) + DNS records for the domain.
 - [ ] A4 Railway account (project with app, worker and Postgres services).
 - [ ] A5 Domain (after D1).

@@ -132,7 +132,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   `awaiting_payment` (Chromium is preinstalled; see environment notes).
 
 ### E11 — Payments
-- status: IN_PROGRESS (2026-10-17)
+- status: DONE (2026-10-17, https://github.com/henrysheykin/finmodel-app/pull/20)
 - depends: E10
 - skills: engineering:system-design, engineering:code-review
 - do: payment adapter interface; Stripe Checkout implementation (test mode),
@@ -168,7 +168,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   scroll at 360 px; `grep -ri "1F3864\|2563EB\|DM Sans"` in web/ is empty.
 
 ### E19 — Customer accounts: magic-link login, "My models", downloads
-- status: TODO
+- status: IN_PROGRESS (2026-10-17)
 - depends: E09, E11
 - skills: engineering:system-design, engineering:code-review, engineering:testing-strategy
 - do: passwordless login (ADR-006): email → single-use, hashed, 15-minute magic-link token sent

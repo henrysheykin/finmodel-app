@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · E11 payments · DONE · https://github.com/henrysheykin/finmodel-app/pull/20
+  Stripe Checkout over httpx (test mode; live keys refused without ALLOW_LIVE_PAYMENTS=1), signed webhooks with replay window,
+  amount/currency checks, idempotent paid, automatic refund of a duplicate payment, refunds service, success/cancel pages, dev test-payment page.
+  For Henry: HUMAN_TODO A2 — test keys + webhook endpoint, steps in docs/PAYMENTS.md. No second provider stub (D2 = Stripe).
 - 2026-10-17 · E · E10 wizard + checkout · DONE · https://github.com/henrysheykin/finmodel-app/pull/19
   /start: 7 steps (type, goal, stage, period, key numbers with stage defaults, plan, email), live summary, progressive enhancement,
   /checkout/{id} summary with masked email. Playwright at 360 px. CI installs Chromium. frontend-design skill not installed; design v2 tokens used.
