@@ -22,6 +22,8 @@ class Settings:
     s3_bucket: str = ""
     s3_endpoint_url: str = ""
     admin_email: str = ""
+    admin_user: str = ""
+    admin_password: str = ""
     payment_provider: str = "fake"
     stripe_secret_key: str = ""
     stripe_webhook_secret: str = ""
@@ -47,6 +49,8 @@ class Settings:
         """Refuse to run in production with unsafe defaults."""
         if self.is_prod and (len(self.secret_key) < 32 or self.secret_key.startswith("dev-insecure")):
             raise RuntimeError("SECRET_KEY must be set (32+ characters) in production")
+        if self.admin_password and len(self.admin_password) < 12:
+            raise RuntimeError("ADMIN_PASSWORD must be at least 12 characters")
         if self.is_prod and self.payment_provider != "stripe":
             raise RuntimeError("production must use PAYMENT_PROVIDER=stripe")
         if self.is_prod and (self.email_provider == "console" or not self.email_from or not self.support_email):
@@ -66,6 +70,8 @@ def load_settings() -> Settings:
         s3_bucket=env("S3_BUCKET", ""),
         s3_endpoint_url=env("S3_ENDPOINT_URL", ""),
         admin_email=env("ADMIN_EMAIL", ""),
+        admin_user=env("ADMIN_USER", ""),
+        admin_password=env("ADMIN_PASSWORD", ""),
         payment_provider=env("PAYMENT_PROVIDER", "") or "fake",
         stripe_secret_key=env("STRIPE_SECRET_KEY", ""),
         stripe_webhook_secret=env("STRIPE_WEBHOOK_SECRET", ""),

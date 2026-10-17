@@ -86,3 +86,11 @@ def test_rebuild_queues_a_new_round(services):
         keys = [j.idempotency_key for j in s.query(Job).filter_by(order_id=oid).order_by(Job.id)]
         assert keys == [f"build:{oid}:1", f"build:{oid}:2"]
         assert s.get(Order, oid).status == "paid"
+
+
+def test_rebuild_never_marks_an_unpaid_order_paid(services):
+    oid = _order(services)
+    with session_scope(services.sessions) as s, pytest.raises(OrderError, match="only ready or failed"):
+        rebuild(s, services.cfg, s.get(Order, oid))
+    with session_scope(services.sessions) as s:
+        assert s.get(Order, oid).status == "awaiting_payment"

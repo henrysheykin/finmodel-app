@@ -133,6 +133,9 @@ def mark_paid(
 
 def rebuild(s: Session, cfg: Settings, order: Order, note: str = "admin re-build") -> Job:
     """Queue another build of a ready or failed order (admin action, E14)."""
+    if order.status not in ("ready", "failed"):
+        # awaiting_payment → paid is the payment transition; a re-build must never stand in for a payment
+        raise OrderError(f"order {order.id} is {order.status}; only ready or failed orders can be re-built")
     transition(s, order, "paid", note)
     order.failure_reason = None
     return enqueue_build(s, order, cfg, reason=note)
