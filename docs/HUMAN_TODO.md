@@ -41,7 +41,19 @@ the answer next to the item (agents read this file every run).
       and deliver within N business days (e.g. 2), or refund if they prefer. Also: support email
       address for all emails (`[SUPPORT_EMAIL]`).
 
+- [ ] D11 Five-model pack and Light→Full upgrade (from E13): the site offers both, but there is no checkout for them
+      yet — the landing says "write to us". Keep them manual (you invoice by Stripe payment link / refund the
+      difference) or add them to checkout (an E task)?
+
+## Legal (from E13, blocks Stripe live activation)
+- [ ] L1 Privacy policy, Terms of service, Refund policy (Henry 2026-10-17: provides his own texts). Save them as
+      `content/legal/privacy.md`, `terms.md`, `refunds.md` (Markdown: `#` headings, paragraphs, `-` lists,
+      `**bold**`, `[link](url)`), or send them to an agent to add. Until then `/privacy`, `/terms`, `/refunds`
+      show "being prepared" and are not indexed. Stripe checks these pages before enabling live payments.
+
 ## Accounts & keys (put keys only into the hosting provider's env vars, never in chat or the repo)
+Step-by-step for all of these: `docs/DEPLOY.md` (Railway service + Postgres + volume, Cloudflare DNS, Stripe
+webhook, Resend domain).
 - [ ] A1 Anthropic API key with a monthly spend limit (for the brief builder).
 - [ ] A2 Stripe account, test-mode keys first (put them only into Railway env vars). Exact steps (keys, webhook
       endpoint `/webhooks/stripe` and its 3 events, local test with the Stripe CLI): `docs/PAYMENTS.md`.

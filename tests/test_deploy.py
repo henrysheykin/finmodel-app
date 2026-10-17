@@ -53,5 +53,5 @@ def test_start_script_is_valid_bash():
 def test_image_ships_runtime_folders():
     """The app reads emails from content/ and assets from web/ at run time; the image must copy both."""
     docker = (ROOT / "Dockerfile").read_text()
-    for folder in ("content", "web", "deploy", "engine", "app", "worker", "adapters"):
+    for folder in ("content", "samples", "web", "deploy", "engine", "app", "worker", "adapters"):
         assert f"COPY {folder} ./{folder}" in docker, folder

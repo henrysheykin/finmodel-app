@@ -28,7 +28,7 @@ include = ["engine*", "app*", "worker*", "adapters*"]
 
 [tool.setuptools.package-data]
 engine = ["briefs/*.json"]
-app = ["migrations/*.py", "migrations/*.mako", "migrations/versions/*.py", "templates/*.html"]
+app = ["migrations/*.py", "migrations/*.mako", "migrations/versions/*.py", "templates/*.html", "templates/admin/*.html", "data/*.json"]
 
 [tool.ruff]
 line-length = 120

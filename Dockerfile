@@ -25,6 +25,7 @@ COPY adapters ./adapters
 COPY alembic.ini ./
 COPY web ./web
 COPY content ./content
+COPY samples ./samples
 COPY deploy ./deploy
 RUN pip install . && chmod +x deploy/start.sh
 

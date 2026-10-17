@@ -1,0 +1,251 @@
+{% extends "site_base.html" %}
+{% block title %}Custom Excel Financial Model, Checked | StartupModel{% endblock %}
+{% block meta %}
+<meta name="description" content="Answer a short questionnaire and get an Excel financial model built on your numbers: live formulas, low/base/high scenarios and a check report. From {{ price_light }}.">
+<link rel="canonical" href="{{ base_url }}/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="StartupModel">
+<meta property="og:url" content="{{ base_url }}/">
+<meta property="og:title" content="Your business plan as a working Excel model">
+<meta property="og:description" content="Built on your numbers. Live formulas, three scenarios, every figure recomputed before delivery. One payment, from {{ price_light }}.">
+<meta name="twitter:card" content="summary">
+{% for ld in ld_json %}<script type="application/ld+json">{{ ld }}</script>
+{% endfor %}
+{% endblock %}
+
+{% macro sheet_row(r) -%}
+{%- if r.chk -%}
+<div class="r r--chk{% if r.kind %} r--{{ r.kind }}{% endif %}" role="row">
+  <span role="{{ 'columnheader' if r.kind == 'head' else 'rowheader' }}">{{ r.label }}</span>
+  <span role="{{ 'columnheader' if r.kind == 'head' else 'cell' }}"{% if r.kind != 'head' %} class="res{% if r.warn %} res--warn{% endif %}"{% endif %}>{{ r.result }}</span>
+  <span role="{{ 'columnheader' if r.kind == 'head' else 'cell' }}"{% if r.kind != 'head' %} class="what"{% endif %}>{{ r.what }}</span>
+</div>
+{%- else -%}
+<div class="r{% if r.kind %} r--{{ r.kind }}{% endif %}" role="row">
+  <span role="{{ 'columnheader' if r.kind == 'head' else 'rowheader' }}">{% if r.label %}{{ r.label }}{% else %}<span class="sr-only">Line item</span>{% endif %}</span>
+  {%- for c in r.cells %}
+  <span role="{{ 'columnheader' if r.kind == 'head' else 'cell' }}"{% if c.on %} class="on"{% endif %}>{{ c.v }}{% if c.tick %}<span class="tk" aria-hidden="true">✓</span>{% elif r.kind != 'head' %}<span class="tk" aria-hidden="true"></span>{% endif %}</span>
+  {%- endfor %}
+</div>
+{%- endif -%}
+{%- endmacro %}
+
+{% block main %}
+<section id="top" class="hero pad">
+  <div class="wrap">
+    <div class="hero__top">
+      <div class="hero__copy">
+        <h1>A financial model built on your numbers, with the maths proven before you get it</h1>
+        <p class="hero__sub">Answer a short brief and get an Excel workbook with live formulas, low, base and high cases, and a Checks sheet your lender, investor or client can read. For loan applications, fundraising and client work.</p>
+        <div class="hero__cta">
+          <a class="btn" href="/start">Start a model</a>
+          <a href="#samples">Open a sample file</a>
+        </div>
+        <span class="hero__note">From {{ price_light }}, one payment per model. Full refund within 7 days if it doesn't fit your business.</span>
+      </div>
+      <aside class="brief" aria-labelledby="brief-h">
+        <h2 id="brief-h">What the brief asks</h2>
+        <ol>
+          <li>What kind of business it is</li>
+          <li>What the model should answer</li>
+          <li>Where the business is today</li>
+          <li>Years to plan, monthly or annual</li>
+          <li>A few key numbers, or sample data</li>
+          <li>Light or Full workbook</li>
+        </ol>
+        <p>Available now: {{ industries | join(", ") }}.</p>
+      </aside>
+    </div>
+
+    <div class="sheet" id="sheet">
+      <div class="sheet__bar">
+        <div class="sheet__title">
+          <strong>{{ sheet_title }}</strong>
+          <span>Real output of the generator, from the cafe sample. Switch the case or the sheet.</span>
+        </div>
+        <div class="cases" role="group" aria-label="Case">
+          {% for k, label in cases.items() %}<button type="button" data-case="{{ k }}" aria-pressed="{{ 'true' if k == '2' else 'false' }}">{{ label }}</button>{% endfor %}
+        </div>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Sheets">
+        {% for k, label in tabs %}<button type="button" role="tab" id="tab-{{ k }}" data-tab="{{ k }}" aria-controls="sheet-grid" aria-selected="{{ 'true' if k == 'sum' else 'false' }}"{% if k != 'sum' %} tabindex="-1"{% endif %}>{{ label }}</button>{% endfor %}
+      </div>
+      <div class="fbar" aria-label="Formula of the highlighted cell">
+        <span class="fbar__cell" id="fcell">{{ view.cell }}</span>
+        <span class="fbar__f" id="fformula">{{ view.formula }}</span>
+      </div>
+      <div class="grid-scroll" tabindex="0" role="region" aria-label="Sheet preview, scrolls sideways">
+        <div class="grid" id="sheet-grid" role="table" aria-labelledby="tab-sum" aria-live="polite">
+          {% for r in view.rows %}{{ sheet_row(r) }}{% endfor %}
+        </div>
+      </div>
+      <div class="sheet__foot">
+        <span><b aria-hidden="true">✓</b> marks a total the independent recalculation agreed with, to the dollar.</span>
+        <a href="#checks">How the checks work</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="section">
+  <div class="wrap">
+    <h2 class="h2">From brief to workbook in three steps</h2>
+    <ol class="steps">
+      <li><span class="steps__n">Step 1</span><h3>Answer the brief</h3><p>Plain questions about how you sell, what it costs and what you need to decide. No finance terms. Not ready to share numbers? Start from sample data and change it later.</p></li>
+      <li><span class="steps__n">Step 2</span><h3>We build it, then check it</h3><p>Your answers become a structured brief. Tested templates write every formula. A separate program then rebuilds every total from your inputs and compares, in all three cases.</p></li>
+      <li><span class="steps__n">Step 3</span><h3>Download and make it yours</h3><p>Open it in Excel. Change any input and every sheet follows. The file is yours to keep, edit and send to your lender or investor.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="checks" class="checks">
+  <div class="wrap">
+    <div class="checks__copy">
+      <h2 class="h2">We check the maths before you see it</h2>
+      <p>After the workbook is built, an independent program recalculates it from your inputs. If any annual total differs by more than one dollar, or any check fails, the file is held back and fixed. The same checks stay in your workbook as live formulas, so they keep working after you edit it.</p>
+    </div>
+    <ul>
+      <li><span aria-hidden="true">✓</span>Annual figures tie to the monthly build</li>
+      <li><span aria-hidden="true">✓</span>Cash rolls forward from one month to the next</li>
+      <li><span aria-hidden="true">✓</span>The balance sheet balances in every period (Full)</li>
+      <li><span aria-hidden="true">✓</span>EBITDA equals gross profit less operating costs</li>
+      <li><span aria-hidden="true">✓</span>The case switch resolves low, base and high</li>
+      <li><span aria-hidden="true">✓</span>No error values anywhere in the file</li>
+      <li><span aria-hidden="true">✓</span>A funding gap is flagged if cash goes below zero</li>
+    </ul>
+  </div>
+</section>
+
+<section id="inside" class="section">
+  <div class="wrap">
+    <div>
+      <h2 class="h2">What's in the workbook</h2>
+      <p class="lead">Inputs are blue, formulas are black, links between sheets are green. Nothing is pasted as a value.</p>
+    </div>
+    <div class="tbl-scroll" tabindex="0" role="region" aria-label="Sheets in the workbook">
+      <table class="tbl tbl--inside">
+        <thead><tr><th scope="col">Sheet</th><th scope="col">What it shows</th><th scope="col" class="c">Light</th><th scope="col" class="c">Full</th></tr></thead>
+        <tbody>
+          {% for name, what, light in [
+            ("Inputs", "Every assumption in one place, with low, base and high side by side", true),
+            ("P&L", "Profit and loss by year, with margins", true),
+            ("Checks", "Each test with its live result", true),
+            ("Dashboard", "Key results for the selected case, and the case switch", false),
+            ("Monthly", "Month-by-month build of revenue, costs and cash", false),
+            ("Cash flow", "Operating, investing and financing cash, and runway", false),
+            ("Balance sheet", "Assets, liabilities and equity, balanced every period", false),
+            ("Headcount", "Roles, start dates and payroll cost", false),
+          ] %}
+          <tr><th scope="row">{{ name }}</th><td>{{ what }}</td>
+            {% if light %}<td class="y"><span aria-hidden="true">✓</span><span class="sr-only">Included</span></td>{% else %}<td class="n"><span aria-hidden="true">–</span><span class="sr-only">Not included</span></td>{% endif %}
+            <td class="y"><span aria-hidden="true">✓</span><span class="sr-only">Included</span></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+{% if samples %}
+<section id="samples" class="samples">
+  <div class="wrap">
+    <div class="samples__copy">
+      <h2 class="h2">Open a sample before you pay</h2>
+      <p class="lead">Real files from the same generator. Click into any cell and read the formula.</p>
+    </div>
+    <ul class="files">
+      {% for s in samples %}
+      <li>
+        <div class="files__name"><strong>{{ s.title }}</strong><div>{{ s.desc }}</div></div>
+        <a class="dl" href="/samples/{{ s.slug }}.xlsx" download><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download .xlsx<span class="sr-only">: {{ s.title }} sample</span></a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="h2">Other ways to get a model</h2>
+    <div class="tbl-scroll" tabindex="0" role="region" aria-label="Comparison with other options">
+      <table class="tbl tbl--compare">
+        <thead><tr><th scope="col"><span class="sr-only">Option</span></th><th scope="col">First usable draft</th><th scope="col">Fits your business</th><th scope="col">Maths checked</th><th scope="col">Cost</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Blank spreadsheet</th><td>Several weekends</td><td>Yes, if you get it right</td><td>Only by you</td><td>Your time</td></tr>
+          <tr><th scope="row">Ready-made template</th><td>Fast if your business matches the file</td><td>After you adapt it</td><td>Your changes are on you</td><td>Low</td></tr>
+          <tr><th scope="row">AI spreadsheet assistant</th><td>Minutes</td><td>As good as your prompts</td><td>You audit every formula</td><td>Monthly subscription</td></tr>
+          <tr><th scope="row">Freelance modeller</th><td>Days to weeks</td><td>Yes</td><td>Depends on the person</td><td>Highest</td></tr>
+          <tr class="us"><th scope="row">StartupModel</th><td>Minutes after payment</td><td>Built from your answers</td><td>Every file, before delivery</td><td>{{ price_light }} or {{ price_full }}, once</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section who">
+  <div class="wrap">
+    <h2 class="h2">Who uses it</h2>
+    <div class="who__grid">
+      <div><h3>Business loan applicants</h3><p>Three years of projections, monthly in year one, with a cash flow and a balance sheet that balances. The package a bank or SBA lender asks for.</p></div>
+      <div><h3>Founders talking to investors</h3><p>Runway, burn and unit economics with downside and upside cases, ready when an investor asks for the model.</p></div>
+      <div><h3>Accountants and advisers</h3><p>Start each client forecast from a checked structure you can put your name to. Five Full models for $1,250{% if support_email %}: <a href="mailto:{{ support_email }}?subject=Five-model%20pack">write to us</a> to set it up{% endif %}.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="section pricing">
+  <div class="wrap">
+    <div>
+      <h2 class="h2">One payment per model</h2>
+      <p class="lead">No subscription. The file is yours. Full refund within 7 days if it doesn't fit your business.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <div><h3>Light</h3><p class="plan__for">For a quick answer or an early conversation</p></div>
+        <span class="plan__price">{{ price_light }}</span>
+        <ul>
+          <li>Inputs, P&amp;L and Checks</li>
+          <li>Low, base and high cases</li>
+          <li>Monthly or annual, 1, 3 or 5 years</li>
+          <li>Upgrade to Full later by paying the difference</li>
+        </ul>
+        <a class="btn btn--ghost" href="/start?plan=light">Choose Light</a>
+      </div>
+      <div class="plan plan--main">
+        <div><h3>Full</h3><p class="plan__for">For investors, lenders and real decisions</p></div>
+        <span class="plan__price">{{ price_full }}</span>
+        <ul>
+          <li>Everything in Light</li>
+          <li>Monthly detail, cash flow, balance sheet and headcount</li>
+          <li>Dashboard with the case switch</li>
+          <li>Advisers: 5 Full models for $1,250</li>
+        </ul>
+        <a class="btn" href="/start?plan=full">Choose Full</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" class="section faq">
+  <div class="wrap">
+    <h2 class="h2">Questions</h2>
+    <dl>
+      {% for q, a in faq %}<div><dt>{{ q }}</dt><dd>{{ a }}</dd></div>
+      {% endfor %}
+    </dl>
+  </div>
+</section>
+
+<section class="final pad">
+  <div class="wrap">
+    <h2 class="h2">A short brief now. A checked workbook in your inbox.</h2>
+    <a class="btn" href="/start">Start a model</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="application/json" id="sheet-views">{{ views_json }}</script>
+<script src="/static/landing.js" defer></script>
+{% endblock %}

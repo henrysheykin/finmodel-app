@@ -1,0 +1,908 @@
+{
+ "title": "Neighborhood cafe, three-year plan",
+ "template": "cafe",
+ "years": 3,
+ "inputs": [
+  {
+   "key": "cust_full",
+   "label": "Customers per day at full traffic",
+   "unit": "#",
+   "fmt": "int",
+   "values": [
+    120.0,
+    160.0,
+    210.0
+   ]
+  },
+  {
+   "key": "ticket",
+   "label": "Average ticket",
+   "unit": "$",
+   "fmt": "usd2",
+   "values": [
+    5.5,
+    6.5,
+    7.5
+   ]
+  },
+  {
+   "key": "traffic_g",
+   "label": "Traffic growth per year (after year 1)",
+   "unit": "%",
+   "fmt": "pct",
+   "values": [
+    0.03,
+    0.06,
+    0.09
+   ]
+  },
+  {
+   "key": "cogs_pct",
+   "label": "Food & beverage cost, % of revenue",
+   "unit": "%",
+   "fmt": "pct",
+   "values": [
+    0.36,
+    0.33,
+    0.3
+   ]
+  },
+  {
+   "key": "rent",
+   "label": "Rent per month",
+   "unit": "$",
+   "fmt": "usd",
+   "values": [
+    4500.0,
+    4500.0,
+    4500.0
+   ]
+  },
+  {
+   "key": "staff_fte",
+   "label": "Cafe staff: headcount (FTE)",
+   "unit": "FTE",
+   "fmt": "dec1",
+   "values": [
+    3.0,
+    3.5,
+    4.0
+   ]
+  },
+  {
+   "key": "staff_salary",
+   "label": "Cafe staff: salary per FTE per year",
+   "unit": "$",
+   "fmt": "usd",
+   "values": [
+    30000.0,
+    32000.0,
+    34000.0
+   ]
+  }
+ ],
+ "formulas": {
+  "sum": {
+   "cell": "Dashboard!B8",
+   "formula": "='P&L'!B5"
+  },
+  "inp": {
+   "cell": "Inputs!E7",
+   "formula": "=CHOOSE(Dashboard!$B$4,B7,C7,D7)"
+  },
+  "pl": {
+   "cell": "P&L!B5",
+   "formula": "=SUMIF(Monthly!$C$5:$AL$5,B$3,Monthly!$C$12:$AL$12)"
+  },
+  "chk": {
+   "cell": "Checks!B16",
+   "formula": "=IF(COUNTIF(B4:B14,\"FAIL\")>0,\"FAIL\",IF(COUNTIF(B4:B14,\"WARN\")>0,\"PASS WITH WARNINGS\",\"PASS\"))"
+  }
+ },
+ "scenarios": {
+  "1": {
+   "summary": [
+    {
+     "label": "Revenue",
+     "values": [
+      178200,
+      249622.56,
+      262253.4615
+     ]
+    },
+    {
+     "label": "Gross profit",
+     "values": [
+      114048,
+      159758.4384,
+      167842.2154
+     ]
+    },
+    {
+     "label": "EBITDA",
+     "values": [
+      -74280,
+      -34450.464,
+      -29986.6431
+     ]
+    },
+    {
+     "label": "EBITDA margin",
+     "values": [
+      -0.4168,
+      -0.138,
+      -0.1143
+     ]
+    },
+    {
+     "label": "Net income",
+     "values": [
+      -105856.5079,
+      -64751.4164,
+      -59007.5955
+     ]
+    },
+    {
+     "label": "Year-end cash",
+     "values": [
+      -54465.6889,
+      -109485.4536,
+      -158760.5187
+     ]
+    },
+    {
+     "label": "Year-end loan balance",
+     "values": [
+      65333.3333,
+      49333.3333,
+      33333.3333
+     ]
+    }
+   ],
+   "pl": [
+    {
+     "label": "Revenue",
+     "values": [
+      178200,
+      249622.56,
+      262253.4615
+     ]
+    },
+    {
+     "label": "Food & beverage cost",
+     "values": [
+      -64152,
+      -89864.1216,
+      -94411.2462
+     ]
+    },
+    {
+     "label": "Gross profit",
+     "values": [
+      114048,
+      159758.4384,
+      167842.2154
+     ]
+    },
+    {
+     "label": "Gross margin",
+     "values": [
+      0.64,
+      0.64,
+      0.64
+     ]
+    },
+    {
+     "label": "Rent",
+     "values": [
+      -54000,
+      -54000,
+      -54000
+     ]
+    },
+    {
+     "label": "Payroll",
+     "values": [
+      -100800,
+      -103824,
+      -106938.72
+     ]
+    },
+    {
+     "label": "Marketing",
+     "values": [
+      -7128,
+      -9984.9024,
+      -10490.1385
+     ]
+    },
+    {
+     "label": "Utilities & other",
+     "values": [
+      -26400,
+      -26400,
+      -26400
+     ]
+    },
+    {
+     "label": "Total operating expenses",
+     "values": [
+      -188328,
+      -194208.9024,
+      -197828.8585
+     ]
+    },
+    {
+     "label": "EBITDA",
+     "values": [
+      -74280,
+      -34450.464,
+      -29986.6431
+     ]
+    },
+    {
+     "label": "EBITDA margin",
+     "values": [
+      -0.4168,
+      -0.138,
+      -0.1143
+     ]
+    },
+    {
+     "label": "Depreciation",
+     "values": [
+      -25714.2857,
+      -25714.2857,
+      -25714.2857
+     ]
+    },
+    {
+     "label": "EBIT",
+     "values": [
+      -99994.2857,
+      -60164.7497,
+      -55700.9288
+     ]
+    },
+    {
+     "label": "Interest",
+     "values": [
+      -5862.2222,
+      -4586.6667,
+      -3306.6667
+     ]
+    },
+    {
+     "label": "Pre-tax income",
+     "values": [
+      -105856.5079,
+      -64751.4164,
+      -59007.5955
+     ]
+    },
+    {
+     "label": "Income tax",
+     "values": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "label": "Net income",
+     "values": [
+      -105856.5079,
+      -64751.4164,
+      -59007.5955
+     ]
+    },
+    {
+     "label": "Net margin",
+     "values": [
+      -0.594,
+      -0.2594,
+      -0.225
+     ]
+    }
+   ],
+   "checks": [
+    {
+     "label": "Annual revenue ties to period detail",
+     "result": "PASS",
+     "what": "Sum of annual revenue equals the sum of every period"
+    },
+    {
+     "label": "Annual net income ties to period detail",
+     "result": "PASS",
+     "what": "Sum of annual net income equals the sum of every period"
+    },
+    {
+     "label": "EBITDA reconciliation",
+     "result": "PASS",
+     "what": "EBITDA = gross profit + operating expenses (costs are negative)"
+    },
+    {
+     "label": "Cash roll-forward",
+     "result": "PASS",
+     "what": "Closing cash = all net cash flows since the start (opening cash is zero)"
+    },
+    {
+     "label": "Scenario selector valid",
+     "result": "PASS",
+     "what": "Dashboard!B4 is 1, 2 or 3"
+    },
+    {
+     "label": "Scenario ordering of drivers",
+     "result": "PASS",
+     "what": "Low / Base / High ordered the right way for every growth and cost driver"
+    },
+    {
+     "label": "Gross margin within 0–100%",
+     "result": "PASS",
+     "what": "Gross margin never negative or above 100%"
+    },
+    {
+     "label": "Loan balance never negative",
+     "result": "PASS",
+     "what": "Repayments never exceed the loan"
+    },
+    {
+     "label": "No error values",
+     "result": "PASS",
+     "what": "No error values (divide-by-zero, broken references) on any calculation sheet"
+    },
+    {
+     "label": "Balance sheet balances every period",
+     "result": "PASS",
+     "what": "Assets = liabilities + equity in every period"
+    },
+    {
+     "label": "Funding sufficient (cash ≥ 0)",
+     "result": "WARN",
+     "what": "Business warning, not an error: cash dips below zero in this scenario"
+    },
+    {
+     "label": "Overall verdict",
+     "result": "PASS WITH WARNINGS",
+     "what": ""
+    }
+   ]
+  },
+  "2": {
+   "summary": [
+    {
+     "label": "Revenue",
+     "values": [
+      319800,
+      408769.92,
+      446294.9987
+     ]
+    },
+    {
+     "label": "Gross profit",
+     "values": [
+      214266,
+      273875.8464,
+      299017.6491
+     ]
+    },
+    {
+     "label": "EBITDA",
+     "values": [
+      1232.0,
+      54409.5488,
+      74549.5031
+     ]
+    },
+    {
+     "label": "EBITDA margin",
+     "values": [
+      0.0039,
+      0.1331,
+      0.167
+     ]
+    },
+    {
+     "label": "Net income",
+     "values": [
+      -27487.3651,
+      26965.7393,
+      38334.2394
+     ]
+    },
+    {
+     "label": "Year-end cash",
+     "values": [
+      41025.5111,
+      74877.9896,
+      120101.6851
+     ]
+    },
+    {
+     "label": "Year-end loan balance",
+     "values": [
+      65333.3333,
+      49333.3333,
+      33333.3333
+     ]
+    }
+   ],
+   "pl": [
+    {
+     "label": "Revenue",
+     "values": [
+      319800,
+      408769.92,
+      446294.9987
+     ]
+    },
+    {
+     "label": "Food & beverage cost",
+     "values": [
+      -105534,
+      -134894.0736,
+      -147277.3496
+     ]
+    },
+    {
+     "label": "Gross profit",
+     "values": [
+      214266,
+      273875.8464,
+      299017.6491
+     ]
+    },
+    {
+     "label": "Gross margin",
+     "values": [
+      0.67,
+      0.67,
+      0.67
+     ]
+    },
+    {
+     "label": "Rent",
+     "values": [
+      -54000,
+      -54000,
+      -54000
+     ]
+    },
+    {
+     "label": "Payroll",
+     "values": [
+      -125440,
+      -129203.2,
+      -133079.296
+     ]
+    },
+    {
+     "label": "Marketing",
+     "values": [
+      -9594,
+      -12263.0976,
+      -13388.85
+     ]
+    },
+    {
+     "label": "Utilities & other",
+     "values": [
+      -24000,
+      -24000,
+      -24000
+     ]
+    },
+    {
+     "label": "Total operating expenses",
+     "values": [
+      -213034,
+      -219466.2976,
+      -224468.146
+     ]
+    },
+    {
+     "label": "EBITDA",
+     "values": [
+      1232.0,
+      54409.5488,
+      74549.5031
+     ]
+    },
+    {
+     "label": "EBITDA margin",
+     "values": [
+      0.0039,
+      0.1331,
+      0.167
+     ]
+    },
+    {
+     "label": "Depreciation",
+     "values": [
+      -22857.1429,
+      -22857.1429,
+      -22857.1429
+     ]
+    },
+    {
+     "label": "EBIT",
+     "values": [
+      -21625.1429,
+      31552.4059,
+      51692.3603
+     ]
+    },
+    {
+     "label": "Interest",
+     "values": [
+      -5862.2222,
+      -4586.6667,
+      -3306.6667
+     ]
+    },
+    {
+     "label": "Pre-tax income",
+     "values": [
+      -27487.3651,
+      26965.7393,
+      48385.6936
+     ]
+    },
+    {
+     "label": "Income tax",
+     "values": [
+      0,
+      0,
+      -10051.4542
+     ]
+    },
+    {
+     "label": "Net income",
+     "values": [
+      -27487.3651,
+      26965.7393,
+      38334.2394
+     ]
+    },
+    {
+     "label": "Net margin",
+     "values": [
+      -0.086,
+      0.066,
+      0.0859
+     ]
+    }
+   ],
+   "checks": [
+    {
+     "label": "Annual revenue ties to period detail",
+     "result": "PASS",
+     "what": "Sum of annual revenue equals the sum of every period"
+    },
+    {
+     "label": "Annual net income ties to period detail",
+     "result": "PASS",
+     "what": "Sum of annual net income equals the sum of every period"
+    },
+    {
+     "label": "EBITDA reconciliation",
+     "result": "PASS",
+     "what": "EBITDA = gross profit + operating expenses (costs are negative)"
+    },
+    {
+     "label": "Cash roll-forward",
+     "result": "PASS",
+     "what": "Closing cash = all net cash flows since the start (opening cash is zero)"
+    },
+    {
+     "label": "Scenario selector valid",
+     "result": "PASS",
+     "what": "Dashboard!B4 is 1, 2 or 3"
+    },
+    {
+     "label": "Scenario ordering of drivers",
+     "result": "PASS",
+     "what": "Low / Base / High ordered the right way for every growth and cost driver"
+    },
+    {
+     "label": "Gross margin within 0–100%",
+     "result": "PASS",
+     "what": "Gross margin never negative or above 100%"
+    },
+    {
+     "label": "Loan balance never negative",
+     "result": "PASS",
+     "what": "Repayments never exceed the loan"
+    },
+    {
+     "label": "No error values",
+     "result": "PASS",
+     "what": "No error values (divide-by-zero, broken references) on any calculation sheet"
+    },
+    {
+     "label": "Balance sheet balances every period",
+     "result": "PASS",
+     "what": "Assets = liabilities + equity in every period"
+    },
+    {
+     "label": "Funding sufficient (cash ≥ 0)",
+     "result": "PASS",
+     "what": "Business warning, not an error: cash dips below zero in this scenario"
+    },
+    {
+     "label": "Overall verdict",
+     "result": "PASS",
+     "what": ""
+    }
+   ]
+  },
+  "3": {
+   "summary": [
+    {
+     "label": "Revenue",
+     "values": [
+      519750,
+      642751.2,
+      728622.7603
+     ]
+    },
+    {
+     "label": "Gross profit",
+     "values": [
+      363825,
+      449925.84,
+      510035.9322
+     ]
+    },
+    {
+     "label": "EBITDA",
+     "values": [
+      117912.5,
+      195753.704,
+      248580.9614
+     ]
+    },
+    {
+     "label": "EBITDA margin",
+     "values": [
+      0.2269,
+      0.3046,
+      0.3412
+     ]
+    },
+    {
+     "label": "Net income",
+     "values": [
+      71591.148,
+      134093.3881,
+      176838.1214
+     ]
+    },
+    {
+     "label": "Year-end cash",
+     "values": [
+      148510.5528,
+      288053.5543,
+      470344.1003
+     ]
+    },
+    {
+     "label": "Year-end loan balance",
+     "values": [
+      65333.3333,
+      49333.3333,
+      33333.3333
+     ]
+    }
+   ],
+   "pl": [
+    {
+     "label": "Revenue",
+     "values": [
+      519750,
+      642751.2,
+      728622.7603
+     ]
+    },
+    {
+     "label": "Food & beverage cost",
+     "values": [
+      -155925,
+      -192825.36,
+      -218586.8281
+     ]
+    },
+    {
+     "label": "Gross profit",
+     "values": [
+      363825,
+      449925.84,
+      510035.9322
+     ]
+    },
+    {
+     "label": "Gross margin",
+     "values": [
+      0.7,
+      0.7,
+      0.7
+     ]
+    },
+    {
+     "label": "Rent",
+     "values": [
+      -54000,
+      -54000,
+      -54000
+     ]
+    },
+    {
+     "label": "Payroll",
+     "values": [
+      -152320,
+      -156889.6,
+      -161596.288
+     ]
+    },
+    {
+     "label": "Marketing",
+     "values": [
+      -15592.5,
+      -19282.536,
+      -21858.6828
+     ]
+    },
+    {
+     "label": "Utilities & other",
+     "values": [
+      -24000,
+      -24000,
+      -24000
+     ]
+    },
+    {
+     "label": "Total operating expenses",
+     "values": [
+      -245912.5,
+      -254172.136,
+      -261454.9708
+     ]
+    },
+    {
+     "label": "EBITDA",
+     "values": [
+      117912.5,
+      195753.704,
+      248580.9614
+     ]
+    },
+    {
+     "label": "EBITDA margin",
+     "values": [
+      0.2269,
+      0.3046,
+      0.3412
+     ]
+    },
+    {
+     "label": "Depreciation",
+     "values": [
+      -21428.5714,
+      -21428.5714,
+      -21428.5714
+     ]
+    },
+    {
+     "label": "EBIT",
+     "values": [
+      96483.9286,
+      174325.1326,
+      227152.39
+     ]
+    },
+    {
+     "label": "Interest",
+     "values": [
+      -5862.2222,
+      -4586.6667,
+      -3306.6667
+     ]
+    },
+    {
+     "label": "Pre-tax income",
+     "values": [
+      90621.7063,
+      169738.4659,
+      223845.7233
+     ]
+    },
+    {
+     "label": "Income tax",
+     "values": [
+      -19030.5583,
+      -35645.0778,
+      -47007.6019
+     ]
+    },
+    {
+     "label": "Net income",
+     "values": [
+      71591.148,
+      134093.3881,
+      176838.1214
+     ]
+    },
+    {
+     "label": "Net margin",
+     "values": [
+      0.1377,
+      0.2086,
+      0.2427
+     ]
+    }
+   ],
+   "checks": [
+    {
+     "label": "Annual revenue ties to period detail",
+     "result": "PASS",
+     "what": "Sum of annual revenue equals the sum of every period"
+    },
+    {
+     "label": "Annual net income ties to period detail",
+     "result": "PASS",
+     "what": "Sum of annual net income equals the sum of every period"
+    },
+    {
+     "label": "EBITDA reconciliation",
+     "result": "PASS",
+     "what": "EBITDA = gross profit + operating expenses (costs are negative)"
+    },
+    {
+     "label": "Cash roll-forward",
+     "result": "PASS",
+     "what": "Closing cash = all net cash flows since the start (opening cash is zero)"
+    },
+    {
+     "label": "Scenario selector valid",
+     "result": "PASS",
+     "what": "Dashboard!B4 is 1, 2 or 3"
+    },
+    {
+     "label": "Scenario ordering of drivers",
+     "result": "PASS",
+     "what": "Low / Base / High ordered the right way for every growth and cost driver"
+    },
+    {
+     "label": "Gross margin within 0–100%",
+     "result": "PASS",
+     "what": "Gross margin never negative or above 100%"
+    },
+    {
+     "label": "Loan balance never negative",
+     "result": "PASS",
+     "what": "Repayments never exceed the loan"
+    },
+    {
+     "label": "No error values",
+     "result": "PASS",
+     "what": "No error values (divide-by-zero, broken references) on any calculation sheet"
+    },
+    {
+     "label": "Balance sheet balances every period",
+     "result": "PASS",
+     "what": "Assets = liabilities + equity in every period"
+    },
+    {
+     "label": "Funding sufficient (cash ≥ 0)",
+     "result": "PASS",
+     "what": "Business warning, not an error: cash dips below zero in this scenario"
+    },
+    {
+     "label": "Overall verdict",
+     "result": "PASS",
+     "what": ""
+    }
+   ]
+  }
+ }
+}

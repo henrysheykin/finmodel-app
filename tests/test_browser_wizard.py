@@ -182,3 +182,20 @@ def test_sign_in_by_link_and_download_from_my_models(page, live_server, services
     assert dl.value.suggested_filename.endswith("-light.xlsx")
     page.get_by_role("button", name="Sign out", exact=True).click()
     page.wait_for_url("**/login")
+
+
+def test_landing_preview_switches_case_and_sheet_on_a_phone(page, live_server):
+    page.goto(f"{live_server}/")
+    assert no_horizontal_scroll(page)
+    grid = page.locator("#sheet-grid")
+    assert "$319,800" in grid.inner_text()  # Base, year 1 revenue of the cafe sample
+    page.get_by_role("button", name="Low", exact=True).click()
+    assert "$178,200" in grid.inner_text()
+    page.get_by_role("tab", name="Checks").click()
+    assert "WARN" in grid.inner_text()
+    assert "Checks!B16" in page.locator("#fcell").inner_text()
+    page.get_by_role("tab", name="Checks").press("ArrowLeft")  # keyboard moves between tabs
+    assert page.get_by_role("tab", name="P&L").get_attribute("aria-selected") == "true"
+    assert no_horizontal_scroll(page)
+    page.get_by_role("link", name="Start a model").first.click()
+    page.wait_for_url("**/start")
