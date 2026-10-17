@@ -270,7 +270,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: files merged with subject + preheader + body each.
 
 ### M08 — Legal drafts (for lawyer review)
-- status: TODO
+- status: CANCELLED (Henry, 2026-10-17: not needed)
 - depends: M02
 - skills: docs (opt, for a review copy)
 - do: privacy policy (GDPR — Henry is based in Spain, EU customers likely),
@@ -279,7 +279,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: drafts merged; HUMAN_TODO updated.
 
 ### M09 — Launch plan (first 30 days)
-- status: TODO
+- status: CANCELLED (Henry, 2026-10-17: not needed)
 - depends: M02, M03
 - skills: small-business:social-content-engine, marketing:campaign-plan (opt)
 - do: channels (Reddit/IndieHackers/Product Hunt, LinkedIn from Henry's personal
@@ -289,13 +289,23 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: `docs/marketing/launch-plan.md` + `content/social/`.
 
 ### M10 — Analytics & funnel spec
-- status: TODO
+- status: CANCELLED (Henry, 2026-10-17: not needed)
 - depends: M03
 - skills: dataviz
 - do: event list (landing view → wizard steps → checkout → paid → downloaded),
   privacy-friendly tool options (Plausible vs GA4 with consent), KPI definitions,
   weekly funnel report spec. Hand the event list to E-track via HUMAN_TODO note.
 - done when: `docs/marketing/analytics.md`.
+
+### M11 — SEO pages, batch 3 (templates now built)
+- status: IN_PROGRESS (2026-10-17)
+- depends: M06
+- skills: small-business:seo-ai-visibility
+- do: added on Henry's request (2026-10-17). 5 pages in `content/seo/` for templates that now
+  exist: SaaS with scenarios (#4), professional services (#5), financial model for investors
+  (#11), e-commerce for investors (#12), retail store projections (#13). Facts from
+  `engine/templates/*.py` and `docs/templates/*.md`; samples from `samples/`.
+- done when: 5 files merged, each 900–1400 words.
 
 ---
 

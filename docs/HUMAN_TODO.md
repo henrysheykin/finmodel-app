@@ -56,7 +56,7 @@ the answer next to the item (agents read this file every run).
       - [ ] SaaS: sample `samples/saas-full.xlsx`, memo `docs/templates/saas.md` (questions at the end).
       - [ ] Retail / e-commerce: sample `samples/retail-full.xlsx`, memo `docs/templates/retail.md` (questions at the end).
       - [ ] Professional services: sample `samples/services-full.xlsx`, memo `docs/templates/services.md` (questions at the end).
-- [ ] R2 Lawyer review of legal drafts (after M08).
+- [x] R2 Lawyer review of legal drafts — n/a: Henry cancelled M08 (2026-10-17); legal texts are his to provide.
 
 ## Go-live
 - [ ] G1 Deploy and run the first real order end to end (runbook from E18).
