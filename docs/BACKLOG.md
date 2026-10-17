@@ -142,7 +142,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: tests cover success, cancel, duplicate webhook, bad signature.
 
 ### E12 — Email delivery
-- status: IN_PROGRESS (2026-10-17)
+- status: DONE (2026-10-17, https://github.com/henrysheykin/finmodel-app/pull/22)
 - depends: E09
 - skills: engineering:testing-strategy
 - do: email adapter (console + Resend/Postmark), templates from `content/email/`
@@ -183,7 +183,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   happy path: sign in by link → My models → download the .xlsx.
 
 ### E14 — Admin panel
-- status: TODO
+- status: IN_PROGRESS (2026-10-17)
 - depends: E09, E11
 - skills: frontend-design, engineering:code-review
 - do: password-protected admin (env var credentials, rate-limited login):

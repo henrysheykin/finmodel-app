@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · E12 email delivery · DONE · https://github.com/henrysheykin/finmodel-app/pull/22
+  Console/Resend/Postmark senders; content/email rendered to text + escaped HTML; receipt (once), model ready, refund, sign-in, admin alerts.
+  Build-failed email is held while its copy has the [FAILED_BUILD_POLICY] placeholder (D9) — admin gets an alert instead. New content/email/sign-in.md (M may polish).
+  Scheduled day-1/day-7/abandoned emails not triggered yet (need consent/unsubscribe, M08). For Henry: D9, A3, SUPPORT_EMAIL.
 - 2026-10-17 · E · E19 customer accounts · DONE · https://github.com/henrysheykin/finmodel-app/pull/21
   Magic-link sign-in (single-use, hashed, 15 min, confirm button against mail scanners), hashed server sessions (30 days, HttpOnly/Lax/Secure),
   rate limits per email/IP with identical responses, My models + 10-minute download links, owner-only 404s, sign out / everywhere. Playwright download test.
