@@ -129,4 +129,4 @@
 </div>
 <script id="wizard-data" type="application/json">{{ wizard_data|tojson }}</script>
 {% endblock %}
-{% block scripts %}<script src="/static/wizard.js" defer></script>{% endblock %}
+{% block scripts %}<script src="{{ asset('wizard.js') }}" defer></script>{% endblock %}

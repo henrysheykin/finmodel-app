@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
+from functools import cache
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
@@ -22,6 +24,23 @@ from engine.brief import BriefError
 templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent / "templates"))
 templates.env.filters["money"] = lambda cents: f"${cents / 100:,.0f}"
 templates.env.filters["fmtnum"] = lambda v: f"{v:g}" if isinstance(v, float) else str(v)
+
+STATIC_DIR = Path(__file__).resolve().parents[1] / "web" / "static"
+
+
+@cache
+def asset(path: str) -> str:
+    """URL of a static file with a content hash, so browsers and the CDN never serve a stale copy
+    after a deploy (static files are cached for hours under a fixed URL)."""
+    file = STATIC_DIR / path
+    try:
+        digest = hashlib.sha256(file.read_bytes()).hexdigest()[:10]
+    except OSError:
+        return f"/static/{path}"
+    return f"/static/{path}?v={digest}"
+
+
+templates.env.globals["asset"] = asset
 
 STATUS_LABEL = {
     "awaiting_payment": "waiting for payment",
