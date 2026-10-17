@@ -44,7 +44,7 @@ def cafe_xlsx(build, cafe_brief) -> Path:
     return build(cafe_brief, "cafe.xlsx")
 
 
-@pytest.fixture(params=["cafe", "saas", "retail"])
+@pytest.fixture(params=["cafe", "saas", "retail", "services"])
 def any_brief(request, cafe_brief) -> Brief:
     """The cafe sample brief and the 'early' default brief of every other template."""
     if request.param == "cafe":
@@ -66,3 +66,10 @@ def retail_brief() -> Brief:
     from engine.templates import get_template
 
     return get_template("retail").default_brief("growing")
+
+
+@pytest.fixture
+def services_brief() -> Brief:
+    from engine.templates import get_template
+
+    return get_template("services").default_brief("growing")

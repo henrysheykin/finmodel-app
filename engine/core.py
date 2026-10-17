@@ -210,6 +210,15 @@ class Top:
 TopFn = Callable[[dict, int, int, Timing, HC], Top]
 
 
+def role_period(d: dict, key: str, p: int, t: Timing) -> tuple[float, float]:
+    """(FTE on payroll, payroll cost — negative) of one role in period ``p`` (plain Python)."""
+    y = t.year_of(p)
+    months_on = max(0.0, min(t.mpp, p * t.mpp - d[f"{key}_start"] + 1))
+    fte = d[f"{key}_fte"] * (1 + d[f"{key}_fte_g"]) ** (y - 1) * months_on / t.mpp
+    cost = -fte * d[f"{key}_salary"] / 12 * t.mpp * (1 + d["payroll_tax"]) * (1 + d["wage_g"]) ** (y - 1)
+    return fte, cost
+
+
 def reference_run(d: dict, roles: list[Role], t: Timing, top: TopFn) -> dict[str, list[float]]:
     """Run the whole model in plain Python. Returns per-period series (index 0 = period 1).
 
@@ -255,10 +264,9 @@ def reference_run(d: dict, roles: list[Role], t: Timing, top: TopFn) -> dict[str
         y = t.year_of(p)
         fte_total = payroll = 0.0
         for r in roles:
-            months_on = max(0.0, min(t.mpp, p * t.mpp - d[f"{r.key}_start"] + 1))
-            fte = d[f"{r.key}_fte"] * (1 + d[f"{r.key}_fte_g"]) ** (y - 1) * months_on / t.mpp
+            fte, cost = role_period(d, r.key, p, t)
             fte_total += fte
-            payroll -= fte * d[f"{r.key}_salary"] / 12 * t.mpp * (1 + d["payroll_tax"]) * (1 + d["wage_g"]) ** (y - 1)
+            payroll += cost
         tp = top(d, p, y, t, HC(payroll, fte_total))
         gp = tp.rev + tp.cogs
         opex = sum(tp.opex.values())
