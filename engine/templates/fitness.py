@@ -205,7 +205,7 @@ class FitnessTemplate(Template):
             Line(
                 "new_mkt",
                 "New members from marketing",
-                "=IF({in:cpl}=0,0,-{mkt}/{in:cpl}*{in:conv})",
+                "=-{mkt}/MAX(1,{in:cpl})*{in:conv}",
                 "top",
                 "dec1",
                 section="Members",
@@ -331,7 +331,7 @@ class FitnessTemplate(Template):
         for p in range(1, upto + 1):
             y = t.year_of(p)
             mkt = d["mkt"] * (1 + d["mkt_g"]) ** (y - 1) * t.mpp
-            new_mkt = 0.0 if d["cpl"] == 0 else mkt / d["cpl"] * d["conv"]
+            new_mkt = mkt / max(1, d["cpl"]) * d["conv"]
             new = new_mkt + d["ref_new"] * (1 + d["ref_g"]) ** (y - 1) * t.mpp
             m0 = members
             uncapped = m0 * r + new if t.granularity == "monthly" else m0 * r**12 + new * r**6

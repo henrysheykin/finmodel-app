@@ -94,6 +94,6 @@ def test_balance_sheet_balances(fit_brief, g, scen):
         assert ta == pytest.approx(tle, abs=1e-6)
 
 
-def test_zero_cost_per_lead_is_guarded(fit_brief):
+def test_cost_per_lead_below_one_dollar_is_guarded(fit_brief):
     s = run(with_values(fit_brief, cpl=0))
     assert all(v >= 0 for v in s["members_close"])

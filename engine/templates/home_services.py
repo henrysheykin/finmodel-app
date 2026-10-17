@@ -217,7 +217,7 @@ class HomeServicesTemplate(Template):
                 "int",
             ),
             Line("season", "Season factor (June–August busy season)", season, "top", "dec1", agg="none"),
-            Line("leads", "Leads from marketing", "=IF({in:cpl}=0,0,-{mkt}/{in:cpl})", "top", "int"),
+            Line("leads", "Leads from marketing", "=-{mkt}/MAX(1,{in:cpl})", "top", "int"),
             Line("booked", "Jobs booked from leads", "={leads}*{in:booking}*{season}", "top", "int"),
             Line(
                 "repeat",
@@ -344,7 +344,7 @@ class HomeServicesTemplate(Template):
         season = _season(p, t, d["peak_uplift"])
         cap = fte * d["jobs_per_tech"] * d["work_days"] * t.mpp
         mkt = d["mkt"] * (1 + d["mkt_g"]) ** (y - 1) * t.mpp
-        leads = 0.0 if d["cpl"] == 0 else mkt / d["cpl"]
+        leads = mkt / max(1, d["cpl"])
         booked = leads * d["booking"] * season
         repeat = d["repeat_jobs"] * (1 + d["repeat_g"]) ** (y - 1) * t.mpp * season
         jobs = min(cap, booked + repeat)
