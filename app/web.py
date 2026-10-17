@@ -97,10 +97,27 @@ def _first_error_step(errors: list[str]) -> int:
 
 
 @router.get("/start", response_class=HTMLResponse)
-def start(request: Request, plan: str = "full", type: str = "") -> HTMLResponse:
+def start(
+    request: Request,
+    plan: str = "full",
+    type: str = "",
+    goal: str = "",
+    horizon: str = "",
+    granularity: str = "",
+    sample: str = "",
+) -> HTMLResponse:
+    """The brief. Query parameters pre-fill it (used by the landing page's demo); unknown values are ignored."""
     form = {**DEFAULT_FORM, "tier": plan if plan in wizard.PLANS else "full"}
     if type in dict(wizard.BUSINESS_TYPES):
         form["business_type"] = type
+    if goal in dict(wizard.GOALS):
+        form["goal"] = goal
+    if horizon in {str(y) for y, _ in wizard.HORIZONS}:
+        form["horizon_years"] = horizon
+    if granularity in dict(wizard.GRANULARITIES):
+        form["granularity"] = granularity
+    if sample == "1":
+        form["sample_data"] = "1"
     return _render_start(request, form, [])
 
 

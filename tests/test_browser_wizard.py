@@ -187,13 +187,13 @@ def test_sign_in_by_link_and_download_from_my_models(page, live_server, services
 def test_landing_preview_switches_case_and_sheet_on_a_phone(page, live_server):
     page.goto(f"{live_server}/")
     assert no_horizontal_scroll(page)
-    grid = page.locator("#sheet-grid")
+    grid = page.locator("#xl-grid")
     assert "$319,800" in grid.inner_text()  # Base, year 1 revenue of the cafe sample
-    page.get_by_role("button", name="Low", exact=True).click()
+    page.select_option("#xl-case", "1")  # Dashboard!B4, the workbook's own case switch
     assert "$178,200" in grid.inner_text()
     page.get_by_role("tab", name="Checks").click()
     assert "WARN" in grid.inner_text()
-    assert "Checks!B16" in page.locator("#fcell").inner_text()
+    assert page.locator("#xl-name").inner_text() == "B16"
     page.get_by_role("tab", name="Checks").press("ArrowLeft")  # keyboard moves between tabs
     assert page.get_by_role("tab", name="P&L").get_attribute("aria-selected") == "true"
     assert no_horizontal_scroll(page)

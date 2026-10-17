@@ -13,88 +13,127 @@
 {% endfor %}
 {% endblock %}
 
-{% macro sheet_row(r) -%}
-{%- if r.chk -%}
-<div class="r r--chk{% if r.kind %} r--{{ r.kind }}{% endif %}" role="row">
-  <span role="{{ 'columnheader' if r.kind == 'head' else 'rowheader' }}">{{ r.label }}</span>
-  <span role="{{ 'columnheader' if r.kind == 'head' else 'cell' }}"{% if r.kind != 'head' %} class="res{% if r.warn %} res--warn{% endif %}"{% endif %}>{{ r.result }}</span>
-  <span role="{{ 'columnheader' if r.kind == 'head' else 'cell' }}"{% if r.kind != 'head' %} class="what"{% endif %}>{{ r.what }}</span>
-</div>
+{% macro xl_cell(c, sel) -%}
+{%- if c.select -%}
+<span role="gridcell" class="xc selector b{% if c.a == sel %} is-sel{% endif %}" data-a="{{ c.a }}"><label class="sr-only" for="xl-case">Scenario: 1 Low, 2 Base, 3 High</label><select id="xl-case" data-a="{{ c.a }}"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></span>
 {%- else -%}
-<div class="r{% if r.kind %} r--{{ r.kind }}{% endif %}" role="row">
-  <span role="{{ 'columnheader' if r.kind == 'head' else 'rowheader' }}">{% if r.label %}{{ r.label }}{% else %}<span class="sr-only">Line item</span>{% endif %}</span>
-  {%- for c in r.cells %}
-  <span role="{{ 'columnheader' if r.kind == 'head' else 'cell' }}"{% if c.on %} class="on"{% endif %}>{{ c.v }}{% if c.tick %}<span class="tk" aria-hidden="true">✓</span>{% elif r.kind != 'head' %}<span class="tk" aria-hidden="true"></span>{% endif %}</span>
-  {%- endfor %}
-</div>
+<button type="button" role="gridcell" class="{{ cell_classes(c, sel) }}" data-a="{{ c.a }}" tabindex="{{ 0 if c.a == sel else -1 }}"{% if c.span > 1 %} style="grid-column: span {{ c.span }}"{% endif %}>{{ cell_text(c) }}{% if c.tick %}<span class="tk" aria-hidden="true">✓</span>{% endif %}</button>
 {%- endif -%}
 {%- endmacro %}
 
 {% block main %}
 <section id="top" class="hero pad">
-  <div class="wrap">
-    <div class="hero__top">
-      <div class="hero__copy">
-        <h1>A financial model built on your numbers, with the maths proven before you get it</h1>
-        <p class="hero__sub">Answer a short brief and get an Excel workbook with live formulas, low, base and high cases, and a Checks sheet your lender, investor or client can read. For loan applications, fundraising and client work.</p>
-        <div class="hero__cta">
-          <a class="btn" href="/start">Start a model</a>
-          <a href="#samples">Open a sample file</a>
-        </div>
-        <span class="hero__note">From {{ price_light }}, one payment per model. Full refund within 7 days if it doesn't fit your business.</span>
+  <div class="wrap hero__row">
+    <div class="hero__copy">
+      <h1>A financial model built on your numbers, with the maths proven before you get it</h1>
+      <p class="hero__sub">Answer a short brief and get an Excel workbook with live formulas, low, base and high cases, and a Checks sheet your lender, investor or client can read.</p>
+      <div class="hero__cta">
+        <a class="btn" href="/start">Start a model</a>
+        <a href="#samples">Open a sample file</a>
       </div>
-      <aside class="brief" aria-labelledby="brief-h">
-        <h2 id="brief-h">What the brief asks</h2>
-        <ol>
-          <li>What kind of business it is</li>
-          <li>What the model should answer</li>
-          <li>Where the business is today</li>
-          <li>Years to plan, monthly or annual</li>
-          <li>A few key numbers, or sample data</li>
-          <li>Light or Full workbook</li>
-        </ol>
-        <p>Available now: {{ industries | join(", ") }}.</p>
-      </aside>
+      <p class="hero__types">Available now: {{ industries | join(", ") }}.</p>
+      <p class="hero__note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>From {{ price_light }}, one payment. Full refund within 7 days.</p>
     </div>
 
-    <div class="sheet" id="sheet">
-      <div class="sheet__bar">
-        <div class="sheet__title">
-          <strong>{{ sheet_title }}</strong>
-          <span>Real output of the generator, from the cafe sample. Switch the case or the sheet.</span>
+    <div class="hero__sheet">
+      <div class="xl" id="xl">
+        <div class="xl__bar">
+          <span class="xl__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="xl__file">{{ sheet_file }}</span>
+          <span class="xl__hint">Live preview: click any cell, change B4, switch sheets</span>
         </div>
-        <div class="cases" role="group" aria-label="Case">
-          {% for k, label in cases.items() %}<button type="button" data-case="{{ k }}" aria-pressed="{{ 'true' if k == '2' else 'false' }}">{{ label }}</button>{% endfor %}
+        <div class="xl__fbar" aria-live="polite">
+          <span class="xl__name" id="xl-name" aria-label="Selected cell">{{ grid.start }}</span>
+          <span class="xl__fx" aria-hidden="true">fx</span>
+          <span class="xl__f" id="xl-f">{{ start_formula }}</span>
+        </div>
+        <div class="xl__scroll" id="xl-scroll">
+          <div class="xl__grid" id="xl-grid" role="grid" aria-label="{{ grid.sheet }} sheet" style="grid-template-columns: {{ grid_cols }}">
+            <div role="row" class="xl__row xl__row--head"><span class="xh xh--corner" aria-hidden="true"></span>{% for c in grid.cols %}<span role="columnheader" class="xh" data-col="{{ c.letter }}">{{ c.letter }}</span>{% endfor %}</div>
+            {% for r in grid.rows %}<div role="row" class="xl__row"><span role="rowheader" class="xn" data-row="{{ r.n }}">{{ r.n }}</span>{% for c in r.cells %}{{ xl_cell(c, grid.start) }}{% endfor %}</div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="xl__tabs" role="tablist" aria-label="Sheets">
+          {% for k, label in grid_tabs %}<button type="button" role="tab" data-tab="{{ k }}" aria-controls="xl-grid" aria-selected="{{ 'true' if k == 'sum' else 'false' }}"{% if k != 'sum' %} tabindex="-1"{% endif %}>{{ label }}{% if k == 'chk' %} <span aria-hidden="true">✓</span>{% endif %}</button>{% endfor %}
         </div>
       </div>
-      <div class="tabs" role="tablist" aria-label="Sheets">
-        {% for k, label in tabs %}<button type="button" role="tab" id="tab-{{ k }}" data-tab="{{ k }}" aria-controls="sheet-grid" aria-selected="{{ 'true' if k == 'sum' else 'false' }}"{% if k != 'sum' %} tabindex="-1"{% endif %}>{{ label }}</button>{% endfor %}
-      </div>
-      <div class="fbar" aria-label="Formula of the highlighted cell">
-        <span class="fbar__cell" id="fcell">{{ view.cell }}</span>
-        <span class="fbar__f" id="fformula">{{ view.formula }}</span>
-      </div>
-      <div class="grid-scroll" tabindex="0" role="region" aria-label="Sheet preview, scrolls sideways">
-        <div class="grid" id="sheet-grid" role="table" aria-labelledby="tab-sum" aria-live="polite">
-          {% for r in view.rows %}{{ sheet_row(r) }}{% endfor %}
-        </div>
-      </div>
-      <div class="sheet__foot">
-        <span><b aria-hidden="true">✓</b> marks a total the independent recalculation agreed with, to the dollar.</span>
-        <a href="#checks">How the checks work</a>
-      </div>
+      <p class="xl__stamp"><span aria-hidden="true">✓</span>Checks passed, 0 formula errors in all three cases</p>
     </div>
   </div>
 </section>
 
-<section id="how" class="section">
+<section id="how" class="section how">
   <div class="wrap">
-    <h2 class="h2">From brief to workbook in three steps</h2>
-    <ol class="steps">
-      <li><span class="steps__n">Step 1</span><h3>Answer the brief</h3><p>Plain questions about how you sell, what it costs and what you need to decide. No finance terms. Not ready to share numbers? Start from sample data and change it later.</p></li>
-      <li><span class="steps__n">Step 2</span><h3>We build it, then check it</h3><p>Your answers become a structured brief. Tested templates write every formula. A separate program then rebuilds every total from your inputs and compares, in all three cases.</p></li>
-      <li><span class="steps__n">Step 3</span><h3>Download and make it yours</h3><p>Open it in Excel. Change any input and every sheet follows. The file is yours to keep, edit and send to your lender or investor.</p></li>
-    </ol>
+    <div>
+      <h2 class="h2">How it works</h2>
+      <p class="lead">Answer a few questions and a checked workbook is built around your answers. Try the first step here.</p>
+    </div>
+
+    <div class="how__step">
+      <div class="how__copy">
+        <span class="steps__n">Step 1</span>
+        <h3>Answer the brief</h3>
+        <p>Plain questions about your business, your goal and a few key numbers. No finance terms and no blank spreadsheet. Sensible defaults fill the gaps, and sample data lets you look around before you share real figures.</p>
+      </div>
+      <div class="demo" id="demo">
+        <div class="demo__head"><strong>Set up your model</strong><span id="demo-step">Step 1 of 3</span></div>
+        <div class="demo__bar" aria-hidden="true"><span id="demo-bar"></span></div>
+        <div class="demo__body">
+          <fieldset class="demo__q" id="demo-q">
+            <legend id="demo-legend">What kind of business is it?</legend>
+            <div class="demo__opts" id="demo-opts">
+              {% for k, label in demo.types %}<button type="button" class="opt" data-v="{{ k }}" aria-pressed="false">{{ label }}</button>{% endfor %}
+            </div>
+          </fieldset>
+          <div class="demo__done" id="demo-done" hidden>
+            <strong>That's the shape of your model</strong>
+            <p id="demo-summary"></p>
+            <p>In the real brief you add a few key numbers, choose Light or Full, and enter the email the file goes to. Your answers carry over.</p>
+            <div class="demo__actions"><a class="btn btn--sm" id="demo-go" href="/start">Continue in the real brief</a><button type="button" class="btn btn--ghost btn--sm" id="demo-restart">Start over</button></div>
+          </div>
+          <div class="demo__foot" id="demo-foot">
+            <label class="demo__sample"><input type="checkbox" id="demo-sample" checked> Fill with sample data</label>
+            <div class="demo__nav">
+              <button type="button" class="btn btn--ghost btn--sm" id="demo-back" hidden>Back</button>
+              <button type="button" class="btn btn--sm" id="demo-next" disabled>Continue</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="how__step how__step--flip">
+      <div class="how__copy">
+        <span class="steps__n">Step 2</span>
+        <h3>We build it, then check it</h3>
+        <p>AI only turns your answers into a brief. The workbook itself comes from tested templates, and a separate program must agree with every total before the file leaves us.</p>
+      </div>
+      <ol class="pipe">
+        <li><strong>Your answers</strong><span>become a structured brief, checked against sensible limits</span></li>
+        <li><strong>A tested template</strong><span>writes every formula, the same way in every period</span></li>
+        <li><strong>A spreadsheet engine</strong><span>recalculates the file and rejects any error value</span></li>
+        <li><strong>An independent check</strong><span>rebuilds the totals for low, base and high and compares to the dollar</span></li>
+        <li class="pipe__ok"><span class="pipe__tick" aria-hidden="true">✓</span><strong>Only then is the file sent to you</strong></li>
+      </ol>
+    </div>
+
+    <div class="how__step">
+      <div class="how__copy">
+        <span class="steps__n">Step 3</span>
+        <h3>Download and make it yours</h3>
+        <p>You get an .xlsx with live formulas, a one-cell case switch and the Checks sheet. Change any input and every sheet follows. The file is yours to keep, edit and send to your lender or investor.</p>
+      </div>
+      <div class="filecard">
+        <span class="filecard__icon" aria-hidden="true">XLSX</span>
+        <div class="filecard__body">
+          <strong>{{ sheet_file }}</strong>
+          <span class="filecard__meta">Full workbook, {{ stats.sheets | length }} sheets, {{ "{:,}".format(stats.formulas) }} live formulas, 0 errors</span>
+          <span class="filecard__tags">{% for s in stats.sheets %}<span{% if s == "Checks" %} class="is-ok"{% endif %}>{{ s }}{% if s == "Checks" %} ✓{% endif %}</span>{% endfor %}</span>
+          <a href="/samples/cafe.xlsx" download>Download this sample</a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -246,6 +285,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="application/json" id="sheet-views">{{ views_json }}</script>
+<script type="application/json" id="xl-data">{{ grid_json }}</script>
+<script type="application/json" id="demo-data">{{ demo_json }}</script>
 <script src="/static/landing.js" defer></script>
 {% endblock %}

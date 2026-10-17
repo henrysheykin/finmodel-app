@@ -29,6 +29,78 @@ from engine.recalc import recalc  # noqa: E402
 from engine.templates import get_template  # noqa: E402
 
 INPUT_KEYS = ["cust_full", "ticket", "traffic_g", "cogs_pct", "rent", "staff_fte", "staff_salary"]
+
+# The hero shows the real top of each sheet as a spreadsheet grid: (sheet, last row, last column).
+GRID_AREAS = {
+    "sum": ("Dashboard", 15, 4),
+    "inp": ("Inputs", 16, 5),
+    "pl": ("P&L", 22, 4),
+    "chk": ("Checks", 16, 3),
+}
+FILL_KINDS = {"1F3864": "title", "2F5597": "section", "FFFF00": "selector"}
+FONT_KINDS = {"0000FF": "input", "008000": "link"}
+
+
+def _cell_style(c) -> dict:
+    """Spreadsheet styling that the web preview mirrors (with the site's own colours)."""
+    fill = c.fill.fgColor.rgb if c.fill is not None and c.fill.fill_type == "solid" else None
+    font = c.font.color.rgb if c.font is not None and c.font.color is not None else None
+    return {
+        "fill": FILL_KINDS.get(str(fill)[-6:]) if isinstance(fill, str) else None,
+        "font": FONT_KINDS.get(str(font)[-6:]) if isinstance(font, str) else None,
+        "bold": bool(c.font.bold) if c.font is not None else False,
+        "numfmt": c.number_format,
+    }
+
+
+def _grid_template(wb_formulas) -> dict:
+    """Addresses, formulas, styles and column widths of each preview area (values are added per scenario)."""
+    out = {}
+    for tab, (sheet, last_row, last_col) in GRID_AREAS.items():
+        ws = wb_formulas[sheet]
+        cols = []
+        for ci in range(1, last_col + 1):
+            letter = ws.cell(1, ci).column_letter
+            width = ws.column_dimensions[letter].width if letter in ws.column_dimensions else None
+            cols.append({"letter": letter, "width": round(width or 10, 1)})
+        rows = []
+        for r in range(1, last_row + 1):
+            cells = []
+            for ci in range(1, last_col + 1):
+                c = ws.cell(r, ci)
+                v = c.value
+                formula = v if isinstance(v, str) and v.startswith("=") else None
+                cells.append({"a": c.coordinate, "f": formula, "const": None if formula else v, **_cell_style(c)})
+            rows.append({"n": r, "cells": cells})
+        out[tab] = {"sheet": sheet, "cols": cols, "rows": rows}
+    return out
+
+
+def _grid_values(wv, template: dict) -> dict:
+    """Computed value of every formula cell in the preview areas for one scenario."""
+    vals = {}
+    for tab, g in template.items():
+        ws = wv[g["sheet"]]
+        vals[tab] = {
+            c["a"]: (round(x, 6) if isinstance(x := ws[c["a"]].value, float) else x)
+            for row in g["rows"]
+            for c in row["cells"]
+            if c["f"]
+        }
+    return vals
+
+
+def _workbook_stats(wb_formulas) -> dict:
+    n = sum(
+        1
+        for ws in wb_formulas.worksheets
+        for row in ws.iter_rows()
+        for c in row
+        if isinstance(c.value, str) and c.value.startswith("=")
+    )
+    return {"sheets": wb_formulas.sheetnames, "formulas": n}
+
+
 FORMULA_CELLS = {
     "sum": ("Dashboard", "B8"),
     "inp": ("Inputs", None),  # first formula in the Inputs sheet
@@ -81,6 +153,8 @@ def main() -> int:
                     if isinstance(c.value, str) and c.value[:1] == "="
                 )
             fcells[tab] = {"cell": f"{sheet}!{cell}", "formula": str(ws[cell].value)}
+        grid = _grid_template(formulas)
+        stats = _workbook_stats(formulas)
         scenarios = {}
         for scen in (1, 2, 3):
             path = Path(tmp) / f"s{scen}.xlsx"
@@ -96,6 +170,8 @@ def main() -> int:
                 "summary": _rows(wv["Dashboard"], 8, 14, brief.horizon_years),
                 "pl": _rows(wv["P&L"], 5, 22, brief.horizon_years),
                 "checks": _checks(wv["Checks"]),
+                "grid": _grid_values(wv, grid),
+                "formula_errors": len(res.errors),
             }
             if scen == 2:
                 (ROOT / "samples").mkdir(exist_ok=True)
@@ -115,6 +191,9 @@ def main() -> int:
             for k in INPUT_KEYS
         ],
         "formulas": fcells,
+        "file": "neighborhood-cafe-plan.xlsx",
+        "stats": stats,
+        "grid": grid,
         "scenarios": scenarios,
     }
     out = ROOT / "app" / "data" / "landing_sheet.json"
