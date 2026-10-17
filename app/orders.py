@@ -20,15 +20,16 @@ from app.db import utcnow
 from app.models import Job, Order, OrderEvent
 from engine.brief import Brief
 
-STATUSES = ("draft", "awaiting_payment", "paid", "building", "checking", "ready", "failed")
+STATUSES = ("draft", "awaiting_payment", "paid", "building", "checking", "ready", "failed", "refunded")
 TRANSITIONS: dict[str, set[str]] = {
     "draft": {"awaiting_payment"},
     "awaiting_payment": {"paid"},
-    "paid": {"building", "failed"},
+    "paid": {"building", "failed", "refunded"},
     "building": {"checking", "paid", "failed"},
     "checking": {"ready", "paid", "failed"},
-    "ready": {"paid"},  # admin re-build (E14)
-    "failed": {"paid"},  # admin re-build after a fix (E14)
+    "ready": {"paid", "refunded"},  # admin re-build (E14) or refund
+    "failed": {"paid", "refunded"},  # admin re-build after a fix, or refund
+    "refunded": set(),
 }
 
 
@@ -38,6 +39,10 @@ class InvalidTransition(ValueError):
 
 class OrderError(ValueError):
     """The request cannot become an order (unsupported business type, invalid numbers...)."""
+
+
+class DuplicatePayment(OrderError):
+    """A second, different payment arrived for an order that is already paid (e.g. two browser tabs)."""
 
 
 def transition(s: Session, order: Order, to: str, note: str = "") -> None:
@@ -50,6 +55,8 @@ def transition(s: Session, order: Order, to: str, note: str = "") -> None:
         order.paid_at = utcnow()
     if to == "ready":
         order.ready_at = utcnow()
+    if to == "refunded":
+        order.refunded_at = utcnow()
 
 
 def create_order(s: Session, cfg: Settings, email: str, brief: Brief, answers: dict | None = None) -> Order:
@@ -91,7 +98,15 @@ def enqueue_build(s: Session, order: Order, cfg: Settings, reason: str = "paid")
     return job
 
 
-def mark_paid(s: Session, cfg: Settings, order_id: str, payment_ref: str, amount_cents: int | None = None) -> Order:
+def mark_paid(
+    s: Session,
+    cfg: Settings,
+    order_id: str,
+    payment_ref: str,
+    amount_cents: int | None = None,
+    currency: str | None = None,
+    payment_intent: str | None = None,
+) -> Order:
     """Apply a confirmed payment. Safe to call twice with the same reference (duplicate webhooks)."""
     order = s.get(Order, order_id, with_for_update=True)
     if order is None:
@@ -99,13 +114,18 @@ def mark_paid(s: Session, cfg: Settings, order_id: str, payment_ref: str, amount
     if order.payment_ref == payment_ref:
         return order  # duplicate delivery: already applied
     if order.payment_ref is not None:
-        raise OrderError(f"order {order.id} is already paid with another reference")
+        raise DuplicatePayment(f"order {order.id} is already paid with another reference")
     clash = s.scalar(select(Order).where(Order.payment_ref == payment_ref))
     if clash is not None:
         raise OrderError("payment reference already used by another order")
     if amount_cents is not None and amount_cents != order.price_cents:
         raise OrderError(f"amount {amount_cents} does not match order price {order.price_cents}")
+    if currency is not None and currency.upper() != order.currency:
+        raise OrderError(f"currency {currency} does not match order currency {order.currency}")
+    if order.status != "awaiting_payment":
+        raise OrderError(f"order {order.id} is {order.status}, not awaiting payment")
     order.payment_ref = payment_ref
+    order.payment_intent = payment_intent or order.payment_intent
     transition(s, order, "paid", f"payment {payment_ref}")
     enqueue_build(s, order, cfg)
     return order
@@ -120,3 +140,18 @@ def rebuild(s: Session, cfg: Settings, order: Order, note: str = "admin re-build
 
 def brief_of(order: Order) -> Brief:
     return Brief.model_validate_json(order.brief_json)
+
+
+def refund_order(s: Session, provider, order: Order, note: str = "refund") -> str:
+    """Refund the full amount through the provider (idempotent per order) and close the order."""
+    if order.status == "refunded":
+        return order.refund_ref or ""
+    if order.status not in ("paid", "ready", "failed"):
+        raise OrderError(f"order {order.id} is {order.status}; only paid, ready or failed orders can be refunded")
+    ref = provider.refund(order.payment_intent or "", order.price_cents, f"refund:{order.id}")
+    order.refund_ref = ref
+    transition(s, order, "refunded", f"{note}: {ref}")
+    for job in order.jobs:  # a refunded order is never built or delivered
+        if job.status == "queued":
+            job.status, job.finished_at, job.last_error = "done", utcnow(), "cancelled: order refunded"
+    return ref

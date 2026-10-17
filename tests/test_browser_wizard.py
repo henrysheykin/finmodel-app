@@ -4,11 +4,13 @@ import os
 import socket
 import threading
 import time
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 import uvicorn
 
+from adapters.payments import FakeProvider
 from app.db import session_scope
 from app.main import create_app
 from app.models import Order
@@ -28,6 +30,9 @@ def live_server(services):
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]
+    base = f"http://127.0.0.1:{port}"
+    services.cfg = replace(services.cfg, public_base_url=base)
+    services.payments = FakeProvider(base)
     server = uvicorn.Server(uvicorn.Config(create_app(services), host="127.0.0.1", port=port, log_level="warning"))
     t = threading.Thread(target=server.run, daemon=True)
     t.start()
@@ -35,7 +40,7 @@ def live_server(services):
         if server.started:
             break
         time.sleep(0.05)
-    yield f"http://127.0.0.1:{port}"
+    yield base
     server.should_exit = True
     t.join(5)
 
@@ -123,3 +128,29 @@ def test_unavailable_type_is_blocked(page, live_server):
     page.get_by_label("Real estate (coming soon)").check()
     page.get_by_role("button", name="Next").click()
     assert "not available yet" in page.get_by_role("alert").inner_text()
+
+
+def test_wizard_pay_build_and_see_ready(page, live_server, services, notifier):
+    """Full customer path with the fake payment page and a fake build step."""
+    from tests.test_pipeline import make
+
+    page.goto(f"{live_server}/start?plan=light")
+    page.get_by_label("Professional services").check()
+    for _ in range(4):
+        page.get_by_role("button", name="Next").click()
+    page.get_by_label("Use typical sample values").check()
+    page.get_by_role("button", name="Next").click()
+    page.get_by_role("button", name="Next").click()
+    page.get_by_label("Email").fill("buyer@example.com")
+    page.get_by_role("button", name="Continue to payment").click()
+    page.get_by_role("button", name="Pay $149").click()
+    page.wait_for_url("**/dev/pay/*")
+    page.get_by_role("button", name="Pay $149 (test)").click()
+    page.wait_for_url("**/success")
+    assert "Payment received" in page.get_by_role("status").inner_text()
+
+    make(services, notifier).run_once()  # the worker builds and checks the model
+    page.wait_for_function("document.getElementById('status-text').dataset.status === 'ready'", timeout=10000)
+    assert "Your model is ready" in page.get_by_role("status").inner_text()
+    ((email, _, link),) = notifier.ready
+    assert email == "buyer@example.com" and "/download/" in link

@@ -29,11 +29,14 @@ class Order(Base):
     brief_json: Mapped[str] = mapped_column(Text)
     #: provider payment id (e.g. Stripe Checkout session); unique so a payment is applied once
     payment_ref: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True)
+    payment_intent: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    refund_ref: Mapped[str | None] = mapped_column(String(255), nullable=True)
     failure_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(default=utcnow, onupdate=utcnow)
     paid_at: Mapped[datetime | None] = mapped_column(nullable=True)
     ready_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    refunded_at: Mapped[datetime | None] = mapped_column(nullable=True)
 
     jobs: Mapped[list[Job]] = relationship(back_populates="order", order_by="Job.id")
     artifacts: Mapped[list[Artifact]] = relationship(back_populates="order", order_by="Artifact.created_at")

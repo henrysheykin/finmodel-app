@@ -95,11 +95,9 @@ def test_typed_values_survive_an_error(client):
     assert 'value="123"' in r.text and 'value="Rocket Notes"' in r.text
 
 
-def test_checkout_unknown_and_pay_placeholder(client):
+def test_checkout_unknown_order(client):
     assert client.get("/checkout/nope").status_code == 404
-    oid = client.post("/start", data=FORM, follow_redirects=False).headers["location"].rsplit("/", 1)[1]
-    r = client.post(f"/checkout/{oid}/pay")
-    assert r.status_code == 503 and "not connected yet" in r.text
+    assert client.post("/checkout/nope/pay").status_code == 404
 
 
 def test_static_assets(client):

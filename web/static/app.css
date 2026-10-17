@@ -90,3 +90,4 @@ input[type=text], input[type=email] { font: inherit; width: 100%; max-width: 420
   .plans { grid-template-columns: minmax(0, 1fr); }
   .choices { grid-template-columns: minmax(0, 1fr); }
 }
+.notice { border-left: 3px solid var(--pine); background: var(--paper); padding: 10px 14px; margin: 0 0 20px; }

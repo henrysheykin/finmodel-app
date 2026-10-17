@@ -3,6 +3,7 @@
 {% block main %}
 <div class="narrow">
   <h1>Review and pay</h1>
+  {% if cancelled and s.status == "awaiting_payment" %}<p class="notice" role="status">Payment was cancelled. Nothing was charged; you can pay below when ready.</p>{% endif %}
   <table class="ledger">
     <caption class="sr-only">Order summary</caption>
     <tbody>
@@ -22,6 +23,7 @@
   <p class="hint">Secure payment by Stripe. After payment your model is built, recalculated and checked, then the download link is emailed to you.</p>
   {% else %}
   <p class="status">Order status: <strong>{{ s.status_label }}</strong></p>
+  <p><a href="/checkout/{{ s.order_id }}/success">See progress</a></p>
   {% endif %}
   <p><a href="/start">Start over</a></p>
 </div>
