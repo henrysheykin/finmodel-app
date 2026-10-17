@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Test payment — StartupModel{% endblock %}
+{% block main %}
+<div class="narrow">
+  <p class="notice" role="note">Development payment page. No real card, no real money. Production uses Stripe Checkout.</p>
+  <h1>Test payment</h1>
+  <table class="ledger"><tbody>
+    <tr><th scope="row">Item</th><td>{{ req.product_name }}</td></tr>
+    <tr><th scope="row">Email</th><td>{{ req.email }}</td></tr>
+    <tr class="total"><th scope="row">Total</th><td>{{ price }}</td></tr>
+  </tbody></table>
+  <form method="post" action="/dev/pay/{{ sid }}">
+    <button class="btn" type="submit" name="action" value="pay">Pay {{ price }} (test)</button>
+    <button class="btn btn--ghost" type="submit" name="action" value="cancel">Cancel</button>
+  </form>
+</div>
+{% endblock %}

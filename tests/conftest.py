@@ -94,7 +94,15 @@ def services(tmp_path):
         storage_dir=str(tmp_path / "storage"),
         job_backoff_seconds=30,
     )
-    return Services(cfg, make_sessionmaker(make_engine(url)), LocalStorage(cfg.storage_dir), PrefillBriefSource())
+    from adapters.payments import FakeProvider
+
+    return Services(
+        cfg,
+        make_sessionmaker(make_engine(url)),
+        LocalStorage(cfg.storage_dir),
+        PrefillBriefSource(),
+        FakeProvider("http://testserver"),
+    )
 
 
 @pytest.fixture

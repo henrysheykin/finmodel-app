@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
@@ -10,11 +11,12 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 
+from adapters.payments import CheckoutRequest, FakeProvider, PaymentError, PaymentEvent, SignatureError
 from app import wizard
 from app.briefing import Answers
 from app.db import session_scope
 from app.models import Order
-from app.orders import OrderError, create_order
+from app.orders import DuplicatePayment, OrderError, create_order, mark_paid
 from engine.brief import BriefError
 
 templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent / "templates"))
@@ -43,6 +45,7 @@ DEFAULT_FORM = {
 }
 
 router = APIRouter()
+log = logging.getLogger("web")
 
 
 def _label(options, value) -> str:
@@ -164,7 +167,7 @@ def _short(exc: Exception) -> str:
 
 
 @router.get("/checkout/{order_id}", response_class=HTMLResponse)
-def checkout(order_id: str, request: Request) -> HTMLResponse:
+def checkout(order_id: str, request: Request, cancelled: int = 0) -> HTMLResponse:
     sv = request.app.state.services
     with session_scope(sv.sessions) as s:
         order = s.get(Order, order_id)
@@ -183,22 +186,131 @@ def checkout(order_id: str, request: Request) -> HTMLResponse:
             "email": _mask(order.email),
             "price": f"${order.price_cents / 100:,.0f}",
         }
-    return templates.TemplateResponse(request, "checkout.html", {"s": summary})
+    return templates.TemplateResponse(request, "checkout.html", {"s": summary, "cancelled": bool(cancelled)})
 
 
-@router.post("/checkout/{order_id}/pay", response_class=HTMLResponse)
-def pay(order_id: str, request: Request) -> HTMLResponse:
-    """Placeholder until the Stripe Checkout adapter lands (E11)."""
+@router.post("/checkout/{order_id}/pay")
+def pay(order_id: str, request: Request):
+    """Create a hosted checkout session and send the customer to it."""
+    sv = request.app.state.services
+    with session_scope(sv.sessions) as s:
+        order = s.get(Order, order_id)
+        if order is None:
+            raise HTTPException(404, "order not found")
+        if order.status != "awaiting_payment":
+            return RedirectResponse(f"/checkout/{order_id}", status_code=303)
+        a = json.loads(order.answers_json or "{}")
+        btype = _label(wizard.BUSINESS_TYPES, a.get("business_type", ""))
+        name = f"StartupModel {wizard.PLANS[order.tier]['name']} — {btype}"
+        req = CheckoutRequest(
+            order_id=order.id,
+            amount_cents=order.price_cents,
+            currency=order.currency,
+            product_name=name,
+            email=order.email,
+            success_url=f"{sv.cfg.public_base_url}/checkout/{order.id}/success",
+            cancel_url=f"{sv.cfg.public_base_url}/checkout/{order.id}?cancelled=1",
+        )
+    try:
+        session = sv.payments.create_checkout(req)
+    except PaymentError:
+        log.exception("checkout session failed for order %s", order_id)
+        return templates.TemplateResponse(
+            request,
+            "message.html",
+            {
+                "heading": "Payment page unavailable",
+                "text": "We could not open the payment page. Nothing was charged. Please try again in a minute.",
+                "link": (f"/checkout/{order_id}", "Back to your order"),
+            },
+            status_code=502,
+        )
+    return RedirectResponse(session.url, status_code=303)
+
+
+@router.get("/checkout/{order_id}/success", response_class=HTMLResponse)
+def paid_page(order_id: str, request: Request) -> HTMLResponse:
+    """Where the provider sends the customer back. Shows status only; the webhook decides payment."""
+    sv = request.app.state.services
+    with session_scope(sv.sessions) as s:
+        order = s.get(Order, order_id)
+        if order is None:
+            raise HTTPException(404, "order not found")
+        status = order.status
     return templates.TemplateResponse(
         request,
-        "message.html",
-        {
-            "heading": "Payments are not connected yet",
-            "text": "This build does not take payments yet. Your order is saved and waiting for payment.",
-            "link": (f"/checkout/{order_id}", "Back to your order"),
-        },
-        status_code=503,
+        "success.html",
+        {"order_id": order_id, "status": status, "label": STATUS_LABEL.get(status, status)},
     )
+
+
+@router.post("/webhooks/stripe")
+async def stripe_webhook(request: Request) -> JSONResponse:
+    sv = request.app.state.services
+    payload = await request.body()
+    try:
+        event = sv.payments.parse_webhook(payload, request.headers.get("stripe-signature", ""))
+    except SignatureError as exc:
+        log.warning("webhook rejected: %s", exc)
+        raise HTTPException(400, "invalid signature") from None
+    return JSONResponse(apply_payment_event(sv, event))
+
+
+def apply_payment_event(sv, event: PaymentEvent) -> dict:
+    """Idempotent: duplicate deliveries of the same payment are no-ops."""
+    if event.kind != "paid":
+        return {"received": True, "action": "ignored"}
+    try:
+        with session_scope(sv.sessions) as s:
+            mark_paid(
+                s,
+                sv.cfg,
+                event.order_id,
+                event.payment_ref,
+                amount_cents=event.amount_cents,
+                currency=event.currency,
+                payment_intent=event.payment_intent,
+            )
+    except DuplicatePayment as exc:
+        # the customer paid twice for one order: give the second payment back automatically
+        try:
+            ref = sv.payments.refund(event.payment_intent, event.amount_cents, f"duplicate:{event.payment_ref}")
+        except PaymentError:
+            log.exception("PAYMENT NEEDS ATTENTION: duplicate payment %s could not be refunded", event.payment_ref)
+            return {"received": True, "action": "needs_attention"}
+        log.warning("duplicate payment %s refunded as %s: %s", event.payment_ref, ref, exc)
+        return {"received": True, "action": "duplicate_refunded"}
+    except OrderError as exc:
+        # acknowledged so the provider stops retrying; needs a human (refund or fix)
+        log.error("PAYMENT NEEDS ATTENTION: event %s order %s: %s", event.event_id, event.order_id, exc)
+        return {"received": True, "action": "needs_attention"}
+    return {"received": True, "action": "paid"}
+
+
+# --------------------------------------------------------------------------- dev-only fake hosted page
+@router.get("/dev/pay/{session_id}", response_class=HTMLResponse)
+def dev_pay_page(session_id: str, request: Request) -> HTMLResponse:
+    sv = request.app.state.services
+    if not isinstance(sv.payments, FakeProvider) or sv.cfg.is_prod or session_id not in sv.payments.sessions:
+        raise HTTPException(404, "not found")
+    req = sv.payments.sessions[session_id]
+    return templates.TemplateResponse(
+        request, "dev_pay.html", {"sid": session_id, "req": req, "price": f"${req.amount_cents / 100:,.0f}"}
+    )
+
+
+@router.post("/dev/pay/{session_id}")
+async def dev_pay_submit(session_id: str, request: Request):
+    sv = request.app.state.services
+    if not isinstance(sv.payments, FakeProvider) or sv.cfg.is_prod or session_id not in sv.payments.sessions:
+        raise HTTPException(404, "not found")
+    req = sv.payments.sessions[session_id]
+    action = (await request.form()).get("action")
+    if action != "pay":
+        return RedirectResponse(req.cancel_url, status_code=303)
+    payload, sig = sv.payments.signed(sv.payments.event(session_id))
+    apply_payment_event(sv, sv.payments.parse_webhook(payload, sig))
+    return RedirectResponse(req.success_url, status_code=303)
 
 
 def _mask(email: str) -> str:

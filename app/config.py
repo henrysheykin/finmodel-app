@@ -22,6 +22,10 @@ class Settings:
     s3_bucket: str = ""
     s3_endpoint_url: str = ""
     admin_email: str = ""
+    payment_provider: str = "fake"
+    stripe_secret_key: str = ""
+    stripe_webhook_secret: str = ""
+    allow_live_payments: bool = False
     #: prices in cents (ADR-002 addendum 2: Light $149, Full $349)
     prices: dict[str, int] = field(default_factory=lambda: {"light": 14900, "full": 34900})
     #: download links in the "model ready" email live 7 days (content/email/model-ready.md)
@@ -39,6 +43,8 @@ class Settings:
         """Refuse to run in production with unsafe defaults."""
         if self.is_prod and (len(self.secret_key) < 32 or self.secret_key.startswith("dev-insecure")):
             raise RuntimeError("SECRET_KEY must be set (32+ characters) in production")
+        if self.is_prod and self.payment_provider != "stripe":
+            raise RuntimeError("production must use PAYMENT_PROVIDER=stripe")
 
 
 def load_settings() -> Settings:
@@ -54,6 +60,10 @@ def load_settings() -> Settings:
         s3_bucket=env("S3_BUCKET", ""),
         s3_endpoint_url=env("S3_ENDPOINT_URL", ""),
         admin_email=env("ADMIN_EMAIL", ""),
+        payment_provider=env("PAYMENT_PROVIDER", "") or "fake",
+        stripe_secret_key=env("STRIPE_SECRET_KEY", ""),
+        stripe_webhook_secret=env("STRIPE_WEBHOOK_SECRET", ""),
+        allow_live_payments=env("ALLOW_LIVE_PAYMENTS", "") == "1",
         prices={"light": _int("PRICE_LIGHT_CENTS", 14900), "full": _int("PRICE_FULL_CENTS", 34900)},
         link_ttl_seconds=_int("LINK_TTL_SECONDS", 7 * 24 * 3600),
     )

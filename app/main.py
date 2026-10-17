@@ -12,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, ValidationError
 from sqlalchemy.orm import Session, sessionmaker
 
+from adapters.payments import PaymentProvider, make_provider
 from adapters.storage import Storage, make_storage
 from app import links
 from app.briefing import Answers, BriefSource, PrefillBriefSource, supported_business_types
@@ -30,6 +31,7 @@ class Services:
     sessions: sessionmaker[Session]
     storage: Storage
     briefs: BriefSource
+    payments: PaymentProvider | None = None
 
 
 class OrderIn(BaseModel):
@@ -49,6 +51,13 @@ def create_app(services: Services | None = None) -> FastAPI:
                 make_sessionmaker(make_engine(cfg.database_url)),
                 make_storage(cfg.storage_backend, cfg.storage_dir, cfg.s3_bucket, cfg.s3_endpoint_url),
                 PrefillBriefSource(),
+                make_provider(
+                    cfg.payment_provider,
+                    cfg.public_base_url,
+                    cfg.stripe_secret_key,
+                    cfg.stripe_webhook_secret,
+                    cfg.allow_live_payments,
+                ),
             )
         yield
 
