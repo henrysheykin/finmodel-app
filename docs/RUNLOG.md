@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · interactive with Henry: production check on Railway (test mode) — healthz, landing, wizard, Stripe test payment,
+  webhook, build, Resend email, download, Checks PASS all OK. Left: custom domain + Resend domain (A5), Stripe account name "FRANCHISE"
+  → StartupModel before go-live. Copy issues for M/E: model-ready email promises a "tomorrow" note that is not sent yet, and says the
+  scenario switch is on Inputs (Full tier has it on Dashboard).
 - 2026-10-17 · E · E07 goal modules · DONE · https://github.com/henrysheykin/finmodel-app/pull/26
   The wizard goal now adds sheets (every template, both tiers): Break-even (funding need to the lowest cash point + cash buffer,
   EBITDA/NI-positive period, payback, annual break-even revenue), Valuation (unlevered FCF, NPV-tied discounting, perpetual-growth and

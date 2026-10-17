@@ -59,10 +59,10 @@ the answer next to the item (agents read this file every run).
 Step-by-step for all of these: `docs/DEPLOY.md` (Railway service + Postgres + volume, Cloudflare DNS, Stripe
 webhook, Resend domain).
 - [ ] A1 Anthropic API key with a monthly spend limit (for the brief builder).
-- [ ] A2 Stripe account, test-mode keys first (put them only into Railway env vars). Exact steps (keys, webhook
+- [x] A2 (test mode done 2026-10-17: keys + webhook on the Railway URL, test purchase delivered) Stripe account, test-mode keys first (put them only into Railway env vars). Exact steps (keys, webhook
       endpoint `/webhooks/stripe` and its 3 events, local test with the Stripe CLI): `docs/PAYMENTS.md`.
-- [ ] A3 Email provider (Resend or Postmark) + DNS records for the domain.
-- [ ] A4 Railway account (project with app, worker and Postgres services).
+- [x] A3 (Resend key done 2026-10-17; domain DNS still to verify — sender is onboarding@resend.dev until then) Email provider (Resend or Postmark) + DNS records for the domain.
+- [x] A4 (done: https://finmodel-app-production.up.railway.app, Postgres, all variables; end-to-end test order 539a9c52 ready, Checks PASS) Railway account (project with app, worker and Postgres services).
 - [ ] A5 Domain (after D1).
 
 ## Reviews
