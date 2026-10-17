@@ -156,6 +156,11 @@ class RetailTemplate(Template):
     key = "retail"
     title = "Retail / e-commerce"
     business_types = ("retail_ecommerce",)
+    order = 30
+    key_numbers = ("visits", "conv", "aov", "ad_budget", "cogs_pct", "stores", "equity")
+    sample_title = "Retail and e-commerce"
+    sample_desc = "Full workbook with traffic, conversion, inventory and stores"
+    sample_stage = "growing"
     kpi_title = "Retail metrics"
     kpi_checked = {"orders": "orders", "stores_end": "stores", "online_sales": "online_sales"}
     kpi_flows = ("orders", "online_sales")

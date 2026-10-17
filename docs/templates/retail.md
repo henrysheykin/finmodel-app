@@ -2,7 +2,7 @@
 
 Template key `retail` (`engine/templates/retail.py`). Sample: `samples/retail-full.xlsx`
 (stage *growing*: online + 2 stores, Full tier, monthly, 3 years; rebuild with
-`python -m engine.build default:retail:growing samples/retail-full.xlsx --recalc`).
+`python scripts/build_samples.py retail`).
 
 Status: **awaiting CFO review (HUMAN_TODO R1)**. All defaults are illustrative starting points
 for the wizard's sample-data path, not market statistics.

@@ -12,11 +12,12 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-BusinessType = Literal["saas", "restaurant_cafe", "retail_ecommerce", "real_estate", "professional_services", "other"]
+#: snake_case business-type id; the allowed set comes from the template catalog (engine/templates, ADR-009)
+BusinessType = Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]{1,39}$")]
 Goal = Literal["revenue_profit", "startup_breakeven", "dcf_valuation", "investor_pitch", "other"]
 Stage = Literal["planning", "early", "growing", "established"]
 Tier = Literal["light", "full"]
@@ -78,6 +79,16 @@ class Brief(BaseModel):
     assumption_note: str = Field(default="", max_length=300)
     roles: list[Role] = Field(default_factory=list, max_length=12)
     drivers: list[DriverValue] = Field(min_length=1, max_length=120)
+
+    @field_validator("business_type")
+    @classmethod
+    def _known_business_type(cls, v: str) -> str:
+        from engine.templates import known_business_types  # lazy: the registry imports this module
+
+        known = known_business_types()
+        if v not in known:
+            raise ValueError(f"unknown business type {v!r}; known: {sorted(known)}")
+        return v
 
     @model_validator(mode="after")
     def _unique(self) -> Brief:

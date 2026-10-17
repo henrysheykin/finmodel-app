@@ -20,6 +20,7 @@ from markupsafe import Markup
 from app import wizard
 from app.emails import md_to_html
 from app.web import templates
+from engine.templates import TEMPLATES
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = Path(__file__).resolve().parent / "data" / "landing_sheet.json"
@@ -34,20 +35,10 @@ LEGAL_PAGES = {
     "refunds": "Refund policy",
 }
 
-#: downloadable samples: slug -> (file, title, description). Only files that exist are listed.
+#: downloadable samples from the template catalog: key -> (file, title, description).
+#: Only files that exist in samples/ are listed (scripts/build_samples.py writes them).
 SAMPLE_FILES = {
-    "cafe": ("cafe-full.xlsx", "Neighborhood cafe", "Full workbook, three years, monthly detail"),
-    "saas": ("saas-full.xlsx", "SaaS startup", "Full workbook with MRR, churn, CAC payback and runway"),
-    "retail": (
-        "retail-full.xlsx",
-        "Retail and e-commerce",
-        "Full workbook with traffic, conversion, inventory and stores",
-    ),
-    "services": (
-        "services-full.xlsx",
-        "Professional services firm",
-        "Full workbook with utilisation, rates and receivables",
-    ),
+    key: (f"{key}-full.xlsx", t.sample_title, t.sample_desc) for key, t in TEMPLATES.items() if t.sample_title
 }
 
 FAQ = [

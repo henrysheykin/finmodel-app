@@ -13,15 +13,10 @@ from typing import Literal, Protocol
 from pydantic import BaseModel, ConfigDict, Field
 
 from engine.brief import Brief, BriefError, BusinessType, Goal, Stage
-from engine.templates import get_template
+from engine.templates import get_template, template_for_business_type
 
-#: wizard business type → template key (real estate / other arrive with E05 and later)
-TEMPLATE_FOR: dict[str, str] = {
-    "saas": "saas",
-    "restaurant_cafe": "cafe",
-    "retail_ecommerce": "retail",
-    "professional_services": "services",
-}
+#: wizard business type → template key, from the template catalog (ADR-009)
+TEMPLATE_FOR: dict[str, str] = template_for_business_type()
 
 
 class Answers(BaseModel):
@@ -57,12 +52,7 @@ class PrefillBriefSource:
         if key is None:
             raise BriefError(f"business type {answers.business_type!r} is not available yet")
         tpl = get_template(key)
-        if key == "cafe":
-            from pathlib import Path
-
-            base = Brief.load(Path(__file__).resolve().parents[1] / "engine" / "briefs" / "cafe.json")
-        else:
-            base = tpl.default_brief(answers.stage)
+        base = tpl.default_brief(answers.stage)
         data = base.model_dump()
         known = {d["key"]: d for d in data["drivers"]}
         unknown = sorted(set(answers.key_numbers) - set(known))

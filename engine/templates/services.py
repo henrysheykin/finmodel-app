@@ -133,6 +133,11 @@ class ServicesTemplate(Template):
     key = "services"
     title = "Professional services"
     business_types = ("professional_services",)
+    order = 40
+    key_numbers = ("senior_rate", "staff_rate", "staff_util", "contractor_hours", "ar_days", "equity")
+    sample_title = "Professional services firm"
+    sample_desc = "Full workbook with utilisation, rates and receivables"
+    sample_stage = "growing"
     kpi_title = "Services metrics"
     kpi_checked = {"hours": "hours", "billable_fte": "billable_fte", "retainer": "rev_retainer"}
     kpi_flows = ("hours", "rev_retainer")

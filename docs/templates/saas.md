@@ -2,7 +2,7 @@
 
 Template key `saas` (`engine/templates/saas.py`). Sample: `samples/saas-full.xlsx`
 (stage *early*, Full tier, monthly, 3 years; rebuild with
-`python -m engine.build default:saas:early samples/saas-full.xlsx --recalc`).
+`python scripts/build_samples.py saas`).
 
 Status: **awaiting CFO review (HUMAN_TODO R1)**. All defaults below are illustrative
 starting points for the wizard's sample-data path, not market statistics; the customer

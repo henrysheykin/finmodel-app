@@ -278,3 +278,28 @@ this is a later switch of env vars); Vercel (no long-running worker or LibreOffi
 
 **Consequences.** One container builds models and serves pages; a long build cannot block requests
 (separate processes), but scaling out means moving files to R2 first. Worker and web restart together.
+
+## ADR-009 — Template catalog: one file per industry (2026-10-17, E20)
+
+**Context.** Henry wants new models added over time. Adding an industry used to touch seven places
+(template file, registry tuple, `BusinessType` literal, briefing map, wizard list, wizard key numbers,
+landing samples), which invites drift between the wizard, the schema and the site.
+
+**Decision.**
+- `engine/templates/__init__.py` discovers every concrete `Template` subclass in the package; the
+  registry is sorted by the template's `order`.
+- Catalog data lives on the template: `title` (wizard and landing label), `business_types`, `order`,
+  `key_numbers` (wizard step 5), `sample_title` / `sample_desc` / `sample_stage` (landing samples,
+  `scripts/build_samples.py`).
+- `PLANNED` announces industries before their template exists ("(coming soon)" in the wizard); an entry
+  disappears automatically once a template serves its business type.
+- `Brief.business_type` is a snake_case string validated against the catalog (served + planned +
+  `other`) instead of a hand-written `Literal`.
+- The cafe template's `default_brief(stage)` returns `engine/briefs/cafe.json` (the briefing special case
+  is gone).
+- `tests/test_catalog.py` checks every registered template automatically (discovery, key numbers exist,
+  stage defaults validate, wizard/briefing/landing consistency, samples present).
+
+**Consequences.** A new industry is its template file + tests + sample + memo
+(`docs/templates/ADDING_A_TEMPLATE.md`). E08's LLM brief builder must take the business-type enum from
+`known_business_types()` when it builds its JSON schema.

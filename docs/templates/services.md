@@ -2,7 +2,7 @@
 
 Template key `services` (`engine/templates/services.py`). Sample: `samples/services-full.xlsx`
 (stage *growing*: 4 partners/seniors + 12 consultants + contractors, Full tier, monthly, 3 years;
-rebuild with `python -m engine.build default:services:growing samples/services-full.xlsx --recalc`).
+rebuild with `python scripts/build_samples.py services`).
 
 Status: **awaiting CFO review (HUMAN_TODO R1)**. All defaults are illustrative starting points
 for the wizard's sample-data path, not market statistics.
