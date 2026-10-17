@@ -20,6 +20,7 @@ COPY app ./app
 COPY worker ./worker
 COPY adapters ./adapters
 COPY alembic.ini ./
+COPY web ./web
 RUN pip install .
 
 USER app

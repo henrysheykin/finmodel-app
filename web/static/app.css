@@ -1,0 +1,92 @@
+/* StartupModel app pages — design v2 tokens (design/tokens.dc.html). */
+:root {
+  --ink: #1B2A2F; --pine: #0F6E56; --pine-dark: #0B5743; --tick: #B8322A; --input: #1F4FD1;
+  --paper: #F7F8F3; --ruling: #E6EFE8; --rule: #DCE9E0; --panel-rule: #CFE0D4;
+  --text-2: #3E5157; --text-3: #56676C; --focus: #6FC4A6; --error: #B8322A;
+  --head: "Schibsted Grotesk", system-ui, sans-serif; --body: "IBM Plex Sans", system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; font-family: var(--body); font-size: 16px; line-height: 1.6; color: var(--ink); background: #fff;
+  font-variant-numeric: tabular-nums; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; margin: 0 0 12px; font-variant-numeric: normal; }
+[hidden] { display: none !important; }
+h1 { font-size: 40px; font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 22px; font-weight: 700; }
+a { color: var(--pine); text-underline-offset: 4px; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 16px; top: 8px; background: #fff; padding: 8px; z-index: 10; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+.top { border-bottom: 1px solid var(--rule); }
+.top__row { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 64px; flex-wrap: wrap; }
+.brand { font-family: var(--head); font-weight: 800; font-size: 20px; color: var(--ink); text-decoration: none; }
+.top__note { font-size: 14px; color: var(--text-3); }
+main.wrap { padding-top: 48px; padding-bottom: 88px; }
+.foot { border-top: 1px solid var(--rule); padding: 24px 0; font-size: 14px; color: var(--text-3); }
+.lead { font-size: 19px; color: var(--text-2); max-width: 680px; }
+.hint { font-size: 14px; color: var(--text-3); margin: 4px 0 12px; }
+.opt { font-weight: 400; color: var(--text-3); }
+
+.wizard-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 48px; align-items: start; }
+.progress { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 0; margin: 24px 0 32px;
+  font-size: 14px; color: var(--text-3); border-top: 2px solid var(--ink); padding-top: 12px; }
+.progress li[aria-current="step"] { color: var(--ink); font-weight: 600; }
+.progress li.done { color: var(--pine); }
+.step { border-top: 1px solid var(--rule); padding: 24px 0; }
+.js .step { border-top: 0; padding-top: 0; }
+.js .step[hidden] { display: none; }
+.field { border: 0; margin: 0 0 20px; padding: 0; min-width: 0; }
+legend, .field > label { font-weight: 600; display: block; margin-bottom: 8px; padding: 0; }
+.choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.choice, .plan, .toggle { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--panel-rule);
+  border-radius: 8px; padding: 12px 14px; cursor: pointer; background: #fff; }
+.choice:has(input:checked) { border: 2px solid var(--pine); padding: 11px 13px; }
+.choice input, .plan input, .toggle input { margin-top: 5px; accent-color: var(--pine); flex: none; }
+.toggle { margin-bottom: 16px; }
+input[type=text], input[type=email] { font: inherit; width: 100%; max-width: 420px; padding: 10px 12px;
+  border: 1px solid var(--panel-rule); border-radius: 6px; color: var(--ink); background: #fff; }
+.kn__input { display: flex; align-items: center; gap: 8px; max-width: 420px; }
+.kn__input input { color: var(--input); font-weight: 500; text-align: right; }
+.unit { font-size: 14px; color: var(--text-3); min-width: 64px; }
+.kn.is-off { opacity: 0.5; }
+.plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.plan:has(input:checked) { border: 2px solid var(--pine); border-radius: 10px; padding: 11px 13px; }
+.plan__body { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.plan__head { display: flex; justify-content: space-between; font-family: var(--head); font-size: 18px; }
+.plan__price { font-weight: 800; }
+.plan__lines { display: flex; flex-direction: column; font-size: 14px; color: var(--text-2); }
+.btn { display: inline-block; font: inherit; font-size: 17px; font-weight: 600; background: var(--pine); color: #fff;
+  border: 1.5px solid var(--pine); border-radius: 6px; padding: 13px 24px; cursor: pointer; text-decoration: none; }
+.btn:hover { background: var(--pine-dark); border-color: var(--pine-dark); }
+.btn--ghost { background: #fff; color: var(--pine); }
+.btn--ghost:hover { background: var(--paper); color: var(--pine-dark); }
+.nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; }
+.errors { border: 2px solid var(--error); border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; }
+.errors h2 { font-size: 17px; color: var(--error); margin: 0 0 4px; }
+.errors ul { margin: 0; padding-left: 20px; }
+.summary { position: sticky; top: 24px; border: 1px solid var(--panel-rule); border-radius: 8px; padding: 20px; }
+.summary h2 { font-size: 18px; }
+.summary dl { margin: 0 0 12px; }
+.summary dl div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #EEF4EF; font-size: 15px; }
+.summary dt { color: var(--text-3); }
+.summary dd { margin: 0; text-align: right; }
+.summary .total, .ledger .total { font-weight: 700; border-bottom: 3px double var(--ink); }
+.narrow { max-width: 640px; }
+.ledger { width: 100%; border-collapse: collapse; margin: 16px 0 24px; border-top: 2px solid var(--ink); }
+.ledger th, .ledger td { padding: 10px 0; border-bottom: 1px solid var(--rule); text-align: left; font-weight: 400; }
+.ledger td { text-align: right; }
+.ledger .total th, .ledger .total td { font-weight: 700; border-bottom: 3px double var(--ink); }
+
+@media (max-width: 900px) {
+  .wizard-layout { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .summary { position: static; }
+}
+@media (max-width: 480px) {
+  .wrap { padding: 0 16px; }
+  h1 { font-size: 32px; }
+  main.wrap { padding-top: 32px; padding-bottom: 56px; }
+  .plans { grid-template-columns: minmax(0, 1fr); }
+  .choices { grid-template-columns: minmax(0, 1fr); }
+}

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Start a model — StartupModel{% endblock %}
+{% macro radios(name, options, current, legend, hint="") %}
+<fieldset class="field">
+  <legend>{{ legend }}</legend>
+  {% if hint %}<p class="hint">{{ hint }}</p>{% endif %}
+  <div class="choices">
+  {% for value, label in options %}
+    <label class="choice">
+      <input type="radio" name="{{ name }}" value="{{ value }}" {% if value|string == current|string %}checked{% endif %} required>
+      <span>{{ label }}</span>
+    </label>
+  {% endfor %}
+  </div>
+</fieldset>
+{% endmacro %}
+{% block main %}
+<div class="wizard-layout">
+<form id="wizard" class="wizard" method="post" action="/start" novalidate data-steps="7">
+  <h1>Start a model</h1>
+  <p class="lead">Seven short steps. Your answers become a validated brief; the workbook is built from it, recalculated and checked before it is sent.</p>
+  <ol class="progress" aria-label="Progress">
+    {% for s in ["Business", "Goal", "Stage", "Period", "Key numbers", "Plan", "Email"] %}
+    <li data-step-label="{{ loop.index }}">{{ s }}</li>
+    {% endfor %}
+  </ol>
+
+  {% if errors %}
+  <div class="errors" role="alert" tabindex="-1" id="errors">
+    <h2>Please check these answers</h2>
+    <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  <section class="step" data-step="1" aria-labelledby="s1">
+    <h2 id="s1">1. Your business</h2>
+    {{ radios("business_type", business_types, form.business_type, "What kind of business is it?") }}
+    <div class="field">
+      <label for="business_name">Business name <span class="opt">(optional)</span></label>
+      <input id="business_name" name="business_name" type="text" maxlength="60" value="{{ form.business_name }}" autocomplete="organization">
+    </div>
+  </section>
+
+  <section class="step" data-step="2" aria-labelledby="s2">
+    <h2 id="s2">2. What the model is for</h2>
+    {{ radios("goal", goals, form.goal, "Main goal") }}
+  </section>
+
+  <section class="step" data-step="3" aria-labelledby="s3">
+    <h2 id="s3">3. Stage</h2>
+    {{ radios("stage", stages, form.stage, "Where is the business today?", "We start your numbers from typical values for this stage; you can change them next.") }}
+  </section>
+
+  <section class="step" data-step="4" aria-labelledby="s4">
+    <h2 id="s4">4. Period</h2>
+    {{ radios("horizon_years", horizons, form.horizon_years, "How many years?") }}
+    {{ radios("granularity", granularities, form.granularity, "Detail") }}
+  </section>
+
+  <section class="step" data-step="5" aria-labelledby="s5">
+    <h2 id="s5">5. Key numbers</h2>
+    <p class="hint">These are your Base case. Low and High keep the same spread around them. Leave a field as it is to keep the typical value.</p>
+    <label class="toggle">
+      <input type="checkbox" name="sample_data" value="1" {% if form.sample_data %}checked{% endif %}>
+      <span>Use typical sample values for everything (I'll edit the file later)</span>
+    </label>
+    <div id="key-numbers" class="kn" data-endpoint="/api/key-numbers">
+      {% for kn in key_numbers %}
+      <div class="field kn__row">
+        <label for="kn_{{ kn.key }}">{{ kn.label }}</label>
+        <div class="kn__input">
+          <input id="kn_{{ kn.key }}" name="kn_{{ kn.key }}" type="text" inputmode="decimal" value="{{ form.get('kn_' ~ kn.key, kn.default|fmtnum) }}">
+          <span class="unit">{{ kn.unit }}</span>
+        </div>
+      </div>
+      {% else %}
+      <p class="hint" id="kn-empty">Choose a business type to see its key numbers.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="step" data-step="6" aria-labelledby="s6">
+    <h2 id="s6">6. Plan</h2>
+    <fieldset class="field">
+      <legend>Choose a workbook</legend>
+      <div class="plans">
+      {% for key, p in plans.items() %}
+        <label class="plan">
+          <input type="radio" name="tier" value="{{ key }}" {% if key == form.tier %}checked{% endif %} required
+                 aria-labelledby="plan-{{ key }}" aria-describedby="plan-{{ key }}-lines">
+          <span class="plan__body">
+            <span class="plan__head" id="plan-{{ key }}"><strong>{{ p.name }}</strong> <span class="plan__price">{{ prices[key]|money }}</span></span>
+            <span class="plan__lines" id="plan-{{ key }}-lines">{% for l in p.lines %}<span>{{ l }}</span>{% endfor %}</span>
+          </span>
+        </label>
+      {% endfor %}
+      </div>
+    </fieldset>
+  </section>
+
+  <section class="step" data-step="7" aria-labelledby="s7">
+    <h2 id="s7">7. Where to send it</h2>
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required maxlength="254" autocomplete="email" value="{{ form.email }}">
+      <p class="hint">We send the download link and the receipt here. No newsletter.</p>
+    </div>
+    <button class="btn" type="submit">Continue to payment</button>
+  </section>
+
+  <div class="nav" hidden>
+    <button class="btn btn--ghost" type="button" data-prev>Back</button>
+    <button class="btn" type="button" data-next>Next</button>
+  </div>
+</form>
+
+<aside class="summary" aria-labelledby="sum-h">
+  <h2 id="sum-h">Your order</h2>
+  <dl id="summary" aria-live="polite">
+    <div><dt>Business</dt><dd data-sum="business_type">—</dd></div>
+    <div><dt>Goal</dt><dd data-sum="goal">—</dd></div>
+    <div><dt>Stage</dt><dd data-sum="stage">—</dd></div>
+    <div><dt>Period</dt><dd data-sum="period">—</dd></div>
+    <div><dt>Plan</dt><dd data-sum="tier">—</dd></div>
+    <div class="total"><dt>Total</dt><dd data-sum="price">—</dd></div>
+  </dl>
+  <p class="hint">Delivered as an .xlsx with live formulas, a low / base / high switch and a Checks sheet. Full refund within 7 days.</p>
+</aside>
+</div>
+<script id="wizard-data" type="application/json">{{ wizard_data|tojson }}</script>
+{% endblock %}
+{% block scripts %}<script src="/static/wizard.js" defer></script>{% endblock %}
