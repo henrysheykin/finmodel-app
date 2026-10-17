@@ -130,3 +130,10 @@ Newest first. One entry per scheduled run: date · track · task · result · PR
 - Returning visitors saw hero v3 unstyled: Cloudflare cached /static/site.css for 4 h under a fixed URL.
 - Fix: asset() adds a content hash (?v=…) to CSS/JS links; versioned static files are immutable, plain ones revalidate.
 - PR https://github.com/henrysheykin/finmodel-app/pull/28 (575 tests green), verified live.
+
+## 2026-10-18 — interactive session (Henry) — hero looks like real Excel
+- Henry: the hero preview "isn't Excel, it's a parody". Now the whole sample workbook (8 sheets) in a spreadsheet window:
+  ribbon following the selection, name box, formula bar, gridlines, frozen panes, B4 list + input message, F2 precedents, range sums.
+- app/xlview.py + landing.js render the same cells (browser test compares); data /preview/workbook.json?v=<hash>.
+- Engine: scenario-cell validation now has an input message. PR https://github.com/henrysheykin/finmodel-app/pull/30 (669 tests).
+- For Henry: workbook title/section bands are still navy (#1F3864 / #2F5597); the site shows them in ink/pine (ADR-005). Switch the files too?
