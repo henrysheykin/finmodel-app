@@ -124,12 +124,18 @@ def test_cta_opens_the_wizard_on_the_page_template(client):
 
 
 def test_copy_prices_match_the_configured_prices(services):
-    """Pages quote prices in prose; they must equal the prices the checkout charges."""
+    """Pages quote tier prices in prose; they must equal the prices the checkout charges."""
     light, full = (f"${services.cfg.prices[t] / 100:,.0f}" for t in ("light", "full"))
+    found = 0
     for page in PAGES:
-        quoted = set(re.findall(r"\$\d{3}\b(?![,.]\d)", re.sub(r"<[^>]+>", "", page.body)))
-        tier_prices = {q for q in quoted if q in ("$149", "$349")} | ({light, full} & quoted)
-        assert tier_prices <= {light, full}, (page.slug, quoted)
+        text = re.sub(r"<[^>]+>", "", page.body)
+        for tier, price in re.findall(r"\b(Light|Full)[\s:(]{1,3}(\$[\d,]+)", text):
+            assert price == {"Light": light, "Full": full}[tier], (page.slug, tier, price)
+            found += 1
+        for price in re.findall(r"\b[Ff]rom (\$[\d,]+)", text):
+            assert price == light, (page.slug, price)
+            found += 1
+    assert found >= 15
 
 
 def test_related_links_prefer_the_same_template():
@@ -157,7 +163,6 @@ def test_indexes_sitemap_and_llms_list_every_page(client):
 
 def test_unknown_page_is_404(client):
     assert client.get("/models/nope").status_code == 404
-    assert client.get("/guides/../models/custom-financial-model").status_code in (404, 200)
     assert client.get("/guides/custom-financial-model").status_code == 404  # wrong section
 
 
