@@ -9,20 +9,20 @@ there (ADR-009).
 
 ```python
 class FitnessTemplate(Template):
-    key = "fitness"                         # template id, also the sample file name
-    title = "Fitness studio / gym"          # shown in the wizard and on the landing page
-    business_types = ("fitness",)           # wizard business-type ids this template serves
-    order = 60                              # position in the wizard list (10, 20, … by convention)
+    key = "fitness"  # template id, also the sample file name
+    title = "Fitness studio / gym"  # shown in the wizard and on the landing page
+    business_types = ("fitness",)  # wizard business-type ids this template serves
+    order = 60  # position in the wizard list (10, 20, … by convention)
     key_numbers = ("members_start", "price_m", "churn_m", "rent", "capex", "equity")  # wizard step 5
-    sample_title = "Fitness studio"         # landing "Open a sample" row (omit to hide)
+    sample_title = "Fitness studio"  # landing "Open a sample" row (omit to hide)
     sample_desc = "Full workbook with members, churn, class revenue and rent"
 
-    def driver_specs(self): ...             # template drivers (standard + headcount are added)
-    def revenue_lines(self, t): ...         # must define `rev` and `cogs`
+    def driver_specs(self): ...  # template drivers (standard + headcount are added)
+    def revenue_lines(self, t): ...  # must define `rev` and `cogs`
     def opex_lines(self, t): ...
     def capex_lines(self, t): ...
     def reference_top(self, d, p, y, t, hc): ...  # plain-Python twin used by the challenger
-    def default_brief(self, stage): ...     # stage defaults: planning / early / growing / established
+    def default_brief(self, stage): ...  # stage defaults: planning / early / growing / established
 ```
 
 Rules that do not change (CLAUDE.md): Excel-2007 functions only, every assumption in its own labelled
