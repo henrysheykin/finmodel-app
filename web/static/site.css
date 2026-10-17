@@ -258,6 +258,32 @@ h1, h2, h3, dt { font-family: var(--head); }
 .doc .updated { color: var(--text-3); font-size: 14px; margin: 0 0 24px; }
 .doc .notice { border: 1px solid var(--panel-rule); border-radius: 8px; padding: 16px 20px; background: var(--paper); }
 
+/* SEO pages (E16): content/seo rendered with a shared layout */
+.seo h1 { margin-bottom: 20px; }
+.seo h2[id], .seo h3[id] { scroll-margin-top: 24px; }
+.seo ul, .seo ol { padding-left: 22px; }
+.seo li { margin: 4px 0; }
+.crumbs ol { list-style: none; margin: 0 0 20px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; font-size: 14px; color: var(--text-3); }
+.crumbs li + li::before { content: "/"; margin-right: 6px; color: var(--muted); }
+.crumbs a { color: var(--text-3); }
+.table-wrap { overflow-x: auto; margin: 16px 0 20px; border: 1px solid var(--panel-rule); border-radius: 8px; background: #fff; }
+.table-wrap:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.seo table { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+.seo th, .seo td { padding: 8px 12px; border-bottom: 1px solid var(--rule-soft); text-align: left; vertical-align: top; }
+.seo th { background: var(--paper); color: var(--ink); font-weight: 600; }
+.seo tr:last-child td { border-bottom: 0; }
+.cta { margin: 48px 0 0; padding: 28px; border: 1px solid var(--panel-rule); border-radius: 10px; }
+.cta h2 { margin-top: 0; }
+.cta p { margin: 0 0 16px; }
+.cta__row { display: flex; flex-wrap: wrap; gap: 12px; }
+.cta .cta__note { margin: 14px 0 0; font-size: 14px; color: var(--text-3); }
+.related { margin-top: 40px; }
+.index { list-style: none; padding: 0; margin: 24px 0; }
+.index li { padding: 14px 0; border-bottom: 1px solid var(--rule-soft); }
+.index a { font-weight: 600; display: block; }
+.index span { display: block; color: var(--text-3); font-size: 15px; }
+@media (max-width: 600px) { .cta { padding: 20px; } .cta .btn { width: 100%; } }
+
 /* tabular figures only where numbers line up; headings keep proportional punctuation */
 h1, h2, h3, dt, .brand, .plan__price { font-variant-numeric: normal; }
 /* keep absolutely positioned screen-reader text inside horizontally scrolling tables */

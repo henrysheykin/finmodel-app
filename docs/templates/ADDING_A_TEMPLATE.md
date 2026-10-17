@@ -53,6 +53,7 @@ Write `docs/templates/<key>.md` (assumption memo with questions for the CFO at t
 
 ## 4. Optional
 
-- An SEO page in `content/seo/` (M track) once the CFO has signed off the template.
+- An SEO page in `content/seo/` (M track) once the CFO has signed off the template. Front matter and
+  samples: `content/README.md`; `python scripts/build_samples.py --seo` builds any sample a page offers.
 - Announce a future industry early: add it to `PLANNED` and it appears in the wizard as
   "(coming soon)" without a template.
