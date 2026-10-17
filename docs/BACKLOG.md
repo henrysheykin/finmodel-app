@@ -91,7 +91,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: as E03.
 
 ### E07 — Goal modules: break-even & startup costs, DCF valuation
-- status: TODO
+- status: IN_PROGRESS (2026-10-17, scheduled E run)
 - depends: E02
 - skills: xlsx
 - do: add-on sheets any template can include based on `goal`: startup cost table
