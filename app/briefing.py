@@ -13,6 +13,7 @@ from typing import Literal, Protocol
 from pydantic import BaseModel, ConfigDict, Field
 
 from engine.brief import Brief, BriefError, BusinessType, Goal, Stage
+from engine.goals import apply_goal
 from engine.templates import get_template, template_for_business_type
 
 #: wizard business type → template key, from the template catalog (ADR-009)
@@ -75,6 +76,6 @@ class PrefillBriefSource:
             granularity=answers.granularity,
             tier=answers.tier,
         )
-        brief = Brief.model_validate(data)
+        brief = apply_goal(Brief.model_validate(data))
         tpl.validate(brief)
         return brief

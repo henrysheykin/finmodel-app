@@ -28,6 +28,7 @@ from engine.core import (
     pnl_head_lines,
     pnl_tail_lines,
 )
+from engine.goals import module_lines, modules_for
 from engine.spec import FORMATS, DriverSpec, Line, StmtRow, Timing
 from engine.templates.base import Template
 
@@ -75,6 +76,9 @@ class Manifest:
     verdict: str
     metrics: dict[str, dict[int, str]]
     grid_ranges: dict[str, str]
+    #: goal modules (E07): single cells and per-year cells the challenger recomputes
+    goal_cells: dict[str, str] = field(default_factory=dict)
+    goal_years: dict[str, dict[int, str]] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return self.__dict__.copy()
@@ -94,6 +98,8 @@ class Plan:
     input_row: dict[str, int]
     calc_sheet: str
     line_at: dict[str, tuple[str, int]] = field(default_factory=dict)
+    #: goal-module layouts (engine/goal_sheets.py), filled by ``plan``
+    modules: dict = field(default_factory=dict)
 
     # ---- references ------------------------------------------------------
     def period_cell(self, key: str, p: int, from_sheet: str, absolute: bool = False) -> str:
@@ -163,7 +169,7 @@ def _calc_lines(tpl: Template, brief: Brief, t: Timing) -> tuple[list[Line], lis
     at = next(i for i, ln in enumerate(core) if ln.key == "d_ap") + 1
     core = core[:at] + liabs + liability_delta_lines(liabs) + core[at:]
     hc = headcount_lines(brief.roles)
-    return top + core + tpl.extra_lines(t), hc, balance_sheet_lines(liab_keys)
+    return top + core + tpl.extra_lines(t) + module_lines(brief.goal), hc, balance_sheet_lines(liab_keys)
 
 
 def _layout_grid(g: GridPlan) -> None:
@@ -313,17 +319,24 @@ def plan(brief: Brief, tpl: Template) -> Plan:
         grids = [GridPlan("P&L", start, calc + hc)]
         selector = ("Inputs", "B3")
         calc_sheet = "P&L"
+    mods = modules_for(brief.goal)
+    sheets = (["Summary"] if "summary" in mods else []) + sheets[:-1]
+    sheets += [name for m, name in (("breakeven", "Break-even"), ("dcf", "Valuation")) if m in mods] + ["Checks"]
     for g in grids:
         _layout_grid(g)
     for b in blocks.values():
         if not b.placed:
             _layout_block(b)
-    specs = tpl.all_specs(brief.roles)
+    specs = tpl.all_specs(brief.roles, brief.goal)
     input_row = _input_rows(specs)
     pl = Plan(brief, tpl, t, specs, lines, grids, blocks, sheets, selector, input_row, calc_sheet)
     for g in grids:
         for k, r in g.rows.items():
             pl.line_at[k] = (g.sheet, r)
+    if mods:
+        from engine.goal_sheets import plan_modules
+
+        plan_modules(pl)
     return pl
 
 
@@ -472,12 +485,7 @@ def _write_block(wb: Workbook, pl: Plan, b: Block, sub: str | None) -> None:
                     f = "=-" + f[1:]
             elif row.kind == "formula":
                 # {key} = another row of this table in the same year; {in:driver} = the live input cell
-                f = TOKEN.sub(
-                    lambda m, col=col: (
-                        pl.input_ref(m.group(1)[3:]) if m.group(1).startswith("in:") else f"{col}{b.placed[m.group(1)]}"
-                    ),
-                    row.src,
-                )
+                f = TOKEN.sub(lambda m, col=col: _block_token(pl, b, m.group(1), col), row.src)
             else:
                 raise ValueError(row.kind)
             c = ws.cell(row=r, column=1 + y, value=f)
@@ -488,6 +496,15 @@ def _write_block(wb: Workbook, pl: Plan, b: Block, sub: str | None) -> None:
     ws.column_dimensions["A"].width = max(ws.column_dimensions["A"].width or 0, 44)
     if b.start_row == 3:
         ws.freeze_panes = f"B{b.year_row + 2}"
+
+
+def _block_token(pl: Plan, b: Block, tok: str, col: str) -> str:
+    """{key} = another row of this table in the same year; {in:driver} = the live input cell; {year} = year #."""
+    if tok.startswith("in:"):
+        return pl.input_ref(tok[3:])
+    if tok == "year":
+        return f"{col}${b.year_row}"
+    return f"{col}{b.placed[tok]}"
 
 
 def _rollup(pl: Plan, ln: Line, col: str, year_row: int) -> str:
@@ -623,6 +640,10 @@ def _write_checks(wb: Workbook, pl: Plan) -> str:
         ),
         ("Loan balance never negative", ok(f"MIN({gr('loan_close')})>=-0.5"), "Repayments never exceed the loan"),
     ]
+    if pl.modules:
+        from engine.goal_sheets import module_checks
+
+        checks += module_checks(pl)
     err_terms = []
     for g in pl.grids:
         rng = f"{q(g.sheet)}!${L(FIRST_COL)}${g.period_row}:${L(FIRST_COL + pl.t.periods - 1)}${g.end_row}"
@@ -630,6 +651,8 @@ def _write_checks(wb: Workbook, pl: Plan) -> str:
     for b in pl.blocks.values():
         last = max(b.placed.values())
         err_terms.append(f"SUMPRODUCT(--ISERROR({q(b.sheet)}!$B${b.year_row}:${L(1 + pl.t.years)}${last}))")
+    for rng in (m.error_range for m in pl.modules.values()):
+        err_terms.append(f"SUMPRODUCT(--ISERROR({rng}))")
     checks.append(
         (
             "No error values",
@@ -704,6 +727,11 @@ def manifest_for(pl: Plan, verdict: str) -> Manifest:
         src.update({f"kpi:{k}": ("kpi", k) for k in pl.template.kpi_checked})
     metrics = {m: {y: pl.stmt_cell(b, k, y) for y in years} for m, (b, k) in src.items()}
     sheet, cell = pl.selector
+    goal_cells: dict[str, str] = {}
+    goal_years: dict[str, dict[int, str]] = {}
+    for m in pl.modules.values():
+        goal_cells.update(m.cells)
+        goal_years.update({k: {y: pl.stmt_cell(m.block, k, y) for y in years} for k in m.checked_rows})
     return Manifest(
         pl.brief.tier,
         pl.t.granularity,
@@ -713,6 +741,8 @@ def manifest_for(pl: Plan, verdict: str) -> Manifest:
         verdict,
         metrics,
         {k: pl.grid_range(k) for k in ("rev", "ebitda", "ni", "cash_close")},
+        goal_cells,
+        goal_years,
     )
 
 
@@ -736,6 +766,10 @@ def build(brief: Brief, tpl: Template, out_path: str | Path) -> Manifest:
     verdict = _write_checks(wb, pl)
     if "Dashboard" in pl.sheets:
         _write_dashboard(wb, pl, verdict)
+    if pl.modules:
+        from engine.goal_sheets import write_modules
+
+        write_modules(wb, pl)
     for ws in wb.worksheets:
         ws.sheet_view.showGridLines = False
     wb.save(out_path)

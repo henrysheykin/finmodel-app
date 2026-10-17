@@ -32,6 +32,9 @@ If the business type was announced as "coming soon", remove it from `PLANNED` in
 `engine/templates/__init__.py` in the same PR (the registry also hides a planned entry automatically as
 soon as a template serves it).
 
+Goal modules (Break-even, Valuation, investor Summary — ADR-010) need nothing from the template: they read
+the standard grid lines, and `tests/test_goals.py` runs the investor pitch for every registered template.
+
 ## 2. Tests — `tests/test_<key>.py`
 
 Copy the structure of `tests/test_services.py`: the tier × granularity × horizon matrix through

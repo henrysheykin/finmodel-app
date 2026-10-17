@@ -45,6 +45,10 @@ the answer next to the item (agents read this file every run).
       yet — the landing says "write to us". Keep them manual (you invoice by Stripe payment link / refund the
       difference) or add them to checkout (an E task)?
 
+- [ ] D12 Investor pitch on the Light plan (from E07): the "Investor-ready pitch model" goal adds Summary,
+      Break-even and Valuation sheets to any plan. Keep it available on Light ($149), or make that goal
+      require Full ($349) in the wizard (an E task)? Non-blocking; today it works on both.
+
 ## Legal (from E13, blocks Stripe live activation)
 - [ ] L1 Privacy policy, Terms of service, Refund policy (Henry 2026-10-17: provides his own texts). Save them as
       `content/legal/privacy.md`, `terms.md`, `refunds.md` (Markdown: `#` headings, paragraphs, `-` lists,
@@ -74,6 +78,8 @@ webhook, Resend domain).
       - [ ] Professional services: sample `samples/services-full.xlsx`, memo `docs/templates/services.md` (questions at the end).
       - [ ] Home services / trades: sample `samples/home_services-full.xlsx`, memo `docs/templates/home_services.md` (questions at the end).
       - [ ] Fitness studio / gym: sample `samples/fitness-full.xlsx`, memo `docs/templates/fitness.md` (questions at the end).
+      - [ ] Goal modules (break-even, DCF valuation, investor summary — all templates): sample
+            `samples/cafe-investor_pitch.xlsx`, memo `docs/templates/goal-modules.md` (questions at the end).
 - [x] R2 Lawyer review of legal drafts — n/a: Henry cancelled M08 (2026-10-17); legal texts are his to provide.
 
 ## Go-live

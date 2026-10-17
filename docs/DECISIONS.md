@@ -303,3 +303,28 @@ landing samples), which invites drift between the wizard, the schema and the sit
 **Consequences.** A new industry is its template file + tests + sample + memo
 (`docs/templates/ADDING_A_TEMPLATE.md`). E08's LLM brief builder must take the business-type enum from
 `known_business_types()` when it builds its JSON schema.
+
+## ADR-010 — Goal modules: the wizard's goal adds sheets (2026-10-17, E07)
+
+**Context.** The wizard asks for a main goal (break-even, DCF valuation, investor pitch), but the workbook
+was the same for every goal.
+
+**Decision.**
+- `engine/goals.py` maps a goal to modules: `startup_breakeven` → Break-even sheet, `dcf_valuation` →
+  Valuation sheet, `investor_pitch` → Summary (first sheet) + both. `revenue_profit` / `other` add nothing.
+- Modules work in every template and both tiers; they read the period grid only (plus a few helper lines
+  appended to it: net-income flag, cash flow before financing and its running minimum, payback flag,
+  unlevered free cash flow), so they never change an existing number.
+- A module's inputs are ordinary drivers with Low / Base / High (`cash_buffer`; `wacc`, `tg`, `exit_mult`,
+  `wacc_step`, `g_step`), required only for goals that use them (`Template.all_specs(roles, goal)`).
+  `apply_goal(brief, goal)` adds the stage defaults (the wizard's prefill path calls it) and drops unused
+  ones. Brief validation refuses WACC − g < 1 pp.
+- `engine/goal_sheets.py` lays the sheets out at plan time, so the manifest carries every module cell
+  (`goal_cells`, `goal_years`); the challenger compares them with `goals.reference` (plain Python). New
+  in-file checks: funding table ties to cash, discounting ties to `NPV()`, WACC > g, sensitivity centre =
+  enterprise value, Summary ties to period detail; WARN when final-year free cash flow ≤ 0.
+- Assumptions and CFO questions: `docs/templates/goal-modules.md`.
+
+**Consequences.** The LLM brief builder (E08) must fill the goal drivers or call `apply_goal`. Light-plan
+customers who pick "Investor-ready pitch model" get the Summary, Break-even and Valuation sheets on top of
+Light (HUMAN_TODO D12 asks whether that goal should require Full).

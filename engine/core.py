@@ -329,6 +329,7 @@ def reference_run(d: dict, roles: list[Role], t: Timing, top: TopFn) -> dict[str
             "cfo": cfo,
             "cfi": cfi,
             "cff": cff,
+            "loan_repay": repay,
         }
         row.update(tp.liabilities)
         row.update(tp.kpis)
@@ -354,6 +355,7 @@ FLOW_KEYS = {
     "cfo",
     "cfi",
     "cff",
+    "loan_repay",
 }
 
 

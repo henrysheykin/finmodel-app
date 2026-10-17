@@ -5,6 +5,8 @@
 2. Recomputes the same economics in plain Python from the brief (the
    template's ``reference_top`` + ``engine.core.reference_run``, which share no
    code with the formula builder) and compares every scenario-year within $1.
+   Goal modules (Break-even, Valuation, Summary) are recomputed by ``engine.goals.reference`` and
+   compared cell by cell (money within $1, ratios within 1e-6, periods and texts exactly).
 3. Requires the in-file Checks verdict to be PASS (or PASS WITH WARNINGS), the
    balance sheet to balance (full tier), and revenue Low < Base < High.
 
@@ -25,6 +27,8 @@ from openpyxl import load_workbook
 from engine.brief import Brief
 from engine.builder import manifest_for, plan
 from engine.core import annualise, reference_run
+from engine.goals import TOLERANCE as GOAL_TOLERANCE
+from engine.goals import reference as goal_reference
 from engine.recalc import RecalcError, recalc
 from engine.spec import Timing
 from engine.templates import get_template
@@ -50,6 +54,21 @@ def python_model(brief: Brief, scenario: int) -> dict[str, dict[int, float]]:
     t = Timing(brief.granularity, brief.horizon_years)
     series = reference_run(brief.values(scenario), brief.roles, t, tpl.reference_top)
     return annualise(series, t, tpl.kpi_flows)
+
+
+def python_goal_model(brief: Brief, scenario: int) -> dict:
+    """Goal-module values (Break-even, Valuation, Summary) recomputed in plain Python."""
+    tpl = get_template(brief.template)
+    t = Timing(brief.granularity, brief.horizon_years)
+    d = brief.values(scenario)
+    series = reference_run(d, brief.roles, t, tpl.reference_top)
+    return goal_reference(brief, d, series, t)
+
+
+def _same(got, exp, tol: float) -> bool:
+    if isinstance(exp, str):
+        return got == exp
+    return _num(got) and abs(got - exp) <= tol
 
 
 def _num(v) -> bool:
@@ -123,6 +142,19 @@ def challenge(brief: Brief | dict, model_path: str | Path) -> dict:
                     if abs(ta - tle) > 0.5:
                         report["problems"].append(f"scenario {scen} year {y}: balance sheet off by {ta - tle:,.2f}")
                 out["years"][y] = got
+            if man.goal_cells or man.goal_years:
+                gexp = python_goal_model(brief, scen)
+                checked = [(n, ref, gexp["cells"][n]) for n, ref in man.goal_cells.items()]
+                checked += [
+                    (f"{n} year {y}", ref, gexp["years"][n][y])
+                    for n, refs in man.goal_years.items()
+                    for y, ref in refs.items()
+                ]
+                for name, ref, exp in checked:
+                    got = val(ref)
+                    if not _same(got, exp, GOAL_TOLERANCE.get(name.split(" ")[0], TOLERANCE_USD)):
+                        report["problems"].append(f"scenario {scen} goal {name}: workbook {got!r} vs python {exp!r}")
+                out["goal"] = {n: val(ref) for n, ref in man.goal_cells.items()}
             if verdict not in ("PASS", "PASS WITH WARNINGS"):
                 report["problems"].append(f"scenario {scen}: in-file checks {verdict!r}")
             revenue[scen] = [out["years"][y].get("rev") for y in range(1, brief.horizon_years + 1)]
