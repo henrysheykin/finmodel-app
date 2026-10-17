@@ -225,3 +225,31 @@ thing to forget and a liability to store. Email is already the delivery channel,
 no new dependency. Trade-off: sign-in depends on email deliverability (HUMAN_TODO A3), and
 links must be single-use, short-lived and hashed at rest.
 
+
+## ADR-007 — Delivery pipeline: DB-polled jobs, order state machine, signed links (2026-10-17, E09)
+
+**Context.** One worker process, low volume at launch (tens of orders a day), Postgres in prod,
+SQLite in dev. A model must never reach a customer unless the challenger passes.
+
+**Decision.**
+- `orders` (state machine `draft → awaiting_payment → paid → building → checking → ready | failed`,
+  every change audited in `order_events`), `jobs` (one build job per order and round, unique
+  `idempotency_key`), `artifacts` (model .xlsx + check report). Alembic owns the schema.
+- Worker polls `jobs`: claims with a conditional `UPDATE … WHERE status='queued'` (atomic on SQLite
+  and Postgres, no Redis), reclaims jobs stuck in `running` past 15 minutes.
+- Deterministic failures (invalid brief, formula errors, challenger mismatch) fail the order at
+  once and alert the admin; infrastructure errors retry with backoff 30 s → 60 s → fail on the 3rd.
+- Payment is applied once per provider reference (`orders.payment_ref` unique); duplicate
+  webhooks are no-ops.
+- Storage adapter: local disk or S3-compatible (boto3 only when `STORAGE_BACKEND=s3`).
+- Download links: `artifact.expires.HMAC-SHA256` with `SECRET_KEY`, 7-day TTL, nothing stored;
+  only `model_xlsx` artifacts of `ready` orders are served. Rotating the key revokes all links.
+- Briefs come from `BriefSource`; today `PrefillBriefSource` (stage defaults + key numbers, no LLM).
+
+**Options considered.** Redis/RQ or Celery (extra service, not needed at this volume);
+Postgres `SKIP LOCKED` (not portable to SQLite tests — the conditional update gives the same
+guarantee for one or a few workers); storing tokens in the DB (revocable per link, but more state —
+E19 sessions will be DB-backed, download links stay stateless).
+
+**Consequences.** Throughput is bounded by LibreOffice (~15–20 s per Light build incl. challenger);
+E17 load-tests 50 concurrent builds. Customer-facing failure messages wait for D9 / E12.
