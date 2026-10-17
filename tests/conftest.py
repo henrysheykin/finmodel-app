@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from engine.brief import Brief
+from engine.templates import TEMPLATES
 
 ROOT = Path(__file__).resolve().parents[1]
 CAFE_BRIEF = ROOT / "engine" / "briefs" / "cafe.json"
@@ -44,9 +45,9 @@ def cafe_xlsx(build, cafe_brief) -> Path:
     return build(cafe_brief, "cafe.xlsx")
 
 
-@pytest.fixture(params=["cafe", "saas", "retail", "services"])
+@pytest.fixture(params=sorted(TEMPLATES))
 def any_brief(request, cafe_brief) -> Brief:
-    """The cafe sample brief and the 'early' default brief of every other template."""
+    """Every registered template (ADR-009): the cafe sample brief, the 'early' defaults of the rest."""
     if request.param == "cafe":
         return cafe_brief
     from engine.templates import get_template
