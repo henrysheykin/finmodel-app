@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Admin sign-in — StartupModel{% endblock %}
+{% block main %}
+<div class="narrow">
+  <h1>Admin</h1>
+  {% if error %}<div class="errors" role="alert"><p>{{ error }}</p></div>{% endif %}
+  <form method="post" action="/admin/login">
+    <div class="field"><label for="user">User</label><input id="user" name="user" type="text" autocomplete="username" required></div>
+    <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required></div>
+    <button class="btn" type="submit">Sign in</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Orders — Admin{% endblock %}
+{% block main %}
+<div class="admin">
+  <div class="admin__head">
+    <h1>Orders</h1>
+    <form method="post" action="/admin/logout"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="btn btn--ghost" type="submit">Sign out</button></form>
+  </div>
+  <dl class="stats">
+    <div><dt>Paid today</dt><dd>{{ c.today[0] }} · {{ c.today[1] }}</dd></div>
+    <div><dt>Paid, last 7 days</dt><dd>{{ c.week[0] }} · {{ c.week[1] }}</dd></div>
+    <div><dt>Paid, all time (excl. refunded)</dt><dd>{{ c.all[0] }} · {{ c.all[1] }}</dd></div>
+    <div><dt>Awaiting payment</dt><dd>{{ c.awaiting }}</dd></div>
+    <div><dt>Failed</dt><dd>{{ c.failed }}</dd></div>
+    <div><dt>Refunded</dt><dd>{{ c.refunded }}</dd></div>
+    <div><dt>Jobs queued / running</dt><dd>{{ c.queued_jobs }}</dd></div>
+  </dl>
+  <form class="filters" method="get" action="/admin">
+    <label for="status">Status</label>
+    <select id="status" name="status">
+      <option value="">All</option>
+      {% for st in statuses %}<option value="{{ st }}" {% if st == status %}selected{% endif %}>{{ st }}</option>{% endfor %}
+    </select>
+    <label for="q">Email or order id</label>
+    <input id="q" name="q" type="text" value="{{ q }}">
+    <button class="btn btn--small" type="submit">Filter</button>
+  </form>
+  <p class="hint">{{ total }} orders · page {{ page }} of {{ pages }}</p>
+  <table class="ledger admin-table">
+    <thead><tr><th scope="col">Order</th><th scope="col">Created</th><th scope="col">Email</th><th scope="col">Template</th><th scope="col">Plan</th><th scope="col">Status</th><th scope="col">Price</th></tr></thead>
+    <tbody>
+    {% for o in items %}
+      <tr><th scope="row"><a href="/admin/orders/{{ o.id }}">{{ o.short }}</a></th><td>{{ o.created }}</td><td>{{ o.email }}</td><td>{{ o.template }}</td><td>{{ o.tier }}</td><td>{{ o.status }}</td><td>{{ o.price }}</td></tr>
+    {% else %}
+      <tr><td colspan="7">No orders.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p>{% if page > 1 %}<a href="/admin?status={{ status }}&q={{ q|urlencode }}&page={{ page - 1 }}">Previous</a>{% endif %}
+     {% if page < pages %}<a href="/admin?status={{ status }}&q={{ q|urlencode }}&page={{ page + 1 }}">Next</a>{% endif %}</p>
+</div>
+{% endblock %}

@@ -104,3 +104,17 @@ input[type=text], input[type=email] { font: inherit; width: 100%; max-width: 420
   .orders tr { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
   .orders th, .orders td { border: 0; padding: 0; }
 }
+.admin { max-width: 1180px; }
+.admin__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin: 16px 0 24px; }
+.stats div { border: 1px solid var(--panel-rule); border-radius: 8px; padding: 10px 12px; }
+.stats dt { font-size: 13px; color: var(--text-3); }
+.stats dd { margin: 0; font-weight: 600; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+.filters input, .filters select { font: inherit; padding: 6px 8px; border: 1px solid var(--panel-rule); border-radius: 6px; max-width: 260px; }
+.admin-table { font-size: 14px; }
+.admin-table td, .admin-table th { text-align: left; padding-right: 12px; }
+.admin { overflow-wrap: anywhere; }
+pre.code { background: var(--paper); border: 1px solid var(--rule); padding: 12px; overflow: auto; max-height: 420px; font-size: 13px; }
+.refund { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.refund .toggle { margin: 0; padding: 6px 10px; }

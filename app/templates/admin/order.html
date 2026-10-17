@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Order {{ o.id[:8] }} — Admin{% endblock %}
+{% block main %}
+<div class="admin">
+  <p><a href="/admin">All orders</a></p>
+  <h1>Order {{ o.id[:8] }}</h1>
+  {% if msg %}<p class="notice" role="status">{{ msg }}</p>{% endif %}
+  <table class="ledger"><tbody>
+    <tr><th scope="row">Order id</th><td>{{ o.id }}</td></tr>
+    <tr><th scope="row">Email</th><td>{{ o.email }}</td></tr>
+    <tr><th scope="row">Status</th><td><strong>{{ o.status }}</strong></td></tr>
+    <tr><th scope="row">Template / plan</th><td>{{ o.template }} / {{ o.tier }}</td></tr>
+    <tr><th scope="row">Price</th><td>{{ o.price }}</td></tr>
+    <tr><th scope="row">Payment ref</th><td>{{ o.payment_ref }}</td></tr>
+    <tr><th scope="row">Refund ref</th><td>{{ o.refund_ref }}</td></tr>
+    <tr><th scope="row">Created / paid / ready</th><td>{{ o.created }} / {{ o.paid }} / {{ o.ready }}</td></tr>
+  </tbody></table>
+  {% if o.failure %}<div class="errors"><h2>Failure</h2><pre>{{ o.failure }}</pre></div>{% endif %}
+
+  <h2>Actions</h2>
+  <div class="row-actions">
+    {% if o.has_model %}<a class="btn btn--small" href="/admin/orders/{{ o.id }}/download">Download .xlsx</a>{% endif %}
+    {% if o.can_resend %}
+    <form method="post" action="/admin/orders/{{ o.id }}/resend"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="btn btn--small" type="submit">Re-send download email</button></form>
+    {% endif %}
+    {% if o.can_rebuild %}
+    <form method="post" action="/admin/orders/{{ o.id }}/rebuild"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="btn btn--small" type="submit">Re-build</button></form>
+    {% endif %}
+    {% if o.can_refund %}
+    <form method="post" action="/admin/orders/{{ o.id }}/refund" class="refund">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <label class="toggle"><input type="checkbox" name="confirm" value="yes"> <span>Refund {{ o.price }} in full</span></label>
+      <button class="btn btn--small" type="submit">Refund</button>
+    </form>
+    {% endif %}
+  </div>
+
+  <h2>Timeline</h2>
+  <table class="ledger admin-table"><tbody>
+    {% for t, a, b, note in o.events %}<tr><td>{{ t }}</td><td>{{ a }} → {{ b }}</td><td>{{ note }}</td></tr>{% endfor %}
+  </tbody></table>
+  <h2>Jobs</h2>
+  <table class="ledger admin-table"><tbody>
+    {% for id, st, att, mx, err in o.jobs %}<tr><td>#{{ id }}</td><td>{{ st }}</td><td>attempt {{ att }}/{{ mx }}</td><td>{{ err }}</td></tr>{% else %}<tr><td>No jobs.</td></tr>{% endfor %}
+  </tbody></table>
+  <h2>Wizard answers</h2><pre class="code">{{ o.answers }}</pre>
+  <h2>Brief</h2><pre class="code">{{ o.brief }}</pre>
+  <h2>Check report</h2>{% if o.report %}<pre class="code">{{ o.report }}</pre>{% else %}<p class="hint">No report yet.</p>{% endif %}
+</div>
+{% endblock %}
