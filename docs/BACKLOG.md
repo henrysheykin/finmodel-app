@@ -142,7 +142,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: tests cover success, cancel, duplicate webhook, bad signature.
 
 ### E12 — Email delivery
-- status: TODO
+- status: IN_PROGRESS (2026-10-17)
 - depends: E09
 - skills: engineering:testing-strategy
 - do: email adapter (console + Resend/Postmark), templates from `content/email/`
@@ -168,7 +168,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   scroll at 360 px; `grep -ri "1F3864\|2563EB\|DM Sans"` in web/ is empty.
 
 ### E19 — Customer accounts: magic-link login, "My models", downloads
-- status: IN_PROGRESS (2026-10-17)
+- status: DONE (2026-10-17, https://github.com/henrysheykin/finmodel-app/pull/21)
 - depends: E09, E11
 - skills: engineering:system-design, engineering:code-review, engineering:testing-strategy
 - do: passwordless login (ADR-006): email → single-use, hashed, 15-minute magic-link token sent

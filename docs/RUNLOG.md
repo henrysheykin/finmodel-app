@@ -2,6 +2,9 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · E19 customer accounts · DONE · https://github.com/henrysheykin/finmodel-app/pull/21
+  Magic-link sign-in (single-use, hashed, 15 min, confirm button against mail scanners), hashed server sessions (30 days, HttpOnly/Lax/Secure),
+  rate limits per email/IP with identical responses, My models + 10-minute download links, owner-only 404s, sign out / everywhere. Playwright download test.
 - 2026-10-17 · E · E11 payments · DONE · https://github.com/henrysheykin/finmodel-app/pull/20
   Stripe Checkout over httpx (test mode; live keys refused without ALLOW_LIVE_PAYMENTS=1), signed webhooks with replay window,
   amount/currency checks, idempotent paid, automatic refund of a duplicate payment, refunds service, success/cancel pages, dev test-payment page.
