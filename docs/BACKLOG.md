@@ -242,11 +242,12 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: tests for auth and every action.
 
 ### E15 — Ops: logging, health, backups, deploy docs
-- status: IN_PROGRESS (2026-10-17, scheduled E run — rate limits + docker compose)
-- continue: done in PR #24 — one Railway container (deploy/start.sh: migrations + worker + web), Postgres URL,
-  logging, security headers/HSTS, docs/DEPLOY.md, verified on Postgres 16 with a volume (ADR-008).
-  Left: rate limiting on `/start` POST and `/api/orders`, `docker-compose.yml` (app + postgres) for local runs
-  and an E2E test against it, a backup note for Railway Postgres in DEPLOY.md is already there.
+- status: DONE (2026-10-17, https://github.com/henrysheykin/finmodel-app/pull/24, https://github.com/henrysheykin/finmodel-app/pull/31)
+- note: #24/#25 — Railway container, logging, security headers, DEPLOY.md (ADR-008). #31 — per-IP rate limits
+  (`/start` + `/api/orders` shared, `/checkout/{id}/pay`), `docker-compose.yml` (image + Postgres 16) and
+  `tests/test_compose_e2e.py`, run by the CI `compose` job. For E17: without `CLIENT_IP_HEADER` the address is the
+  left-most `X-Forwarded-For` entry (uvicorn `--forwarded-allow-ips='*'`), which callers can set — also affects the
+  magic-link and admin login limits; verify Railway's `X-Real-IP` handling.
 - depends: E09
 - skills: engineering:deploy-checklist, engineering:documentation
 - do: structured logs, `/healthz`, error alert email to admin, DB backup script,

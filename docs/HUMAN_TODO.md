@@ -64,6 +64,8 @@ webhook, Resend domain).
 - [x] A3 (Resend key done 2026-10-17; domain DNS still to verify — sender is onboarding@resend.dev until then) Email provider (Resend or Postmark) + DNS records for the domain.
 - [x] A4 (done: https://finmodel-app-production.up.railway.app, Postgres, all variables; end-to-end test order 539a9c52 ready, Checks PASS) Railway account (project with app, worker and Postgres services).
 - [ ] A5 Domain (after D1).
+- [ ] A6 (from E15, 1 minute) Railway → app service → Variables: add `CLIENT_IP_HEADER` = `X-Real-IP`, so the new rate
+      limits (30 orders / 30 checkouts per visitor per 10 min) count real visitor addresses (docs/DEPLOY.md "Rate limits").
 
 ## Reviews
 - [ ] R0 (non-blocking) CFO glance at the shared engine economics in `docs/DECISIONS.md` ADR-003
