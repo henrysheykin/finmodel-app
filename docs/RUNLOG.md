@@ -2,6 +2,12 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · E06 Professional services template · DONE · https://github.com/henrysheykin/finmodel-app/pull/16
+  Billable FTE × available hours × utilisation (senior / consultant roles) + contractor hours; rate card with yearly increase;
+  retainer (discount) vs project (realisation) mix; billable payroll + contractors in cost of delivery; 45 receivable days default;
+  KPI table incl. employee vs contractor cost per hour; stage defaults ×4; monthly = annual exactly. 229 tests. Sample samples/services-full.xlsx.
+  For Henry: HUMAN_TODO R1 — CFO review of services (memo docs/templates/services.md). Note for P: E05 (real estate) claimed 2026-10-16 20:15 UTC
+  with no branch, PR or continue: note — looks abandoned; skipped per protocol, needs reset to TODO or a continue: note.
 - 2026-10-16 · M · M07 email copy · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/15
   `content/email/`: 7 emails (order received, model ready, build failed, refund issued, day-1 how-to, day-7 feedback, one abandoned-checkout reminder) + README with variables/triggers for E12.
   For Henry: HUMAN_TODO D9 (failed-build policy; support email address). marketing:email-sequence not installed.
