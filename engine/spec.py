@@ -23,13 +23,14 @@ from typing import Literal
 
 from engine.brief import Brief, BriefError
 
-Fmt = Literal["usd", "usd2", "pct", "int", "dec1", "days", "x"]
+Fmt = Literal["usd", "usd2", "pct", "int", "dec1", "dec3", "days", "x"]
 FORMATS: dict[str, str] = {
     "usd": "$#,##0;($#,##0);-",
     "usd2": "$#,##0.00;($#,##0.00);-",
     "pct": "0.0%;(0.0%);-",
     "int": "#,##0;(#,##0);-",
     "dec1": "#,##0.0;(#,##0.0);-",
+    "dec3": "0.000",
     "days": "#,##0;(#,##0);-",
     "x": "0.0x",
 }
