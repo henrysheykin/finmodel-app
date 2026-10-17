@@ -113,3 +113,9 @@ Newest first. One entry per scheduled run: date · track · task · result · PR
   stricter on non-numeric/missing results), Dockerfile + CI (pytest with LibreOffice required, in-image smoke test), ADR-001.
   Skills loaded: xlsx, engineering:architecture, engineering:testing-strategy. Nothing new for Henry.
 - 2026-10-16 · setup · repo created; prototype, design, research, backlog and agent rules added. Scheduled tasks: E daily 07:50, M weekdays 10:50, P Mondays 17:51 (Europe/Madrid); first E and M runs fired manually right after setup.
+
+## 2026-10-17 — interactive session (Henry) — landing hero v3
+- Hero is now a clickable spreadsheet of the real cafe workbook: Dashboard / Inputs / P&L / Checks tabs, formula bar, B4 Low/Base/High switch, keyboard navigation; numbers tested against the independent Python model.
+- How it works: interactive 3-question demo brief that opens a prefilled /start; pipeline and sample file card.
+- PR https://github.com/henrysheykin/finmodel-app/pull/27 (571 tests green).
+- For Henry: "how-to" guide pages are E16 (SEO pages engine), still TODO.
