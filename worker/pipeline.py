@@ -199,6 +199,10 @@ class Pipeline:
             )
         except Exception:
             log.exception("admin alert failed for order %s", order.id)
+        try:
+            self.notifier.build_failed(order.id)
+        except Exception:
+            log.exception("build-failed email failed for order %s", order.id)
 
     def _retry_or_fail(self, s: Session, job: Job, reason: str) -> None:
         order = job.order

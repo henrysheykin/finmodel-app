@@ -11,10 +11,11 @@ import os
 import socket
 import time
 
-from adapters.notify import ConsoleNotifier
+from adapters.email import make_sender
 from adapters.storage import make_storage
 from app.config import load_settings
 from app.db import make_engine, make_sessionmaker, migrate
+from app.emails import EmailNotifier
 from worker.pipeline import Pipeline
 
 
@@ -24,7 +25,8 @@ def make_pipeline() -> Pipeline:
         migrate(cfg.database_url)
     sessions = make_sessionmaker(make_engine(cfg.database_url))
     storage = make_storage(cfg.storage_backend, cfg.storage_dir, cfg.s3_bucket, cfg.s3_endpoint_url)
-    return Pipeline(sessions, cfg, storage, ConsoleNotifier(), worker_id=f"{socket.gethostname()}:{os.getpid()}")
+    notifier = EmailNotifier(make_sender(cfg.email_provider, cfg.email_api_key, cfg.email_from), cfg, sessions)
+    return Pipeline(sessions, cfg, storage, notifier, worker_id=f"{socket.gethostname()}:{os.getpid()}")
 
 
 def main(argv: list[str] | None = None) -> int:

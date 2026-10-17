@@ -143,7 +143,10 @@ def test_stripe_webhook_parse_verifies_signature():
 def test_production_requires_stripe():
     with pytest.raises(RuntimeError, match="PAYMENT_PROVIDER=stripe"):
         Settings(app_env="prod", secret_key="k" * 40, payment_provider="fake").check()
-    Settings(app_env="prod", secret_key="k" * 40, payment_provider="stripe").check()
+    ok = {"email_provider": "resend", "email_from": "m@x.co", "support_email": "help@x.co"}
+    Settings(app_env="prod", secret_key="k" * 40, payment_provider="stripe", **ok).check()
+    with pytest.raises(RuntimeError, match="EMAIL_PROVIDER"):
+        Settings(app_env="prod", secret_key="k" * 40, payment_provider="stripe").check()
 
 
 # --------------------------------------------------------------------------- web flow
@@ -196,10 +199,10 @@ def _webhook(client, services, sid, **override):
 
 def test_duplicate_webhooks_apply_once(client, services):
     oid, sid = _pay(client)
-    for _ in range(3):
-        r = _webhook(client, services, sid)
-        assert r.status_code == 200 and r.json()["action"] == "paid"
+    actions = [_webhook(client, services, sid).json()["action"] for _ in range(3)]
+    assert actions == ["paid", "already_paid", "already_paid"]
     assert _status(services, oid) == ("paid", 1)
+    assert services.notifier.events == [("order_received", oid)]  # one receipt
 
 
 def test_bad_signature_is_rejected(client, services):

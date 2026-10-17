@@ -262,6 +262,9 @@ def apply_payment_event(sv, event: PaymentEvent) -> dict:
         return {"received": True, "action": "ignored"}
     try:
         with session_scope(sv.sessions) as s:
+            existing = s.get(Order, event.order_id)
+            if existing is not None and existing.payment_ref == event.payment_ref:
+                return {"received": True, "action": "already_paid"}  # duplicate delivery: no second receipt
             mark_paid(
                 s,
                 sv.cfg,
@@ -284,6 +287,10 @@ def apply_payment_event(sv, event: PaymentEvent) -> dict:
         # acknowledged so the provider stops retrying; needs a human (refund or fix)
         log.error("PAYMENT NEEDS ATTENTION: event %s order %s: %s", event.event_id, event.order_id, exc)
         return {"received": True, "action": "needs_attention"}
+    try:
+        sv.notifier.order_received(event.order_id)
+    except Exception:  # the payment is recorded; a missing receipt email must not fail the webhook
+        log.exception("order-received email failed for %s", event.order_id)
     return {"received": True, "action": "paid"}
 
 

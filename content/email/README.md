@@ -34,3 +34,4 @@ never mention FinModelsLab; sign-off "StartupModel".
 | how-to-use.md | day 1 after `ready` | service (opt-out link) |
 | feedback-request.md | day 7 after `ready` | marketing-lite (opt-out link) |
 | abandoned-checkout.md | 24 h after checkout started and not paid, once | marketing (consent + opt-out) |
+| sign-in.md | customer asks for a sign-in link (E19, added by E-track; M-track may polish the copy) | transactional |
