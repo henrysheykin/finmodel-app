@@ -106,7 +106,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: 20 fixture cases produce valid briefs; invalid LLM output is caught.
 
 ### E09 — Orders, jobs and the delivery pipeline
-- status: TODO
+- status: IN_PROGRESS (2026-10-17)
 - depends: E02
 - note (2026-10-17): build briefs from wizard answers via the template stage defaults + key numbers
   ("prefill", no LLM); E08 plugs the LLM brief builder into the same interface later.
