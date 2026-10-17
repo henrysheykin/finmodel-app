@@ -12,13 +12,15 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, ValidationError
 from sqlalchemy.orm import Session, sessionmaker
 
-from adapters.notify import ConsoleNotifier, Notifier
+from adapters.email import make_sender
+from adapters.notify import Notifier
 from adapters.payments import PaymentProvider, make_provider
 from adapters.storage import Storage, make_storage
 from app import links
 from app.briefing import Answers, BriefSource, PrefillBriefSource, supported_business_types
 from app.config import Settings, load_settings
 from app.db import make_engine, make_sessionmaker, migrate, session_scope
+from app.emails import EmailNotifier
 from app.models import Artifact, Order
 from app.orders import OrderError, create_order
 from engine.brief import BriefError
@@ -60,7 +62,11 @@ def create_app(services: Services | None = None) -> FastAPI:
                     cfg.stripe_webhook_secret,
                     cfg.allow_live_payments,
                 ),
-                ConsoleNotifier(),  # E12 swaps in the email adapter
+                None,
+            )
+            sv = app.state.services
+            sv.notifier = EmailNotifier(
+                make_sender(cfg.email_provider, cfg.email_api_key, cfg.email_from), cfg, sv.sessions
             )
         yield
 

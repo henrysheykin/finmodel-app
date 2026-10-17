@@ -17,6 +17,9 @@ class Notifier(Protocol):
     def model_ready(self, email: str, order_id: str, download_url: str) -> None: ...
     def admin_alert(self, subject: str, body: str) -> None: ...
     def login_link(self, email: str, url: str) -> None: ...
+    def order_received(self, order_id: str) -> None: ...
+    def build_failed(self, order_id: str) -> None: ...
+    def refund_issued(self, order_id: str) -> None: ...
 
 
 class ConsoleNotifier:
@@ -29,6 +32,15 @@ class ConsoleNotifier:
     def login_link(self, email: str, url: str) -> None:
         log.info("sign-in link for %s: %s", email, url)
 
+    def order_received(self, order_id: str) -> None:
+        log.info("order received: %s", order_id)
+
+    def build_failed(self, order_id: str) -> None:
+        log.info("build failed (customer email): %s", order_id)
+
+    def refund_issued(self, order_id: str) -> None:
+        log.info("refund issued: %s", order_id)
+
 
 @dataclass
 class RecordingNotifier:
@@ -37,6 +49,7 @@ class RecordingNotifier:
     ready: list[tuple[str, str, str]] = field(default_factory=list)
     alerts: list[tuple[str, str]] = field(default_factory=list)
     logins: list[tuple[str, str]] = field(default_factory=list)
+    events: list[tuple[str, str]] = field(default_factory=list)
 
     def model_ready(self, email: str, order_id: str, download_url: str) -> None:
         self.ready.append((email, order_id, download_url))
@@ -46,3 +59,12 @@ class RecordingNotifier:
 
     def login_link(self, email: str, url: str) -> None:
         self.logins.append((email, url))
+
+    def order_received(self, order_id: str) -> None:
+        self.events.append(("order_received", order_id))
+
+    def build_failed(self, order_id: str) -> None:
+        self.events.append(("build_failed", order_id))
+
+    def refund_issued(self, order_id: str) -> None:
+        self.events.append(("refund_issued", order_id))

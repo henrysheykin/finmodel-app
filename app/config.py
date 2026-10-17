@@ -26,6 +26,10 @@ class Settings:
     stripe_secret_key: str = ""
     stripe_webhook_secret: str = ""
     allow_live_payments: bool = False
+    email_provider: str = "console"
+    email_api_key: str = ""
+    email_from: str = ""
+    support_email: str = ""
     #: prices in cents (ADR-002 addendum 2: Light $149, Full $349)
     prices: dict[str, int] = field(default_factory=lambda: {"light": 14900, "full": 34900})
     #: download links in the "model ready" email live 7 days (content/email/model-ready.md)
@@ -45,6 +49,8 @@ class Settings:
             raise RuntimeError("SECRET_KEY must be set (32+ characters) in production")
         if self.is_prod and self.payment_provider != "stripe":
             raise RuntimeError("production must use PAYMENT_PROVIDER=stripe")
+        if self.is_prod and (self.email_provider == "console" or not self.email_from or not self.support_email):
+            raise RuntimeError("production needs EMAIL_PROVIDER (resend|postmark), EMAIL_FROM and SUPPORT_EMAIL")
 
 
 def load_settings() -> Settings:
@@ -64,6 +70,10 @@ def load_settings() -> Settings:
         stripe_secret_key=env("STRIPE_SECRET_KEY", ""),
         stripe_webhook_secret=env("STRIPE_WEBHOOK_SECRET", ""),
         allow_live_payments=env("ALLOW_LIVE_PAYMENTS", "") == "1",
+        email_provider=env("EMAIL_PROVIDER", "") or "console",
+        email_api_key=env("EMAIL_API_KEY", ""),
+        email_from=env("EMAIL_FROM", ""),
+        support_email=env("SUPPORT_EMAIL", ""),
         prices={"light": _int("PRICE_LIGHT_CENTS", 14900), "full": _int("PRICE_FULL_CENTS", 34900)},
         link_ttl_seconds=_int("LINK_TTL_SECONDS", 7 * 24 * 3600),
     )
