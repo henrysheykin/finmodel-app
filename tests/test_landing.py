@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from app import landing
+from app import landing, xlview
 from app.main import create_app
 from engine.brief import Brief
 from engine.challenger import python_model
@@ -81,46 +81,53 @@ def test_preview_numbers_match_the_independent_python_model(scenario):
     assert verdict["result"].startswith("PASS")
 
 
-def _grid_cell(tab: str, addr: str) -> dict:
-    return landing.grid_cell(landing.grid_views()[tab], addr)
+def _sheet(name: str) -> dict:
+    return xlview.sheet(name)
+
+
+def _text(sheet: str, address: str, case: int = 2) -> str:
+    return xlview.cell_view(_sheet(sheet), address, case)["text"]
 
 
 def test_low_case_shows_the_funding_warning():
-    funding = _grid_cell("chk", "B14")
-    assert landing.cell_text(funding, 1) == "WARN" and landing.cell_text(funding, 2) == "PASS"
-    assert "res--warn" in landing.cell_classes(funding, "A1", case=1)
-    assert "res--warn" not in landing.cell_classes(funding, "A1", case=2)
+    assert _text("Checks", "B14", 1) == "WARN" and _text("Checks", "B14", 2) == "PASS"
+    assert _text("Checks", "B16", 1) == "PASS WITH WARNINGS" and _text("Checks", "B16", 2) == "PASS"
 
 
 @pytest.mark.parametrize("case", [1, 2, 3])
-def test_grid_shows_the_same_numbers_as_the_checked_rows(case):
-    """The spreadsheet grid and the rows checked against the Python model come from the same recalculation."""
+def test_spreadsheet_shows_the_same_numbers_as_the_checked_rows(case):
+    """The hero spreadsheet and the rows checked against the Python model come from the same recalculation."""
     data = landing.sheet_data()
     summary = {r["label"]: r["values"] for r in data["scenarios"][str(case)]["summary"]}
     for row, label in ((8, "Revenue"), (10, "EBITDA"), (12, "Net income"), (13, "Year-end cash")):
         for i, col in enumerate("BCD"):
-            cell = _grid_cell("sum", f"{col}{row}")
-            assert landing.cell_text(cell, case) == landing.money(summary[label][i]), (case, label, col)
-            assert cell["tick"], (label, col)
-    assert landing.cell_text(_grid_cell("sum", "C4"), case) == ["Low", "Base", "High"][case - 1]
+            assert _text("Dashboard", f"{col}{row}", case) == landing.money(summary[label][i]).replace("–", "-"), (
+                case,
+                label,
+                col,
+            )
+    assert _text("Dashboard", "C4", case) == ["Low", "Base", "High"][case - 1]
 
 
-def test_grid_cells_carry_real_addresses_and_formulas():
-    views = landing.grid_views()
-    assert [t for t, _ in landing.GRID_TABS] == list(views)
-    for tab, view in views.items():
-        letters = [c["letter"] for c in view["cols"]]
-        assert letters == [chr(ord("A") + i) for i in range(len(letters))]
-        for row in view["rows"]:
-            width = sum(c["span"] for c in row["cells"])
-            assert width == len(letters), (tab, row["n"])  # spans tile the row exactly
-            for c in row["cells"]:
-                assert c["f"] is None or c["f"].startswith("="), c
-        landing.grid_cell(view, view["start"])  # the start cell exists
-    selector = _grid_cell("sum", "B4")
-    assert selector.get("select") and selector["f"] is None
-    assert _grid_cell("sum", "C4")["f"] == '=CHOOSE(B4,"Low","Base","High")'
-    assert _grid_cell("inp", "E7")["f"].startswith("=CHOOSE(Dashboard!$B$4,")
+def test_spreadsheet_is_the_whole_workbook():
+    """Every sheet of the delivered file, every formula, the frozen panes and the scenario list on B4."""
+    wb = xlview.workbook()
+    data = landing.sheet_data()
+    assert [s["name"] for s in wb["sheets"]] == data["stats"]["sheets"]
+    formulas = sum(1 for s in wb["sheets"] for c in s["cells"].values() if len(c) > 2)
+    assert formulas == data["stats"]["formulas"]
+    for s in wb["sheets"]:
+        for a, c in s["cells"].items():
+            assert len(c) < 3 or c[2].startswith("="), (s["name"], a)
+            values = c[1] if len(c) > 1 and isinstance(c[1], list) else [c[1] if len(c) > 1 else None]
+            errors = {"#DIV/0!", "#N/A", "#VALUE!", "#REF!", "#NAME?", "#NUM!", "#NULL!"}
+            assert not any(v in errors for v in values), (s["name"], a, values)
+        assert s["start"] in s["cells"], s["name"]
+    dash = _sheet("Dashboard")
+    assert dash["lists"]["B4"]["options"] == ["1", "2", "3"] and dash["lists"]["B4"]["prompt"]
+    assert dash["cells"]["C4"][2] == '=CHOOSE(B4,"Low","Base","High")'
+    assert _sheet("Inputs")["cells"]["E7"][2].startswith("=CHOOSE(Dashboard!$B$4,")
+    assert _sheet("Monthly")["freeze"] == [5, 2]
 
 
 def test_preview_claims_match_the_build():
@@ -129,12 +136,44 @@ def test_preview_claims_match_the_build():
     assert data["stats"]["formulas"] > 1000 and "Checks" in data["stats"]["sheets"]
 
 
-def test_hero_grid_is_server_rendered(client):
+def test_hero_spreadsheet_is_server_rendered(client):
     html = client.get("/").text
-    assert 'id="xl-grid"' in html and 'id="xl-case"' in html
-    assert 'data-a="B10"' in html and "=&#39;P&amp;L&#39;!B14" in html  # formula bar starts on EBITDA
+    assert 'id="xl-grid"' in html and 'aria-activedescendant="xc-B4"' in html
+    assert 'id="xc-B10"' in html and "$54,410" in html  # Dashboard in the Base case
+    for name in xlview.workbook()["sheets"]:
+        assert f'data-sheet="{name["name"].replace("&", "&amp;")}"' in html
     assert "0 formula errors in all three cases" in html
     assert 'id="demo"' in html and 'id="demo-data"' in html
+    src = re.search(r'data-src="([^"]+)"', html).group(1)
+    r = client.get(src)
+    assert r.status_code == 200 and "immutable" in r.headers["cache-control"]
+    assert r.json()["sheets"][0]["name"] == "Dashboard"
+    assert "no-cache" in client.get("/preview/workbook.json").headers["cache-control"]
+
+
+@pytest.mark.parametrize(
+    ("value", "fmt", "text"),
+    [
+        (1234.5, "$#,##0;($#,##0);-", "$1,235"),
+        (-27487.2, "$#,##0;($#,##0);-", "($27,487)"),
+        (0, "$#,##0;($#,##0);-", "-"),
+        (0.1333, "0.0%;(0.0%);-", "13.3%"),
+        (-0.05, "0.0%;(0.0%);-", "(5.0%)"),
+        (6.5, "$#,##0.00;($#,##0.00);-", "$6.50"),
+        (3.5, "#,##0.0;(#,##0.0);-", "3.5"),
+        (-1234.4, "#,##0;(#,##0);-", "(1,234)"),
+        (2.5, "0", "3"),
+        (0.35, "General", "0.35"),
+        (36, "General", "36"),
+        (1234.5, '\\$#,##0;"($"#,##0\\);\\-', "$1,235"),
+        (-5, '\\$#,##0;"($"#,##0\\);\\-', "($5)"),
+        ("PASS", "General", "PASS"),
+        (True, "General", "TRUE"),
+        (None, "General", ""),
+    ],
+)
+def test_number_formats_follow_the_workbook(value, fmt, text):
+    assert xlview.format_value(value, fmt)[0] == text
 
 
 def test_start_prefills_from_the_demo_link(client):
@@ -155,11 +194,6 @@ def test_money_and_percent_formats():
     assert landing.money(-27487.4) == "($27,487)"
     assert landing.money(0.2) == "–"
     assert landing.pct(-0.0859) == "(8.6%)"
-    assert (
-        landing.fmt_cell(0.33, "0.0%;(0.0%);-") == "33.0%"
-        and landing.fmt_cell(6.5, "$#,##0.00;($#,##0.00);-") == "$6.50"
-    )
-    assert landing.fmt_cell(-1234.4, "#,##0;(#,##0);-") == "(1,234)" and landing.fmt_cell("PASS", "General") == "PASS"
 
 
 def test_views_json_cannot_break_out_of_its_script_tag():
