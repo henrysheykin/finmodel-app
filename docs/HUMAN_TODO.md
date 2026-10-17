@@ -73,6 +73,7 @@ webhook, Resend domain).
       - [ ] Retail / e-commerce: sample `samples/retail-full.xlsx`, memo `docs/templates/retail.md` (questions at the end).
       - [ ] Professional services: sample `samples/services-full.xlsx`, memo `docs/templates/services.md` (questions at the end).
       - [ ] Home services / trades: sample `samples/home_services-full.xlsx`, memo `docs/templates/home_services.md` (questions at the end).
+      - [ ] Fitness studio / gym: sample `samples/fitness-full.xlsx`, memo `docs/templates/fitness.md` (questions at the end).
 - [x] R2 Lawyer review of legal drafts — n/a: Henry cancelled M08 (2026-10-17); legal texts are his to provide.
 
 ## Go-live

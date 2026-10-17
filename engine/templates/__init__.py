@@ -15,7 +15,6 @@ from engine.templates.base import Template
 #: industries shown in the wizard as "(coming soon)" before a template serves them: business type -> label
 PLANNED: dict[str, str] = {
     "real_estate": "Real estate",
-    "fitness": "Fitness studio / gym",
 }
 
 #: business types accepted in a brief without a template (free-text "something else")

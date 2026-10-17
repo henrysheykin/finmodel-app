@@ -200,7 +200,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: as E03.
 
 ### E22 — Template: Fitness studio / gym
-- status: TODO
+- status: IN_PROGRESS (2026-10-17, interactive session with Henry; PR pending)
 - depends: E02, E20
 - skills: xlsx, engineering:testing-strategy
 - do: follow `docs/templates/ADDING_A_TEMPLATE.md`; `key = "fitness"`, business type `fitness`
