@@ -12,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, ValidationError
 from sqlalchemy.orm import Session, sessionmaker
 
+from adapters.notify import ConsoleNotifier, Notifier
 from adapters.payments import PaymentProvider, make_provider
 from adapters.storage import Storage, make_storage
 from app import links
@@ -32,6 +33,7 @@ class Services:
     storage: Storage
     briefs: BriefSource
     payments: PaymentProvider | None = None
+    notifier: Notifier | None = None
 
 
 class OrderIn(BaseModel):
@@ -58,15 +60,18 @@ def create_app(services: Services | None = None) -> FastAPI:
                     cfg.stripe_webhook_secret,
                     cfg.allow_live_payments,
                 ),
+                ConsoleNotifier(),  # E12 swaps in the email adapter
             )
         yield
 
     app = FastAPI(title="StartupModel", docs_url=None, redoc_url=None, lifespan=lifespan)
     app.state.services = services
     app.mount("/static", StaticFiles(directory=str(STATIC)), name="static")
+    from app.account_web import router as account_router
     from app.web import router as web_router
 
     app.include_router(web_router)
+    app.include_router(account_router)
 
     def svc(request: Request) -> Services:
         return request.app.state.services

@@ -94,6 +94,7 @@ def services(tmp_path):
         storage_dir=str(tmp_path / "storage"),
         job_backoff_seconds=30,
     )
+    from adapters.notify import RecordingNotifier
     from adapters.payments import FakeProvider
 
     return Services(
@@ -102,14 +103,13 @@ def services(tmp_path):
         LocalStorage(cfg.storage_dir),
         PrefillBriefSource(),
         FakeProvider("http://testserver"),
+        RecordingNotifier(),
     )
 
 
 @pytest.fixture
-def notifier():
-    from adapters.notify import RecordingNotifier
-
-    return RecordingNotifier()
+def notifier(services):
+    return services.notifier
 
 
 @pytest.fixture

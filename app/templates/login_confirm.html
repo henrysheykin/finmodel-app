@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Confirm sign-in — StartupModel{% endblock %}
+{% block main %}
+<div class="narrow">
+  <h1>Sign in to StartupModel</h1>
+  <p class="lead">Confirm to open your models on this device.</p>
+  <form method="post" action="/login/verify">
+    <input type="hidden" name="token" value="{{ token }}">
+    <button class="btn" type="submit">Sign in</button>
+  </form>
+</div>
+{% endblock %}

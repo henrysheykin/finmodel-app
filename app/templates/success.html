@@ -10,6 +10,7 @@
     {% else %}Payment received. Your model is being built, recalculated and checked. This usually takes a minute or two; this page updates by itself.{% endif %}
   </p>
   <p class="hint">Order {{ order_id[:8] }} · status: <span id="status-label">{{ label }}</span></p>
+  <p class="hint">You can also <a href="/login">sign in with your email</a> to see and download your models any time.</p>
 </div>
 <script>
 (function () {

@@ -102,3 +102,43 @@ class Artifact(Base):
     created_at: Mapped[datetime] = mapped_column(default=utcnow)
 
     order: Mapped[Order] = relationship(back_populates="artifacts")
+
+
+class Customer(Base):
+    """A person who signs in by magic link. Orders belong to a customer through the checkout email."""
+
+    __tablename__ = "customers"
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=_uuid)
+    email: Mapped[str] = mapped_column(String(254), unique=True)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    last_login_at: Mapped[datetime | None] = mapped_column(nullable=True)
+
+
+class LoginToken(Base):
+    """Single-use magic-link token; only its SHA-256 is stored."""
+
+    __tablename__ = "login_tokens"
+    __table_args__ = (Index("ix_login_tokens_email_created", "email", "created_at"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    email: Mapped[str] = mapped_column(String(254))
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    ip: Mapped[str] = mapped_column(String(64), default="", index=True)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column()
+    used_at: Mapped[datetime | None] = mapped_column(nullable=True)
+
+
+class CustomerSession(Base):
+    """Server-side session; the cookie carries a random token, the DB only its SHA-256."""
+
+    __tablename__ = "customer_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    customer_id: Mapped[str] = mapped_column(ForeignKey("customers.id", ondelete="CASCADE"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column()
+    revoked_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    user_agent: Mapped[str] = mapped_column(String(200), default="")
