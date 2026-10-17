@@ -2,6 +2,7 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · E05 reset to TODO (Henry's request): abandoned claim from 2026-10-16, no branch/PR. Next E run picks it up.
 - 2026-10-17 · E · E06 Professional services template · DONE · https://github.com/henrysheykin/finmodel-app/pull/16
   Billable FTE × available hours × utilisation (senior / consultant roles) + contractor hours; rate card with yearly increase;
   retainer (discount) vs project (realisation) mix; billable payroll + contractors in cost of delivery; 45 receivable days default;
