@@ -5,7 +5,7 @@ Newest first. One entry per scheduled run: date · track · task · result · PR
 - 2026-10-17 · E · E15 ops (rest) · DONE · https://github.com/henrysheykin/finmodel-app/pull/31
   Per-IP rate limits: wizard + /api/orders share 30/10 min, checkout sessions 30/10 min (RATE_LIMIT_PER_10MIN), 429 + Retry-After,
   answers kept. docker-compose.yml (production image + Postgres 16); compose E2E (wizard → test payment → build → Checks PASS) in CI.
-  680 tests. For Henry: set CLIENT_IP_HEADER=X-Real-IP in Railway (HUMAN_TODO A6). E05 skipped again (stale claim, no continue:),
+  668 tests (666 local + 2 compose). For Henry: set CLIENT_IP_HEADER=X-Real-IP in Railway (HUMAN_TODO A6). E05 skipped again (stale claim, no continue:),
   please reset to TODO; E17 is now unblocked.
 - 2026-10-17 · E · E16 SEO pages engine · DONE · https://github.com/henrysheykin/finmodel-app/pull/29
   All 15 content/seo pages live at /models/… and /guides/… (shared layout, breadcrumbs, CTA to the wizard on the page's template,
