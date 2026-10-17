@@ -120,7 +120,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   downloadable, checked file, and a broken template ends in `failed`.
 
 ### E10 — Wizard + checkout UI
-- status: IN_PROGRESS (2026-10-17)
+- status: DONE (2026-10-17, https://github.com/henrysheykin/finmodel-app/pull/19)
 - depends: E09
 - skills: frontend-design
 - do: server-rendered multi-step wizard reproducing the competitor's flow as
@@ -132,7 +132,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   `awaiting_payment` (Chromium is preinstalled; see environment notes).
 
 ### E11 — Payments
-- status: TODO
+- status: IN_PROGRESS (2026-10-17)
 - depends: E10
 - skills: engineering:system-design, engineering:code-review
 - do: payment adapter interface; Stripe Checkout implementation (test mode),

@@ -2,6 +2,9 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · E10 wizard + checkout · DONE · https://github.com/henrysheykin/finmodel-app/pull/19
+  /start: 7 steps (type, goal, stage, period, key numbers with stage defaults, plan, email), live summary, progressive enhancement,
+  /checkout/{id} summary with masked email. Playwright at 360 px. CI installs Chromium. frontend-design skill not installed; design v2 tokens used.
 - 2026-10-17 · E · E09 orders, jobs, delivery pipeline · DONE · https://github.com/henrysheykin/finmodel-app/pull/18
   Order state machine + audit, idempotent mark_paid, DB-polled worker (atomic claim, stale reclaim, 30/60 s backoff, fail on 3rd),
   generate → recalc → challenger → store → notify; rejected models fail + admin alert, never delivered. Local/S3 storage, HMAC links (7 days),
