@@ -12,7 +12,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 ## Track E — Engineering (daily)
 
 > **Priority (Henry, 2026-10-17, go-live within days):** E-track runs pick tasks in THIS order
-> (overrides file order): **E05 → E21 → E22 → E07 → E17 → E18**, then E16, E15 (rest), E08.
+> (overrides file order): **E21 → E22 → E05 → E07 → E17 → E18**, then E16, E15 (rest), E08.
 > Done in the interactive session on 2026-10-17: E13 landing, E15 deploy slice, E20 template catalog.
 > New industries are one file each (ADR-009, `docs/templates/ADDING_A_TEMPLATE.md`).
 > Customer login = passwordless magic link by email (ADR-006).
@@ -66,7 +66,11 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: as E03.
 
 ### E05 — Template: Real estate (rental property investment)
-- status: IN_PROGRESS (2026-10-17, interactive session with Henry)
+- status: TODO
+- note (2026-10-17, interactive session): needs three framework extensions first — an annuity (mortgage) loan option
+  (`loan_style`, interest on the opening balance), a non-depreciable land share of the purchase price, and a
+  Returns sheet (yearly unlevered and levered cash flows with year 0, exit value = next-year NOI ÷ exit cap rate
+  less selling costs, IRR and NPV) in the builder and the challenger. Do them as part of this task.
 - note: reset 2026-10-17 by Henry's request — the 2026-10-16 claim left no branch, PR or continue: note.
 - note (2026-10-17): follow `docs/templates/ADDING_A_TEMPLATE.md`; `key = "real_estate"`, business type
   `real_estate` (remove it from `PLANNED`); the landing lists the sample automatically.
@@ -178,7 +182,8 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: adding a template needs no edits outside its own file, tests, sample and memo.
 
 ### E21 — Template: Home services / trades
-- status: TODO
+- status: IN_PROGRESS (2026-10-17, interactive session with Henry; PR pending)
+- note (2026-10-17): built in the interactive session; plan members simplified to a yearly growth rate (memo, CFO question 4).
 - depends: E02, E20
 - skills: xlsx, engineering:testing-strategy
 - do: follow `docs/templates/ADDING_A_TEMPLATE.md`; `key = "home_services"`, business type `home_services`
