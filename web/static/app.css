@@ -91,3 +91,15 @@ input[type=text], input[type=email] { font: inherit; width: 100%; max-width: 420
   .choices { grid-template-columns: minmax(0, 1fr); }
 }
 .notice { border-left: 3px solid var(--pine); background: var(--paper); padding: 10px 14px; margin: 0 0 20px; }
+.narrow--wide { max-width: 860px; }
+.orders th, .orders td { text-align: left; padding-right: 12px; vertical-align: middle; }
+.orders thead th { font-size: 14px; color: var(--text-3); font-weight: 500; }
+.btn--small { font-size: 15px; padding: 7px 12px; border-width: 1.5px; background: #fff; color: var(--pine); white-space: nowrap; }
+.btn--small:hover { background: var(--paper); color: var(--pine-dark); }
+.row-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.top__nav { display: flex; gap: 16px; align-items: center; font-size: 15px; }
+@media (max-width: 640px) {
+  .orders thead { display: none; }
+  .orders tr { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+  .orders th, .orders td { border: 0; padding: 0; }
+}

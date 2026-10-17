@@ -154,3 +154,31 @@ def test_wizard_pay_build_and_see_ready(page, live_server, services, notifier):
     assert "Your model is ready" in page.get_by_role("status").inner_text()
     ((email, _, link),) = notifier.ready
     assert email == "buyer@example.com" and "/download/" in link
+
+
+def test_sign_in_by_link_and_download_from_my_models(page, live_server, services, notifier):
+    from urllib.parse import urlparse
+
+    from fastapi.testclient import TestClient
+
+    from tests.test_accounts import ready_order
+
+    with TestClient(create_app(services)) as c:
+        ready_order(c, services, notifier, email="buyer@example.com", name="Rocket Notes")
+    page.goto(f"{live_server}/account")
+    page.wait_for_url("**/login")
+    page.get_by_label("Email").fill("buyer@example.com")
+    page.get_by_role("button", name="Email me a sign-in link").click()
+    assert page.get_by_role("heading", name="Check your email").is_visible()
+    link = notifier.logins[-1][1]
+    page.goto(live_server + "/login/verify?" + urlparse(link).query)
+    page.get_by_role("button", name="Sign in").click()
+    page.wait_for_url("**/account")
+    assert page.get_by_role("heading", name="My models").is_visible()
+    assert page.get_by_role("rowheader", name="Rocket Notes").is_visible()
+    assert no_horizontal_scroll(page)
+    with page.expect_download() as dl:
+        page.get_by_role("link", name="Download .xlsx").click()
+    assert dl.value.suggested_filename.endswith("-light.xlsx")
+    page.get_by_role("button", name="Sign out", exact=True).click()
+    page.wait_for_url("**/login")

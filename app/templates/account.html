@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}My models — StartupModel{% endblock %}
+{% block main %}
+<div class="narrow narrow--wide">
+  <h1>My models</h1>
+  <p class="hint">Signed in as {{ email }}</p>
+  {% if orders %}
+  <table class="ledger orders">
+    <caption class="sr-only">Your orders</caption>
+    <thead><tr><th scope="col">Model</th><th scope="col">Plan</th><th scope="col">Ordered</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Download</span></th></tr></thead>
+    <tbody>
+    {% for o in orders %}
+      <tr>
+        <th scope="row">{{ o.name }}</th>
+        <td>{{ o.plan }}</td>
+        <td>{{ o.date }}</td>
+        <td>{{ o.label }}</td>
+        <td>{% if o.ready %}<a class="btn btn--small" href="/account/orders/{{ o.id }}/download">Download .xlsx</a>
+            {% elif o.status == "awaiting_payment" %}<a href="/checkout/{{ o.id }}">Pay</a>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No models yet. <a href="/start">Start a model</a></p>
+  {% endif %}
+  <div class="row-actions">
+    <form method="post" action="/logout"><button class="btn btn--ghost" type="submit">Sign out</button></form>
+    <form method="post" action="/account/sign-out-everywhere"><button class="btn btn--ghost" type="submit">Sign out on all devices</button></form>
+  </div>
+</div>
+{% endblock %}
