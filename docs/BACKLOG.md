@@ -298,7 +298,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: `docs/marketing/analytics.md`.
 
 ### M11 — SEO pages, batch 3 (templates now built)
-- status: IN_PROGRESS (2026-10-17)
+- status: DONE (2026-10-17, PR #17)
 - depends: M06
 - skills: small-business:seo-ai-visibility
 - do: added on Henry's request (2026-10-17). 5 pages in `content/seo/` for templates that now

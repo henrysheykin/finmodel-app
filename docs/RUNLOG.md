@@ -2,6 +2,9 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · M · M11 SEO pages batch 3 · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/17
+  Henry cancelled M08 (legal), M09 (launch plan), M10 (analytics); added M11. 5 pages: SaaS with scenarios, professional services, investors, e-commerce for investors, retail store for a bank loan.
+  Publish only with CFO-signed templates (R1). Left for later: rental pro forma (after E05), DCF for owners (after E07).
 - 2026-10-17 · E · E05 reset to TODO (Henry's request): abandoned claim from 2026-10-16, no branch/PR. Next E run picks it up.
 - 2026-10-17 · E · E06 Professional services template · DONE · https://github.com/henrysheykin/finmodel-app/pull/16
   Billable FTE × available hours × utilisation (senior / consultant roles) + contractor hours; rate card with yearly increase;
