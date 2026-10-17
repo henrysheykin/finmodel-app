@@ -2,6 +2,7 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · re-plan (Henry): app first — order E09 → E10 → E11 → E19 (new: magic-link accounts, My models, downloads) → E12 → E14, then templates. E09 no longer waits for E08. ADR-006. E05 back to TODO.
 - 2026-10-17 · M · M11 SEO pages batch 3 · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/17
   Henry cancelled M08 (legal), M09 (launch plan), M10 (analytics); added M11. 5 pages: SaaS with scenarios, professional services, investors, e-commerce for investors, retail store for a bank loan.
   Publish only with CFO-signed templates (R1). Left for later: rental pro forma (after E05), DCF for owners (after E07).

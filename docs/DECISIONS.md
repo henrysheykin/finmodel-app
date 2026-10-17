@@ -206,3 +206,22 @@ sheet, file properties or footer), for all customers, so firms can pass files on
 work. **The 5 × Full pack ($1,250) is valid for 12 months** from purchase. E-track consequences:
 the builder must not write the brand into workbooks or document properties; E11/E14 track pack
 credits with a 12-month expiry.
+
+## ADR-006 — Customer accounts by magic link; app before more templates (2026-10-17)
+
+**Decision (Henry).** Customers sign in with a passwordless magic link sent to their email; no
+passwords. The account shows "My models" (orders, status, re-download). The guest path stays:
+the "model ready" email still carries a signed download link, so nobody has to sign in to get
+the file they paid for.
+
+**Priority.** The E track builds the working app first — orders and build pipeline (E09),
+wizard and checkout (E10), Stripe test-mode payments (E11), customer accounts and downloads
+(E19), email (E12), admin (E14) — then returns to templates (E05 real estate, E07 goal modules)
+and the LLM brief builder (E08). E09 starts from template defaults + the wizard's key numbers
+(no LLM call), behind an interface E08 implements later.
+
+**Why magic link.** Customers buy rarely (one model, maybe an upgrade): a password is one more
+thing to forget and a liability to store. Email is already the delivery channel, so login adds
+no new dependency. Trade-off: sign-in depends on email deliverability (HUMAN_TODO A3), and
+links must be single-use, short-lived and hashed at rest.
+

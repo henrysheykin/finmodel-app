@@ -33,6 +33,9 @@ the answer next to the item (agents read this file every run).
       (a) how long the 5-model pack credits stay valid (M02 suggested 12 months);
       (b) delivered files: StartupModel branding inside the workbook or none / white-label for firms?)
 
+- [x] D10 Customer login + priority — Henry 2026-10-17: **magic link by email**; build the working app
+      (login, payments, download) before more templates (ADR-006, BACKLOG priority note).
+
 - [ ] D9 Failed-build policy (from M07, `content/email/build-failed.md`): when a model fails the
       checks, what does the customer get? Option A: automatic full refund at once. Option B: we fix
       and deliver within N business days (e.g. 2), or refund if they prefer. Also: support email

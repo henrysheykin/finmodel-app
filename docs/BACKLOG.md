@@ -11,6 +11,12 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ## Track E — Engineering (daily)
 
+> **Priority (Henry, 2026-10-17): the working app first** — wizard, customer login, payments,
+> download. E-track runs pick tasks in THIS order (overrides file order); everything not listed
+> follows in file order afterwards:
+> **E09 → E10 → E11 → E19 → E12 → E14**, then E05, E07, E08, E13, E15, E16, E17, E18.
+> Customer login = passwordless magic link by email (ADR-006).
+
 ### E01 — Repo scaffold, CI, port the prototype
 - status: DONE (2026-10-16, https://github.com/henrysheykin/finmodel-app/pull/1)
 - depends: —
@@ -60,7 +66,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: as E03.
 
 ### E05 — Template: Real estate (rental property investment)
-- status: IN_PROGRESS (2026-10-17)
+- status: TODO
 - note: reset 2026-10-17 by Henry's request — the 2026-10-16 claim left no branch, PR or continue: note.
 - depends: E02
 - skills: xlsx
@@ -101,7 +107,9 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ### E09 — Orders, jobs and the delivery pipeline
 - status: TODO
-- depends: E02, E08
+- depends: E02
+- note (2026-10-17): build briefs from wizard answers via the template stage defaults + key numbers
+  ("prefill", no LLM); E08 plugs the LLM brief builder into the same interface later.
 - skills: engineering:system-design, engineering:architecture, engineering:testing-strategy
 - do: models (Order, Job, Artifact), Alembic, state machine
   `draft → awaiting_payment → paid → building → checking → ready | failed`,
@@ -158,6 +166,21 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: matches design v2 at 1440 and 360 px; Lighthouse mobile ≥ 95 on
   all four categories (run headless Chromium), axe 0 critical, no horizontal
   scroll at 360 px; `grep -ri "1F3864\|2563EB\|DM Sans"` in web/ is empty.
+
+### E19 — Customer accounts: magic-link login, "My models", downloads
+- status: TODO
+- depends: E09, E11
+- skills: engineering:system-design, engineering:code-review, engineering:testing-strategy
+- do: passwordless login (ADR-006): email → single-use, hashed, 15-minute magic-link token sent
+  through the email adapter (console in dev/tests) → secure session cookie (HttpOnly, Secure in
+  prod, SameSite=Lax, 30-day expiry, server-side revocation). Rate limit per email and per IP;
+  same response whether or not the email exists. Orders are linked to the customer by checkout
+  email; after payment the customer can sign in and see "My models": order list, status,
+  download (fresh short-lived signed link per click), re-build history. Logout, "sign out
+  everywhere". No passwords stored anywhere.
+- done when: tests cover login flow, expired/reused token, rate limit, another customer's
+  order is 404, download works only for the owner and only for `ready` orders; Playwright
+  happy path: sign in by link → My models → download the .xlsx.
 
 ### E14 — Admin panel
 - status: TODO
