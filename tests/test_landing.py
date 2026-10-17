@@ -81,19 +81,85 @@ def test_preview_numbers_match_the_independent_python_model(scenario):
     assert verdict["result"].startswith("PASS")
 
 
+def _grid_cell(tab: str, addr: str) -> dict:
+    return landing.grid_cell(landing.grid_views()[tab], addr)
+
+
 def test_low_case_shows_the_funding_warning():
-    views = landing.sheet_views()
-    low = {r["label"]: r for r in views["1"]["chk"]["rows"]}
-    assert low["Funding sufficient (cash ≥ 0)"]["result"] == "WARN"
-    base = {r["label"]: r for r in views["2"]["chk"]["rows"]}
-    assert base["Funding sufficient (cash ≥ 0)"]["result"] == "PASS"
+    funding = _grid_cell("chk", "B14")
+    assert landing.cell_text(funding, 1) == "WARN" and landing.cell_text(funding, 2) == "PASS"
+    assert "res--warn" in landing.cell_classes(funding, "A1", case=1)
+    assert "res--warn" not in landing.cell_classes(funding, "A1", case=2)
+
+
+@pytest.mark.parametrize("case", [1, 2, 3])
+def test_grid_shows_the_same_numbers_as_the_checked_rows(case):
+    """The spreadsheet grid and the rows checked against the Python model come from the same recalculation."""
+    data = landing.sheet_data()
+    summary = {r["label"]: r["values"] for r in data["scenarios"][str(case)]["summary"]}
+    for row, label in ((8, "Revenue"), (10, "EBITDA"), (12, "Net income"), (13, "Year-end cash")):
+        for i, col in enumerate("BCD"):
+            cell = _grid_cell("sum", f"{col}{row}")
+            assert landing.cell_text(cell, case) == landing.money(summary[label][i]), (case, label, col)
+            assert cell["tick"], (label, col)
+    assert landing.cell_text(_grid_cell("sum", "C4"), case) == ["Low", "Base", "High"][case - 1]
+
+
+def test_grid_cells_carry_real_addresses_and_formulas():
+    views = landing.grid_views()
+    assert [t for t, _ in landing.GRID_TABS] == list(views)
+    for tab, view in views.items():
+        letters = [c["letter"] for c in view["cols"]]
+        assert letters == [chr(ord("A") + i) for i in range(len(letters))]
+        for row in view["rows"]:
+            width = sum(c["span"] for c in row["cells"])
+            assert width == len(letters), (tab, row["n"])  # spans tile the row exactly
+            for c in row["cells"]:
+                assert c["f"] is None or c["f"].startswith("="), c
+        landing.grid_cell(view, view["start"])  # the start cell exists
+    selector = _grid_cell("sum", "B4")
+    assert selector.get("select") and selector["f"] is None
+    assert _grid_cell("sum", "C4")["f"] == '=CHOOSE(B4,"Low","Base","High")'
+    assert _grid_cell("inp", "E7")["f"].startswith("=CHOOSE(Dashboard!$B$4,")
+
+
+def test_preview_claims_match_the_build():
+    data = landing.sheet_data()
+    assert all(data["scenarios"][s]["formula_errors"] == 0 for s in "123")  # "0 formula errors" stamp
+    assert data["stats"]["formulas"] > 1000 and "Checks" in data["stats"]["sheets"]
+
+
+def test_hero_grid_is_server_rendered(client):
+    html = client.get("/").text
+    assert 'id="xl-grid"' in html and 'id="xl-case"' in html
+    assert 'data-a="B10"' in html and "=&#39;P&amp;L&#39;!B14" in html  # formula bar starts on EBITDA
+    assert "0 formula errors in all three cases" in html
+    assert 'id="demo"' in html and 'id="demo-data"' in html
+
+
+def test_start_prefills_from_the_demo_link(client):
+    html = client.get("/start?type=restaurant_cafe&goal=dcf_valuation&horizon=5&granularity=annual&sample=1").text
+    for name, value in (
+        ("business_type", "restaurant_cafe"),
+        ("goal", "dcf_valuation"),
+        ("horizon_years", "5"),
+        ("granularity", "annual"),
+    ):
+        assert re.search(rf'name="{name}" value="{value}"\s+checked', html), name
+    assert re.search(r'name="sample_data" value="1"\s+checked', html)
+    ignored = client.get("/start?goal=nonsense&horizon=7").text  # unknown values fall back to defaults
+    assert re.search(r'name="goal" value="revenue_profit"\s+checked', ignored)
 
 
 def test_money_and_percent_formats():
     assert landing.money(-27487.4) == "($27,487)"
     assert landing.money(0.2) == "–"
     assert landing.pct(-0.0859) == "(8.6%)"
-    assert landing.fmt_input(0.33, "pct") == "33%" and landing.fmt_input(6.5, "usd2") == "$6.50"
+    assert (
+        landing.fmt_cell(0.33, "0.0%;(0.0%);-") == "33.0%"
+        and landing.fmt_cell(6.5, "$#,##0.00;($#,##0.00);-") == "$6.50"
+    )
+    assert landing.fmt_cell(-1234.4, "#,##0;(#,##0);-") == "(1,234)" and landing.fmt_cell("PASS", "General") == "PASS"
 
 
 def test_views_json_cannot_break_out_of_its_script_tag():
