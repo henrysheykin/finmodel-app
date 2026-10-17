@@ -11,10 +11,10 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ## Track E — Engineering (daily)
 
-> **Priority (Henry, 2026-10-17): the working app first** — wizard, customer login, payments,
-> download. E-track runs pick tasks in THIS order (overrides file order); everything not listed
-> follows in file order afterwards:
-> **E09 → E10 → E11 → E19 → E12 → E14**, then E05, E07, E08, E13, E15, E16, E17, E18.
+> **Priority (Henry, 2026-10-17, go-live within days):** E-track runs pick tasks in THIS order
+> (overrides file order): **E05 → E21 → E22 → E07 → E17 → E18**, then E16, E15 (rest), E08.
+> Done in the interactive session on 2026-10-17: E13 landing, E15 deploy slice, E20 template catalog.
+> New industries are one file each (ADR-009, `docs/templates/ADDING_A_TEMPLATE.md`).
 > Customer login = passwordless magic link by email (ADR-006).
 
 ### E01 — Repo scaffold, CI, port the prototype
@@ -68,7 +68,9 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 ### E05 — Template: Real estate (rental property investment)
 - status: TODO
 - note: reset 2026-10-17 by Henry's request — the 2026-10-16 claim left no branch, PR or continue: note.
-- depends: E02
+- note (2026-10-17): follow `docs/templates/ADDING_A_TEMPLATE.md`; `key = "real_estate"`, business type
+  `real_estate` (remove it from `PLANNED`); the landing lists the sample automatically.
+- depends: E02, E20
 - skills: xlsx
 - do: purchase price, closing costs, LTV/rate/term loan with amortisation
   schedule, rent roll, vacancy, opex, NOI, cap rate, cash-on-cash, DSCR, exit
@@ -151,7 +153,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: tests render every template and send through the console adapter.
 
 ### E13 — Landing page and static pages
-- status: IN_PROGRESS (2026-10-17, interactive session with Henry)
+- status: IN_PROGRESS (2026-10-17, interactive session with Henry; PR #25 open — merge pending Henry)
 - depends: E01
 - skills: frontend-design, small-business:seo-ai-visibility
 - do: build the landing from **design v2**: `design/landing.dc.html` (layout,
@@ -166,6 +168,47 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: matches design v2 at 1440 and 360 px; Lighthouse mobile ≥ 95 on
   all four categories (run headless Chromium), axe 0 critical, no horizontal
   scroll at 360 px; `grep -ri "1F3864\|2563EB\|DM Sans"` in web/ is empty.
+
+### E20 — Template catalog: a new industry is one file
+- status: IN_PROGRESS (2026-10-17, interactive session with Henry; PR open — merge pending Henry)
+- depends: E02
+- do: ADR-009 — registry discovers templates; catalog data on the template (order, key numbers, samples);
+  `PLANNED` "coming soon" list; wizard / briefing / brief schema / landing derive from it;
+  `scripts/build_samples.py`; `tests/test_catalog.py`; `docs/templates/ADDING_A_TEMPLATE.md`.
+- done when: adding a template needs no edits outside its own file, tests, sample and memo.
+
+### E21 — Template: Home services / trades
+- status: TODO
+- depends: E02, E20
+- skills: xlsx, engineering:testing-strategy
+- do: follow `docs/templates/ADDING_A_TEMPLATE.md`; `key = "home_services"`, business type `home_services`
+  (remove it from `PLANNED`). Plumbing, HVAC, electrical, cleaning, landscaping. Revenue: technicians
+  (headcount role) × billable jobs per technician per day × working days × average ticket, with monthly
+  seasonality (12 factors averaging 1, default flat); leads from a marketing budget ÷ cost per lead ×
+  booking rate cap the job count (jobs = min(capacity, booked leads + repeat customers)); service
+  agreements (maintenance plan members × monthly fee, monthly churn, new members as % of jobs).
+  Costs: materials % of job revenue, technician payroll, vehicle cost per technician per month,
+  insurance & licences, dispatcher/office roles, marketing. Capex: van + tools per new technician,
+  depreciated. Receivable days small (default 10). KPIs: revenue per technician, jobs per month,
+  gross margin per job, plan members and plan MRR, marketing cost per booked job, utilisation.
+  Stage defaults ×4. Sample + memo; HUMAN_TODO R1 CFO review.
+- done when: as E03.
+
+### E22 — Template: Fitness studio / gym
+- status: TODO
+- depends: E02, E20
+- skills: xlsx, engineering:testing-strategy
+- do: follow `docs/templates/ADDING_A_TEMPLATE.md`; `key = "fitness"`, business type `fitness`
+  (remove it from `PLANNED`). Members: opening members (presale), new members per month from a marketing
+  budget ÷ cost per lead × conversion plus referrals, monthly churn, capacity cap (max members);
+  membership fee per month with yearly increase, joining fee, personal training (sessions per month ×
+  rate, trainer payout %), class packs / drop-ins, retail & drinks with their own cost %. Costs: rent,
+  utilities, instructors per class × classes per week (contractors), front-desk and manager roles,
+  software & payment fees % of revenue, marketing, equipment maintenance. Capex: fit-out + equipment,
+  replacement after N years. KPIs: members, membership MRR, churn, average revenue per member, LTV,
+  break-even members, revenue per square foot (sq ft input). Stage defaults ×4. Sample + memo;
+  HUMAN_TODO R1 CFO review.
+- done when: as E03.
 
 ### E19 — Customer accounts: magic-link login, "My models", downloads
 - status: DONE (2026-10-17, https://github.com/henrysheykin/finmodel-app/pull/21)
@@ -193,6 +236,10 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ### E15 — Ops: logging, health, backups, deploy docs
 - status: IN_PROGRESS (2026-10-17, interactive session with Henry)
+- continue: done in PR #24 — one Railway container (deploy/start.sh: migrations + worker + web), Postgres URL,
+  logging, security headers/HSTS, docs/DEPLOY.md, verified on Postgres 16 with a volume (ADR-008).
+  Left: rate limiting on `/start` POST and `/api/orders`, `docker-compose.yml` (app + postgres) for local runs
+  and an E2E test against it, a backup note for Railway Postgres in DEPLOY.md is already there.
 - depends: E09
 - skills: engineering:deploy-checklist, engineering:documentation
 - do: structured logs, `/healthz`, error alert email to admin, DB backup script,
