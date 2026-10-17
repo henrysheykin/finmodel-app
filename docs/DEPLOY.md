@@ -36,6 +36,8 @@ volume, applies migrations, owns `/data/storage` as the `app` user and serves th
 | `SUPPORT_EMAIL` | `support@startup-model.com` |
 | `ADMIN_USER` / `ADMIN_PASSWORD` | your admin login; password 12+ characters |
 | `ADMIN_EMAIL` | where build-failure alerts go (your own inbox) |
+| `CLIENT_IP_HEADER` | `X-Real-IP` (Railway's edge sets it to the visitor's address; used by the rate limits) |
+| `RATE_LIMIT_PER_10MIN` | optional; default `30` new orders and `30` checkout sessions per visitor address per 10 minutes, `0` = off |
 
 `APP_ENV=prod` and `STORAGE_DIR=/data/storage` are set in the image. The app refuses to start in
 production without `SECRET_KEY`, Stripe and a real email provider; `python -m app.manage check`
@@ -88,7 +90,39 @@ production without `SECRET_KEY`, Stripe and a real email provider; `python -m ap
 - Files on `/data` can always be rebuilt from the stored brief (`/admin` → order → Re-build), so the
   volume is not the only copy of anything that matters.
 
+## Rate limits
+
+Per visitor address, in memory of the one web process (a restart resets the counts):
+
+| Endpoint | Limit | When exceeded |
+|---|---|---|
+| `POST /start` (wizard) and `POST /api/orders` — one shared budget | 30 / 10 min | 429 + `Retry-After`; the wizard re-shows the form with the answers kept |
+| `POST /checkout/{id}/pay` (opens a Stripe session) | 30 / 10 min | 429 page with a link back to the order |
+| `POST /login` (magic link) | 5 per email, 20 per address / 15 min | same "check your inbox" answer, no email |
+| `POST /admin/login` | failed attempts per address | 429 |
+
+The visitor address is the `CLIENT_IP_HEADER` header when set, otherwise the peer address uvicorn
+takes from `X-Forwarded-For`. Use a header the edge proxy *overwrites* (Railway: `X-Real-IP`), so a
+caller cannot pick its own address. Check after deploy: two orders from your phone and laptop on
+different networks do not share a budget.
+
 ## Local run of the production image
+
+The whole stack (production image with web + worker, Postgres 16, a volume) with Docker Compose —
+fake payments (a `/dev/pay` page), emails printed to the log, throwaway local credentials:
+
+```bash
+docker compose up --build --wait                        # http://localhost:8000, admin: admin / local-admin-only
+COMPOSE_BASE_URL=http://localhost:8000 pytest -m compose tests/test_compose_e2e.py
+docker compose logs app                                 # worker + web log, including the emails
+docker compose down -v                                  # stop and delete the local data
+```
+
+The E2E test walks the customer path (landing → wizard → checkout → test payment → worker build with
+LibreOffice → challenger → ready) and downloads the model through `/admin`; its Checks sheet must
+say PASS. CI runs it on every pull request (`compose` job).
+
+Single container without Postgres:
 
 ```bash
 docker build -t finmodel-app .

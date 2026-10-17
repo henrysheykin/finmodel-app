@@ -16,7 +16,7 @@ from adapters.email import make_sender
 from adapters.notify import Notifier
 from adapters.payments import PaymentProvider, make_provider
 from adapters.storage import Storage, make_storage
-from app import links
+from app import links, ratelimit
 from app.briefing import Answers, BriefSource, PrefillBriefSource, supported_business_types
 from app.config import Settings, load_settings
 from app.db import make_engine, make_sessionmaker, migrate, session_scope
@@ -75,6 +75,7 @@ def create_app(services: Services | None = None) -> FastAPI:
 
     app = FastAPI(title="StartupModel", docs_url=None, redoc_url=None, lifespan=lifespan)
     app.state.services = services
+    app.state.limiter = None  # built from the settings on the first rate-limited request
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):
@@ -122,6 +123,9 @@ def create_app(services: Services | None = None) -> FastAPI:
     @app.post("/api/orders", status_code=201)
     def post_order(body: OrderIn, request: Request) -> dict:
         sv = svc(request)
+        wait = ratelimit.check(request, "orders")
+        if wait:
+            raise HTTPException(429, "too many orders from this address; try again later", {"Retry-After": str(wait)})
         try:
             brief = sv.briefs.build_brief(body.answers)
         except (BriefError, ValidationError) as exc:

@@ -14,7 +14,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 
 from adapters.payments import CheckoutRequest, FakeProvider, PaymentError, PaymentEvent, SignatureError
-from app import wizard
+from app import ratelimit, wizard
 from app.briefing import Answers
 from app.db import session_scope
 from app.models import Order
@@ -66,6 +66,8 @@ DEFAULT_FORM = {
 router = APIRouter()
 log = logging.getLogger("web")
 
+TOO_MANY = "Too many requests from your network. Please wait a few minutes and try again."
+
 
 def _label(options, value) -> str:
     return next((label for v, label in options if str(v) == str(value)), str(value))
@@ -108,6 +110,8 @@ def _render_start(request: Request, form: dict, errors: list[str], status: int =
 
 
 def _first_error_step(errors: list[str]) -> int:
+    if TOO_MANY in errors:
+        return 7  # they were submitting: keep them on the last step with their answers
     text = " ".join(errors).lower()
     for step, words in ((1, ("business",)), (5, ("number", "between", "must")), (7, ("email",))):
         if any(w in text for w in words):
@@ -154,6 +158,11 @@ async def start_submit(request: Request):
     sv = request.app.state.services
     raw = await request.form()
     form = {**DEFAULT_FORM, **{k: str(v) for k, v in raw.items()}}
+    wait = ratelimit.check(request, "orders")
+    if wait:
+        resp = _render_start(request, form, [TOO_MANY], status=429)
+        resp.headers["Retry-After"] = str(wait)
+        return resp
     errors: list[str] = []
     bt = form["business_type"]
     if not bt:
@@ -229,6 +238,15 @@ def checkout(order_id: str, request: Request, cancelled: int = 0) -> HTMLRespons
 def pay(order_id: str, request: Request):
     """Create a hosted checkout session and send the customer to it."""
     sv = request.app.state.services
+    wait = ratelimit.check(request, "checkout")
+    if wait:
+        return templates.TemplateResponse(
+            request,
+            "message.html",
+            {"heading": "Too many attempts", "text": TOO_MANY, "link": (f"/checkout/{order_id}", "Back to your order")},
+            status_code=429,
+            headers={"Retry-After": str(wait)},
+        )
     with session_scope(sv.sessions) as s:
         order = s.get(Order, order_id)
         if order is None:

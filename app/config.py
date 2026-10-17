@@ -40,6 +40,10 @@ class Settings:
     job_backoff_seconds: int = 30
     job_timeout_seconds: int = 15 * 60
     worker_poll_seconds: int = 2
+    #: new orders (wizard + API) and checkout sessions allowed per client IP per 10 minutes; 0 = off
+    rate_limit_per_10min: int = 30
+    #: header the hosting edge sets to the visitor's address (e.g. X-Real-IP); empty = proxy-derived peer
+    client_ip_header: str = ""
 
     @property
     def is_prod(self) -> bool:
@@ -91,6 +95,8 @@ def load_settings() -> Settings:
         support_email=env("SUPPORT_EMAIL", ""),
         prices={"light": _int("PRICE_LIGHT_CENTS", 14900), "full": _int("PRICE_FULL_CENTS", 34900)},
         link_ttl_seconds=_int("LINK_TTL_SECONDS", 7 * 24 * 3600),
+        rate_limit_per_10min=_int("RATE_LIMIT_PER_10MIN", 30),
+        client_ip_header=env("CLIENT_IP_HEADER", "").strip(),
     )
     s.check()
     return s

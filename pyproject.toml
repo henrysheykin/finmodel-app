@@ -44,4 +44,5 @@ testpaths = ["tests"]
 markers = [
     "libreoffice: needs soffice (LibreOffice) on PATH",
     "browser: drives Chromium through Playwright",
+    "compose: runs against the docker compose stack (COMPOSE_BASE_URL)",
 ]
