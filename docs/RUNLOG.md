@@ -2,6 +2,12 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · E16 SEO pages engine · DONE · https://github.com/henrysheykin/finmodel-app/pull/29
+  All 15 content/seo pages live at /models/… and /guides/… (shared layout, breadcrumbs, CTA to the wizard on the page's template,
+  sample download, related links, canonical/OG, JSON-LD); /models and /guides indexes; sitemap + llms.txt list them. Sample names
+  `<key>-<tier>[-Ny]` served at /samples/; built missing cafe-light and cafe-full-5y (pages linked to 404s). 76 new tests; 648 local green.
+  For M: 9 titles exceed ~70 chars (Google truncates), tests allow ≤ 90. For Henry/P: E05 claimed 13:33 with no branch/PR/continue: —
+  skipped a 2nd time per protocol; please reset to TODO. E17 waits on E15 (IN_PROGRESS). frontend-design skill not installed.
 - 2026-10-17 · E · interactive with Henry: production check on Railway (test mode) — healthz, landing, wizard, Stripe test payment,
   webhook, build, Resend email, download, Checks PASS all OK. Left: custom domain + Resend domain (A5), Stripe account name "FRANCHISE"
   → StartupModel before go-live. Copy issues for M/E: model-ready email promises a "tomorrow" note that is not sent yet, and says the
