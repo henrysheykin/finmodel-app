@@ -43,7 +43,7 @@ def test_light_and_full_show_identical_numbers(build, cafe_brief):
                 assert light[k] == full[k], (s, y, k)
 
 
-@pytest.mark.parametrize("template", ["saas", "retail"])
+@pytest.mark.parametrize("template", ["saas", "retail", "services"])
 @pytest.mark.parametrize("stage", ["planning", "early", "growing", "established"])
 def test_stage_defaults_pass(build, template, stage):
     from engine.templates import get_template
