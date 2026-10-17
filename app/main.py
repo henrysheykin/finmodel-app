@@ -87,6 +87,12 @@ def create_app(services: Services | None = None) -> FastAPI:
         sv = request.app.state.services
         if sv is not None and sv.cfg.is_prod:
             h.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+        if request.url.path.startswith("/static/") and resp.status_code == 200:
+            # Versioned URLs (asset() adds ?v=<content hash>) never change; unversioned ones must revalidate.
+            versioned = "v" in request.query_params
+            h["Cache-Control"] = (
+                "public, max-age=31536000, immutable" if versioned else "public, max-age=0, must-revalidate"
+            )
         return resp
 
     app.mount("/static", StaticFiles(directory=str(STATIC)), name="static")
