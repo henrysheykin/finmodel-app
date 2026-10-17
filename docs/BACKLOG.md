@@ -106,7 +106,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: 20 fixture cases produce valid briefs; invalid LLM output is caught.
 
 ### E09 — Orders, jobs and the delivery pipeline
-- status: IN_PROGRESS (2026-10-17)
+- status: DONE (2026-10-17, https://github.com/henrysheykin/finmodel-app/pull/18)
 - depends: E02
 - note (2026-10-17): build briefs from wizard answers via the template stage defaults + key numbers
   ("prefill", no LLM); E08 plugs the LLM brief builder into the same interface later.
@@ -120,7 +120,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   downloadable, checked file, and a broken template ends in `failed`.
 
 ### E10 — Wizard + checkout UI
-- status: TODO
+- status: IN_PROGRESS (2026-10-17)
 - depends: E09
 - skills: frontend-design
 - do: server-rendered multi-step wizard reproducing the competitor's flow as

@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · E09 orders, jobs, delivery pipeline · DONE · https://github.com/henrysheykin/finmodel-app/pull/18
+  Order state machine + audit, idempotent mark_paid, DB-polled worker (atomic claim, stale reclaim, 30/60 s backoff, fail on 3rd),
+  generate → recalc → challenger → store → notify; rejected models fail + admin alert, never delivered. Local/S3 storage, HMAC links (7 days),
+  order API, Alembic, prefill briefs (no LLM). ADR-007. 278 tests incl. LibreOffice end-to-end. Nothing new for Henry.
 - 2026-10-17 · E · re-plan (Henry): app first — order E09 → E10 → E11 → E19 (new: magic-link accounts, My models, downloads) → E12 → E14, then templates. E09 no longer waits for E08. ADR-006. E05 back to TODO.
 - 2026-10-17 · M · M11 SEO pages batch 3 · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/17
   Henry cancelled M08 (legal), M09 (launch plan), M10 (analytics); added M11. 5 pages: SaaS with scenarios, professional services, investors, e-commerce for investors, retail store for a bank loan.
