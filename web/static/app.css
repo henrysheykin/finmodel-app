@@ -85,6 +85,7 @@ input[type=text], input[type=email] { font: inherit; width: 100%; max-width: 420
 }
 @media (max-width: 480px) {
   .wrap { padding: 0 16px; }
+  .top__note { display: none; }
   h1 { font-size: 32px; }
   main.wrap { padding-top: 32px; padding-bottom: 56px; }
   .plans { grid-template-columns: minmax(0, 1fr); }

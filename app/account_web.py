@@ -11,10 +11,20 @@ from sqlalchemy import select
 from app import accounts, links, wizard
 from app.db import session_scope
 from app.models import Order
-from app.web import STATUS_LABEL, _label, templates
+from app.web import _label, templates
 
 COOKIE = "sm_session"
 DOWNLOAD_TTL = 10 * 60  # account downloads get a fresh, short-lived link per click
+
+SHORT_STATUS = {
+    "awaiting_payment": "Waiting for payment",
+    "paid": "Queued",
+    "building": "Building",
+    "checking": "Checking",
+    "ready": "Ready",
+    "failed": "Delayed — we'll email you",
+    "refunded": "Refunded",
+}
 
 router = APIRouter()
 
@@ -121,7 +131,7 @@ def account(request: Request):
                     "plan": wizard.PLANS.get(o.tier, {}).get("name", o.tier),
                     "date": o.created_at.strftime("%d %b %Y"),
                     "status": o.status,
-                    "label": STATUS_LABEL.get(o.status, o.status),
+                    "label": SHORT_STATUS.get(o.status, o.status),
                     "ready": o.status == "ready" and o.artifact("model_xlsx") is not None,
                 }
             )
