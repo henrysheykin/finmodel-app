@@ -256,7 +256,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   passes against it.
 
 ### E16 — Seo pages engine and sample files on the site
-- status: TODO
+- status: IN_PROGRESS (2026-10-17, scheduled E run)
 - depends: E13, E03
 - skills: frontend-design, small-business:seo-ai-visibility
 - do: render `content/seo/*.md` into industry pages with a shared layout,
