@@ -4,7 +4,8 @@
 
 Builds the cafe brief as a Full, monthly, 3-year workbook, recalculates it in LibreOffice once per
 scenario and writes:
-  - app/data/landing_sheet.json  (numbers, check results and formulas shown in the hero preview)
+  - app/data/landing_sheet.json     (numbers and check results quoted on the page)
+  - app/data/landing_workbook.json  (every sheet, cell, formula and style for the hero spreadsheet)
   - samples/cafe-full.xlsx       (the downloadable sample, Base case)
 tests/test_landing.py checks the JSON against the engine's independent Python model, so the
 marketing preview cannot drift from what the product actually builds.
@@ -30,64 +31,117 @@ from engine.templates import get_template  # noqa: E402
 
 INPUT_KEYS = ["cust_full", "ticket", "traffic_g", "cogs_pct", "rent", "staff_fte", "staff_salary"]
 
-# The hero shows the real top of each sheet as a spreadsheet grid: (sheet, last row, last column).
-GRID_AREAS = {
-    "sum": ("Dashboard", 15, 4),
-    "inp": ("Inputs", 16, 5),
-    "pl": ("P&L", 22, 4),
-    "chk": ("Checks", 16, 3),
-}
-FILL_KINDS = {"1F3864": "title", "2F5597": "section", "FFFF00": "selector"}
-FONT_KINDS = {"0000FF": "input", "008000": "link"}
+# The hero shows the whole workbook as a spreadsheet: every sheet, cell, formula and style.
+FILL_KINDS = {"1F3864": "t", "2F5597": "s", "FFFF00": "y"}
+FONT_KINDS = {"0000FF": "in", "008000": "ln", "6B7280": "mu", "FFFFFF": "wh", "C55A11": "or"}
+DEFAULT_ROW_PT = 15.0
+DEFAULT_COL_W = 8.43
 
 
-def _cell_style(c) -> dict:
-    """Spreadsheet styling that the web preview mirrors (with the site's own colours)."""
-    fill = c.fill.fgColor.rgb if c.fill is not None and c.fill.fill_type == "solid" else None
-    font = c.font.color.rgb if c.font is not None and c.font.color is not None else None
-    return {
-        "fill": FILL_KINDS.get(str(fill)[-6:]) if isinstance(fill, str) else None,
-        "font": FONT_KINDS.get(str(font)[-6:]) if isinstance(font, str) else None,
-        "bold": bool(c.font.bold) if c.font is not None else False,
-        "numfmt": c.number_format,
-    }
+def _rgb(color) -> str | None:
+    rgb = getattr(color, "rgb", None)
+    return rgb[-6:].upper() if isinstance(rgb, str) else None
 
 
-def _grid_template(wb_formulas) -> dict:
-    """Addresses, formulas, styles and column widths of each preview area (values are added per scenario)."""
-    out = {}
-    for tab, (sheet, last_row, last_col) in GRID_AREAS.items():
-        ws = wb_formulas[sheet]
-        cols = []
-        for ci in range(1, last_col + 1):
-            letter = ws.cell(1, ci).column_letter
-            width = ws.column_dimensions[letter].width if letter in ws.column_dimensions else None
-            cols.append({"letter": letter, "width": round(width or 10, 1)})
-        rows = []
-        for r in range(1, last_row + 1):
-            cells = []
-            for ci in range(1, last_col + 1):
-                c = ws.cell(r, ci)
+def _style_key(c) -> tuple:
+    fill = _rgb(c.fill.fgColor) if c.fill is not None and c.fill.fill_type == "solid" else None
+    f = c.font
+    return (
+        FILL_KINDS.get(fill) if fill else None,
+        FONT_KINDS.get(_rgb(f.color)) if f is not None and f.color is not None else None,
+        bool(f.bold) if f is not None else False,
+        bool(f.italic) if f is not None else False,
+        float(f.sz) if f is not None and f.sz and f.name == "Arial" else 10.0,
+        c.alignment.horizontal if c.alignment is not None and c.alignment.horizontal != "general" else None,
+        getattr(getattr(c.border, "top", None), "style", None),
+        getattr(getattr(c.border, "bottom", None), "style", None),
+        c.number_format or "General",
+    )
+
+
+def _workbook_preview(wb, values: list) -> dict:
+    """Every sheet of the workbook for the hero spreadsheet: sizes, frozen panes, the scenario list and,
+    per non-empty or styled cell, [style, value, formula]; a formula's value is [low, base, high] when
+    the scenarios differ."""
+    styles: list[dict] = []
+    style_ids: dict[tuple, int] = {}
+    numfmts: list[str] = []
+    sheets = []
+    for ws in wb.worksheets:
+        cells = {}
+        first_formula = None
+        for row in ws.iter_rows():
+            for c in row:
                 v = c.value
-                formula = v if isinstance(v, str) and v.startswith("=") else None
-                cells.append({"a": c.coordinate, "f": formula, "const": None if formula else v, **_cell_style(c)})
-            rows.append({"n": r, "cells": cells})
-        out[tab] = {"sheet": sheet, "cols": cols, "rows": rows}
-    return out
-
-
-def _grid_values(wv, template: dict) -> dict:
-    """Computed value of every formula cell in the preview areas for one scenario."""
-    vals = {}
-    for tab, g in template.items():
-        ws = wv[g["sheet"]]
-        vals[tab] = {
-            c["a"]: (round(x, 6) if isinstance(x := ws[c["a"]].value, float) else x)
-            for row in g["rows"]
-            for c in row["cells"]
-            if c["f"]
-        }
-    return vals
+                key = _style_key(c)
+                styled = key[0] or key[6] or key[7]
+                if v is None and not styled:
+                    continue
+                nf = key[8]
+                if nf not in numfmts:
+                    numfmts.append(nf)
+                skey = (*key[:8], numfmts.index(nf))
+                if skey not in style_ids:
+                    style_ids[skey] = len(styles)
+                    fill, color, bold, italic, size, h, bt, bb, nfi = skey
+                    styles.append(
+                        {
+                            k: x
+                            for k, x in {
+                                "fill": fill,
+                                "color": color,
+                                "b": bold or None,
+                                "i": italic or None,
+                                "sz": size if size != 10.0 else None,
+                                "h": h,
+                                "bt": bt,
+                                "bb": bb,
+                                "nf": nfi,
+                            }.items()
+                            if x
+                        }
+                    )
+                entry: list = [style_ids[skey]]
+                if isinstance(v, str) and v.startswith("="):
+                    first_formula = first_formula or c.coordinate
+                    vals = [_clean(wv[ws.title][c.coordinate].value) for wv in values]
+                    entry += [vals[0] if vals.count(vals[0]) == 3 else vals, v]
+                else:
+                    entry.append(_clean(v))
+                cells[c.coordinate] = entry
+        cols = []
+        for ci in range(1, ws.max_column + 1):
+            letter = ws.cell(1, ci).column_letter
+            dim = ws.column_dimensions.get(letter)
+            cols.append(round(dim.width, 2) if dim is not None and dim.width else DEFAULT_COL_W)
+        rows = []
+        for r in range(1, ws.max_row + 1):
+            dim = ws.row_dimensions.get(r)
+            rows.append(dim.height if dim is not None and dim.height else DEFAULT_ROW_PT)
+        fp = ws.freeze_panes
+        freeze = None
+        if fp:
+            fr = ws[fp]
+            freeze = [fr.row - 1, fr.column - 1]
+        lists = {}
+        for dv in ws.data_validations.dataValidation:
+            if dv.type == "list":
+                opts = dv.formula1.strip('"').split(",")
+                for rng in str(dv.sqref).split():
+                    lists[rng] = {"options": opts, "title": dv.promptTitle or "", "prompt": dv.prompt or ""}
+        sheets.append(
+            {
+                "name": ws.title,
+                "cols": cols,
+                "rows": rows,
+                "freeze": freeze,
+                "grid": bool(ws.sheet_view.showGridLines),
+                "start": "B4" if ws.title == "Dashboard" else (first_formula or "A1"),
+                "lists": lists,
+                "cells": cells,
+            }
+        )
+    return {"styles": styles, "numfmts": numfmts, "sheets": sheets}
 
 
 def _workbook_stats(wb_formulas) -> dict:
@@ -99,6 +153,13 @@ def _workbook_stats(wb_formulas) -> dict:
         if isinstance(c.value, str) and c.value.startswith("=")
     )
     return {"sheets": wb_formulas.sheetnames, "formulas": n}
+
+
+def _clean(v):
+    if isinstance(v, float):
+        v = round(v, 6)
+        return int(v) if v.is_integer() and abs(v) < 1e15 else v
+    return v
 
 
 FORMULA_CELLS = {
@@ -153,8 +214,8 @@ def main() -> int:
                     if isinstance(c.value, str) and c.value[:1] == "="
                 )
             fcells[tab] = {"cell": f"{sheet}!{cell}", "formula": str(ws[cell].value)}
-        grid = _grid_template(formulas)
         stats = _workbook_stats(formulas)
+        recalculated = []
         scenarios = {}
         for scen in (1, 2, 3):
             path = Path(tmp) / f"s{scen}.xlsx"
@@ -170,9 +231,9 @@ def main() -> int:
                 "summary": _rows(wv["Dashboard"], 8, 14, brief.horizon_years),
                 "pl": _rows(wv["P&L"], 5, 22, brief.horizon_years),
                 "checks": _checks(wv["Checks"]),
-                "grid": _grid_values(wv, grid),
                 "formula_errors": len(res.errors),
             }
+            recalculated.append(wv)
             if scen == 2:
                 (ROOT / "samples").mkdir(exist_ok=True)
                 shutil.copy(path, ROOT / "samples" / "cafe-full.xlsx")
@@ -193,9 +254,12 @@ def main() -> int:
         "formulas": fcells,
         "file": "neighborhood-cafe-plan.xlsx",
         "stats": stats,
-        "grid": grid,
         "scenarios": scenarios,
     }
+    preview = _workbook_preview(formulas, recalculated)
+    preview["file"] = data["file"]
+    wb_out = ROOT / "app" / "data" / "landing_workbook.json"
+    wb_out.write_text(json.dumps(preview, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
     out = ROOT / "app" / "data" / "landing_sheet.json"
     out.parent.mkdir(exist_ok=True)
     out.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")

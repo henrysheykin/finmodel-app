@@ -60,6 +60,10 @@ FILTER, SORT, UNIQUE, SEQUENCE, LET, LAMBDA. Zero formula errors after recalc.
   #0F6E56, pad paper #F7F8F3 with 32 px ruling, red auditor tick marks
   #B8322A, double-underlined totals; Schibsted Grotesk + IBM Plex Sans with
   tabular figures. Canvas: https://claude.ai/artifact/4qNJgJzUU633rZ9A7vhQJj
+- Hero spreadsheet (2026-10-18, Henry: "must look like real Excel"): the reference is the live code —
+  `app/xlview.py` + `web/static/landing.js` render the real sample workbook in a spreadsheet-app
+  window (ribbon, name box, formula bar, gridlines, frozen panes, B4 list, sheet tabs, status bar).
+  It supersedes the hero in the canvas. Keep it faithful to the file; no decoration inside the grid.
 - The v1 look copied the competitor's visual language too closely and was
   replaced (ADR-005). Never reintroduce their palette (navy #1F3864 + blue
   #2563EB), DM Sans, quote cards, "VS" cards or single price card.

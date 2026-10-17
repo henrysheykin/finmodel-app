@@ -11,6 +11,7 @@ from __future__ import annotations
 import html
 import json
 import re
+from decimal import ROUND_HALF_UP, Decimal
 from functools import lru_cache
 from pathlib import Path
 
@@ -18,7 +19,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response
 from markupsafe import Markup
 
-from app import seo, wizard
+from app import seo, wizard, xlview
 from app.emails import md_to_html
 from app.web import templates
 from engine.samples import parse_name
@@ -99,7 +100,7 @@ PL_ROWS = [
 
 
 def money(v: float) -> str:
-    r = round(v)
+    r = int(Decimal(v).quantize(Decimal(1), rounding=ROUND_HALF_UP))  # as Excel rounds, so page and sheet agree
     if r == 0:
         return "–"
     s = f"${abs(r):,}"
@@ -122,144 +123,6 @@ DEMO_HORIZONS = [
     ["3", "monthly", "3 years, monthly"],
     ["5", "annual", "5 years, annual"],
 ]
-
-#: preview tabs in workbook order, and the cell selected when a tab opens
-GRID_TABS = [("sum", "Dashboard"), ("inp", "Inputs"), ("pl", "P&L"), ("chk", "Checks")]
-GRID_START = {"sum": "B10", "inp": "E7", "pl": "B14", "chk": "B16"}
-#: rows whose year values the independent Python model recomputes (shown with a tick mark)
-TICKED = {
-    "sum": {label for label, _, tick in SUMMARY_ROWS if tick},
-    "pl": {label for label, _, tick in PL_ROWS if tick},
-}
-
-
-def fmt_cell(v, numfmt: str) -> str:
-    """Display text for a cell value, following the workbook's number format."""
-    if v is None:
-        return ""
-    if isinstance(v, bool) or not isinstance(v, int | float):
-        return str(v)
-    if "%" in numfmt:
-        return "–" if round(v, 6) == 0 and numfmt.endswith("-") else pct(v)
-    if numfmt.startswith("$#,##0.00"):
-        r = round(v, 2)
-        return "–" if r == 0 else (f"(${abs(r):,.2f})" if r < 0 else f"${r:,.2f}")
-    if numfmt.startswith("$"):
-        return money(v)
-    if numfmt.startswith("#,##0.0"):
-        r = round(v, 1)
-        return "–" if r == 0 else (f"({abs(r):,.1f})" if r < 0 else f"{r:,.1f}")
-    if numfmt.startswith("#,##0"):
-        r = round(v)
-        return "–" if r == 0 else (f"({abs(r):,})" if r < 0 else f"{r:,}")
-    return f"{v:g}" if isinstance(v, float) else str(v)
-
-
-def _col_px(width: float) -> int:
-    return int(min(max(width * 7 + 14, 64), 250))
-
-
-@lru_cache(maxsize=1)
-def grid_views() -> dict:
-    """The real top of each sheet as a spreadsheet grid: every cell's address, formula and value per case.
-
-    Text overflows into empty cells to its right (as in Excel); title and section bands span the row.
-    """
-    d = sheet_data()
-    out = {}
-    for tab, label in GRID_TABS:
-        g = d["grid"][tab]
-        ncols = len(g["cols"])
-        rows = []
-        for row in g["rows"]:
-            cells, skip = [], 0
-            label_text = str(row["cells"][0]["const"] or "")
-            for i, c in enumerate(row["cells"]):
-                if skip:
-                    skip -= 1
-                    continue
-                if c["f"]:
-                    vals = [d["scenarios"][s]["grid"][tab].get(c["a"]) for s in ("1", "2", "3")]
-                else:
-                    vals = [c["const"]] * 3
-                text = [fmt_cell(v, c["numfmt"]) for v in vals]
-                empty = all(t == "" for t in text) and not c["f"]
-                span = 1
-                is_text = isinstance(vals[1], str)
-                if c["fill"] in ("title", "section") or (is_text and i == 0 and not c["f"]):
-                    span = 1
-                    for nxt in row["cells"][i + 1 :]:
-                        if nxt["f"] or nxt["const"] not in (None, ""):
-                            break
-                        span += 1
-                    if c["fill"] in ("title", "section"):
-                        span = ncols - i
-                skip = span - 1
-                cls = []
-                if c["fill"]:
-                    cls.append(c["fill"])
-                if c["font"]:
-                    cls.append(c["font"])
-                if c["bold"]:
-                    cls.append("b")
-                if i == 0:
-                    cls.append("lbl")
-                elif is_text and not c["fill"]:
-                    cls.append("txt")
-                if tab == "chk" and i == 1 and c["f"]:
-                    cls.append("res")  # PASS in green; anything else is flagged per case at render time
-                tick = bool(c["f"]) and i > 0 and label_text in TICKED.get(tab, set())
-                cell = {
-                    "a": c["a"],
-                    "f": c["f"],
-                    "v": text[0] if len(set(text)) == 1 else text,
-                    "cls": " ".join(cls),
-                    "span": span,
-                    "tick": tick,
-                    "empty": empty,
-                }
-                if tab == "sum" and c["a"] == "B4":
-                    cell["select"] = True
-                cells.append(cell)
-            rows.append({"n": row["n"], "cells": cells})
-        out[tab] = {
-            "label": label,
-            "sheet": g["sheet"],
-            "start": GRID_START[tab],
-            "cols": [{"letter": c["letter"], "px": _col_px(c["width"])} for c in g["cols"]],
-            "rows": rows,
-        }
-    return out
-
-
-def grid_cell(view: dict, address: str) -> dict:
-    return next(c for r in view["rows"] for c in r["cells"] if c["a"] == address)
-
-
-def formula_bar(cell: dict, case: int = 2) -> str:
-    """What the formula bar shows for a cell: its formula, else its value."""
-    return cell["f"] or cell_text(cell, case)
-
-
-def grid_columns(view: dict) -> str:
-    """CSS grid tracks: row numbers, then the sheet's own column widths; the last column takes any spare room."""
-    px = [f"{c['px']}px" for c in view["cols"]]
-    px[-1] = f"minmax({view['cols'][-1]['px']}px, 1fr)"
-    return "40px " + " ".join(px)
-
-
-def cell_text(cell: dict, case: int = 2) -> str:
-    v = cell["v"]
-    return v[case - 1] if isinstance(v, list) else v
-
-
-def cell_classes(cell: dict, selected: str, case: int = 2) -> str:
-    cls = ["xc"] + ([cell["cls"]] if cell["cls"] else [])
-    if "res" in cell["cls"].split() and not cell_text(cell, case).startswith("PASS"):
-        cls.append("res--warn")
-    if cell["a"] == selected:
-        cls.append("is-sel")
-    return " ".join(cls)
 
 
 def available_industries() -> list[str]:
@@ -319,8 +182,8 @@ def _price(cents: int) -> str:
 def landing(request: Request) -> HTMLResponse:
     cfg = request.app.state.services.cfg
     base = cfg.public_base_url
-    grids = grid_views()
     data = sheet_data()
+    first = xlview.workbook()["sheets"][0]
     demo = {
         "types": [[k, label] for k, label in wizard.BUSINESS_TYPES if wizard.available(k)],
         "goals": [[k, label] for k, label in wizard.GOALS if k != "other"],
@@ -330,13 +193,12 @@ def landing(request: Request) -> HTMLResponse:
         request,
         "landing.html",
         {
-            "grid": grids["sum"],
-            "grid_tabs": GRID_TABS,
-            "grid_cols": grid_columns(grids["sum"]),
-            "start_formula": formula_bar(grid_cell(grids["sum"], grids["sum"]["start"])),
-            "grid_json": _json_script({"tabs": grids, "case": 2}),
-            "cell_text": cell_text,
-            "cell_classes": cell_classes,
+            "xl_sheets": [s["name"] for s in xlview.workbook()["sheets"]],
+            "xl_first": first,
+            "xl_grid": xlview.render_grid(first["name"]),
+            "xl_tracks": xlview.grid_template(first),
+            "xl_start": xlview.cell_view(first, first["start"]),
+            "xl_url": f"/preview/workbook.json?v={xlview.workbook_version()}",
             "sheet_file": data["file"],
             "stats": data["stats"],
             "demo": demo,
@@ -416,6 +278,17 @@ def sample(slug: str) -> FileResponse:
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         filename=f"startupmodel-sample-{slug}.xlsx",
         headers={"Cache-Control": "public, max-age=3600"},
+    )
+
+
+@router.get("/preview/workbook.json", include_in_schema=False)
+def preview_workbook(v: str = "") -> FileResponse:
+    """The hero spreadsheet's data; the page links it with a content hash, so it can be cached for good."""
+    fresh = v == xlview.workbook_version()
+    return FileResponse(
+        xlview.DATA,
+        media_type="application/json",
+        headers={"Cache-Control": "public, max-age=31536000, immutable" if fresh else "no-cache"},
     )
 
 

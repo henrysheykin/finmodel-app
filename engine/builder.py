@@ -411,6 +411,9 @@ def _write_selector(ws, row: int, default: int) -> None:
         showErrorMessage=True,
         errorTitle="Scenario",
         error="Enter 1, 2 or 3",
+        showInputMessage=True,
+        promptTitle="Scenario",
+        prompt="1 = Low, 2 = Base, 3 = High. Every sheet recalculates.",
     )
     ws.add_data_validation(dv)
     dv.add(f"B{row}")
