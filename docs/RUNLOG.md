@@ -2,6 +2,12 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · E07 goal modules · DONE · https://github.com/henrysheykin/finmodel-app/pull/26
+  The wizard goal now adds sheets (every template, both tiers): Break-even (funding need to the lowest cash point + cash buffer,
+  EBITDA/NI-positive period, payback, annual break-even revenue), Valuation (unlevered FCF, NPV-tied discounting, perpetual-growth and
+  exit-multiple EV, WACC × g sensitivity), investor Summary. Challenger recomputes every module cell; ADR-010; 561 tests.
+  For Henry: R1 CFO review of goal modules (samples/cafe-investor_pitch.xlsx, 6 questions in docs/templates/goal-modules.md); D12.
+  Note: E05 claimed 2026-10-17 13:33 by a scheduled run with no branch/PR/continue: note — skipped per protocol; needs reset to TODO.
 - 2026-10-17 · E · interactive session with Henry (go-live request) · PR https://github.com/henrysheykin/finmodel-app/pull/25
   E15 slice: Railway deploy — one container (migrations + worker + web), Postgres URL, logging, security headers, docs/DEPLOY.md, ADR-008;
   verified on Postgres 16 with a volume (full customer path). E13: landing from design v2 with a live preview of real engine output,

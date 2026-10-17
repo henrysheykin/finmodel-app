@@ -91,7 +91,8 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: as E03.
 
 ### E07 — Goal modules: break-even & startup costs, DCF valuation
-- status: IN_PROGRESS (2026-10-17, scheduled E run)
+- status: DONE (2026-10-17, https://github.com/henrysheykin/finmodel-app/pull/26)
+- note: ADR-010; memo docs/templates/goal-modules.md; CFO review in HUMAN_TODO R1; D12 (investor pitch on Light?).
 - depends: E02
 - skills: xlsx
 - do: add-on sheets any template can include based on `goal`: startup cost table
