@@ -12,8 +12,9 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 ## Track E — Engineering (daily)
 
 > **Priority (Henry, 2026-10-17, go-live within days):** E-track runs pick tasks in THIS order
-> (overrides file order): **E21 → E22 → E05 → E07 → E17 → E18**, then E16, E15 (rest), E08.
-> Done in the interactive session on 2026-10-17: E13 landing, E15 deploy slice, E20 template catalog.
+> (overrides file order): **E05 → E07 → E17 → E18**, then E16, E15 (rest), E08.
+> Done in the interactive session on 2026-10-17 (PR #25): E13 landing, E15 deploy slice, E20 template catalog,
+> E21 home services, E22 fitness.
 > New industries are one file each (ADR-009, `docs/templates/ADDING_A_TEMPLATE.md`).
 > Customer login = passwordless magic link by email (ADR-006).
 
@@ -157,7 +158,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: tests render every template and send through the console adapter.
 
 ### E13 — Landing page and static pages
-- status: IN_PROGRESS (2026-10-17, interactive session with Henry; PR #25 open — merge pending Henry)
+- status: DONE (2026-10-17, https://github.com/henrysheykin/finmodel-app/pull/25)
 - depends: E01
 - skills: frontend-design, small-business:seo-ai-visibility
 - do: build the landing from **design v2**: `design/landing.dc.html` (layout,
@@ -174,7 +175,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   scroll at 360 px; `grep -ri "1F3864\|2563EB\|DM Sans"` in web/ is empty.
 
 ### E20 — Template catalog: a new industry is one file
-- status: IN_PROGRESS (2026-10-17, interactive session with Henry; PR open — merge pending Henry)
+- status: DONE (2026-10-17, https://github.com/henrysheykin/finmodel-app/pull/25)
 - depends: E02
 - do: ADR-009 — registry discovers templates; catalog data on the template (order, key numbers, samples);
   `PLANNED` "coming soon" list; wizard / briefing / brief schema / landing derive from it;
@@ -182,7 +183,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: adding a template needs no edits outside its own file, tests, sample and memo.
 
 ### E21 — Template: Home services / trades
-- status: IN_PROGRESS (2026-10-17, interactive session with Henry; PR pending)
+- status: DONE (2026-10-17, https://github.com/henrysheykin/finmodel-app/pull/25)
 - note (2026-10-17): built in the interactive session; plan members simplified to a yearly growth rate (memo, CFO question 4).
 - depends: E02, E20
 - skills: xlsx, engineering:testing-strategy
@@ -200,7 +201,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: as E03.
 
 ### E22 — Template: Fitness studio / gym
-- status: IN_PROGRESS (2026-10-17, interactive session with Henry; PR pending)
+- status: DONE (2026-10-17, https://github.com/henrysheykin/finmodel-app/pull/25)
 - depends: E02, E20
 - skills: xlsx, engineering:testing-strategy
 - do: follow `docs/templates/ADDING_A_TEMPLATE.md`; `key = "fitness"`, business type `fitness`
