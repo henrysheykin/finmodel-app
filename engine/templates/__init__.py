@@ -53,14 +53,26 @@ def get_template(key: str) -> Template:
         raise KeyError(f"unknown template {key!r}; known: {sorted(TEMPLATES)}") from None
 
 
+def check_catalog(registry: dict[str, Template] | None = None) -> None:
+    """Refuse a catalog where two templates claim the same business type (run at import and in tests)."""
+    seen: dict[str, str] = {}
+    for t in (TEMPLATES if registry is None else registry).values():
+        for bt in t.business_types:
+            if bt in seen:
+                raise RuntimeError(f"business type {bt!r} is served by both {seen[bt]!r} and {t.key!r}")
+            seen[bt] = t.key
+
+
 def template_for_business_type() -> dict[str, str]:
-    """Wizard business type -> template key, for every registered template (in wizard order)."""
+    """Wizard business type -> template key, for every registered template (in wizard order).
+
+    The first template in catalog order wins; ``check_catalog`` keeps the real catalog free of clashes
+    (tests may register a variant of an existing template under another key).
+    """
     out: dict[str, str] = {}
     for t in TEMPLATES.values():
         for bt in t.business_types:
-            if bt in out:
-                raise RuntimeError(f"business type {bt!r} is served by both {out[bt]!r} and {t.key!r}")
-            out[bt] = t.key
+            out.setdefault(bt, t.key)
     return out
 
 
@@ -72,3 +84,6 @@ def planned() -> dict[str, str]:
 
 def known_business_types() -> set[str]:
     return set(template_for_business_type()) | set(PLANNED) | set(EXTRA_BUSINESS_TYPES)
+
+
+check_catalog(TEMPLATES)

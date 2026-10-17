@@ -90,10 +90,10 @@ def test_landing_samples_follow_the_catalog():
         assert (ROOT / "samples" / fname).is_file(), f"run: python scripts/build_samples.py {key}"
 
 
-def test_duplicate_business_type_is_refused(monkeypatch):
+def test_duplicate_business_type_is_refused():
     class Clone(type(TEMPLATES["saas"])):
         key = "saas_clone"
 
-    monkeypatch.setitem(templates.TEMPLATES, "saas_clone", Clone())
+    templates.check_catalog(TEMPLATES)  # the real catalog is clean
     with pytest.raises(RuntimeError, match="served by both"):
-        template_for_business_type()
+        templates.check_catalog({**TEMPLATES, "saas_clone": Clone()})
