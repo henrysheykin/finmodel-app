@@ -99,12 +99,14 @@ def create_app(services: Services | None = None) -> FastAPI:
     from app.account_web import router as account_router
     from app.admin import router as admin_router
     from app.landing import router as landing_router
+    from app.seo import router as seo_router
     from app.web import router as web_router
 
     app.include_router(web_router)
     app.include_router(account_router)
     app.include_router(admin_router)
     app.include_router(landing_router)
+    app.include_router(seo_router)
 
     def svc(request: Request) -> Services:
         return request.app.state.services

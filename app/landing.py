@@ -18,9 +18,10 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response
 from markupsafe import Markup
 
-from app import wizard
+from app import seo, wizard
 from app.emails import md_to_html
 from app.web import templates
+from engine.samples import parse_name
 from engine.templates import TEMPLATES
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -400,9 +401,13 @@ def refunds(request: Request) -> HTMLResponse:
 
 @router.get("/samples/{slug}.xlsx", include_in_schema=False)
 def sample(slug: str) -> FileResponse:
-    if slug not in SAMPLE_FILES:
+    """/samples/<key>.xlsx (landing alias of <key>-full) or any named sample, e.g. /samples/cafe-full-5y.xlsx."""
+    if slug in SAMPLE_FILES:
+        fname = SAMPLE_FILES[slug][0]
+    elif (spec := parse_name(slug)) is not None:
+        fname = spec.filename
+    else:
         raise HTTPException(404, "not found")
-    fname = SAMPLE_FILES[slug][0]
     path = SAMPLES / fname
     if not path.is_file():
         raise HTTPException(404, "not found")
@@ -427,7 +432,7 @@ def robots(request: Request) -> PlainTextResponse:
 @router.get("/sitemap.xml", include_in_schema=False)
 def sitemap(request: Request) -> Response:
     base = request.app.state.services.cfg.public_base_url
-    paths = ["/"] + [f"/{p}" for p in LEGAL_PAGES if (LEGAL / f"{p}.md").is_file()]
+    paths = ["/"] + seo.sitemap_paths() + [f"/{p}" for p in LEGAL_PAGES if (LEGAL / f"{p}.md").is_file()]
     urls = "".join(f"<url><loc>{html.escape(base + p)}</loc></url>" for p in paths)
     xml = f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>'
     return Response(xml, media_type="application/xml")
@@ -450,4 +455,9 @@ def llms(request: Request) -> PlainTextResponse:
     ]
     if cfg.support_email:
         lines.append(f"- Contact: {cfg.support_email}")
+    for section, (title, _) in seo.SECTIONS.items():
+        lines += ["", f"## {title}", ""]
+        for page in seo.pages().values():
+            if page.section == section:
+                lines.append(f"- [{page.h1}]({cfg.public_base_url}{page.slug}): {page.description}")
     return PlainTextResponse("\n".join(lines) + "\n")

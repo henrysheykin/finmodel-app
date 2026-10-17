@@ -53,3 +53,13 @@ def test_demo_brief_hands_answers_to_the_real_brief(page, live_server):  # noqa:
     assert page.get_by_label("Business valuation (DCF)").is_checked()
     assert page.get_by_label("5 years").is_checked()
     assert page.get_by_label("Annual").is_checked()
+
+
+def test_seo_pages_fit_a_phone(page, live_server):  # noqa: F811
+    """E16: every SEO page at 360 px: no horizontal page scroll (wide tables scroll inside their wrapper)."""
+    from app.seo import pages
+
+    page.set_viewport_size({"width": 360, "height": 780})
+    for slug in list(pages()) + ["/models", "/guides"]:
+        page.goto(f"{live_server}{slug}")
+        assert no_horizontal_scroll(page), slug

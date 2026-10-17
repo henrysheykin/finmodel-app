@@ -1,0 +1,49 @@
+{% extends "site_base.html" %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block meta %}
+<meta name="description" content="{{ page.description }}">
+<link rel="canonical" href="{{ base_url }}{{ page.slug }}">
+<meta property="og:type" content="{{ 'article' if page.section == 'guides' else 'website' }}">
+<meta property="og:site_name" content="StartupModel">
+<meta property="og:url" content="{{ base_url }}{{ page.slug }}">
+<meta property="og:title" content="{{ page.h1 }}">
+<meta property="og:description" content="{{ page.description }}">
+<meta name="twitter:card" content="summary">
+{% for ld in ld_json %}<script type="application/ld+json">{{ ld }}</script>
+{% endfor %}
+{% endblock %}
+{% block main %}
+<article class="doc seo">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/{{ page.section }}">{{ section_title }}</a></li>
+        <li aria-current="page">{{ page.h1 }}</li>
+      </ol>
+    </nav>
+    {{ body }}
+
+    <aside class="cta pad" aria-labelledby="cta-title">
+      <h2 id="cta-title">{% if template_title %}Get a {{ template_title }} model built on your numbers{% else %}Get a model built on your numbers{% endif %}</h2>
+      <p>Answer a short brief and receive an Excel workbook with live formulas, low, base and high cases and a Checks sheet. Every scenario is recomputed independently before delivery. Light {{ price_light }}, Full {{ price_full }}, one payment, full refund within 7 days.</p>
+      <div class="cta__row">
+        <a class="btn" href="{{ start_href }}">Start a model</a>
+        {% if sample %}<a class="btn btn--ghost" href="/samples/{{ sample.filename }}" download>Download the sample (.xlsx)</a>{% endif %}
+      </div>
+      {% if sample %}<p class="cta__note">Sample: {{ sample.tier | capitalize }} tier, {{ sample.horizon_years }} year{{ 's' if sample.horizon_years != 1 }}, {{ sample.granularity }}, generated and checked by the same engine that builds customer models.</p>{% endif %}
+    </aside>
+
+    {% if related %}
+    <nav class="related" aria-labelledby="related-title">
+      <h2 id="related-title">Related</h2>
+      <ul>
+        {% for p in related %}<li><a href="{{ p.slug }}">{{ p.h1 }}</a></li>
+        {% endfor %}
+      </ul>
+      <p><a href="/models">All financial models</a> · <a href="/guides">All guides</a></p>
+    </nav>
+    {% endif %}
+  </div>
+</article>
+{% endblock %}
