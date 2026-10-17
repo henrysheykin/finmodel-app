@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-17 · E · E14 admin panel · DONE · https://github.com/henrysheykin/finmodel-app/pull/23
+  /admin: env credentials (off when unset, 12+ chars), per-IP login limit, signed 12 h cookie (Strict, /admin), CSRF on every action;
+  orders list/filters/counters, detail (timeline, jobs, answers, brief, check report), download, re-send, re-build, refund with confirmation.
+  Fixed: re-build could mark an unpaid order paid. App-first priority list (ADR-006) is now complete: wizard, payments, accounts, downloads, email, admin.
+  For Henry: A2 (Stripe test keys), A3 (email provider), A4 (Railway), D9 + SUPPORT_EMAIL, ADMIN_USER/ADMIN_PASSWORD in env. Next E: E05, E07, E08, E13, E15.
 - 2026-10-17 · E · E12 email delivery · DONE · https://github.com/henrysheykin/finmodel-app/pull/22
   Console/Resend/Postmark senders; content/email rendered to text + escaped HTML; receipt (once), model ready, refund, sign-in, admin alerts.
   Build-failed email is held while its copy has the [FAILED_BUILD_POLICY] placeholder (D9) — admin gets an alert instead. New content/email/sign-in.md (M may polish).
