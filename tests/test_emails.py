@@ -99,7 +99,7 @@ def test_receipt_on_payment_once(client, services, mail):
     assert oid[:8].upper() in mail.outbox[0].text and "$149" in mail.outbox[0].text
 
 
-def test_failed_build_email_is_held_until_policy_is_decided(client, services, mail):
+def _fail_build(client, services):
     from worker.pipeline import BuildRejected
 
     def bad(brief, path):
@@ -111,6 +111,27 @@ def test_failed_build_email_is_held_until_policy_is_decided(client, services, ma
     with session_scope(services.sessions) as s:
         mark_paid(s, services.cfg, oid, "cs_f")
     make(services, services.notifier, check=bad).run_once()
+    return oid
+
+
+def test_failed_build_tells_the_customer_the_policy_and_alerts_admin(client, services, mail):
+    _fail_build(client, services)
+    customer = [m for m in mail.outbox if m.to == "a@b.co" and "didn't pass" in m.subject]
+    assert len(customer) == 1
+    assert "within 2 business days" in customer[0].text and "refund your $149 in full" in customer[0].text
+    assert any(m.to == "henry@example.com" and "Build failed" in m.subject for m in mail.outbox)
+
+
+def test_email_with_unfinished_copy_is_held(client, services, mail, tmp_path, monkeypatch):
+    import shutil
+
+    from app import emails
+
+    shutil.copytree(emails.CONTENT, tmp_path / "email")
+    f = tmp_path / "email" / "build-failed.md"
+    f.write_text(f.read_text("utf-8").replace("**What happens next**", "[FAILED_BUILD_POLICY: decide]"), "utf-8")
+    monkeypatch.setattr(emails, "CONTENT", tmp_path / "email")
+    _fail_build(client, services)
     assert all(m.to == "henry@example.com" for m in mail.outbox)  # nothing with placeholder copy to the customer
     subjects = [m.subject for m in mail.outbox]
     assert any("Build failed" in x for x in subjects) and any("not sent to a@b.co" in x for x in subjects)

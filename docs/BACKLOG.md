@@ -105,6 +105,8 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ### E08 — Brief builder (Claude API)
 - status: TODO
+- note (2026-10-18, L1): when the LLM path goes live, add Anthropic to the processors list in
+  `content/legal/privacy.md` ("Who processes it for us") in the same PR.
 - depends: E02
 - skills: product-self-knowledge, engineering:system-design, engineering:testing-strategy
 - do: `engine/brief_builder.py`: wizard answers (+ optional free text + key numbers)
@@ -280,8 +282,9 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: report in `docs/reviews/` with no open high-severity items.
 
 ### E18 — Release candidate v0.1.0
-- status: NEEDS_HENRY: create the tag `v0.1.0` on commit `0deedd7` (GitHub → Releases → Draft a new release → tag v0.1.0,
-  target that commit; HUMAN_TODO G0). Everything else merged in https://github.com/henrysheykin/finmodel-app/pull/34.
+- status: DONE (2026-10-18, https://github.com/henrysheykin/finmodel-app/pull/34)
+- note: git tag `v0.1.0` not created — the agents' git proxy refuses tag pushes and Henry chose not to bother (optional,
+  HUMAN_TODO G0); the version is visible in /healthz and the deploy log.
 - note (2026-10-18): the agents' git proxy refuses tag pushes (branch pushes work), so the tag is the only part left.
   Done: version 0.1.0 (/healthz, deploy log), go-live preflight (`app/golive.py`, deploy log + /admin box),
   `docs/RUNBOOK_GO_LIVE.md`, `CHANGELOG.md`, `docs/reviews/E18-release-checklist.md`, HUMAN_TODO G1.1–G1.9.

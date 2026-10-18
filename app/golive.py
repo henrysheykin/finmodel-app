@@ -18,7 +18,7 @@ from app import __version__
 from app.config import Settings
 from app.emails import CONTENT as EMAIL_CONTENT
 from app.emails import PLACEHOLDER
-from app.landing import LEGAL, LEGAL_PAGES
+from app.landing import LEGAL, LEGAL_PAGES, legal_text
 
 OK, WARN, FAIL = "ok", "warn", "fail"
 LIVE_PREFIXES = ("sk_live_", "rk_live_")
@@ -110,12 +110,14 @@ def readiness(cfg: Settings, legal_dir: Path = LEGAL, email_dir: Path = EMAIL_CO
         "CLIENT_IP_HEADER is empty — set X-Real-IP on Railway so rate limits count real visitors",
         level=WARN,
     )
-    missing = [p for p in LEGAL_PAGES if not (legal_dir / f"{p}.md").is_file()]
+    missing = [p for p in LEGAL_PAGES if not legal_text(p, legal_dir)]
     add(
         "legal",
         not missing,
         "privacy, terms and refund pages published",
-        "legal texts missing: " + ", ".join(f"content/legal/{p}.md" for p in missing) + " (Stripe checks them)",
+        "legal texts missing or with unfilled [PLACEHOLDERS]: "
+        + ", ".join(f"content/legal/{p}.md" for p in missing)
+        + " (Stripe checks them)",
     )
     unfinished = sorted(
         f.stem for f in email_dir.glob("*.md") if f.name != "README.md" and PLACEHOLDER.search(f.read_text("utf-8"))

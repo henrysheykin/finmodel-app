@@ -36,10 +36,11 @@ the answer next to the item (agents read this file every run).
 - [x] D10 Customer login + priority — Henry 2026-10-17: **magic link by email**; build the working app
       (login, payments, download) before more templates (ADR-006, BACKLOG priority note).
 
-- [ ] D9 Failed-build policy (from M07, `content/email/build-failed.md`): when a model fails the
-      checks, what does the customer get? Option A: automatic full refund at once. Option B: we fix
-      and deliver within N business days (e.g. 2), or refund if they prefer. Also: support email
-      address for all emails (`[SUPPORT_EMAIL]`).
+- [x] D9 Failed-build policy — Henry 2026-10-18: always deliver. A model that fails the checks is never sent; we fix it
+      and send a passing model within 2 business days (admin → Re-build), or refund in full if we cannot or the customer
+      prefers. Written into `content/email/build-failed.md` and `content/legal/refunds.md`. (Failures are rare: every model
+      is built from the customer's own numbers, so there is no ready-made copy to send; the checks exist to catch a
+      template bug before a customer sees it.)
 
 - [ ] D11 Five-model pack and Light→Full upgrade (from E13): the site offers both, but there is no checkout for them
       yet — the landing says "write to us". Keep them manual (you invoice by Stripe payment link / refund the
@@ -50,10 +51,13 @@ the answer next to the item (agents read this file every run).
       require Full ($349) in the wizard (an E task)? Non-blocking; today it works on both.
 
 ## Legal (from E13, blocks Stripe live activation)
-- [ ] L1 Privacy policy, Terms of service, Refund policy (Henry 2026-10-17: provides his own texts). Save them as
-      `content/legal/privacy.md`, `terms.md`, `refunds.md` (Markdown: `#` headings, paragraphs, `-` lists,
-      `**bold**`, `[link](url)`), or send them to an agent to add. Until then `/privacy`, `/terms`, `/refunds`
-      show "being prepared" and are not indexed. Stripe checks these pages before enabling live payments.
+- [x] D13 EU 14-day withdrawal checkbox at checkout — Henry 2026-10-18: ignore, no checkbox. (Refund policy keeps
+      "your legal rights are not limited".)
+- [x] L1 Privacy policy, Terms of service, Refund policy — written by an agent 2026-10-18 at Henry's request (not reviewed
+      by a lawyer): `content/legal/*.md`, seller **StartupModels LLC (Wyoming, USA)**, Wyoming law, no address or tax ID
+      published (Henry's choice). Live on /privacy, /terms, /refunds after the deploy.
+      Note, non-blocking: a non-EU company selling to people in the EU is normally expected to name an EU representative
+      under GDPR Art. 27; worth a question to your adviser when convenient.
 
 ## Accounts & keys (put keys only into the hosting provider's env vars, never in chat or the repo)
 Step-by-step for all of these: `docs/DEPLOY.md` (Railway service + Postgres + volume, Cloudflare DNS, Stripe
@@ -61,7 +65,7 @@ webhook, Resend domain).
 - [ ] A1 Anthropic API key with a monthly spend limit (for the brief builder).
 - [x] A2 (test mode done 2026-10-17: keys + webhook on the Railway URL, test purchase delivered) Stripe account, test-mode keys first (put them only into Railway env vars). Exact steps (keys, webhook
       endpoint `/webhooks/stripe` and its 3 events, local test with the Stripe CLI): `docs/PAYMENTS.md`.
-- [x] A3 (Resend key done 2026-10-17; domain DNS still to verify — sender is onboarding@resend.dev until then) Email provider (Resend or Postmark) + DNS records for the domain.
+- [x] A3 (Resend key done 2026-10-17; domain verified by Henry 2026-10-18 — set `EMAIL_FROM` to `StartupModel <models@startup-model.com>` in Railway if not yet) Email provider (Resend or Postmark) + DNS records for the domain.
 - [x] A4 (done: https://finmodel-app-production.up.railway.app, Postgres, all variables; end-to-end test order 539a9c52 ready, Checks PASS) Railway account (project with app, worker and Postgres services).
 - [ ] A5 Domain (after D1).
 - [ ] A6 (from E15, 1 minute) Railway → app service → Variables: add `CLIENT_IP_HEADER` = `X-Real-IP`, so the new rate
@@ -89,7 +93,7 @@ webhook, Resend domain).
 ## Go-live (v0.1.0, E18 — step by step with checks: `docs/RUNBOOK_GO_LIVE.md`)
 Where you stand at any moment: the "Before live payments" box at the top of `/admin` (also printed in every
 Railway deploy log). It disappears when everything is done.
-- [ ] G0 (1 minute) Tag the release: GitHub → finmodel-app → Releases → Draft a new release → "Choose a tag" → type
+- [ ] G0 (optional, no effect on the site) Tag the release: GitHub → finmodel-app → Releases → Draft a new release → "Choose a tag" → type
       `v0.1.0` → target: commit `0deedd7` (E18 merge on main) → title "v0.1.0", notes from `CHANGELOG.md` → Publish.
       Agents cannot push tags from their sandbox.
 - [ ] G1 Go live — the exact steps, in order (runbook section in brackets):
@@ -97,11 +101,11 @@ Railway deploy log). It disappears when everything is done.
   - [ ] G1.2 Railway Variables: `CLIENT_IP_HEADER=X-Real-IP` (= A6), `ADMIN_EMAIL` = your inbox (§1).
   - [ ] G1.3 `PUBLIC_BASE_URL=https://startup-model.com` — the domain already answers (checked 2026-10-18), but the
         sitemap and links still use the Railway address (§2).
-  - [ ] G1.4 Resend: verify startup-model.com, then `EMAIL_FROM=StartupModel <models@startup-model.com>`,
+  - [ ] G1.4 Resend domain verified (Henry, 2026-10-18); still check in Railway: `EMAIL_FROM=StartupModel <models@startup-model.com>`,
         `SUPPORT_EMAIL=support@startup-model.com`, Cloudflare Email Routing for support@ (§3).
-  - [ ] G1.5 Legal texts into `content/legal/` (= L1) (§4).
+  - [x] G1.5 Legal texts (= L1, done 2026-10-18) (§4).
   - [ ] G1.6 Test-mode order on https://startup-model.com with card 4242…: emails, file, Checks PASS, refund (§5).
-  - [ ] G1.7 Stripe: public name StartupModel (now "FRANCHISE"), activate the account (§6).
+  - [x] G1.7 Stripe: public name StartupModel, account activated (Henry, 2026-10-18) (§6).
   - [ ] G1.8 Live webhook + `sk_live_…` + its `whsec_…` + `ALLOW_LIVE_PAYMENTS=1` in ONE save; deploy log says
         "READY for live payments" (§7).
   - [ ] G1.9 One real $149 purchase with your own card, check, refund from /admin; tick G1 with the date (§8).

@@ -22,6 +22,8 @@ python -m app.manage check
 # go-live readiness in the deploy log; informational, never stops the container
 python -m app.manage preflight || true
 python -m app.manage migrate
+# privacy policy retention (unpaid orders, old sign-in records); never stops the container
+python -m app.manage purge || true
 
 trap 'kill 0' TERM INT
 

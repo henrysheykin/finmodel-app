@@ -229,10 +229,23 @@ def legal_html(md: str) -> str:
     return "\n".join(out)
 
 
+#: an unfilled value such as [OPERATOR_NAME]; a legal text that still has one is not published
+LEGAL_PLACEHOLDER = re.compile(r"\[[A-Z][A-Z_]{3,}\]")
+
+
+def legal_text(page: str, legal_dir: Path | None = None) -> str | None:
+    """The page's Markdown, or None while the file is missing or still has a placeholder."""
+    path = (legal_dir or LEGAL) / f"{page}.md"
+    if not path.is_file():
+        return None
+    text = path.read_text(encoding="utf-8")
+    return None if LEGAL_PLACEHOLDER.search(text) else text
+
+
 def legal(page: str, request: Request) -> HTMLResponse:
     cfg = request.app.state.services.cfg
-    path = LEGAL / f"{page}.md"
-    body = legal_html(path.read_text(encoding="utf-8")) if path.is_file() else None
+    text = legal_text(page)
+    body = legal_html(text) if text else None
     return templates.TemplateResponse(
         request,
         "legal.html",
@@ -305,7 +318,7 @@ def robots(request: Request) -> PlainTextResponse:
 @router.get("/sitemap.xml", include_in_schema=False)
 def sitemap(request: Request) -> Response:
     base = request.app.state.services.cfg.public_base_url
-    paths = ["/"] + seo.sitemap_paths() + [f"/{p}" for p in LEGAL_PAGES if (LEGAL / f"{p}.md").is_file()]
+    paths = ["/"] + seo.sitemap_paths() + [f"/{p}" for p in LEGAL_PAGES if legal_text(p)]
     urls = "".join(f"<url><loc>{html.escape(base + p)}</loc></url>" for p in paths)
     xml = f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>'
     return Response(xml, media_type="application/xml")

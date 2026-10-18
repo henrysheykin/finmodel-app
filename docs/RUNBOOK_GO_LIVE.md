@@ -31,9 +31,8 @@ are on and this is still wrong — fix it at once.
 
 - **R1 CFO sign-off** of the templates you will sell (HUMAN_TODO R1). A template you have not signed
   off can stay listed; just do not promote it.
-- **D9 failed-build policy** + support address — until decided, a failed build sends no email to the
-  customer, you get an admin alert and refund by hand from `/admin` (check `email_copy` stays `WARN`;
-  it does not block go-live).
+- **D9 failed-build policy** — decided 2026-10-18: the customer is told the model is being fixed and
+  gets a passing one within 2 business days (`/admin` → Re-build), or a full refund.
 - **Tax**: VAT / sales tax with your tax adviser (HUMAN_TODO D2) — Stripe charges the price as is.
 - **D11** pack and upgrade stay manual ("write to us") unless you decide otherwise.
 
@@ -97,9 +96,9 @@ item 2 below is left.
 
 ## 4. Legal pages (HUMAN_TODO L1)
 
-Send the three texts to an agent (or commit them yourself) as `content/legal/privacy.md`, `terms.md`,
-`refunds.md` (format in HUMAN_TODO L1). After the deploy, `/privacy`, `/terms`, `/refunds` show your
-text and become indexable (check `legal`). Stripe reviews these pages before it enables live payments.
+Done 2026-10-18: `content/legal/privacy.md`, `terms.md`, `refunds.md` (StartupModels LLC, Wyoming).
+After the deploy, `/privacy`, `/terms`, `/refunds` show the texts and become indexable (check `legal`).
+A text with an unfilled `[PLACEHOLDER]` is never published. Stripe reviews these pages before it enables live payments.
 
 ## 5. Full test order on the real domain (test mode, 10 min)
 
