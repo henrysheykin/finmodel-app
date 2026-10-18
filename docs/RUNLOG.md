@@ -2,6 +2,8 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-18 · E · interactive with Henry: LLM provider → OpenAI (replace Anthropic) · ADR-012
+  New E25 (Model: opus) first in track E: OpenAI client, OPENAI_API_KEY, E23 on gpt-6-luna / gpt-6.1-sol / gpt-6-astra, privacy.md. A1 now = OpenAI key.
 - 2026-10-18 · E · E23 brief-model eval · harness merged, NEEDS_HENRY (live run) · https://github.com/henrysheykin/finmodel-app/pull/40
   `evals/brief_model_eval.py`: 60 committed cases (6 industries × 10) → prefill → E08 builder → validate → worker build + challenger;
   per model pass share, mean/p95 s, $/order from per-request usage × prices (pricing page 2026-10-18, Haiku >100k surcharge);

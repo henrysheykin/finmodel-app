@@ -356,3 +356,23 @@ level payment, land that is never depreciated, and investor returns (IRR / NPV w
 **Consequences.** Existing templates build byte-for-byte the same formulas (straight loans, no land, no
 Returns sheet). If Excel's IRR cannot find the root the bisection finds (e.g. flows with several sign
 changes) the cell shows "n/a", the challenger fails the model and it is not delivered.
+
+## ADR-012 — Brief builder LLM provider: OpenAI instead of Anthropic (2026-10-18, Henry)
+
+**Context.** E08 (PR #39) and the E23 eval harness (PR #40) call the Claude API (`ANTHROPIC_API_KEY`,
+`BRIEF_MODEL`, off by default). Henry, 2026-10-18: there will be OpenAI API keys; asked "add a provider or
+replace Anthropic?", he chose **replace**.
+
+**Decision.**
+- The brief builder talks to the OpenAI API only. Env: `OPENAI_API_KEY` + `BRIEF_MODEL` (an OpenAI model id;
+  empty = LLM off, prefill only, as today). `ANTHROPIC_API_KEY` and the Anthropic client are removed.
+- Nothing else in the architecture changes: the LLM still only fills the validated brief through one forced
+  tool / function call that may change driver Low/Base/High only; same validation, retries, 15 s deadline,
+  prefill fallback, usage log line, fixtures in tests (never the live API).
+- E23 compares OpenAI models instead (candidates from the pricing page 2026-10-18: `gpt-6-luna`,
+  `gpt-6.1-sol`, `gpt-6-astra`; reference = the strongest model; check function-calling support and prices
+  when implementing).
+- `content/legal/privacy.md` names OpenAI instead of Anthropic as the processor of wizard answers and notes.
+
+**Consequences.** Task E25 does the switch before E23's live run. Agent sessions themselves still run on
+Claude (Claude Code); this ADR is about the product's runtime LLM only.
