@@ -50,10 +50,16 @@ the answer next to the item (agents read this file every run).
       require Full ($349) in the wizard (an E task)? Non-blocking; today it works on both.
 
 ## Legal (from E13, blocks Stripe live activation)
-- [ ] L1 Privacy policy, Terms of service, Refund policy (Henry 2026-10-17: provides his own texts). Save them as
-      `content/legal/privacy.md`, `terms.md`, `refunds.md` (Markdown: `#` headings, paragraphs, `-` lists,
-      `**bold**`, `[link](url)`), or send them to an agent to add. Until then `/privacy`, `/terms`, `/refunds`
-      show "being prepared" and are not indexed. Stripe checks these pages before enabling live payments.
+- [ ] D13 (from L1) EU consumers have a 14-day right to withdraw from digital purchases unless, at checkout, they expressly
+      agree to immediate delivery and acknowledge losing that right. The checkout has no such checkbox yet, so for consumers
+      the 7-day refund is effectively 14 days. Add the checkbox (small E task) or accept 14 days for consumers?
+- [ ] L1 Privacy policy, Terms of service, Refund policy — **drafted by an agent 2026-10-18** at Henry's request
+      (`content/legal/privacy.md`, `terms.md`, `refunds.md`; not reviewed by a lawyer). They go live automatically once the
+      three placeholders are filled; until then the pages keep saying "being prepared". Henry: send the agent
+      (a) the seller's legal name (your full name as autónomo, or the company name), (b) NIF/NIE/CIF, (c) postal address
+      in Spain. Read the texts once; two choices in them are yours to confirm:
+      - refunds.md answers **D9**: a model that fails the checks → the customer chooses a corrected model or a full refund;
+      - terms.md: prices **include** any tax we must charge (see D2 / tax adviser).
 
 ## Accounts & keys (put keys only into the hosting provider's env vars, never in chat or the repo)
 Step-by-step for all of these: `docs/DEPLOY.md` (Railway service + Postgres + volume, Cloudflare DNS, Stripe

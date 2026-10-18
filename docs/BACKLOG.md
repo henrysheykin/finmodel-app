@@ -105,6 +105,8 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ### E08 — Brief builder (Claude API)
 - status: TODO
+- note (2026-10-18, L1): when the LLM path goes live, add Anthropic to the processors list in
+  `content/legal/privacy.md` ("Who processes it for us") in the same PR.
 - depends: E02
 - skills: product-self-knowledge, engineering:system-design, engineering:testing-strategy
 - do: `engine/brief_builder.py`: wizard answers (+ optional free text + key numbers)

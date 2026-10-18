@@ -2,6 +2,7 @@
 
 python -m app.manage migrate   # apply database migrations (run on every container start)
 python -m app.manage check     # load and validate settings, print a short summary (no secrets)
+python -m app.manage purge     # delete data past its retention period (app/retention.py)
 python -m app.manage preflight # go-live readiness (app/golive.py); --strict exits 1 unless ready for live
 """
 
@@ -30,7 +31,7 @@ def _summary() -> str:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="python -m app.manage")
-    ap.add_argument("command", choices=["migrate", "check", "preflight"])
+    ap.add_argument("command", choices=["migrate", "check", "preflight", "purge"])
     ap.add_argument("--strict", action="store_true", help="preflight: exit 1 unless ready for live payments")
     a = ap.parse_args(argv)
     if a.command == "preflight":
@@ -44,6 +45,13 @@ def main(argv: list[str] | None = None) -> int:
         print(_summary())
         return 0
     cfg = load_settings()
+    if a.command == "purge":
+        from app.db import make_engine, make_sessionmaker, session_scope
+        from app.retention import purge
+
+        with session_scope(make_sessionmaker(make_engine(cfg.database_url))) as s:
+            print("retention purge: " + ", ".join(f"{k}={v}" for k, v in purge(s).items()))
+        return 0
     migrate(cfg.database_url)
     print("migrations applied")
     return 0
