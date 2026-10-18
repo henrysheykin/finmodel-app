@@ -39,7 +39,13 @@ class LLMConfigError(ValueError):
 
 
 class LLMTransportError(RuntimeError):
-    """The API call itself failed (network, timeout, HTTP error). Never carries the API key."""
+    """The API call itself failed (network, timeout, HTTP error). Never carries the API key.
+
+    ``retryable`` is False for errors a retry cannot fix (bad request, bad key, unknown model)."""
+
+    def __init__(self, message: str, *, retryable: bool = True) -> None:
+        super().__init__(message)
+        self.retryable = retryable
 
 
 def validate_brief_model(value: str) -> str:
@@ -180,7 +186,7 @@ class AnthropicHTTPClient:
     with the HTTP status and the API's error type only (never the request headers).
     """
 
-    def __init__(self, api_key: str, *, timeout: float = 30.0, transport: httpx.BaseTransport | None = None) -> None:
+    def __init__(self, api_key: str, *, timeout: float = 12.0, transport: httpx.BaseTransport | None = None) -> None:
         if not api_key:
             raise LLMConfigError("ANTHROPIC_API_KEY is not set")
         self._http = httpx.Client(
@@ -200,7 +206,8 @@ class AnthropicHTTPClient:
                 kind = r.json().get("error", {}).get("type", "")
             except ValueError:
                 kind = ""
-            raise LLMTransportError(f"Claude API HTTP {r.status_code} {kind}".strip())
+            retryable = r.status_code in (408, 409, 429) or r.status_code >= 500
+            raise LLMTransportError(f"Claude API HTTP {r.status_code} {kind}".strip(), retryable=retryable)
         try:
             return r.json()
         except ValueError:

@@ -18,6 +18,8 @@ from __future__ import annotations
 
 import json
 import logging
+import re
+import time
 from collections.abc import Collection
 from dataclasses import dataclass
 from typing import Any
@@ -40,6 +42,9 @@ TOOL_NAME = "submit_brief"
 NOTE_MAX = 200
 ASSUMPTION_NOTE_MAX = 300
 MAX_OUTPUT_TOKENS = 4096
+#: no new attempt starts after this many seconds (the customer is waiting on a form post); with the
+#: client's per-call timeout this caps the wait at about DEADLINE_S + one call
+DEADLINE_S = 15.0
 
 SYSTEM_INSTRUCTION = """\
 You prepare the assumptions of a custom Excel financial model for a small business.
@@ -134,7 +139,7 @@ class CustomerInput:
 class _Change(BaseModel):
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
-    key: str
+    key: str = Field(max_length=40, pattern=r"^[a-z][a-z0-9_]{0,39}$")
     low: float
     base: float
     high: float
@@ -198,8 +203,8 @@ def template_description(tpl: Template) -> str:
 
 
 def _wrap(text: str, tag: str) -> str:
-    # the customer cannot close our tag early
-    clean = text.replace(f"</{tag}>", "").replace(f"<{tag}>", "")
+    # the customer cannot open or close our tag (any case, any spacing)
+    clean = re.sub(rf"<\s*/?\s*{tag}\s*>", "", text, flags=re.IGNORECASE)
     return f"<{tag}>\n{clean.strip()}\n</{tag}>"
 
 
@@ -239,16 +244,19 @@ def build_request(model: str, start: Brief, inp: CustomerInput) -> dict[str, Any
         user_content=user_content(start, tpl, inp),
         max_tokens=MAX_OUTPUT_TOKENS,
         tools=[SUBMIT_TOOL],
-        tool_choice={"type": "tool", "name": TOOL_NAME},
+        tool_choice={"type": "tool", "name": TOOL_NAME, "disable_parallel_tool_use": True},
     )
 
 
 # --------------------------------------------------------------------------- response handling
 def plain_text(text: str, limit: int) -> str:
-    """One line of plain text a spreadsheet will not read as a formula."""
+    """One line of plain text a spreadsheet will not read as a formula (a leading ``=``, ``+`` or ``@``
+    is dropped; a leading ``-`` keeps its meaning, e.g. "-5% vs last year", behind a space)."""
     t = " ".join(str(text).split())
-    while t and t[0] in "=+-@":
+    while t and t[0] in "=+@":
         t = t[1:].lstrip()
+    if t.startswith("-"):
+        t = " " + t
     return t[:limit]
 
 
@@ -315,13 +323,19 @@ def build_brief(client: Any, model: str, start: Brief, inp: CustomerInput) -> Bu
     messages: list[dict[str, Any]] = list(request["messages"])
     usage: LLMUsage | None = None
     last_error = ""
+    t0 = time.monotonic()
     for attempt in range(MAX_RETRIES + 1):
+        if attempt and time.monotonic() - t0 > DEADLINE_S:
+            last_error = f"out of time after {attempt} attempts ({last_error})"
+            break
         request["messages"] = messages
         try:
             response, u = call_messages(client, request)
         except LLMTransportError as exc:
             last_error = str(exc)
             log.warning("brief_llm attempt=%d transport error: %s", attempt + 1, last_error)
+            if not exc.retryable:
+                break
             continue
         usage = u if usage is None else usage + u
         call = _tool_call(response)
@@ -356,7 +370,7 @@ def build_brief(client: Any, model: str, start: Brief, inp: CustomerInput) -> Bu
             ]
             continue
         return BuildResult(brief, usage, changed)
-    raise BriefBuildError(f"no valid brief after {MAX_RETRIES + 1} attempts: {last_error}", usage)
+    raise BriefBuildError(f"no valid brief from the model: {last_error}", usage)
 
 
 __all__ = [

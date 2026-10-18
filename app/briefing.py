@@ -124,12 +124,17 @@ class LLMBriefSource:
 
     def build_brief_with_usage(self, answers: Answers) -> tuple[Brief, LLMUsage | None]:
         start = self.prefill.build_brief(answers)
+        if not answers.notes.strip():
+            return start, None  # nothing to tailor: no call, no cost, no invented changes
         inp = CustomerInput(business_name=answers.business_name, notes=answers.notes, locked=set(answers.key_numbers))
         try:
             res = llm_build_brief(self.client, self.model, start, inp)
         except BriefBuildError as exc:
             log.warning("brief_llm fallback to prefill (%s): %s", start.template, exc)
             return start, exc.usage
+        except Exception as exc:  # the LLM may improve a model, never block one
+            log.exception("brief_llm fallback to prefill (%s): unexpected %s", start.template, type(exc).__name__)
+            return start, None
         return res.brief, res.usage
 
     def build_brief(self, answers: Answers) -> Brief:
