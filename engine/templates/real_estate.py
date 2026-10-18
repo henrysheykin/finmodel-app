@@ -230,7 +230,7 @@ class RealEstateTemplate(Template):
             StmtRow("yield", "NOI ÷ purchase price", "formula", "=IF({in:price}=0,0,{noi}/{in:price})", "pct"),
             StmtRow("ds", "Debt service (interest + principal)", "line", "debt_service", neg=True),
             StmtRow(
-                "dscr", "Debt service coverage (NOI ÷ debt service)", "formula", '=IF({ds}>0,{noi}/{ds},"n/a")', "dec1"
+                "dscr", "Debt service coverage (NOI ÷ debt service)", "formula", '=IF({ds}>0.5,{noi}/{ds},"n/a")', "x"
             ),
             StmtRow("loan_end", "Loan balance (year end)", "line", "loan_close"),
             StmtRow(
