@@ -54,7 +54,7 @@ def _location(r: httpx.Response) -> str:
 
 
 def test_stack_is_up(http):
-    assert http.get("/healthz").json() == {"status": "ok"}
+    assert http.get("/healthz").json()["status"] == "ok"
     landing = http.get("/")
     assert landing.status_code == 200 and "StartupModel" in landing.text
     assert http.get("/start").status_code == 200

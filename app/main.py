@@ -17,7 +17,7 @@ from adapters.email import make_sender
 from adapters.notify import Notifier
 from adapters.payments import PaymentProvider, make_provider
 from adapters.storage import Storage, make_storage
-from app import links, ratelimit
+from app import __version__, links, ratelimit
 from app.briefing import Answers, BriefSource, PrefillBriefSource, supported_business_types
 from app.config import Settings, load_settings
 from app.db import make_engine, make_sessionmaker, migrate, session_scope
@@ -162,7 +162,7 @@ def create_app(services: Services | None = None) -> FastAPI:
 
     @app.get("/healthz")
     def healthz() -> dict:
-        return {"status": "ok"}
+        return {"status": "ok", "version": __version__}
 
     @app.get("/api/business-types")
     def business_types() -> dict:

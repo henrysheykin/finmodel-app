@@ -86,5 +86,19 @@ webhook, Resend domain).
             `samples/cafe-investor_pitch.xlsx`, memo `docs/templates/goal-modules.md` (questions at the end).
 - [x] R2 Lawyer review of legal drafts — n/a: Henry cancelled M08 (2026-10-17); legal texts are his to provide.
 
-## Go-live
-- [ ] G1 Deploy and run the first real order end to end (runbook from E18).
+## Go-live (v0.1.0, E18 — step by step with checks: `docs/RUNBOOK_GO_LIVE.md`)
+Where you stand at any moment: the "Before live payments" box at the top of `/admin` (also printed in every
+Railway deploy log). It disappears when everything is done.
+- [ ] G1 Go live — the exact steps, in order (runbook section in brackets):
+  - [ ] G1.1 Decide what to launch with: R1 sign-offs for the templates you will promote; D9; VAT with your adviser (§0).
+  - [ ] G1.2 Railway Variables: `CLIENT_IP_HEADER=X-Real-IP` (= A6), `ADMIN_EMAIL` = your inbox (§1).
+  - [ ] G1.3 `PUBLIC_BASE_URL=https://startup-model.com` — the domain already answers (checked 2026-10-18), but the
+        sitemap and links still use the Railway address (§2).
+  - [ ] G1.4 Resend: verify startup-model.com, then `EMAIL_FROM=StartupModel <models@startup-model.com>`,
+        `SUPPORT_EMAIL=support@startup-model.com`, Cloudflare Email Routing for support@ (§3).
+  - [ ] G1.5 Legal texts into `content/legal/` (= L1) (§4).
+  - [ ] G1.6 Test-mode order on https://startup-model.com with card 4242…: emails, file, Checks PASS, refund (§5).
+  - [ ] G1.7 Stripe: public name StartupModel (now "FRANCHISE"), activate the account (§6).
+  - [ ] G1.8 Live webhook + `sk_live_…` + its `whsec_…` + `ALLOW_LIVE_PAYMENTS=1` in ONE save; deploy log says
+        "READY for live payments" (§7).
+  - [ ] G1.9 One real $149 purchase with your own card, check, refund from /admin; tick G1 with the date (§8).

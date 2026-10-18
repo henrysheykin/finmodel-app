@@ -6,6 +6,8 @@ Postgres** and a **volume at `/data`** for the built `.xlsx` files. The containe
 if either stops, the container stops and Railway restarts it. Cloudflare stays the registrar and DNS
 for `startup-model.com`. Vercel is not used (no long-running worker, no LibreOffice).
 
+Going live (order of steps, checks, rollback): `docs/RUNBOOK_GO_LIVE.md`. Releases: `CHANGELOG.md`.
+
 Verified locally on 2026-10-17: the production image starts against Postgres 16 with a mounted
 volume, applies migrations, owns `/data/storage` as the `app` user and serves the full customer path
 (wizard → payment → build in ~9 s → email → sign-in → download).
@@ -79,7 +81,8 @@ production without `SECRET_KEY`, Stripe and a real email provider; `python -m ap
 
 ## 5. After every deploy
 
-- `https://startup-model.com/healthz` → `{"status":"ok"}`.
+- `https://startup-model.com/healthz` → `{"status":"ok","version":"<this release>"}`.
+- Deploy log: the `go-live preflight` block (same list as the box at the top of `/admin`).
 - `/admin` → sign in; the order counters load.
 - A test order (test mode) or, after go-live, watch the first real orders in `/admin`.
 

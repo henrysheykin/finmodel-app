@@ -21,7 +21,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from sqlalchemy import func, select
 
 from adapters.payments import PaymentError
-from app import links, ratelimit
+from app import __version__, golive, links, ratelimit
 from app.db import session_scope, utcnow
 from app.models import Job, Order
 from app.orders import OrderError, rebuild, refund_order
@@ -184,6 +184,8 @@ def orders(request: Request, status: str = "", q: str = "", page: int = 1) -> HT
             "q": q,
             "statuses": list(STATUS_LABEL) + ["refunded"],
             "c": counters,
+            "readiness": [i for i in golive.readiness(sv.cfg) if i.level != golive.OK],
+            "version": __version__,
             "csrf": _csrf(request, cookie),
         },
     )
