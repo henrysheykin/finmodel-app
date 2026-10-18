@@ -5,6 +5,8 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass, field
 
+from adapters.llm import LLMConfigError, validate_brief_model
+
 
 def _int(name: str, default: int) -> int:
     v = os.environ.get(name, "")
@@ -44,6 +46,8 @@ class Settings:
     rate_limit_per_10min: int = 30
     #: header the hosting edge sets to the visitor's address (e.g. X-Real-IP); empty = proxy-derived peer
     client_ip_header: str = ""
+    #: Claude model for the LLM brief builder (adapters/llm.py BRIEF_MODELS); empty = LLM off, prefill briefs
+    brief_model: str = ""
 
     @property
     def is_prod(self) -> bool:
@@ -59,6 +63,10 @@ class Settings:
             raise RuntimeError("production must use PAYMENT_PROVIDER=stripe")
         if self.is_prod and (self.email_provider == "console" or not self.email_from or not self.support_email):
             raise RuntimeError("production needs EMAIL_PROVIDER (resend|postmark), EMAIL_FROM and SUPPORT_EMAIL")
+        try:
+            validate_brief_model(self.brief_model)
+        except LLMConfigError as e:
+            raise RuntimeError(str(e)) from e
 
 
 def normalize_database_url(url: str) -> str:
@@ -97,6 +105,7 @@ def load_settings() -> Settings:
         link_ttl_seconds=_int("LINK_TTL_SECONDS", 7 * 24 * 3600),
         rate_limit_per_10min=_int("RATE_LIMIT_PER_10MIN", 30),
         client_ip_header=env("CLIENT_IP_HEADER", "").strip(),
+        brief_model=env("BRIEF_MODEL", "").strip(),
     )
     s.check()
     return s

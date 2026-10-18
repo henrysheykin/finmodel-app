@@ -40,6 +40,7 @@ volume, applies migrations, owns `/data/storage` as the `app` user and serves th
 | `ADMIN_EMAIL` | where build-failure alerts go (your own inbox) |
 | `CLIENT_IP_HEADER` | `X-Real-IP` (Railway's edge sets it to the visitor's address; used by the rate limits) |
 | `RATE_LIMIT_PER_10MIN` | optional; default `30` new orders and `30` checkout sessions per visitor address per 10 minutes, `0` = off |
+| `BRIEF_MODEL` | optional; Claude model for the LLM brief builder: `claude-haiku-5-5`, `claude-sonnet-5-5` or `claude-opus-5-5`. **Leave empty for now**: empty = LLM off, briefs come from template defaults + the customer's key numbers (how the site works today). Any other value stops the container at start (first line of the deploy log). The model is picked by the eval (BACKLOG E23); it also needs `ANTHROPIC_API_KEY` (HUMAN_TODO A1). |
 
 `APP_ENV=prod` and `STORAGE_DIR=/data/storage` are set in the image. The app refuses to start in
 production without `SECRET_KEY`, Stripe and a real email provider; `python -m app.manage check`
