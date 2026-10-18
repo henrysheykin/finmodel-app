@@ -17,7 +17,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 > Customer login = passwordless magic link by email (ADR-006).
 
 ### E23 — Eval: which model fills the brief
-- status: TODO
+- status: IN_PROGRESS (2026-10-18)
 - Model: sonnet
 - depends: E08 (LLM brief builder, done #39), BRIEF_MODEL plumbing (token-budget PR, done)
 - skills: product-self-knowledge, engineering:testing-strategy
