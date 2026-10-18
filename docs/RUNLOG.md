@@ -2,7 +2,7 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
-- 2026-10-18 · E · interactive with Henry: token budget + model routing · PR_LINK
+- 2026-10-18 · E · interactive with Henry: token budget + model routing · https://github.com/henrysheykin/finmodel-app/pull/38
   Subagents `.claude/agents/` (scout haiku, implementer sonnet, reviewer opus); CLAUDE.md 115 → 90 lines with Model routing
   and Token budget, background moved to docs/ARCHITECTURE.md; finished tasks → docs/DONE.md, RUNLOG kept at 10 (rest in
   docs/runlog/archive-2026-10.md); `Model:` on every open task; new E23 brief-model eval. BRIEF_MODEL = empty (LLM off):
