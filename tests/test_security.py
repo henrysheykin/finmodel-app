@@ -130,3 +130,35 @@ def test_admin_guessing_from_many_addresses_hits_the_global_cap(client, admin_on
         "/admin/login", data={"user": "henry", "password": "correct horse battery"}, headers={"X-Real-IP": "10.9.9.9"}
     )
     assert r.status_code == 429  # even the right password waits out the window during an attack
+
+
+# --------------------------------------------------------------------------- logs
+def test_access_log_hides_sign_in_and_download_tokens():
+    import logging
+
+    from app.logs import RedactSecrets, redact
+
+    assert redact("GET /login/verify?token=abc_DEF-123 HTTP/1.1") == "GET /login/verify?token=[redacted] HTTP/1.1"
+    assert redact("/download/42.1700000000.c2lnbmF0dXJl") == "/download/[redacted]"
+    assert redact("/start?plan=full&type=saas") == "/start?plan=full&type=saas"
+    rec = logging.LogRecord(
+        "uvicorn.access",
+        logging.INFO,
+        "",
+        0,
+        '%s - "%s %s HTTP/%s" %d',
+        ("1.2.3.4:5", "GET", "/login/verify?x=1&token=SECRET", "1.1", 200),
+        None,
+    )
+    assert RedactSecrets().filter(rec) and "SECRET" not in rec.getMessage()
+
+
+def test_oversized_bodies_are_refused_before_parsing(client):
+    from app.main import MAX_BODY_BYTES
+
+    big = b"x" * (MAX_BODY_BYTES + 1)
+    assert client.post("/webhooks/stripe", content=big).status_code == 413
+    assert (
+        client.post("/login", content=big, headers={"Content-Type": "application/x-www-form-urlencoded"}).status_code
+        == 413
+    )

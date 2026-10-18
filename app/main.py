@@ -47,6 +47,8 @@ CSP = (
     "font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
 )
 UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+#: no endpoint takes uploads: wizard forms and Stripe events are a few kilobytes
+MAX_BODY_BYTES = 1_000_000
 #: server-to-server callers (no browser, no Origin) authenticated by their own signature
 ORIGIN_EXEMPT = ("/webhooks/",)
 
@@ -69,6 +71,13 @@ def cross_site(request: Request, public_base_url: str) -> bool:
         return False
     own = {_origin_of(public_base_url), f"{request.url.scheme}://{request.headers.get('host', '')}".lower()}
     return origin.lower() not in own
+
+
+def _too_large(request: Request) -> bool:
+    try:
+        return int(request.headers.get("content-length") or 0) > MAX_BODY_BYTES
+    except ValueError:
+        return True
 
 
 class OrderIn(BaseModel):
@@ -113,7 +122,9 @@ def create_app(services: Services | None = None) -> FastAPI:
     @app.middleware("http")
     async def security_headers(request: Request, call_next):
         sv = request.app.state.services
-        if sv is not None and cross_site(request, sv.cfg.public_base_url):
+        if _too_large(request):
+            resp = PlainTextResponse("request body too large", status_code=413)
+        elif sv is not None and cross_site(request, sv.cfg.public_base_url):
             resp = PlainTextResponse("cross-site request refused", status_code=403)
         else:
             resp = await call_next(request)

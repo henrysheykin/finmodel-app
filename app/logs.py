@@ -8,9 +8,28 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import time
 
 FORMAT = "%(asctime)sZ %(levelname)s %(name)s %(message)s"
+#: secrets that travel in URLs: magic-link tokens (?token=) and signed download links (/download/<token>)
+_SECRET_IN_URL = re.compile(r"(/download/|[?&]token=)[^\s&\"]+")
+
+
+def redact(text: str) -> str:
+    return _SECRET_IN_URL.sub(r"\1[redacted]", text)
+
+
+class RedactSecrets(logging.Filter):
+    """Keeps sign-in and download tokens out of the access log (E17): anyone who can read the host's
+    logs could otherwise sign in as a customer for 15 minutes or download a model for 7 days."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        if isinstance(record.args, tuple):
+            record.args = tuple(redact(a) if isinstance(a, str) else a for a in record.args)
+        elif isinstance(record.msg, str):
+            record.msg = redact(record.msg)
+        return True
 
 
 def configure_logging() -> None:
@@ -24,4 +43,5 @@ def configure_logging() -> None:
     handler.setFormatter(fmt)
     root.addHandler(handler)
     root.setLevel(level)
+    logging.getLogger("uvicorn.access").addFilter(RedactSecrets())
     root._startupmodel_configured = True  # type: ignore[attr-defined]

@@ -67,6 +67,7 @@ DEFAULT_FORM = {
 router = APIRouter()
 log = logging.getLogger("web")
 
+
 async def form_data(request: Request) -> dict[str, str]:
     """The submitted form, read on the event loop. Handlers that take it as a dependency are plain
     ``def`` functions, so FastAPI runs them in its thread pool: their database work and the calls
