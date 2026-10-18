@@ -134,7 +134,7 @@ class LLMBriefSource:
             return start, exc.usage
         except Exception as exc:  # the LLM may improve a model, never block one
             log.exception("brief_llm fallback to prefill (%s): unexpected %s", start.template, type(exc).__name__)
-            return start, None
+            return start, getattr(exc, "usage", None)  # calls made before the failure
         return res.brief, res.usage
 
     def build_brief(self, answers: Answers) -> Brief:

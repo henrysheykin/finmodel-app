@@ -15,6 +15,8 @@ and the plain-Python twin the challenger compares against. Sheets are written by
 
 from __future__ import annotations
 
+from collections.abc import Collection
+
 from engine.brief import Brief, BriefError
 from engine.spec import DriverSpec, Line, Timing
 
@@ -99,7 +101,32 @@ def _three_months_opex(brief: Brief) -> float:
     tpl = get_template(brief.template)
     d = {k: v for k, v in brief.values(2).items() if k not in ALL_GOAL_KEYS}
     s = reference_run(d, brief.roles, Timing("monthly", 1), tpl.reference_top)
-    return float(max(0, round(-sum(s["opex_total"]) / 12 * 3, -3)))
+    spec = BREAKEVEN_SPECS[0]  # the buffer stays inside its own allowed range, whatever the costs
+    return float(min(spec.max, max(spec.min, round(-sum(s["opex_total"]) / 12 * 3, -3))))
+
+
+#: goal drivers whose default is computed from other drivers (see ``default_values``)
+DERIVED_KEYS = frozenset({"cash_buffer"})
+
+
+def refresh_derived(brief: Brief, keep: Collection[str] = ()) -> Brief:
+    """Recompute the derived goal defaults (``DERIVED_KEYS``) after other drivers changed.
+
+    Keys in ``keep`` (changed by the model, or typed by the customer) are left alone. Low / High follow
+    the same derivation as the defaults. A brief without those drivers is returned as is.
+    """
+    fresh = {
+        dv["key"]: dv
+        for dv in default_values(brief.goal, brief)
+        if dv["key"] in DERIVED_KEYS and dv["key"] not in keep and any(d.key == dv["key"] for d in brief.drivers)
+    }
+    if not fresh:
+        return brief
+    data = brief.model_dump()
+    for d in data["drivers"]:
+        if d["key"] in fresh:
+            d.update(low=fresh[d["key"]]["low"], base=fresh[d["key"]]["base"], high=fresh[d["key"]]["high"])
+    return Brief.model_validate(data)
 
 
 def apply_goal(brief: Brief, goal: str | None = None) -> Brief:
