@@ -12,35 +12,14 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ## Track E — Engineering (daily)
 
-> **Priority:** E08 → E23. All earlier E tasks are done (`docs/DONE.md`).
+> **Priority:** E23 → E24. All earlier E tasks are done (`docs/DONE.md`).
 > New industries are one file each (ADR-009, `docs/templates/ADDING_A_TEMPLATE.md`; follow E21/E22, Model: sonnet).
 > Customer login = passwordless magic link by email (ADR-006).
-
-### E08 — Brief builder (Claude API)
-- status: IN_PROGRESS (2026-10-18)
-- Model: opus
-- note (2026-10-18, token-budget PR): plumbing is ready in `adapters/llm.py` — use it, don't duplicate it.
-  `BRIEF_MODEL` (empty = LLM off = today's prefill; unknown id fails at start), `build_brief_request` puts the
-  fixed prefix (system instruction + template description) first with `cache_control` when it reaches the
-  model's minimum (512 tokens for the 5.5 models), `call_messages` returns token usage + latency, and
-  `create_order(..., brief_usage=...)` writes it to the log per order. Keep the default empty: the model is
-  chosen by E23. Add the `anthropic` SDK (pinned in constraints.txt) if you call the API through it.
-- note (2026-10-18, L1): when the LLM path goes live, add Anthropic to the processors list in
-  `content/legal/privacy.md` ("Who processes it for us") in the same PR.
-- depends: E02
-- skills: product-self-knowledge, engineering:system-design, engineering:testing-strategy
-- do: `engine/brief_builder.py`: wizard answers (+ optional free text + key numbers)
-  → Brief via Anthropic API with a strict JSON schema (tool use / structured output),
-  per-industry/stage default library from templates, server-side validation,
-  2 retries, cost+latency logging. Check the current model id and SDK usage with
-  product-self-knowledge — do not guess. Tests use recorded fixtures; no network.
-  Sample-data path ("prefill") works with no LLM call at all.
-- done when: 20 fixture cases produce valid briefs; invalid LLM output is caught.
 
 ### E23 — Eval: which model fills the brief
 - status: TODO
 - Model: sonnet
-- depends: E08 (LLM brief builder), BRIEF_MODEL plumbing (token-budget PR, done)
+- depends: E08 (LLM brief builder, done #39), BRIEF_MODEL plumbing (token-budget PR, done)
 - skills: product-self-knowledge, engineering:testing-strategy
 - do: `evals/brief_model_eval.py`: 6 industries × 10 wizard-answer variants (fixed, committed in `evals/cases/`)
   through `claude-haiku-5-5`, `claude-sonnet-5-5` and `claude-opus-5-5` via the E08 builder. Each brief goes
@@ -52,6 +31,18 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: `docs/memos/brief-model-eval.md` with the table and a recommendation: the cheapest model whose
   pass share is not below the reference and whose p95 ≤ 15 s. Reference = opus pass share (no model is in
   production yet; BRIEF_MODEL is empty). Henry sets `BRIEF_MODEL` from it (add to HUMAN_TODO).
+
+### E24 — LLM brief: refresh derived goal defaults, count usage on every fallback
+- status: TODO
+- Model: sonnet
+- depends: E08
+- skills: engineering:testing-strategy
+- do: (from the E08 review, low) (1) `apply_goal` defaults that are computed from other drivers (e.g.
+  `cash_buffer` ≈ 3 months of costs) are set before the model changes costs in `engine/brief_builder.merge`;
+  recompute them after the merge for goal keys the model did not change and the customer did not lock.
+  (2) `app/briefing.LLMBriefSource`: on an unexpected exception the usage of calls already made is lost
+  (logged as none); carry the running usage on the error so `brief_llm order=…` stays complete.
+- done when: tests show a cost change moves `cash_buffer` Base and that usage is logged on every fallback.
 
 ---
 

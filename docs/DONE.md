@@ -14,6 +14,7 @@ New lines go at the end of the table (protocol step 9).
 | E05 | Template: Real estate (rental property investment) | #33 | done 2026-10-18 |
 | E06 | Template: Professional services | #16 | done 2026-10-17 |
 | E07 | Goal modules: break-even & startup costs, DCF valuation | #26 | done 2026-10-17 |
+| E08 | Brief builder (Claude API), off until BRIEF_MODEL is set | #39 | done 2026-10-18 |
 | E09 | Orders, jobs and the delivery pipeline | #18 | done 2026-10-17 |
 | E10 | Wizard + checkout UI | #19 | done 2026-10-17 |
 | E11 | Payments | #20 | done 2026-10-17 |

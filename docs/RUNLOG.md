@@ -2,6 +2,12 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-18 · E · E08 brief builder (Claude API) · DONE · https://github.com/henrysheykin/finmodel-app/pull/39
+  `engine/brief_builder.py`: prefill brief + customer notes → one forced `submit_brief` tool call that may only change
+  driver Low/Base/High (structure, roles, typed key numbers locked); Brief + template validation; errors back as tool_result,
+  2 retries, 15 s deadline, no retry on 4xx, then prefill fallback; no call without notes; formula-like text neutralised.
+  httpx Messages API client (no SDK dependency). 21 fixture cases → valid briefs, all build + challenger PASS; 4 fallback cases.
+  OFF by default: Henry sets ANTHROPIC_API_KEY + BRIEF_MODEL (A1, after E23). Skill product-self-knowledge not installed. Follow-up E24.
 - 2026-10-18 · E · interactive with Henry: token budget + model routing · https://github.com/henrysheykin/finmodel-app/pull/38
   Subagents `.claude/agents/` (scout haiku, implementer sonnet, reviewer opus); CLAUDE.md 115 → 90 lines with Model routing
   and Token budget, background moved to docs/ARCHITECTURE.md; finished tasks → docs/DONE.md, RUNLOG kept at 10 (rest in
