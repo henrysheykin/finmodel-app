@@ -106,9 +106,9 @@ def test_unfinished_email_copy_is_flagged_but_does_not_block(tmp_path):
     lv, items = levels(LIVE, tmp_path, email=email_dir(tmp_path, "[FAILED_BUILD_POLICY: decide] {{ amount }}"))
     assert lv["email_copy"] == golive.WARN
     assert golive.ready_for_live(items)
-    # the real repo: D9 still open, so build-failed carries the placeholder
+    # the real repo: no email copy is left unfinished
     real = {i.key: i for i in golive.readiness(LIVE)}
-    assert "build-failed" in real["email_copy"].message or real["email_copy"].level == golive.OK
+    assert real["email_copy"].level == golive.OK, real["email_copy"].message
 
 
 def test_preflight_command(monkeypatch, capsys):

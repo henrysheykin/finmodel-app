@@ -195,7 +195,8 @@ class Pipeline:
             self.notifier.admin_alert(
                 f"Build failed: order {order.id}",
                 f"Order {order.id} ({order.template}, {order.tier}, {order.email})\n"
-                f"Job {job.id}, attempt {job.attempts}/{job.max_attempts}\n\n{reason}",
+                f"Job {job.id}, attempt {job.attempts}/{job.max_attempts}\n\n{reason}\n\n"
+                "The customer has not been told. Open /admin, then Re-build or Refund this order.",
             )
         except Exception:
             log.exception("admin alert failed for order %s", order.id)

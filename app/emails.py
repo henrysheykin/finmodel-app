@@ -172,8 +172,9 @@ class EmailNotifier:
         self._send(order.email, "order-received", self._ctx(order))
 
     def build_failed(self, order_id: str) -> None:
-        order = self._order(order_id)
-        self._send(order.email, "build-failed", self._ctx(order))
+        """No email to the customer (Henry, 2026-10-18, D9): the admin alert sent by the pipeline is the only
+        message; Henry re-builds or refunds from /admin. content/email/build-failed.md is kept but not sent."""
+        log.warning("build failed for order %s: customer not emailed (D9), admin alerted", order_id)
 
     def refund_issued(self, order_id: str) -> None:
         order = self._order(order_id)

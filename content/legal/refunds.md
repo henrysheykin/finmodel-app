@@ -12,7 +12,7 @@ After a refund, please delete your copies of the model; the licence in our [Term
 
 # If we cannot deliver
 
-If your model does not pass our checks, we do not send it. We email you, fix it and send you a model that passes within 2 business days. If we cannot, or if you would rather not wait, we refund you in full.
+If your model does not pass our checks, we do not send it. If we cannot deliver a model that passes them, we refund you in full.
 
 # Duplicate payments
 

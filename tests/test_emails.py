@@ -114,12 +114,12 @@ def _fail_build(client, services):
     return oid
 
 
-def test_failed_build_tells_the_customer_the_policy_and_alerts_admin(client, services, mail):
+def test_failed_build_alerts_only_the_admin(client, services, mail):
     _fail_build(client, services)
-    customer = [m for m in mail.outbox if m.to == "a@b.co" and "didn't pass" in m.subject]
-    assert len(customer) == 1
-    assert "within 2 business days" in customer[0].text and "refund your $149 in full" in customer[0].text
-    assert any(m.to == "henry@example.com" and "Build failed" in m.subject for m in mail.outbox)
+    to_customer = [m.subject for m in mail.outbox if m.to == "a@b.co"]
+    assert all(x.startswith("We've got your order") for x in to_customer)  # only the receipt, no failure email
+    alert = [m for m in mail.outbox if m.to == "henry@example.com" and "Build failed" in m.subject]
+    assert len(alert) == 1 and "Re-build or Refund" in alert[0].text
 
 
 def test_email_with_unfinished_copy_is_held(client, services, mail, tmp_path, monkeypatch):
@@ -127,14 +127,17 @@ def test_email_with_unfinished_copy_is_held(client, services, mail, tmp_path, mo
 
     from app import emails
 
+    services.cfg = replace(services.cfg, admin_email="henry@example.com")
+    services.notifier.cfg = services.cfg
+    oid = _paid_ready(client, services, services.notifier)
     shutil.copytree(emails.CONTENT, tmp_path / "email")
-    f = tmp_path / "email" / "build-failed.md"
-    f.write_text(f.read_text("utf-8").replace("**What happens next**", "[FAILED_BUILD_POLICY: decide]"), "utf-8")
+    f = tmp_path / "email" / "refund-issued.md"
+    f.write_text(f.read_text("utf-8") + "\n[REFUND_DETAILS: decide]\n", "utf-8")
     monkeypatch.setattr(emails, "CONTENT", tmp_path / "email")
-    _fail_build(client, services)
-    assert all(m.to == "henry@example.com" for m in mail.outbox)  # nothing with placeholder copy to the customer
-    subjects = [m.subject for m in mail.outbox]
-    assert any("Build failed" in x for x in subjects) and any("not sent to a@b.co" in x for x in subjects)
+    mail.outbox.clear()
+    services.notifier.refund_issued(oid)
+    assert [m.to for m in mail.outbox] == ["henry@example.com"]  # nothing with placeholder copy to the customer
+    assert "not sent to a@b.co" in mail.outbox[0].subject
 
 
 def test_refund_and_sign_in_emails(client, services, mail):
@@ -147,7 +150,7 @@ def test_refund_and_sign_in_emails(client, services, mail):
     assert "/login/verify?token=" in sign_in.text
 
 
-def test_failed_build_email_sends_once_policy_text_exists(services, mail, monkeypatch, tmp_path):
+def test_failed_build_never_emails_the_customer_even_with_complete_copy(services, mail, monkeypatch, tmp_path):
     src = (emails.CONTENT / "build-failed.md").read_text()
     body = src.split("**What happens next**")[0] + "**What happens next**\n\nWe will fix it or refund you.\n"
     (tmp_path / "build-failed.md").write_text(body)
@@ -158,7 +161,7 @@ def test_failed_build_email_sends_once_policy_text_exists(services, mail, monkey
         s.flush()
         oid = o.id
     services.notifier.build_failed(oid)
-    assert [m.to for m in mail.outbox] == ["c@d.co"]
+    assert mail.outbox == []  # D9 (Henry, 2026-10-18): the admin alert is the only message
 
 
 # --------------------------------------------------------------------------- providers (mocked HTTP)
