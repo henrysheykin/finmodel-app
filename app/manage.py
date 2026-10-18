@@ -26,6 +26,7 @@ def _summary() -> str:
         f"v{__version__} env={cfg.app_env} db={db} storage={cfg.storage_backend} payments={cfg.payment_provider}"
         f" stripe={stripe_mode} email={cfg.email_provider} base_url={cfg.public_base_url}"
         f" admin={'on' if cfg.admin_user and cfg.admin_password else 'off'}"
+        f" brief_model={cfg.brief_model or 'off'}"
     )
 
 

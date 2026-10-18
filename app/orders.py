@@ -15,6 +15,7 @@ import json
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
+from adapters.llm import LLMUsage, log_brief_usage
 from app.config import Settings
 from app.db import utcnow
 from app.models import Job, Order, OrderEvent
@@ -63,8 +64,16 @@ def transition(s: Session, order: Order, to: str, note: str = "") -> None:
         order.refunded_at = utcnow()
 
 
-def create_order(s: Session, cfg: Settings, email: str, brief: Brief, answers: dict | None = None) -> Order:
-    """A validated brief becomes an order waiting for payment."""
+def create_order(
+    s: Session,
+    cfg: Settings,
+    email: str,
+    brief: Brief,
+    answers: dict | None = None,
+    brief_usage: LLMUsage | None = None,
+) -> Order:
+    """A validated brief becomes an order waiting for payment. ``brief_usage`` (the LLM brief
+    builder's tokens and latency, E08) is written to the log against the new order id."""
     if brief.tier not in cfg.prices:
         raise OrderError(f"no price for tier {brief.tier!r}")
     email = email.strip().lower()
@@ -81,6 +90,8 @@ def create_order(s: Session, cfg: Settings, email: str, brief: Brief, answers: d
     s.add(order)
     s.flush()
     transition(s, order, "awaiting_payment")
+    if brief_usage is not None:
+        log_brief_usage(order.id, brief_usage)
     return order
 
 
