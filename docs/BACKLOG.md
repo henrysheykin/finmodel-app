@@ -67,7 +67,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: as E03.
 
 ### E05 — Template: Real estate (rental property investment)
-- status: IN_PROGRESS (2026-10-17, scheduled E run)
+- status: IN_PROGRESS (2026-10-18, scheduled E run — took over the stale 2026-10-17 13:33 claim: no branch, PR or continue:, skipped by 3 runs)
 - note (2026-10-17, interactive session): needs three framework extensions first — an annuity (mortgage) loan option
   (`loan_style`, interest on the opening balance), a non-depreciable land share of the purchase price, and a
   Returns sheet (yearly unlevered and levered cash flows with year 0, exit value = next-year NOI ÷ exit cap rate
