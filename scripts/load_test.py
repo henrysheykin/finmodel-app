@@ -205,8 +205,11 @@ def main(argv: list[str] | None = None) -> int:
         "not_ready": failed,
         "build_jobs": jobs,
         "webhook_actions": actions,
-        "order_placement_s": {"p50": _pct([t for _, t in placed], 50), "max": max(t for _, t in placed)},
-        "webhook_s": {"p50": _pct([t for _, t in paid], 50), "max": max(t for _, t in paid)},
+        "order_placement_s": {
+            "p50": round(_pct([t for _, t in placed], 50), 3),
+            "max": round(max(t for _, t in placed), 3),
+        },
+        "webhook_s": {"p50": round(_pct([t for _, t in paid], 50), 3), "max": round(max(t for _, t in paid), 3)},
         "drain_wall_s": round(t_done - t_paid, 1),
         "total_wall_s": round(t_done - t_start, 1),
         "build_s_per_model": {

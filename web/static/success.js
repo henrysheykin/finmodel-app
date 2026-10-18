@@ -5,11 +5,16 @@
   var done = ["ready", "failed", "refunded"];
   if (done.indexOf(el.dataset.status) >= 0) return;
   var url = "/api/orders/" + encodeURIComponent(el.dataset.order);
-  var tries = 0;
-  var timer = setInterval(function () {
-    if (++tries > 120) { clearInterval(timer); return; }
+  // every 3 s for two minutes, then every 15 s for up to 30 minutes: a busy queue (one worker,
+  // ~6-10 s per model) can hold a model for several minutes (E17 load test)
+  var started = Date.now();
+  function tick() {
+    var age = Date.now() - started;
+    if (age > 30 * 60 * 1000) return;
     fetch(url).then(function (r) { return r.json(); }).then(function (o) {
-      if (o.status !== el.dataset.status) { clearInterval(timer); window.location.reload(); }
-    }).catch(function () {});
-  }, 3000);
+      if (o.status !== el.dataset.status) { window.location.reload(); return; }
+      setTimeout(tick, age < 120000 ? 3000 : 15000);
+    }).catch(function () { setTimeout(tick, 15000); });
+  }
+  setTimeout(tick, 3000);
 })();
