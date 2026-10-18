@@ -64,7 +64,7 @@ webhook, Resend domain).
       `OPENAI_API_KEY` and `BRIEF_MODEL` (which model: from the E23 memo `docs/memos/brief-model-eval.md`).
       For the E23 live run: add `OPENAI_API_KEY` as an environment variable of the Claude cloud environment these
       scheduled runs use (never in chat or the repo) — the next E run after E25 fills the memo. Worth a glance before
-      switching on: OpenAI's API data-usage / DPA terms (privacy.md makes no claim about training or retention; the app sends `store: false`, so OpenAI keeps no retrievable copy of the conversation).
+      switching on: OpenAI's API data-usage / DPA terms (privacy.md makes no claim about training or retention; the app sends `store: false`, so OpenAI keeps no retrievable copy of the conversation; abuse-monitoring retention under their terms may still apply).
 - [x] A2 (test mode done 2026-10-17: keys + webhook on the Railway URL, test purchase delivered) Stripe account, test-mode keys first (put them only into Railway env vars). Exact steps (keys, webhook
       endpoint `/webhooks/stripe` and its 3 events, local test with the Stripe CLI): `docs/PAYMENTS.md`.
 - [x] A3 (Resend key done 2026-10-17; domain verified by Henry 2026-10-18 — set `EMAIL_FROM` to `StartupModel <models@startup-model.com>` in Railway if not yet) Email provider (Resend or Postmark) + DNS records for the domain.

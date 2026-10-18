@@ -278,6 +278,15 @@ def _output_items(response: Any) -> list[Any]:
     return list(_get(response, "output", []) or [])
 
 
+def _replayable(items: list[Any]) -> list[Any]:
+    """Output items safe to send back: a reasoning item is only valid followed by the item it produced, so
+    trailing reasoning items (an answer cut off by the token limit) are dropped."""
+    end = len(items)
+    while end and _get(items[end - 1], "type") == "reasoning":
+        end -= 1
+    return items[:end]
+
+
 def _tool_call(response: Any) -> tuple[str, str] | None:
     """(call_id, raw JSON arguments) of the first ``submit_brief`` function call in the answer."""
     for item in _output_items(response):
@@ -368,7 +377,7 @@ def build_brief(client: Any, model: str, start: Brief, inp: CustomerInput) -> Bu
             last_error = f"no {TOOL_NAME} call in the answer" + (f" (status {status})" if status != "completed" else "")
             conversation = [
                 *conversation,
-                *_output_items(response),
+                *_replayable(_output_items(response)),
                 {"role": "user", "content": f"Please answer by calling {TOOL_NAME}."},
             ]
             continue

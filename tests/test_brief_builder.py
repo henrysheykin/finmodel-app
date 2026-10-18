@@ -179,10 +179,17 @@ def test_incomplete_answer_is_retried_and_named():
         "usage": {"input_tokens": 100, "output_tokens": 4096},
     }
     case = CASES["fallback"][0]
+    client = FakeClient([cut] * 3)
     with pytest.raises(BriefBuildError, match="status incomplete"):
-        build_brief(
-            FakeClient([cut] * 3), MODEL, PREFILL.build_brief(Answers(**case["answers"])), CustomerInput(notes="x")
-        )
+        build_brief(client, MODEL, PREFILL.build_brief(Answers(**case["answers"])), CustomerInput(notes="x"))
+    # a reasoning item with nothing after it is not valid input: it is not sent back, only the nudge is
+    for req in client.requests[1:]:
+        assert all(i.get("type") != "reasoning" for i in req["input"])
+        assert req["input"][-1]["role"] == "user" and "submit_brief" in req["input"][-1]["content"]
+    # a complete answer without a call keeps its reasoning item (followed by the message it produced)
+    case = next(c for c in CASES["valid"] if c["id"] == "retry-text-then-schema-then-ok")
+    _, _, _, client = run(case)
+    assert [i.get("type") for i in client.requests[1]["input"][1:3]] == ["reasoning", "message"]
 
 
 def _walk_objects(schema):
