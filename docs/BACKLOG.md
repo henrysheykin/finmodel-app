@@ -280,7 +280,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: report in `docs/reviews/` with no open high-severity items.
 
 ### E18 — Release candidate v0.1.0
-- status: TODO
+- status: IN_PROGRESS (2026-10-18)
 - depends: E17, E03, E04, E05, E06, E07
 - skills: engineering:deploy-checklist, engineering:documentation
 - do: run the deploy checklist, tag `v0.1.0`, write the go-live runbook for Henry
