@@ -1,0 +1,18 @@
+{
+  "id": "retail-09",
+  "industry": "retail",
+  "tags": [
+    "vague-notes"
+  ],
+  "answers": {
+    "business_type": "retail_ecommerce",
+    "goal": "investor_pitch",
+    "stage": "established",
+    "horizon_years": 5,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Mint Stationery",
+    "key_numbers": {},
+    "notes": "A small online store with great reviews. We want to expand to more product lines when it makes sense."
+  }
+}

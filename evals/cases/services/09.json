@@ -1,0 +1,18 @@
+{
+  "id": "services-09",
+  "industry": "services",
+  "tags": [
+    "vague-notes"
+  ],
+  "answers": {
+    "business_type": "professional_services",
+    "goal": "investor_pitch",
+    "stage": "established",
+    "horizon_years": 5,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Keystone Engineering",
+    "key_numbers": {},
+    "notes": "A professional services firm with a good reputation and repeat clients. We want to keep growing at a healthy pace."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "retail-02",
+  "industry": "retail",
+  "tags": [
+    "locked-numbers",
+    "short-notes"
+  ],
+  "answers": {
+    "business_type": "retail_ecommerce",
+    "goal": "startup_breakeven",
+    "stage": "early",
+    "horizon_years": 1,
+    "granularity": "monthly",
+    "tier": "light",
+    "business_name": "PawBox Supply",
+    "key_numbers": {
+      "aov": 58.0,
+      "cogs_pct": 0.45
+    },
+    "notes": "We have been selling on our own site for 5 months. Average order value is $58, cost of goods about 45%. Ads are on Meta, roughly $2,500 a month."
+  }
+}

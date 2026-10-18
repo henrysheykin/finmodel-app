@@ -1,0 +1,18 @@
+{
+  "id": "home_services-01",
+  "industry": "home_services",
+  "tags": [
+    "short-notes"
+  ],
+  "answers": {
+    "business_type": "home_services",
+    "goal": "revenue_profit",
+    "stage": "planning",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "BrightFlow Plumbing",
+    "key_numbers": {},
+    "notes": "Two-van plumbing company in the suburbs. Average job ticket about $440, each technician does roughly 2.5 jobs a day, marketing around $2,500 a month on Google ads at $50 per lead."
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "fitness-08",
+  "industry": "fitness",
+  "tags": [
+    "locked-numbers",
+    "conflicting-notes"
+  ],
+  "answers": {
+    "business_type": "fitness",
+    "goal": "revenue_profit",
+    "stage": "growing",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Lotus Hot Yoga",
+    "key_numbers": {
+      "fee": 109.0,
+      "rent": 14000,
+      "churn_m": 0.05
+    },
+    "notes": "The monthly fee is $109 now and rent about $14,000, but I entered different figures in the form. Churn about 5% a month. We also sell supplements at about $5 per member."
+  }
+}

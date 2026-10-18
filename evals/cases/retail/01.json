@@ -1,0 +1,18 @@
+{
+  "id": "retail-01",
+  "industry": "retail",
+  "tags": [
+    "short-notes"
+  ],
+  "answers": {
+    "business_type": "retail_ecommerce",
+    "goal": "revenue_profit",
+    "stage": "planning",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Willow & Thread",
+    "key_numbers": {},
+    "notes": "Online shop selling handmade candles. About 6,000 visits a month, conversion near 2.5%, average order $48, product cost about 38% of sales."
+  }
+}

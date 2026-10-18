@@ -1,0 +1,18 @@
+{
+  "id": "fitness-09",
+  "industry": "fitness",
+  "tags": [
+    "vague-notes"
+  ],
+  "answers": {
+    "business_type": "fitness",
+    "goal": "investor_pitch",
+    "stage": "established",
+    "horizon_years": 5,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Anchor Strength",
+    "key_numbers": {},
+    "notes": "A friendly community gym where everybody knows each other. We want to keep the vibe and grow gradually."
+  }
+}

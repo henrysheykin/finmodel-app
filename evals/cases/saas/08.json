@@ -1,0 +1,23 @@
+{
+  "id": "saas-08",
+  "industry": "saas",
+  "tags": [
+    "locked-numbers",
+    "conflicting-notes"
+  ],
+  "answers": {
+    "business_type": "saas",
+    "goal": "revenue_profit",
+    "stage": "growing",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "TidyCRM",
+    "key_numbers": {
+      "arpa": 149.0,
+      "cac": 520.0,
+      "churn_m": 0.025
+    },
+    "notes": "Our blended price is closer to $149 although the wizard says $199, CAC about $520 and churn around 2.5% a month. We also give 20% off on the first year."
+  }
+}

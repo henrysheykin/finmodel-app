@@ -1,0 +1,18 @@
+{
+  "id": "retail-03",
+  "industry": "retail",
+  "tags": [
+    "long-notes"
+  ],
+  "answers": {
+    "business_type": "retail_ecommerce",
+    "goal": "dcf_valuation",
+    "stage": "growing",
+    "horizon_years": 5,
+    "granularity": "annual",
+    "tier": "full",
+    "business_name": "North Peak Outdoors",
+    "key_numbers": {},
+    "notes": "We sell outdoor gear online and through two pop-up stores. Web traffic is 42,000 visits a month growing 25% a year, conversion 2.1%, average order $96 with 12% returns. Repeat purchases add about 0.4 extra orders per customer. Product cost is 48% of sales, fulfilment $7.50 an order, payment fees 2.9%. Ad spend is $18,000 a month at $38 per order. Q4 is about 35% stronger than an average month. We plan to open a permanent 2,400 sq ft store at $32 per sq ft per year with a $140,000 fit-out and expect sales of $350 per sq ft. We want a five year view for a valuation discussion."
+  }
+}

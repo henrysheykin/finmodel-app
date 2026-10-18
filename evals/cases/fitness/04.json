@@ -1,0 +1,20 @@
+{
+  "id": "fitness-04",
+  "industry": "fitness",
+  "tags": [
+    "locked-numbers"
+  ],
+  "answers": {
+    "business_type": "fitness",
+    "goal": "investor_pitch",
+    "stage": "established",
+    "horizon_years": 3,
+    "granularity": "annual",
+    "tier": "light",
+    "business_name": "Barre & Beyond",
+    "key_numbers": {
+      "fee": 89.0
+    },
+    "notes": "Ten years in the neighborhood, steady membership, fee $89 a month. Little marketing needed. Conservative please."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "cafe-10",
+  "industry": "cafe",
+  "tags": [
+    "financing"
+  ],
+  "answers": {
+    "business_type": "restaurant_cafe",
+    "goal": "startup_breakeven",
+    "stage": "planning",
+    "horizon_years": 5,
+    "granularity": "annual",
+    "tier": "light",
+    "business_name": "Greenhouse Coffee",
+    "key_numbers": {},
+    "notes": "Opening in March next year. We have a $120,000 bank loan at 8% over 5 years plus $60,000 of our own savings for the fit-out. Expect about 120 customers a day after a six month ramp."
+  }
+}

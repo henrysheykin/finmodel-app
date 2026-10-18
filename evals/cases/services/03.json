@@ -1,0 +1,18 @@
+{
+  "id": "services-03",
+  "industry": "services",
+  "tags": [
+    "long-notes"
+  ],
+  "answers": {
+    "business_type": "professional_services",
+    "goal": "dcf_valuation",
+    "stage": "growing",
+    "horizon_years": 5,
+    "granularity": "annual",
+    "tier": "full",
+    "business_name": "Cedar Legal Ops",
+    "key_numbers": {},
+    "notes": "We are a 22 person engineering consultancy. Four partners bill at $400 an hour with 50% utilisation, twelve staff engineers bill at $190 with 78% utilisation, and we use about 300 contractor hours a month at $160 billed and $100 cost. Retainers make up 45% of revenue with a 10% discount. Realisation is around 91% because of write-offs. Business development is two people. Rent is covered by the office line at about $9,000 a month. We expect rate increases of 4% a year and want to buy a competitor in year three, so we need a valuation-ready five year model."
+  }
+}

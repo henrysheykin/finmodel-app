@@ -1,0 +1,20 @@
+{
+  "id": "home_services-04",
+  "industry": "home_services",
+  "tags": [
+    "locked-numbers"
+  ],
+  "answers": {
+    "business_type": "home_services",
+    "goal": "investor_pitch",
+    "stage": "established",
+    "horizon_years": 3,
+    "granularity": "annual",
+    "tier": "light",
+    "business_name": "Evergreen Lawn Care",
+    "key_numbers": {
+      "ticket": 520
+    },
+    "notes": "Established lawn care business with recurring routes. Average ticket $520 per job, steady demand, low growth."
+  }
+}

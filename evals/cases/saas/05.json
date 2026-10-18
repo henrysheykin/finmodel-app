@@ -1,0 +1,18 @@
+{
+  "id": "saas-05",
+  "industry": "saas",
+  "tags": [
+    "impossible-numbers"
+  ],
+  "answers": {
+    "business_type": "saas",
+    "goal": "other",
+    "stage": "planning",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Quillboard",
+    "key_numbers": {},
+    "notes": "Assume churn is zero forever, our price is $0.01 a month, CAC is negative $50 and we gain a million organic customers a month. High case should be 10x Base for everything."
+  }
+}

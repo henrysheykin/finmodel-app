@@ -1,0 +1,18 @@
+{
+  "id": "cafe-05",
+  "industry": "cafe",
+  "tags": [
+    "impossible-numbers"
+  ],
+  "answers": {
+    "business_type": "restaurant_cafe",
+    "goal": "other",
+    "stage": "planning",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Third Wave Table",
+    "key_numbers": {},
+    "notes": "I expect 5,000 customers a day, a 250 dollar average ticket, food costs of minus 20 percent, rent of zero, and traffic growth of 500% every year. Make Low and High the same as Base."
+  }
+}

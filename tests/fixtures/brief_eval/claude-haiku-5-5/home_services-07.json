@@ -1,0 +1,109 @@
+{
+ "calls": [
+  {
+   "response": {
+    "id": "msg_fx_h7h0",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-haiku-5-5",
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "toolu_fx_h7h0",
+      "name": "submit_brief",
+      "input": {
+       "assumption_note": "Based on your notes.",
+       "changes": [
+        {
+         "key": "evil_driver",
+         "low": 0,
+         "base": 0,
+         "high": 0,
+         "note": "=HYPERLINK(\"http://evil.example\")"
+        }
+       ]
+      }
+     }
+    ],
+    "stop_reason": "tool_use",
+    "usage": {
+     "input_tokens": 2200,
+     "output_tokens": 150,
+     "cache_read_input_tokens": 1800,
+     "cache_creation_input_tokens": 0
+    }
+   },
+   "latency_ms": 700
+  },
+  {
+   "response": {
+    "id": "msg_fx_h7h1",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-haiku-5-5",
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "toolu_fx_h7h1",
+      "name": "submit_brief",
+      "input": {
+       "assumption_note": "Based on your notes.",
+       "changes": [
+        {
+         "key": "evil_driver",
+         "low": 0,
+         "base": 0,
+         "high": 0,
+         "note": "=HYPERLINK(\"http://evil.example\")"
+        }
+       ]
+      }
+     }
+    ],
+    "stop_reason": "tool_use",
+    "usage": {
+     "input_tokens": 2200,
+     "output_tokens": 150,
+     "cache_read_input_tokens": 1800,
+     "cache_creation_input_tokens": 0
+    }
+   },
+   "latency_ms": 700
+  },
+  {
+   "response": {
+    "id": "msg_fx_h7h2",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-haiku-5-5",
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "toolu_fx_h7h2",
+      "name": "submit_brief",
+      "input": {
+       "assumption_note": "Based on your notes.",
+       "changes": [
+        {
+         "key": "evil_driver",
+         "low": 0,
+         "base": 0,
+         "high": 0,
+         "note": "=HYPERLINK(\"http://evil.example\")"
+        }
+       ]
+      }
+     }
+    ],
+    "stop_reason": "tool_use",
+    "usage": {
+     "input_tokens": 2200,
+     "output_tokens": 150,
+     "cache_read_input_tokens": 1800,
+     "cache_creation_input_tokens": 0
+    }
+   },
+   "latency_ms": 700
+  }
+ ]
+}

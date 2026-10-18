@@ -1,0 +1,22 @@
+{
+  "id": "services-02",
+  "industry": "services",
+  "tags": [
+    "locked-numbers",
+    "short-notes"
+  ],
+  "answers": {
+    "business_type": "professional_services",
+    "goal": "startup_breakeven",
+    "stage": "early",
+    "horizon_years": 1,
+    "granularity": "monthly",
+    "tier": "light",
+    "business_name": "Brightline Consulting",
+    "key_numbers": {
+      "senior_rate": 300,
+      "staff_util": 0.7
+    },
+    "notes": "First year of the agency. Senior rate is $300 an hour, consultants are about 70% utilised. We use some contractors at $150 an hour billed out and $90 an hour paid."
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "retail-04",
+  "industry": "retail",
+  "tags": [
+    "locked-numbers"
+  ],
+  "answers": {
+    "business_type": "retail_ecommerce",
+    "goal": "investor_pitch",
+    "stage": "established",
+    "horizon_years": 3,
+    "granularity": "annual",
+    "tier": "light",
+    "business_name": "Kettle & Co Home",
+    "key_numbers": {
+      "cogs_pct": 0.4
+    },
+    "notes": "Home goods brand, five years old, mostly wholesale to boutiques plus our web shop. Product cost is about 40% of revenue."
+  }
+}

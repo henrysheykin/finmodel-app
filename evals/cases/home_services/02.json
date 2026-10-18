@@ -1,0 +1,22 @@
+{
+  "id": "home_services-02",
+  "industry": "home_services",
+  "tags": [
+    "locked-numbers",
+    "short-notes"
+  ],
+  "answers": {
+    "business_type": "home_services",
+    "goal": "startup_breakeven",
+    "stage": "early",
+    "horizon_years": 1,
+    "granularity": "monthly",
+    "tier": "light",
+    "business_name": "CoolAir HVAC",
+    "key_numbers": {
+      "ticket": 380,
+      "jobs_per_tech": 2.2
+    },
+    "notes": "Started HVAC repair 7 months ago with 2 technicians. Average ticket is $380, 2.2 jobs per technician per working day. Materials run about 25% of revenue."
+  }
+}

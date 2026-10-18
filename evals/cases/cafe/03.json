@@ -1,0 +1,18 @@
+{
+  "id": "cafe-03",
+  "industry": "cafe",
+  "tags": [
+    "long-notes"
+  ],
+  "answers": {
+    "business_type": "restaurant_cafe",
+    "goal": "dcf_valuation",
+    "stage": "growing",
+    "horizon_years": 5,
+    "granularity": "annual",
+    "tier": "full",
+    "business_name": "Harbor Roasters",
+    "key_numbers": {},
+    "notes": "We run two cafes in a mid-sized college town and are opening a third next year. Each location does roughly 170 customers a day on weekdays and 220 on weekends; the average ticket is $8.40 and rising about 4% a year as we add food. Food and beverage costs are close to 31% of sales after we moved to a local roaster. Rent is $5,800 per location and we pay about $2,600 a month for utilities, insurance and card fees together. Marketing is mostly Instagram and a loyalty app, around 2% of sales. The third location needs about $210,000 of build-out and equipment. Foot traffic grows with the semester calendar, so summers are slow, and we expect modest but steady traffic growth of 5% a year. We want a model we can show to a bank for an equipment loan."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "retail-05",
+  "industry": "retail",
+  "tags": [
+    "impossible-numbers"
+  ],
+  "answers": {
+    "business_type": "retail_ecommerce",
+    "goal": "other",
+    "stage": "planning",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Leaf Society Plants",
+    "key_numbers": {},
+    "notes": "Conversion will be 60%, average order $50,000, returns negative 30%, product cost 5% of sales, and traffic doubles every month for five years. Fulfilment is free."
+  }
+}

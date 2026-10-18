@@ -17,7 +17,8 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 > Customer login = passwordless magic link by email (ADR-006).
 
 ### E23 — Eval: which model fills the brief
-- status: IN_PROGRESS (2026-10-18)
+- status: NEEDS_HENRY: live run needs `ANTHROPIC_API_KEY` (HUMAN_TODO A1). continue: harness merged (PR #40);
+  run `python -m evals.brief_model_eval --record evals/runs/<date> --memo`, commit the filled memo, then DONE.
 - Model: sonnet
 - depends: E08 (LLM brief builder, done #39), BRIEF_MODEL plumbing (token-budget PR, done)
 - skills: product-self-knowledge, engineering:testing-strategy

@@ -1,0 +1,20 @@
+{
+  "id": "services-04",
+  "industry": "services",
+  "tags": [
+    "locked-numbers"
+  ],
+  "answers": {
+    "business_type": "professional_services",
+    "goal": "investor_pitch",
+    "stage": "established",
+    "horizon_years": 3,
+    "granularity": "annual",
+    "tier": "light",
+    "business_name": "Atlas Design Studio",
+    "key_numbers": {
+      "senior_rate": 420
+    },
+    "notes": "Accounting practice, 14 years old. Partner rate $420 an hour, steady client base, little growth. Keep it conservative."
+  }
+}

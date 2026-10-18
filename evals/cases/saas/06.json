@@ -1,0 +1,18 @@
+{
+  "id": "saas-06",
+  "industry": "saas",
+  "tags": [
+    "foreign-language"
+  ],
+  "answers": {
+    "business_type": "saas",
+    "goal": "revenue_profit",
+    "stage": "early",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "RouteWise",
+    "key_numbers": {},
+    "notes": "Software fuer Physiotherapiepraxen. Wir verlangen 89 Euro pro Praxis und Monat und rechnen mit etwa 2,5 Prozent Kuendigungen pro Monat. Das Marketingbudget liegt bei 2.000 Euro monatlich."
+  }
+}

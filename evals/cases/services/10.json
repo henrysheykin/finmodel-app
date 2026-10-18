@@ -1,0 +1,18 @@
+{
+  "id": "services-10",
+  "industry": "services",
+  "tags": [
+    "financing"
+  ],
+  "answers": {
+    "business_type": "professional_services",
+    "goal": "startup_breakeven",
+    "stage": "planning",
+    "horizon_years": 5,
+    "granularity": "annual",
+    "tier": "light",
+    "business_name": "Harper & Lane",
+    "key_numbers": {},
+    "notes": "We open the firm in April. Two founders put in $80,000 and we have a $50,000 credit line. Rates start at $250 an hour for senior work, and we expect to hire the first consultant after six months."
+  }
+}

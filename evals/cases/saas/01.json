@@ -1,0 +1,18 @@
+{
+  "id": "saas-01",
+  "industry": "saas",
+  "tags": [
+    "short-notes"
+  ],
+  "answers": {
+    "business_type": "saas",
+    "goal": "revenue_profit",
+    "stage": "planning",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "ClinicDesk",
+    "key_numbers": {},
+    "notes": "B2B scheduling software for dental clinics. We plan to charge $149 per clinic per month and expect about 3% monthly churn. Marketing budget $3,000 a month."
+  }
+}

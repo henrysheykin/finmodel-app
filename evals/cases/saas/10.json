@@ -1,0 +1,18 @@
+{
+  "id": "saas-10",
+  "industry": "saas",
+  "tags": [
+    "financing"
+  ],
+  "answers": {
+    "business_type": "saas",
+    "goal": "startup_breakeven",
+    "stage": "planning",
+    "horizon_years": 5,
+    "granularity": "annual",
+    "tier": "light",
+    "business_name": "ParcelPing",
+    "key_numbers": {},
+    "notes": "We start building in January and launch in June. We raised a $250,000 pre-seed and will hire two engineers in the first six months. Target price $59 per seat per month, we expect slow growth for the first year."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "retail-10",
+  "industry": "retail",
+  "tags": [
+    "financing"
+  ],
+  "answers": {
+    "business_type": "retail_ecommerce",
+    "goal": "startup_breakeven",
+    "stage": "planning",
+    "horizon_years": 5,
+    "granularity": "annual",
+    "tier": "light",
+    "business_name": "Harvest Pantry",
+    "key_numbers": {},
+    "notes": "We launch the store in September. A $90,000 loan at 9% for inventory and about $20,000 of our own money. Expect traffic of 3,000 visits in the first month, with paid ads of $1,500 monthly."
+  }
+}

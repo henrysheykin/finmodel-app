@@ -1,0 +1,18 @@
+{
+  "id": "fitness-10",
+  "industry": "fitness",
+  "tags": [
+    "financing"
+  ],
+  "answers": {
+    "business_type": "fitness",
+    "goal": "startup_breakeven",
+    "stage": "planning",
+    "horizon_years": 5,
+    "granularity": "annual",
+    "tier": "light",
+    "business_name": "Stride Run Club",
+    "key_numbers": {},
+    "notes": "We open in September after a $150,000 equipment loan at 8.5% and $80,000 of our own money for the fit-out. We expect about 100 founding members before opening and want 350 members within a year."
+  }
+}

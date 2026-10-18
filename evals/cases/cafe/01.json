@@ -1,0 +1,18 @@
+{
+  "id": "cafe-01",
+  "industry": "cafe",
+  "tags": [
+    "short-notes"
+  ],
+  "answers": {
+    "business_type": "restaurant_cafe",
+    "goal": "revenue_profit",
+    "stage": "planning",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Corner Bean",
+    "key_numbers": {},
+    "notes": "Small neighborhood cafe, 900 sq ft, average ticket about $7.50, rent $4,200 a month, open 7 days."
+  }
+}

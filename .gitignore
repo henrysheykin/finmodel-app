@@ -12,3 +12,4 @@ var/
 *.db
 /build/
 /dist/
+/evals/runs/

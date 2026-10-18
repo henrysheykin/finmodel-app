@@ -1,0 +1,23 @@
+{
+  "id": "home_services-08",
+  "industry": "home_services",
+  "tags": [
+    "locked-numbers",
+    "conflicting-notes"
+  ],
+  "answers": {
+    "business_type": "home_services",
+    "goal": "revenue_profit",
+    "stage": "growing",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "PestAway Services",
+    "key_numbers": {
+      "ticket": 460,
+      "cpl": 62,
+      "materials_pct": 0.22
+    },
+    "notes": "Ticket is about $460 now and cost per lead is $62, but I put $520 in the form because that is our target. Materials around 22%. We sell a maintenance plan at $18 a month."
+  }
+}
