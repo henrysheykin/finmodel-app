@@ -267,7 +267,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: every page in content/seo builds and passes the SEO tests.
 
 ### E17 — Hardening: end-to-end, security, performance
-- status: TODO
+- status: IN_PROGRESS (2026-10-18, scheduled E run)
 - depends: E10, E11, E12, E14, E15
 - skills: engineering:code-review, engineering:testing-strategy, engineering:tech-debt
 - do: full E2E (landing → wizard → Stripe test → worker → email → download) in CI,
