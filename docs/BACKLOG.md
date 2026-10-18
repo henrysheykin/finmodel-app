@@ -397,6 +397,16 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   `engine/templates/*.py` and `docs/templates/*.md`; samples from `samples/`.
 - done when: 5 files merged, each 900–1400 words.
 
+### M12 — SEO pages, batch 4 (real estate, fitness, home services, goal modules)
+- status: IN_PROGRESS (2026-10-18)
+- depends: M11
+- skills: small-business:seo-ai-visibility
+- do: on Henry's request (2026-10-18). 5 pages: rental property pro forma for lenders (#8),
+  DCF valuation for small-business owners (#14), gym / fitness studio projections, home services
+  (trades) projections, startup costs and funding need + break-even guide. Refresh older pages
+  that still say "only café is available".
+- done when: 5 files merged, `tests/test_seo.py` green.
+
 ---
 
 ## Track P — Project management (weekly, Monday)
