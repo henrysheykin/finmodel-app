@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "finmodel-app"
-version = "0.0.1"
+version = "0.1.0"
 description = "Custom Excel financial models from a validated brief"
 requires-python = ">=3.12,<3.13"
 dependencies = [

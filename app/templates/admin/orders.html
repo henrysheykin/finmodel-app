@@ -6,6 +6,15 @@
     <h1>Orders</h1>
     <form method="post" action="/admin/logout"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="btn btn--ghost" type="submit">Sign out</button></form>
   </div>
+  {% if readiness %}
+  <section class="readiness" aria-labelledby="readiness-h">
+    <h2 id="readiness-h">Before live payments ({{ readiness|length }})</h2>
+    <ul>
+      {% for i in readiness %}<li class="readiness__{{ i.level }}"><strong>{{ i.level|upper }} {{ i.key }}</strong> — {{ i.message }}</li>{% endfor %}
+    </ul>
+    <p class="hint">Steps: docs/RUNBOOK_GO_LIVE.md. Version {{ version }}.</p>
+  </section>
+  {% endif %}
   <dl class="stats">
     <div><dt>Paid today</dt><dd>{{ c.today[0] }} · {{ c.today[1] }}</dd></div>
     <div><dt>Paid, last 7 days</dt><dd>{{ c.week[0] }} · {{ c.week[1] }}</dd></div>

@@ -19,6 +19,8 @@ if [ "$(id -u)" = "0" ]; then
 fi
 
 python -m app.manage check
+# go-live readiness in the deploy log; informational, never stops the container
+python -m app.manage preflight || true
 python -m app.manage migrate
 
 trap 'kill 0' TERM INT
