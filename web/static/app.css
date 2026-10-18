@@ -45,8 +45,9 @@ legend, .field > label { font-weight: 600; display: block; margin-bottom: 8px; p
 .choice:has(input:checked) { border: 2px solid var(--pine); padding: 11px 13px; }
 .choice input, .plan input, .toggle input { margin-top: 5px; accent-color: var(--pine); flex: none; }
 .toggle { margin-bottom: 16px; }
-input[type=text], input[type=email] { font: inherit; width: 100%; max-width: 420px; padding: 10px 12px;
+input[type=text], input[type=email], textarea { font: inherit; width: 100%; max-width: 420px; padding: 10px 12px;
   border: 1px solid var(--panel-rule); border-radius: 6px; color: var(--ink); background: #fff; }
+textarea { max-width: 560px; resize: vertical; }
 .kn__input { display: flex; align-items: center; gap: 8px; max-width: 420px; }
 .kn__input input { color: var(--input); font-weight: 500; text-align: right; }
 .unit { font-size: 14px; color: var(--text-3); min-width: 64px; }

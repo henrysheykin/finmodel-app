@@ -1,8 +1,8 @@
 """Claude API plumbing for the brief builder (E08): model choice, prompt caching, usage logging.
 
-Nothing here calls the network by itself. ``build_brief_request`` returns the keyword arguments for
-``client.messages.create``; ``call_messages`` times one call on any client with that method (the
-Anthropic SDK in production, a fake in tests) and returns the response with its token usage.
+``build_brief_request`` returns the keyword arguments for ``client.messages.create``; ``call_messages``
+times one call on any client with that method (``AnthropicHTTPClient`` in production, a fake in tests)
+and returns the response with its token usage. Only ``AnthropicHTTPClient`` touches the network.
 
 Model choice (``BRIEF_MODEL``): unset = the LLM path is off and briefs come from the deterministic
 prefill (``app.briefing.PrefillBriefSource``), which is how the product works today. Which model
@@ -15,6 +15,8 @@ import logging
 import time
 from dataclasses import asdict, dataclass
 from typing import Any
+
+import httpx
 
 log = logging.getLogger("llm")
 
@@ -34,6 +36,10 @@ CHARS_PER_TOKEN = 4
 
 class LLMConfigError(ValueError):
     pass
+
+
+class LLMTransportError(RuntimeError):
+    """The API call itself failed (network, timeout, HTTP error). Never carries the API key."""
 
 
 def validate_brief_model(value: str) -> str:
@@ -94,9 +100,22 @@ class LLMUsage:
     cache_read_input_tokens: int
     cache_creation_input_tokens: int
     latency_ms: int
+    #: API calls behind these numbers (1 + retries); usage of all of them is summed
+    calls: int = 1
 
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+    def __add__(self, other: LLMUsage) -> LLMUsage:
+        return LLMUsage(
+            model=self.model,
+            input_tokens=self.input_tokens + other.input_tokens,
+            output_tokens=self.output_tokens + other.output_tokens,
+            cache_read_input_tokens=self.cache_read_input_tokens + other.cache_read_input_tokens,
+            cache_creation_input_tokens=self.cache_creation_input_tokens + other.cache_creation_input_tokens,
+            latency_ms=self.latency_ms + other.latency_ms,
+            calls=self.calls + other.calls,
+        )
 
 
 def _field(usage: Any, name: str) -> int:
@@ -128,7 +147,7 @@ def log_brief_usage(order_id: str, usage: LLMUsage) -> None:
     """One line per order in the app log (Railway log view), searchable by ``brief_llm order=<id>``."""
     log.info(
         "brief_llm order=%s model=%s input_tokens=%d output_tokens=%d cache_read_input_tokens=%d"
-        " cache_creation_input_tokens=%d latency_ms=%d",
+        " cache_creation_input_tokens=%d latency_ms=%d calls=%d",
         order_id,
         usage.model,
         usage.input_tokens,
@@ -136,13 +155,64 @@ def log_brief_usage(order_id: str, usage: LLMUsage) -> None:
         usage.cache_read_input_tokens,
         usage.cache_creation_input_tokens,
         usage.latency_ms,
+        usage.calls,
     )
 
 
+#: Messages API endpoint and the API version header value (stable since 2023-06-01)
+ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
+ANTHROPIC_VERSION = "2023-06-01"
+
+
+class _Messages:
+    def __init__(self, owner: AnthropicHTTPClient) -> None:
+        self._owner = owner
+
+    def create(self, **request: Any) -> dict[str, Any]:
+        return self._owner.post(request)
+
+
+class AnthropicHTTPClient:
+    """Minimal Messages API client over httpx (already a dependency), shaped like the SDK:
+    ``client.messages.create(**request)`` returns the response JSON as a dict.
+
+    No retries here: the brief builder owns the retry budget. Errors become ``LLMTransportError``
+    with the HTTP status and the API's error type only (never the request headers).
+    """
+
+    def __init__(self, api_key: str, *, timeout: float = 30.0, transport: httpx.BaseTransport | None = None) -> None:
+        if not api_key:
+            raise LLMConfigError("ANTHROPIC_API_KEY is not set")
+        self._http = httpx.Client(
+            timeout=timeout,
+            transport=transport,
+            headers={"x-api-key": api_key, "anthropic-version": ANTHROPIC_VERSION, "content-type": "application/json"},
+        )
+        self.messages = _Messages(self)
+
+    def post(self, request: dict[str, Any]) -> dict[str, Any]:
+        try:
+            r = self._http.post(ANTHROPIC_URL, json=request)
+        except httpx.HTTPError as exc:
+            raise LLMTransportError(f"Claude API unreachable: {type(exc).__name__}") from None
+        if r.status_code != 200:
+            try:
+                kind = r.json().get("error", {}).get("type", "")
+            except ValueError:
+                kind = ""
+            raise LLMTransportError(f"Claude API HTTP {r.status_code} {kind}".strip())
+        try:
+            return r.json()
+        except ValueError:
+            raise LLMTransportError("Claude API returned a non-JSON body") from None
+
+
 __all__ = [
+    "AnthropicHTTPClient",
     "BRIEF_MODELS",
     "MIN_CACHEABLE_TOKENS",
     "LLMConfigError",
+    "LLMTransportError",
     "LLMUsage",
     "build_brief_request",
     "cacheable",
