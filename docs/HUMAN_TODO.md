@@ -36,11 +36,9 @@ the answer next to the item (agents read this file every run).
 - [x] D10 Customer login + priority — Henry 2026-10-17: **magic link by email**; build the working app
       (login, payments, download) before more templates (ADR-006, BACKLOG priority note).
 
-- [x] D9 Failed-build policy — Henry 2026-10-18: always deliver. A model that fails the checks is never sent; we fix it
-      and send a passing model within 2 business days (admin → Re-build), or refund in full if we cannot or the customer
-      prefers. Written into `content/email/build-failed.md` and `content/legal/refunds.md`. (Failures are rare: every model
-      is built from the customer's own numbers, so there is no ready-made copy to send; the checks exist to catch a
-      template bug before a customer sees it.)
+- [x] D9 Failed-build policy — Henry 2026-10-18: no email to the customer; only Henry gets an alert ("Build failed",
+      to `ADMIN_EMAIL`) and handles it from /admin (Re-build or Refund). refunds.md promises only a full refund if a model
+      that passes the checks cannot be delivered.
 
 - [ ] D11 Five-model pack and Light→Full upgrade (from E13): the site offers both, but there is no checkout for them
       yet — the landing says "write to us". Keep them manual (you invoice by Stripe payment link / refund the

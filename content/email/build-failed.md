@@ -2,6 +2,7 @@
 id: build-failed
 trigger: job status becomes failed
 type: transactional
+status: not sent (D9, 2026-10-18: failures go to the admin alert only)
 subject: "Your model didn't pass our checks, so we haven't sent it"
 preheader: "Order {{ order_id }}. Nothing for you to do. Here's what happens next."
 ---

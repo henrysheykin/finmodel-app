@@ -31,8 +31,8 @@ are on and this is still wrong — fix it at once.
 
 - **R1 CFO sign-off** of the templates you will sell (HUMAN_TODO R1). A template you have not signed
   off can stay listed; just do not promote it.
-- **D9 failed-build policy** — decided 2026-10-18: the customer is told the model is being fixed and
-  gets a passing one within 2 business days (`/admin` → Re-build), or a full refund.
+- **D9 failed-build policy** — decided 2026-10-18: the customer gets no email; you get a "Build failed"
+  alert and choose `/admin` → Re-build or Refund.
 - **Tax**: VAT / sales tax with your tax adviser (HUMAN_TODO D2) — Stripe charges the price as is.
 - **D11** pack and upgrade stay manual ("write to us") unless you decide otherwise.
 
