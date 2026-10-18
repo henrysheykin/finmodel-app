@@ -12,7 +12,7 @@ After a refund, please delete your copies of the model; the licence in our [Term
 
 # If we cannot deliver
 
-If your model does not pass our checks or cannot be built, we email you. We then either deliver a corrected model or refund you in full — you choose which, and if we cannot deliver a correct model we always refund.
+If your model does not pass our checks, we do not send it. We email you, fix it and send you a model that passes within 2 business days. If we cannot, or if you would rather not wait, we refund you in full.
 
 # Duplicate payments
 
@@ -28,4 +28,4 @@ This policy is in addition to your rights by law. If you are a consumer in the E
 
 # Contact
 
-[support@startup-model.com](mailto:support@startup-model.com) · [OPERATOR_NAME], [OPERATOR_ADDRESS], Spain
+[support@startup-model.com](mailto:support@startup-model.com) · StartupModels LLC, Wyoming, United States

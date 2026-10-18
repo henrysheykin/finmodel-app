@@ -17,27 +17,18 @@ from tests.test_golive import LIVE, email_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = ("privacy", "terms", "refunds")
-FILLED = {"[OPERATOR_NAME]": "Jane Doe", "[OPERATOR_TAX_ID]": "X0000000X", "[OPERATOR_ADDRESS]": "Calle 1, Madrid"}
+LEGAL = ROOT / "content" / "legal"
 
 
 def text(page):
     return (ROOT / "content" / "legal" / f"{page}.md").read_text("utf-8")
 
 
-def filled(tmp_path):
-    d = tmp_path / "legal"
-    d.mkdir()
+def test_texts_have_no_placeholders_and_name_the_operator():
     for p in PAGES:
-        t = text(p)
-        for k, v in FILLED.items():
-            t = t.replace(k, v)
-        (d / f"{p}.md").write_text(t, encoding="utf-8")
-    return d
-
-
-def test_only_operator_details_are_left_to_fill():
-    for p in PAGES:
-        assert set(landing.LEGAL_PLACEHOLDER.findall(text(p))) <= set(FILLED), p
+        assert not landing.LEGAL_PLACEHOLDER.search(text(p)), p
+        assert "StartupModels LLC" in text(p) and "Wyoming" in text(p), p
+    assert "Spain" not in text("terms") + text("privacy")
 
 
 def test_page_with_placeholders_is_not_published(client, tmp_path, monkeypatch):
@@ -48,22 +39,26 @@ def test_page_with_placeholders_is_not_published(client, tmp_path, monkeypatch):
     assert "/terms" not in client.get("/sitemap.xml").text
 
 
-def test_filled_texts_render_and_are_indexed(client, tmp_path, monkeypatch):
-    monkeypatch.setattr(landing, "LEGAL", filled(tmp_path))
+def test_texts_render_and_are_indexed(client):
     for p in PAGES:
         r = client.get(f"/{p}")
         assert r.status_code == 200 and "being prepared" not in r.text and "noindex" not in r.text
-        assert "Jane Doe" in r.text and "mailto:support@startup-model.com" in r.text
+        assert "StartupModels LLC" in r.text and "mailto:support@startup-model.com" in r.text
         assert not re.search(r"\[[A-Z_]{4,}\]", r.text)
     sitemap = client.get("/sitemap.xml").text
     assert all(f"/{p}" in sitemap for p in PAGES)
 
 
 def test_golive_legal_check_follows_placeholders(tmp_path):
-    items = {i.key: i for i in golive.readiness(LIVE, ROOT / "content" / "legal", email_dir(tmp_path))}
-    assert items["legal"].level == golive.FAIL and "PLACEHOLDERS" in items["legal"].message
-    items = {i.key: i for i in golive.readiness(LIVE, filled(tmp_path), email_dir(tmp_path / "e"))}
+    d = tmp_path / "legal"
+    d.mkdir()
+    for p in PAGES:
+        (d / f"{p}.md").write_text(text(p), encoding="utf-8")
+    items = {i.key: i for i in golive.readiness(LIVE, d, email_dir(tmp_path))}
     assert items["legal"].level == golive.OK
+    (d / "terms.md").write_text("Seller: [OPERATOR_NAME]\n", encoding="utf-8")
+    items = {i.key: i for i in golive.readiness(LIVE, d, email_dir(tmp_path / "e"))}
+    assert items["legal"].level == golive.FAIL and "PLACEHOLDERS" in items["legal"].message
 
 
 def test_texts_match_what_the_site_promises():

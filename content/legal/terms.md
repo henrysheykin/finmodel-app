@@ -4,7 +4,7 @@ These terms apply when you use startup-model.com and buy a financial model from 
 
 # Who we are
 
-StartupModel is operated by [OPERATOR_NAME], tax ID [OPERATOR_TAX_ID], [OPERATOR_ADDRESS], Spain ("we", "us"). Contact: [support@startup-model.com](mailto:support@startup-model.com).
+StartupModel is operated by StartupModels LLC, a limited liability company organised in Wyoming, United States ("we", "us"). Contact: [support@startup-model.com](mailto:support@startup-model.com).
 
 # What we sell
 
@@ -50,4 +50,4 @@ We work to keep the site available but do not promise uninterrupted access. We m
 
 # Law and disputes
 
-These terms are governed by Spanish law. If you are a consumer, you also keep the protection of the mandatory laws of the country where you live, and you may bring a claim in the courts of that country. Before going to court, please write to us — most issues can be solved quickly. We do not take part in alternative dispute resolution procedures before a consumer arbitration body.
+These terms are governed by the laws of the State of Wyoming, United States. If you are a consumer, you also keep the protection of the mandatory laws of the country where you live, and you may bring a claim in the courts of that country. Before going to court, please write to us — most issues can be solved quickly. We do not take part in alternative dispute resolution procedures before a consumer arbitration body.

@@ -4,7 +4,7 @@ This policy explains what personal data StartupModel (startup-model.com) collect
 
 # Who is responsible
 
-The data controller is [OPERATOR_NAME], tax ID [OPERATOR_TAX_ID], [OPERATOR_ADDRESS], Spain ("StartupModel", "we"). Contact for anything about your data: [support@startup-model.com](mailto:support@startup-model.com).
+The data controller is StartupModels LLC, a limited liability company organised in Wyoming, United States ("StartupModel", "we"). Contact for anything about your data: [support@startup-model.com](mailto:support@startup-model.com).
 
 # What we collect
 
@@ -34,13 +34,13 @@ We use these service providers. Each processes data only on our instructions und
 - **Cloudflare** — domain, DNS, network security and delivery of the site.
 - **Resend** — sending our emails.
 
-Some of these providers process data in the United States or other countries outside the European Economic Area. Such transfers rely on the EU–US Data Privacy Framework where the provider is certified, or on the European Commission's Standard Contractual Clauses.
+We are based in the United States, so your data is processed in the United States and in the other countries where these providers operate. Where a provider receives personal data of people in the European Economic Area or the United Kingdom, it is protected by the EU–US Data Privacy Framework where the provider is certified, or by the European Commission's Standard Contractual Clauses.
 
 We may disclose data when the law requires it, for example to a tax authority or a court.
 
 # How long we keep it
 
-- Paid orders and payment and refund records: as long as tax and accounting law requires (in Spain generally 6 years), then deleted.
+- Paid orders and payment and refund records: as long as tax and accounting law requires (generally up to 7 years), then deleted.
 - Model files and wizard answers: while your order exists, so you can download or re-build the model; you can ask us to delete them earlier.
 - Orders that were never paid: deleted after 12 months.
 - Sign-in links expire after 15 minutes and sessions after 30 days or when you sign out; their records are deleted after 12 months.
@@ -50,7 +50,7 @@ We may disclose data when the law requires it, for example to a tax authority or
 
 You may ask us for access to your data, a copy of it in a portable format, correction, deletion, restriction of processing, and you may object to processing based on legitimate interests. Write to [support@startup-model.com](mailto:support@startup-model.com) from the email address you used; we answer within one month. Some data we must keep for legal reasons (for example payment records) even if you ask us to delete it; we will tell you if that applies.
 
-You also have the right to complain to a data protection authority. In Spain this is the Agencia Española de Protección de Datos ([www.aepd.es](https://www.aepd.es)); you may also contact the authority in the EU country where you live or work.
+If you live in the European Economic Area or the United Kingdom, you also have the right to complain to the data protection authority of the country where you live or work.
 
 # Cookies
 
