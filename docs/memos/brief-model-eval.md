@@ -68,7 +68,8 @@ Live mode needs the key and refuses to start without it (exit status 2); the key
 Options: `--models` (default all three), `--cases` (glob, default `evals/cases/*/*.json`), `--out results.json`
 (per-case results and aggregates), `--memo` (rewrite the table and recommendation below), `--record DIR` (save the
 raw API responses, no headers or key, so the run can be replayed). A run makes up to 3 x 60 builder sessions
-(each up to 3 requests) and rebuilds 180 workbooks in LibreOffice: allow about an hour and a few dollars.
+(each up to 3 requests) and rebuilds 180 workbooks in LibreOffice: rough guess, not measured: about an hour and a few dollars.
+Recordings in `evals/runs/` are git-ignored; commit only the updated memo.
 
 Offline: `python -m evals.brief_model_eval --replay <dir>` runs the whole pipeline on recorded responses. CI does
 this on the small fixtures in `tests/fixtures/brief_eval/`. `--memo` accepts a replay only of a recording made by a

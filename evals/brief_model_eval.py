@@ -265,6 +265,7 @@ class ReplayClient:
         from adapters.llm import LLMTransportError
 
         if not self.entries:
+            self.last_latency_ms = 0
             raise LLMTransportError("replay: more calls than recorded", retryable=False)
         e = self.entries.pop(0)
         self.last_latency_ms = e.get("latency_ms", 0)
@@ -475,13 +476,15 @@ def main(argv: list[str] | None = None) -> int:
         print("--memo from a replay needs a recording of a live run (meta.json live=true)", file=sys.stderr)
         return 2
     cases = load_cases(args.cases)
-    results = run_eval(
-        cases, args.models, make_client=make, record_dir=args.record, progress=lambda m: print(m, flush=True)
-    )
     if args.record:
+        # written first so an interrupted live run still leaves a usable recording
+        args.record.mkdir(parents=True, exist_ok=True)
         (args.record / "meta.json").write_text(
             json.dumps({"live": True, "recorded_at": date.today().isoformat(), "models": args.models}) + "\n"
         )
+    results = run_eval(
+        cases, args.models, make_client=make, record_dir=args.record, progress=lambda m: print(m, flush=True)
+    )
     summary = summarize(results)
     print()
     print(results_table(summary))

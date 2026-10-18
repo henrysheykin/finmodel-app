@@ -65,6 +65,10 @@ webhook, Resend domain).
       E23 memo `docs/memos/brief-model-eval.md`). When on, the wizard shows an optional "notes" field; privacy.md already
       lists Anthropic. Worth a glance before switching on: Anthropic's commercial terms / data processing addendum for
       API data (privacy.md makes no claim about training or retention).
+      E23 (2026-10-18): the eval harness is merged; only the live run is missing, it needs the key. Either (a) add
+      `ANTHROPIC_API_KEY` as an environment variable of the Claude cloud environment these scheduled runs use (never in
+      chat or the repo) and the next E run fills `docs/memos/brief-model-eval.md`, or (b) run it yourself from the repo:
+      `ANTHROPIC_API_KEY=... python -m evals.brief_model_eval --record evals/runs/today --memo` (~1 h, a few $, rough guess).
 - [x] A2 (test mode done 2026-10-17: keys + webhook on the Railway URL, test purchase delivered) Stripe account, test-mode keys first (put them only into Railway env vars). Exact steps (keys, webhook
       endpoint `/webhooks/stripe` and its 3 events, local test with the Stripe CLI): `docs/PAYMENTS.md`.
 - [x] A3 (Resend key done 2026-10-17; domain verified by Henry 2026-10-18 — set `EMAIL_FROM` to `StartupModel <models@startup-model.com>` in Railway if not yet) Email provider (Resend or Postmark) + DNS records for the domain.

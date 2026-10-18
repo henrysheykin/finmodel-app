@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-18 · E · E23 brief-model eval · harness merged, NEEDS_HENRY (live run) · PR: see E23 branch PR
+  `evals/brief_model_eval.py`: 60 committed cases (6 industries × 10) → prefill → E08 builder → validate → worker build + challenger;
+  per model pass share, mean/p95 s, $/order from per-request usage × prices (pricing page 2026-10-18, Haiku >100k surcharge);
+  recommendation = cheapest with pass ≥ opus and p95 ≤ 15 s; replay/record modes; 88 tests on fixtures. Memo skeleton, results pending:
+  no ANTHROPIC_API_KEY in the sandbox → HUMAN_TODO A1. Skill product-self-knowledge not installed (prices from the docs page). Next E: E24.
 - 2026-10-18 · E · E08 brief builder (Claude API) · DONE · https://github.com/henrysheykin/finmodel-app/pull/39
   `engine/brief_builder.py`: prefill brief + customer notes → one forced `submit_brief` tool call that may only change
   driver Low/Base/High (structure, roles, typed key numbers locked); Brief + template validation; errors back as tool_result,
