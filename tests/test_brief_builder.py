@@ -537,3 +537,19 @@ def test_unexpected_error_keeps_the_usage_of_calls_already_made(caplog):
     brief, usage = LLMBriefSource(client, MODEL).build_brief_with_usage(a)
     assert brief == PREFILL.build_brief(a) and "unexpected TypeError" in caplog.text
     assert usage is not None and usage.calls == 1 and usage.input_tokens == 100
+
+
+def test_buffer_echoed_unchanged_by_the_model_still_follows_costs():
+    start = PREFILL.build_brief(Answers(business_type="restaurant_cafe", goal="startup_breakeven"))
+    b0 = start.driver("cash_buffer")
+    echo = ("cash_buffer", b0.low, b0.base, b0.high)
+    brief, _ = merge(start, _changes(_cost_bump(start), echo), ())
+    assert brief.driver("cash_buffer").base > b0.base
+
+
+def test_derived_buffer_stays_inside_its_allowed_range(monkeypatch):
+    import engine.core
+
+    start = PREFILL.build_brief(Answers(business_type="restaurant_cafe", goal="startup_breakeven"))
+    monkeypatch.setattr(engine.core, "reference_run", lambda *a, **k: {"opex_total": [-1e12] * 12})
+    assert refresh_derived(start).driver("cash_buffer").base == 1e9

@@ -342,7 +342,10 @@ def merge(start: Brief, output: Any, locked: Collection[str]) -> tuple[Brief, tu
     except ValidationError as exc:
         raise BriefError("; ".join(e["msg"] for e in exc.errors()[:10])) from None
     # goal defaults computed from other drivers (cash buffer = 3 months of costs) followed the old costs
-    brief = refresh_derived(brief, set(changed) | set(locked))
+    # a key the model sent back unchanged does not count as the model's own value
+    start_vals = {d.key: (d.low, d.base, d.high) for d in start.drivers}
+    moved = {k for k in changed if (by_key[k]["low"], by_key[k]["base"], by_key[k]["high"]) != start_vals[k]}
+    brief = refresh_derived(brief, moved | set(locked))
     get_template(brief.template).validate(brief)
     return brief, tuple(changed)
 
@@ -406,8 +409,6 @@ def build_brief(client: Any, model: str, start: Brief, inp: CustomerInput) -> Bu
                 ]
                 continue
             return BuildResult(brief, usage, changed)
-    except BriefError:
-        raise
     except Exception as exc:
         exc.usage = usage  # type: ignore[attr-defined]  # calls already paid for stay accounted
         raise

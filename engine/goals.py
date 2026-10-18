@@ -101,7 +101,8 @@ def _three_months_opex(brief: Brief) -> float:
     tpl = get_template(brief.template)
     d = {k: v for k, v in brief.values(2).items() if k not in ALL_GOAL_KEYS}
     s = reference_run(d, brief.roles, Timing("monthly", 1), tpl.reference_top)
-    return float(max(0, round(-sum(s["opex_total"]) / 12 * 3, -3)))
+    spec = BREAKEVEN_SPECS[0]  # the buffer stays inside its own allowed range, whatever the costs
+    return float(min(spec.max, max(spec.min, round(-sum(s["opex_total"]) / 12 * 3, -3))))
 
 
 #: goal drivers whose default is computed from other drivers (see ``default_values``)
