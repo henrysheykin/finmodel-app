@@ -398,7 +398,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: 5 files merged, each 900–1400 words.
 
 ### M12 — SEO pages, batch 4 (real estate, fitness, home services, goal modules)
-- status: IN_PROGRESS (2026-10-18)
+- status: DONE (2026-10-18, PR #37)
 - depends: M11
 - skills: small-business:seo-ai-visibility
 - do: on Henry's request (2026-10-18). 5 pages: rental property pro forma for lenders (#8),

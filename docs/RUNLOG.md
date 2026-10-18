@@ -166,3 +166,5 @@ Newest first. One entry per scheduled run: date · track · task · result · PR
 - app/xlview.py + landing.js render the same cells (browser test compares); data /preview/workbook.json?v=<hash>.
 - Engine: scenario-cell validation now has an input message. PR https://github.com/henrysheykin/finmodel-app/pull/30 (669 tests).
 - For Henry: workbook title/section bands are still navy (#1F3864 / #2F5597); the site shows them in ink/pine (ADR-005). Switch the files too?
+
+- 2026-10-18 | M | M12 SEO batch 4 | 5 new pages (rental pro forma, DCF, fitness, home services, break-even), 4 older pages refreshed; test_seo 99 passed | PR #37 | New templates still await CFO review (R1); no public sample with Valuation/Break-even sheets.
