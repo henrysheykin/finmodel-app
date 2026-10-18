@@ -1,0 +1,41 @@
+{
+ "calls": [
+  {
+   "response": {
+    "id": "resp_fx_s5s",
+    "object": "response",
+    "status": "completed",
+    "model": "gpt-6.1-sol",
+    "output": [
+     {
+      "type": "reasoning",
+      "id": "rs_fx_s5s",
+      "summary": [],
+      "encrypted_content": "gAAAA46987b8c7198c4ac4e45ab027b95455365a137aa"
+     },
+     {
+      "type": "function_call",
+      "id": "fc_fx_s5s",
+      "call_id": "call_fx_s5s",
+      "name": "submit_brief",
+      "arguments": "{\"assumption_note\":\"Based on your notes.\",\"changes\":[{\"key\":\"churn_m\",\"low\":0.0345,\"base\":0.03,\"high\":0.0255,\"note\":\"You said churn_m is about 0.03.\"},{\"key\":\"cac\",\"low\":690.0,\"base\":600,\"high\":510.0,\"note\":\"You said cac is about 600.\"}]}",
+      "status": "completed"
+     }
+    ],
+    "usage": {
+     "input_tokens": 4100,
+     "input_tokens_details": {
+      "cached_tokens": 1800,
+      "cache_write_tokens": 0
+     },
+     "output_tokens": 300,
+     "output_tokens_details": {
+      "reasoning_tokens": 0
+     },
+     "total_tokens": 4400
+    }
+   },
+   "latency_ms": 2600
+  }
+ ]
+}

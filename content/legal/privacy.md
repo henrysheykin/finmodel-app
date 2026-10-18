@@ -33,7 +33,7 @@ We use these service providers. Each processes data only on our instructions und
 - **Railway** — hosting of the application, its database and the model files.
 - **Cloudflare** — domain, DNS, network security and delivery of the site.
 - **Resend** — sending our emails.
-- **Anthropic** — its Claude AI model may be used to turn your wizard answers and any notes you type into the starting assumptions of your model. It receives those answers and notes, not your email address or payment details.
+- **OpenAI** — its AI model may be used to turn your wizard answers and any notes you type into the starting assumptions of your model. It receives those answers and notes, not your email address or payment details.
 
 We are based in the United States, so your data is processed in the United States and in the other countries where these providers operate. Where a provider receives personal data of people in the European Economic Area or the United Kingdom, it is protected by the EU–US Data Privacy Framework where the provider is certified, or by the European Commission's Standard Contractual Clauses.
 

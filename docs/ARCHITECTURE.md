@@ -22,16 +22,16 @@ delivered. The prototype of all three is in `poc/` (cafe template: 894 formulas,
 scenario-years match).
 
 Briefs come from `app/briefing.PrefillBriefSource` (template stage defaults + the customer's key
-numbers, no LLM) while `BRIEF_MODEL` is empty. When it is set (plus `ANTHROPIC_API_KEY`),
+numbers, no LLM) while `BRIEF_MODEL` is empty. When it is set (plus `OPENAI_API_KEY`; ADR-012),
 `LLMBriefSource` starts from that same prefill brief and `engine/brief_builder.py` asks the model, in one
-forced `submit_brief` tool call, to change only the drivers the customer's notes give a reason for
+forced `submit_brief` function call (OpenAI Responses API, strict JSON schema), to change only the drivers the customer's notes give a reason for
 (Low / Base / High + a short reason each). Structure (template, tier, horizon, roles) and the customer's
 typed key numbers are never the model's to change. Its answer passes the same `Brief` + template
-validation; errors go back to the model as a tool result, at most 2 retries; after that the prefill brief
+validation; errors go back to the model as the function call's output, at most 2 retries; after that the prefill brief
 is used, so the LLM can make a model better but never block or break one. The wizard shows the
 free-text "notes" field only when the LLM is on. `adapters/llm.py` holds the model choice, the
-prompt-caching layout (fixed prefix = instruction + per-template driver description), a minimal
-httpx Messages API client and the per-order token log (`brief_llm order=… calls=…`).
+prompt-caching layout (fixed prefix = instruction + per-template driver description; caching is automatic),
+a minimal httpx Responses API client (no SDK; no retry on 4xx except 429) and the per-order token log (`brief_llm order=… calls=…`).
 
 ## Stack (ADR-001)
 
@@ -40,7 +40,7 @@ httpx Messages API client and the per-order token log (`brief_llm order=… call
 - Worker = separate process polling a `jobs` table (no Redis).
 - openpyxl to write, LibreOffice headless (`soffice`) to recalculate.
 - Adapters with a fake/console implementation for tests: payments (Stripe Checkout), email (Resend or
-  Postmark), storage (local disk / S3), LLM (Anthropic API; tests use recorded fixtures, never the live API).
+  Postmark), storage (local disk / S3), LLM (OpenAI Responses API, ADR-012; tests use recorded fixtures, never the live API).
 - pytest, ruff; GitHub Actions CI installs LibreOffice and runs everything.
 - One Docker image (app + worker commands). Production: one Railway service + Postgres + `/data` volume
   (ADR-008, `docs/DEPLOY.md`).

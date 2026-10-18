@@ -1,0 +1,41 @@
+{
+ "calls": [
+  {
+   "response": {
+    "id": "resp_fx_c1o",
+    "object": "response",
+    "status": "completed",
+    "model": "gpt-6-astra",
+    "output": [
+     {
+      "type": "reasoning",
+      "id": "rs_fx_c1o",
+      "summary": [],
+      "encrypted_content": "gAAAA9df3dbca9152cbea07078b23876d88d0f2b1b4d1"
+     },
+     {
+      "type": "function_call",
+      "id": "fc_fx_c1o",
+      "call_id": "call_fx_c1o",
+      "name": "submit_brief",
+      "arguments": "{\"assumption_note\":\"Based on your notes.\",\"changes\":[{\"key\":\"ticket\",\"low\":6.375,\"base\":7.5,\"high\":8.625,\"note\":\"You said ticket is about 7.5.\"},{\"key\":\"rent\",\"low\":3780.0,\"base\":4200,\"high\":4620.0,\"note\":\"You said rent is about 4200.\"}]}",
+      "status": "completed"
+     }
+    ],
+    "usage": {
+     "input_tokens": 3800,
+     "input_tokens_details": {
+      "cached_tokens": 1700,
+      "cache_write_tokens": 0
+     },
+     "output_tokens": 380,
+     "output_tokens_details": {
+      "reasoning_tokens": 0
+     },
+     "total_tokens": 4180
+    }
+   },
+   "latency_ms": 4100
+  }
+ ]
+}

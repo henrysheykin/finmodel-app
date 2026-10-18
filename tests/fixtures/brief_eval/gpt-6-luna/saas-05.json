@@ -1,0 +1,78 @@
+{
+ "calls": [
+  {
+   "response": {
+    "id": "resp_fx_s5h1",
+    "object": "response",
+    "status": "completed",
+    "model": "gpt-6-luna",
+    "output": [
+     {
+      "type": "reasoning",
+      "id": "rs_fx_s5h1",
+      "summary": [],
+      "encrypted_content": "gAAAA853f11ac517f6ab7e64d75447f7c917f886cb6e4"
+     },
+     {
+      "type": "function_call",
+      "id": "fc_fx_s5h1",
+      "call_id": "call_fx_s5h1",
+      "name": "submit_brief",
+      "arguments": "{\"assumption_note\":\"Based on your notes.\",\"changes\":[{\"key\":\"churn_m\",\"low\":0.0345,\"base\":0.03,\"high\":0.0255,\"note\":\"You said churn_m is about 0.03.\"},{\"key\":\"cac\",\"low\":-50,\"base\":-50,\"high\":-50,\"note\":\"You said churn_m is about 0.9.\"}]}",
+      "status": "completed"
+     }
+    ],
+    "usage": {
+     "input_tokens": 4100,
+     "input_tokens_details": {
+      "cached_tokens": 1800,
+      "cache_write_tokens": 0
+     },
+     "output_tokens": 300,
+     "output_tokens_details": {
+      "reasoning_tokens": 0
+     },
+     "total_tokens": 4400
+    }
+   },
+   "latency_ms": 800
+  },
+  {
+   "response": {
+    "id": "resp_fx_s5h2",
+    "object": "response",
+    "status": "completed",
+    "model": "gpt-6-luna",
+    "output": [
+     {
+      "type": "reasoning",
+      "id": "rs_fx_s5h2",
+      "summary": [],
+      "encrypted_content": "gAAAAe871178e750f9997048ca06fe8d47c4d0512c71e"
+     },
+     {
+      "type": "function_call",
+      "id": "fc_fx_s5h2",
+      "call_id": "call_fx_s5h2",
+      "name": "submit_brief",
+      "arguments": "{\"assumption_note\":\"Based on your notes.\",\"changes\":[{\"key\":\"churn_m\",\"low\":0.0345,\"base\":0.03,\"high\":0.0255,\"note\":\"You said churn_m is about 0.03.\"},{\"key\":\"cac\",\"low\":690.0,\"base\":600,\"high\":510.0,\"note\":\"You said cac is about 600.\"}]}",
+      "status": "completed"
+     }
+    ],
+    "usage": {
+     "input_tokens": 4500,
+     "input_tokens_details": {
+      "cached_tokens": 1800,
+      "cache_write_tokens": 0
+     },
+     "output_tokens": 320,
+     "output_tokens_details": {
+      "reasoning_tokens": 0
+     },
+     "total_tokens": 4820
+    }
+   },
+   "latency_ms": 1000
+  }
+ ]
+}

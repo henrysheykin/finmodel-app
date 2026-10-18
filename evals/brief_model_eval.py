@@ -1,4 +1,4 @@
-"""E23: which Claude model fills the brief best? (``python -m evals.brief_model_eval``)
+"""E23: which OpenAI model fills the brief best? (``python -m evals.brief_model_eval``)
 
 For every committed case (``evals/cases/<industry>/<nn>.json``) and every model the script runs the same
 path as production: wizard answers → prefill brief (``app.briefing.PrefillBriefSource``) → the E08 builder
@@ -9,7 +9,7 @@ A case passes only if the model's brief was accepted by the builder (no ``BriefB
 production path would not have fallen back to the prefill brief) AND the build passes the challenger.
 
 Modes
-- live: needs ``ANTHROPIC_API_KEY`` (never printed or logged). ``--record DIR`` saves every raw API response.
+- live: needs ``OPENAI_API_KEY`` (never printed or logged). ``--record DIR`` saves every raw API response.
 - replay: ``--replay DIR`` feeds recorded responses through the same code, offline. No key, no network.
 Without a key and without ``--replay`` the script exits with status 2 before doing anything.
 """
@@ -36,39 +36,47 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CASES = "evals/cases/*/*.json"
 DEFAULT_MEMO = ROOT / "docs" / "memos" / "brief-model-eval.md"
-DEFAULT_MODELS = ("claude-haiku-5-5", "claude-sonnet-5-5", "claude-opus-5-5")
-REFERENCE_MODEL = "claude-opus-5-5"
+DEFAULT_MODELS = ("gpt-6-luna", "gpt-6.1-sol", "gpt-6-astra")
+REFERENCE_MODEL = "gpt-6-astra"
 #: the recommendation rule's latency ceiling (the customer waits on the form post; builder DEADLINE_S is 15)
 P95_LIMIT_S = 15.0
-LONG_PROMPT_TOKENS = 100_000
+LONG_PROMPT_TOKENS = 272_000
 
-#: USD per million tokens. Source: https://platform.claude.com/docs/en/about-claude/pricing, checked 2026-10-18.
-#: ``cache_write`` is the 5-minute cache-write rate: the adapter marks the prefix ``{"type": "ephemeral"}``
-#: without a ``ttl`` (adapters/llm.py ``build_brief_request``), and the default TTL is 5 minutes.
-#: ``*_long`` apply to a request whose total input (input + cache read + cache write tokens) exceeds
-#: 100,000 tokens; the surcharge is applied per request (see ``cost_usd``).
+#: USD per million tokens, Standard tier, text. Source: https://developers.openai.com/api/docs/pricing and the
+#: model pages, checked 2026-10-18. Every input token is billed at exactly one rate: uncached (``input``),
+#: read from the cache (``cache_read``, "Cached input") or written to it (``cache_write``, "Cache writes";
+#: caching is automatic, so writes happen without a flag). ``*_long`` apply to the whole request when its
+#: total input exceeds 272,000 tokens (2x input and cache rates, 1.5x output); see ``cost_usd``.
 PRICES_PER_MTOK: dict[str, dict[str, Decimal]] = {
-    "claude-haiku-5-5": {
+    "gpt-6-luna": {
         "input": Decimal("0.10"),
         "cache_write": Decimal("0.125"),
         "cache_read": Decimal("0.01"),
         "output": Decimal("0.50"),
-        "input_long": Decimal("0.50"),
-        "cache_write_long": Decimal("0.625"),
-        "cache_read_long": Decimal("0.05"),
-        "output_long": Decimal("2.50"),
+        "input_long": Decimal("0.20"),
+        "cache_write_long": Decimal("0.25"),
+        "cache_read_long": Decimal("0.02"),
+        "output_long": Decimal("0.75"),
     },
-    "claude-sonnet-5-5": {
+    "gpt-6.1-sol": {
         "input": Decimal("2"),
         "cache_write": Decimal("2.50"),
         "cache_read": Decimal("0.10"),
         "output": Decimal("10"),
+        "input_long": Decimal("4"),
+        "cache_write_long": Decimal("5"),
+        "cache_read_long": Decimal("0.20"),
+        "output_long": Decimal("15"),
     },
-    "claude-opus-5-5": {
-        "input": Decimal("4"),
-        "cache_write": Decimal("5"),
-        "cache_read": Decimal("0.20"),
-        "output": Decimal("20"),
+    "gpt-6-astra": {
+        "input": Decimal("10"),
+        "cache_write": Decimal("12.50"),
+        "cache_read": Decimal("1"),
+        "output": Decimal("50"),
+        "input_long": Decimal("20"),
+        "cache_write_long": Decimal("25"),
+        "cache_read_long": Decimal("2"),
+        "output_long": Decimal("75"),
     },
 }
 
@@ -90,8 +98,8 @@ class CallUsage:
 
 
 def cost_usd(model: str, calls: list[CallUsage]) -> Decimal:
-    """Dollar cost of the requests of one order. Exact (Decimal). The >100k-input surcharge, where the
-    model has one, is applied per request, so a retry with a short prompt is not surcharged."""
+    """Dollar cost of the requests of one order. Exact (Decimal). The long-context rates (input over
+    ``LONG_PROMPT_TOKENS``) apply per request, so a retry with a short prompt is not surcharged."""
     p = PRICES_PER_MTOK[model]
     total = Decimal(0)
     for c in calls:
@@ -172,7 +180,8 @@ def summarize(results: list[CaseResult]) -> dict[str, dict[str, Any]]:
 def recommend(summary: dict[str, dict[str, Any]], *, p95_limit: float = P95_LIMIT_S) -> dict[str, Any]:
     """Cheapest model (mean cost per order) whose pass share >= the reference model's and p95 <= limit.
 
-    The reference is Opus's pass share. Returns ``{"model": name | None, "reason": text}``."""
+    The reference is gpt-6-astra's pass share (the most capable model).
+    Returns ``{"model": name | None, "reason": text}``."""
     ref = summary.get(REFERENCE_MODEL)
     if ref is None:
         return {"model": None, "reason": f"no recommendation: {REFERENCE_MODEL} (the reference) was not run"}
@@ -219,13 +228,13 @@ def prefill_for(case: dict[str, Any]):
 
 # --------------------------------------------------------------------------- clients
 class RecordingClient:
-    """Wraps any client with ``messages.create``; keeps every call (response or error) for usage and
+    """Wraps any client with ``responses.create``; keeps every call (response or error) for usage and
     for ``--record``. Latency comes from the inner client's ``last_latency_ms`` when it has one (replay
     of a recorded latency), otherwise it is measured here."""
 
     def __init__(self, inner: Any) -> None:
         self.inner = inner
-        self.messages = self
+        self.responses = self
         self.entries: list[dict[str, Any]] = []
         self.calls: list[CallUsage] = []
 
@@ -234,7 +243,7 @@ class RecordingClient:
 
         t0 = time.monotonic()
         try:
-            response = self.inner.messages.create(**request)
+            response = self.inner.responses.create(**request)
         except LLMTransportError as exc:
             ms = self._latency(t0)
             self.entries.append({"raise": str(exc), "retryable": exc.retryable, "latency_ms": ms})
@@ -243,9 +252,7 @@ class RecordingClient:
         ms = self._latency(t0)
         u = usage_from_response(response, request["model"], ms)
         self.entries.append({"response": response, "latency_ms": ms})
-        self.calls.append(
-            CallUsage(u.input_tokens, u.output_tokens, u.cache_read_input_tokens, u.cache_creation_input_tokens, ms)
-        )
+        self.calls.append(CallUsage(u.input_tokens, u.output_tokens, u.cached_input_tokens, u.cache_write_tokens, ms))
         return response
 
     def _latency(self, t0: float) -> int:
@@ -258,7 +265,7 @@ class ReplayClient:
 
     def __init__(self, entries: list[dict[str, Any]]) -> None:
         self.entries = list(entries)
-        self.messages = self
+        self.responses = self
         self.last_latency_ms: int | None = None
 
     def create(self, **_request: Any) -> Any:
@@ -379,9 +386,9 @@ def replay_client_factory(root: Path) -> Callable[[str, dict[str, Any]], ReplayC
 
 
 def live_client_factory(api_key: str) -> Callable[[str, dict[str, Any]], Any]:
-    from adapters.llm import AnthropicHTTPClient
+    from adapters.llm import OpenAIHTTPClient
 
-    client = AnthropicHTTPClient(api_key)  # the same client and timeout as production
+    client = OpenAIHTTPClient(api_key)  # the same client and timeout as production
 
     def make(_model: str, _case: dict[str, Any]) -> Any:
         return client
@@ -462,10 +469,10 @@ def main(argv: list[str] | None = None) -> int:
         live_meta = json.loads(meta_file.read_text()) if meta_file.exists() else {}
         mode = "replay of a live run" if live_meta.get("live") else "replay of fixtures"
     else:
-        key = os.environ.get("ANTHROPIC_API_KEY", "")
+        key = os.environ.get("OPENAI_API_KEY", "")
         if not key:
             print(
-                "ANTHROPIC_API_KEY is not set: the live run needs it (set it in your shell; it is never printed).\n"
+                "OPENAI_API_KEY is not set: the live run needs it (set it in your shell; it is never printed).\n"
                 "For an offline run on recorded responses use --replay <dir>.",
                 file=sys.stderr,
             )

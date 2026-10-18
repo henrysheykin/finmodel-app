@@ -1,0 +1,46 @@
+{
+ "calls": [
+  {
+   "raise": "OpenAI API HTTP 429 rate_limit_exceeded",
+   "retryable": true,
+   "latency_ms": 300
+  },
+  {
+   "response": {
+    "id": "resp_fx_s5o",
+    "object": "response",
+    "status": "completed",
+    "model": "gpt-6-astra",
+    "output": [
+     {
+      "type": "reasoning",
+      "id": "rs_fx_s5o",
+      "summary": [],
+      "encrypted_content": "gAAAA4030cf524784f5efaa536527ee98da873f7ce656"
+     },
+     {
+      "type": "function_call",
+      "id": "fc_fx_s5o",
+      "call_id": "call_fx_s5o",
+      "name": "submit_brief",
+      "arguments": "{\"assumption_note\":\"Based on your notes.\",\"changes\":[{\"key\":\"churn_m\",\"low\":0.0345,\"base\":0.03,\"high\":0.0255,\"note\":\"You said churn_m is about 0.03.\"},{\"key\":\"cac\",\"low\":690.0,\"base\":600,\"high\":510.0,\"note\":\"You said cac is about 600.\"}]}",
+      "status": "completed"
+     }
+    ],
+    "usage": {
+     "input_tokens": 4100,
+     "input_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 1800
+     },
+     "output_tokens": 300,
+     "output_tokens_details": {
+      "reasoning_tokens": 0
+     },
+     "total_tokens": 4400
+    }
+   },
+   "latency_ms": 4600
+  }
+ ]
+}
