@@ -34,7 +34,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   production yet; BRIEF_MODEL is empty). Henry sets `BRIEF_MODEL` from it (add to HUMAN_TODO).
 
 ### E24 — LLM brief: refresh derived goal defaults, count usage on every fallback
-- status: TODO
+- status: IN_PROGRESS (2026-10-18)
 - Model: sonnet
 - depends: E08
 - skills: engineering:testing-strategy
