@@ -3,7 +3,7 @@
 {% block main %}
 <div class="narrow">
   <h1>Thank you</h1>
-  <p class="lead" id="status-text" role="status" aria-live="polite" data-status="{{ status }}">
+  <p class="lead" id="status-text" role="status" aria-live="polite" data-status="{{ status }}" data-order="{{ order_id }}">
     {% if status == "awaiting_payment" %}We are confirming your payment with the bank. This page updates by itself.
     {% elif status == "ready" %}Your model is ready. The download link is in your email.
     {% elif status == "failed" %}Your model did not pass our checks, so we have not sent it. We are on it and will email you; you will not be charged for a model you don't receive.
@@ -12,18 +12,5 @@
   <p class="hint">Order {{ order_id[:8] }} · status: <span id="status-label">{{ label }}</span></p>
   <p class="hint">You can also <a href="/login">sign in with your email</a> to see and download your models any time.</p>
 </div>
-<script>
-(function () {
-  var el = document.getElementById("status-text");
-  var done = ["ready", "failed", "refunded"];
-  if (done.indexOf(el.dataset.status) >= 0) return;
-  var tries = 0;
-  var timer = setInterval(function () {
-    if (++tries > 120) { clearInterval(timer); return; }
-    fetch("/api/orders/{{ order_id }}").then(function (r) { return r.json(); }).then(function (o) {
-      if (o.status !== el.dataset.status) { clearInterval(timer); window.location.reload(); }
-    }).catch(function () {});
-  }, 3000);
-})();
-</script>
 {% endblock %}
+{% block scripts %}<script src="{{ asset('success.js') }}" defer></script>{% endblock %}

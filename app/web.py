@@ -7,8 +7,9 @@ import json
 import logging
 from functools import cache
 from pathlib import Path
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
@@ -18,7 +19,7 @@ from app import ratelimit, wizard
 from app.briefing import Answers
 from app.db import session_scope
 from app.models import Order
-from app.orders import DuplicatePayment, OrderError, create_order, mark_paid
+from app.orders import AlreadyPaid, DuplicatePayment, OrderError, create_order, mark_paid
 from engine.brief import BriefError
 
 templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent / "templates"))
@@ -65,6 +66,21 @@ DEFAULT_FORM = {
 
 router = APIRouter()
 log = logging.getLogger("web")
+
+
+async def form_data(request: Request) -> dict[str, str]:
+    """The submitted form, read on the event loop. Handlers that take it as a dependency are plain
+    ``def`` functions, so FastAPI runs them in its thread pool: their database work and the calls
+    to Stripe and the email API never block the event loop (E17)."""
+    return {k: str(v) for k, v in (await request.form()).items()}
+
+
+async def raw_body(request: Request) -> bytes:
+    return await request.body()
+
+
+FormData = Annotated[dict, Depends(form_data)]
+RawBody = Annotated[bytes, Depends(raw_body)]
 
 TOO_MANY = "Too many requests from your network. Please wait a few minutes and try again."
 
@@ -154,10 +170,9 @@ def api_key_numbers(business_type: str, stage: str = "planning") -> JSONResponse
 
 
 @router.post("/start")
-async def start_submit(request: Request):
+def start_submit(request: Request, raw: FormData):
     sv = request.app.state.services
-    raw = await request.form()
-    form = {**DEFAULT_FORM, **{k: str(v) for k, v in raw.items()}}
+    form = {**DEFAULT_FORM, **raw}
     wait = ratelimit.check(request, "orders")
     if wait:
         resp = _render_start(request, form, [TOO_MANY], status=429)
@@ -299,9 +314,8 @@ def paid_page(order_id: str, request: Request) -> HTMLResponse:
 
 
 @router.post("/webhooks/stripe")
-async def stripe_webhook(request: Request) -> JSONResponse:
+def stripe_webhook(request: Request, payload: RawBody) -> JSONResponse:
     sv = request.app.state.services
-    payload = await request.body()
     try:
         event = sv.payments.parse_webhook(payload, request.headers.get("stripe-signature", ""))
     except SignatureError as exc:
@@ -316,9 +330,6 @@ def apply_payment_event(sv, event: PaymentEvent) -> dict:
         return {"received": True, "action": "ignored"}
     try:
         with session_scope(sv.sessions) as s:
-            existing = s.get(Order, event.order_id)
-            if existing is not None and existing.payment_ref == event.payment_ref:
-                return {"received": True, "action": "already_paid"}  # duplicate delivery: no second receipt
             mark_paid(
                 s,
                 sv.cfg,
@@ -327,7 +338,10 @@ def apply_payment_event(sv, event: PaymentEvent) -> dict:
                 amount_cents=event.amount_cents,
                 currency=event.currency,
                 payment_intent=event.payment_intent,
+                strict=True,
             )
+    except AlreadyPaid:
+        return {"received": True, "action": "already_paid"}  # duplicate delivery: no second receipt
     except DuplicatePayment as exc:
         # the customer paid twice for one order: give the second payment back automatically
         try:
@@ -361,12 +375,12 @@ def dev_pay_page(session_id: str, request: Request) -> HTMLResponse:
 
 
 @router.post("/dev/pay/{session_id}")
-async def dev_pay_submit(session_id: str, request: Request):
+def dev_pay_submit(session_id: str, request: Request, form: FormData):
     sv = request.app.state.services
     if not isinstance(sv.payments, FakeProvider) or sv.cfg.is_prod or session_id not in sv.payments.sessions:
         raise HTTPException(404, "not found")
     req = sv.payments.sessions[session_id]
-    action = (await request.form()).get("action")
+    action = form.get("action")
     if action != "pay":
         return RedirectResponse(req.cancel_url, status_code=303)
     payload, sig = sv.payments.signed(sv.payments.event(session_id))

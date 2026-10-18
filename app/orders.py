@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import json
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.config import Settings
@@ -39,6 +39,10 @@ class InvalidTransition(ValueError):
 
 class OrderError(ValueError):
     """The request cannot become an order (unsupported business type, invalid numbers...)."""
+
+
+class AlreadyPaid(OrderError):
+    """The same payment was applied by a concurrent delivery of the same webhook (E17)."""
 
 
 class DuplicatePayment(OrderError):
@@ -106,16 +110,27 @@ def mark_paid(
     amount_cents: int | None = None,
     currency: str | None = None,
     payment_intent: str | None = None,
+    strict: bool = False,
 ) -> Order:
-    """Apply a confirmed payment. Safe to call twice with the same reference (duplicate webhooks)."""
-    order = s.get(Order, order_id, with_for_update=True)
+    """Apply a confirmed payment. Safe to call twice with the same reference (duplicate webhooks);
+    with ``strict`` a repeat raises ``AlreadyPaid`` instead, so the webhook knows not to send a
+    second receipt.
+
+    Concurrent deliveries of one payment race here (the provider retries, two web threads): the
+    payment is claimed with a conditional UPDATE, so exactly one caller wins; a loser holding the
+    same reference gets ``AlreadyPaid`` (no second build, no second receipt), one holding another
+    reference gets ``DuplicatePayment``.
+    """
+    order = s.get(Order, order_id, with_for_update=True, populate_existing=True)
     if order is None:
         raise OrderError(f"unknown order {order_id}")
-    if order.payment_ref == payment_ref:
-        return order  # duplicate delivery: already applied
+    if order.payment_ref == payment_ref:  # duplicate delivery: already applied
+        if strict:
+            raise AlreadyPaid(f"order {order.id}: payment {payment_ref} is already applied")
+        return order
     if order.payment_ref is not None:
         raise DuplicatePayment(f"order {order.id} is already paid with another reference")
-    clash = s.scalar(select(Order).where(Order.payment_ref == payment_ref))
+    clash = s.scalar(select(Order).where(Order.payment_ref == payment_ref, Order.id != order.id))
     if clash is not None:
         raise OrderError("payment reference already used by another order")
     if amount_cents is not None and amount_cents != order.price_cents:
@@ -124,6 +139,17 @@ def mark_paid(
         raise OrderError(f"currency {currency} does not match order currency {order.currency}")
     if order.status != "awaiting_payment":
         raise OrderError(f"order {order.id} is {order.status}, not awaiting payment")
+    claimed = s.execute(
+        update(Order)
+        .where(Order.id == order.id, Order.payment_ref.is_(None), Order.status == "awaiting_payment")
+        .values(payment_ref=payment_ref)
+        .execution_options(synchronize_session=False)
+    )
+    if claimed.rowcount != 1:
+        s.refresh(order)
+        if order.payment_ref == payment_ref:
+            raise AlreadyPaid(f"order {order.id}: payment {payment_ref} was applied concurrently")
+        raise DuplicatePayment(f"order {order.id} was paid concurrently with another reference")
     order.payment_ref = payment_ref
     order.payment_intent = payment_intent or order.payment_intent
     transition(s, order, "paid", f"payment {payment_ref}")

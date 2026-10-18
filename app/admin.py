@@ -21,16 +21,20 @@ from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from sqlalchemy import func, select
 
 from adapters.payments import PaymentError
-from app import links
+from app import links, ratelimit
 from app.db import session_scope, utcnow
 from app.models import Job, Order
 from app.orders import OrderError, rebuild, refund_order
-from app.web import STATUS_LABEL, templates
+from app.web import STATUS_LABEL, FormData, templates
 
 log = logging.getLogger("admin")
 COOKIE = "sm_admin"
 SESSION_SECONDS = 12 * 3600
 MAX_FAILS, FAIL_WINDOW = 5, 15 * 60
+#: failed logins from all addresses together per window: bounds password guessing even when the
+#: attacker rotates addresses (E17); the owner may wait a few minutes during an attack
+MAX_FAILS_GLOBAL = 50
+ALL = "*"
 PAGE = 50
 PAID_STATUSES = ("paid", "building", "checking", "ready", "failed")
 
@@ -73,16 +77,22 @@ def _require(request: Request) -> str:
     return cookie
 
 
-async def _require_post(request: Request) -> dict:
+def _require_post(request: Request, form: dict) -> dict:
     cookie = _require(request)
-    form = dict(await request.form())
     if not hmac.compare_digest(str(form.get("csrf", "")), _csrf(request, cookie)):
         raise HTTPException(403, "bad csrf token")
     return form
 
 
 def _ip(request: Request) -> str:
-    return request.client.host if request.client else "?"
+    return ratelimit.client_ip(request)
+
+
+def _recent(key: str, now: float) -> deque:
+    q = _fails[key]
+    while q and q[0] < now - FAIL_WINDOW:
+        q.popleft()
+    return q
 
 
 # --------------------------------------------------------------------------- auth
@@ -93,21 +103,19 @@ def login_page(request: Request) -> HTMLResponse:
 
 
 @router.post("/login")
-async def login(request: Request):
+def login(request: Request, form: FormData):
     cfg = _cfg(request)
     ip, now = _ip(request), time.time()
-    q = _fails[ip]
-    while q and q[0] < now - FAIL_WINDOW:
-        q.popleft()
-    if len(q) >= MAX_FAILS:
+    q, everyone = _recent(ip, now), _recent(ALL, now)
+    if len(q) >= MAX_FAILS or len(everyone) >= MAX_FAILS_GLOBAL:
         return templates.TemplateResponse(
             request, "admin/login.html", {"error": "Too many attempts. Try again later."}, status_code=429
         )
-    form = await request.form()
     user_ok = hmac.compare_digest(str(form.get("user", "")).encode(), cfg.admin_user.encode())
     pass_ok = hmac.compare_digest(str(form.get("password", "")).encode(), cfg.admin_password.encode())
     if not (user_ok and pass_ok):
         q.append(now)
+        everyone.append(now)
         log.warning("admin login failed from %s", ip)
         return templates.TemplateResponse(
             request, "admin/login.html", {"error": "Wrong user or password."}, status_code=401
@@ -128,8 +136,8 @@ async def login(request: Request):
 
 
 @router.post("/logout")
-async def logout(request: Request):
-    await _require_post(request)
+def logout(request: Request, form: FormData):
+    _require_post(request, form)
     resp = RedirectResponse("/admin/login", status_code=303)
     resp.delete_cookie(COOKIE, path="/admin")
     return resp
@@ -246,8 +254,8 @@ def _back(order_id: str, msg: str) -> RedirectResponse:
 
 
 @router.post("/orders/{order_id}/rebuild")
-async def do_rebuild(order_id: str, request: Request):
-    await _require_post(request)
+def do_rebuild(order_id: str, request: Request, form: FormData):
+    _require_post(request, form)
     sv = request.app.state.services
     try:
         with session_scope(sv.sessions) as s:
@@ -262,8 +270,8 @@ async def do_rebuild(order_id: str, request: Request):
 
 
 @router.post("/orders/{order_id}/refund")
-async def do_refund(order_id: str, request: Request):
-    form = await _require_post(request)
+def do_refund(order_id: str, request: Request, form: FormData):
+    _require_post(request, form)
     if form.get("confirm") != "yes":
         return _back(order_id, "Tick the confirmation box to refund.")
     sv = request.app.state.services
@@ -285,8 +293,8 @@ async def do_refund(order_id: str, request: Request):
 
 
 @router.post("/orders/{order_id}/resend")
-async def do_resend(order_id: str, request: Request):
-    await _require_post(request)
+def do_resend(order_id: str, request: Request, form: FormData):
+    _require_post(request, form)
     sv = request.app.state.services
     with session_scope(sv.sessions) as s:
         o = s.get(Order, order_id)

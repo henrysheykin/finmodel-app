@@ -55,3 +55,23 @@ def test_image_ships_runtime_folders():
     docker = (ROOT / "Dockerfile").read_text()
     for folder in ("content", "samples", "web", "deploy", "engine", "app", "worker", "adapters"):
         assert f"COPY {folder} ./{folder}" in docker, folder
+
+
+def test_constraints_pin_every_runtime_dependency():
+    """The image installs exact versions (constraints.txt, audited in CI); a new runtime
+    dependency in pyproject.toml must be pinned there too."""
+    import re
+    import tomllib
+
+    pins = {}
+    for line in (ROOT / "constraints.txt").read_text().splitlines():
+        if line and not line.startswith("#"):
+            name, _, version = line.partition("==")
+            assert version, f"not an exact pin: {line}"
+            pins[re.sub(r"[-_.]+", "-", name.lower())] = version
+    deps = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["dependencies"]
+    for dep in deps:
+        name = re.sub(r"[-_.]+", "-", re.split(r"[<>=!~\[ ;]", dep, maxsplit=1)[0].lower())
+        assert name in pins, f"{name} is not pinned in constraints.txt"
+    docker = (ROOT / "Dockerfile").read_text()
+    assert "pip install -c constraints.txt ." in docker

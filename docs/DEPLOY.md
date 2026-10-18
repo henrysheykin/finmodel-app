@@ -101,9 +101,12 @@ Per visitor address, in memory of the one web process (a restart resets the coun
 | `POST /login` (magic link) | 5 per email, 20 per address / 15 min | same "check your inbox" answer, no email |
 | `POST /admin/login` | failed attempts per address | 429 |
 
-The visitor address is the `CLIENT_IP_HEADER` header when set, otherwise the peer address uvicorn
-takes from `X-Forwarded-For`. Use a header the edge proxy *overwrites* (Railway: `X-Real-IP`), so a
-caller cannot pick its own address. Check after deploy: two orders from your phone and laptop on
+The visitor address (one rule for every limit above, `app/ratelimit.client_ip`) is the
+`CLIENT_IP_HEADER` header when set, otherwise the left-most `X-Forwarded-For` entry, which uvicorn
+puts in the peer address. Use a header the edge proxy *overwrites* (Railway: `X-Real-IP`), so a
+caller cannot pick its own address. Admin login also stops after 50 failures per 15 minutes from all
+addresses together. Request bodies over 1 MB get 413; magic-link and download tokens are redacted
+from the access log; cross-site POSTs get 403 (E17, `docs/reviews/E17-hardening.md`). Check after deploy: two orders from your phone and laptop on
 different networks do not share a budget.
 
 ## Local run of the production image

@@ -5,9 +5,10 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import Response
+from fastapi.responses import PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, ValidationError
 from sqlalchemy.orm import Session, sessionmaker
@@ -36,6 +37,47 @@ class Services:
     briefs: BriefSource
     payments: PaymentProvider | None = None
     notifier: Notifier | None = None
+
+
+#: Content-Security-Policy for every response (E17). Scripts and styles come from our own origin
+#: only; JSON data blocks (<script type="application/json">) are not executed, so need no exception.
+#: form-action is left out on purpose: Chrome applies it to the 303 redirect to Stripe Checkout.
+CSP = (
+    "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
+    "font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+)
+UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+#: no endpoint takes uploads: wizard forms and Stripe events are a few kilobytes
+MAX_BODY_BYTES = 1_000_000
+#: server-to-server callers (no browser, no Origin) authenticated by their own signature
+ORIGIN_EXEMPT = ("/webhooks/",)
+
+
+def _origin_of(url: str) -> str:
+    parts = urlsplit(url)
+    return f"{parts.scheme}://{parts.netloc}".lower()
+
+
+def cross_site(request: Request, public_base_url: str) -> bool:
+    """True for a browser form or fetch POSTed from another site (CSRF defence in depth, E17).
+
+    Browsers send ``Origin`` with every cross-origin POST; requests without it (API clients,
+    tests, old browsers on same-origin forms) pass, and the admin forms carry their own tokens.
+    """
+    if request.method not in UNSAFE_METHODS or request.url.path.startswith(ORIGIN_EXEMPT):
+        return False
+    origin = request.headers.get("origin")
+    if origin is None:
+        return False
+    own = {_origin_of(public_base_url), f"{request.url.scheme}://{request.headers.get('host', '')}".lower()}
+    return origin.lower() not in own
+
+
+def _too_large(request: Request) -> bool:
+    try:
+        return int(request.headers.get("content-length") or 0) > MAX_BODY_BYTES
+    except ValueError:
+        return True
 
 
 class OrderIn(BaseModel):
@@ -79,13 +121,19 @@ def create_app(services: Services | None = None) -> FastAPI:
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):
-        resp = await call_next(request)
+        sv = request.app.state.services
+        if _too_large(request):
+            resp = PlainTextResponse("request body too large", status_code=413)
+        elif sv is not None and cross_site(request, sv.cfg.public_base_url):
+            resp = PlainTextResponse("cross-site request refused", status_code=403)
+        else:
+            resp = await call_next(request)
         h = resp.headers
         h.setdefault("X-Content-Type-Options", "nosniff")
         h.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
         h.setdefault("X-Frame-Options", "DENY")
         h.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
-        sv = request.app.state.services
+        h.setdefault("Content-Security-Policy", CSP)
         if sv is not None and sv.cfg.is_prod:
             h.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
         if request.url.path.startswith("/static/") and resp.status_code == 200:

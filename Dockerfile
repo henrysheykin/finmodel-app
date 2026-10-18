@@ -17,7 +17,7 @@ RUN apt-get update \
 RUN useradd --create-home --uid 10001 app
 WORKDIR /srv/app
 
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md constraints.txt ./
 COPY engine ./engine
 COPY app ./app
 COPY worker ./worker
@@ -27,7 +27,7 @@ COPY web ./web
 COPY content ./content
 COPY samples ./samples
 COPY deploy ./deploy
-RUN pip install . && chmod +x deploy/start.sh
+RUN pip install -c constraints.txt . && chmod +x deploy/start.sh
 
 # Starts as root only to fix volume ownership; start.sh drops to the `app` user at once.
 EXPOSE 8000

@@ -8,10 +8,10 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy import select
 
-from app import accounts, links, wizard
+from app import accounts, links, ratelimit, wizard
 from app.db import session_scope
 from app.models import Order
-from app.web import _label, templates
+from app.web import FormData, _label, templates
 
 COOKIE = "sm_session"
 DOWNLOAD_TTL = 10 * 60  # account downloads get a fresh, short-lived link per click
@@ -30,7 +30,7 @@ router = APIRouter()
 
 
 def _client_ip(request: Request) -> str:
-    return request.client.host if request.client else ""
+    return ratelimit.client_ip(request)
 
 
 def _set_cookie(resp, token: str, secure: bool) -> None:
@@ -55,9 +55,8 @@ def login_page(request: Request, next: str = "") -> HTMLResponse:
 
 
 @router.post("/login", response_class=HTMLResponse)
-async def login_submit(request: Request) -> HTMLResponse:
+def login_submit(request: Request, form: FormData) -> HTMLResponse:
     sv = request.app.state.services
-    form = await request.form()
     email = str(form.get("email", ""))
     try:
         with session_scope(sv.sessions) as s:
@@ -86,9 +85,9 @@ def verify_page(request: Request, token: str = "") -> HTMLResponse:
 
 
 @router.post("/login/verify")
-async def verify_submit(request: Request):
+def verify_submit(request: Request, form: FormData):
     sv = request.app.state.services
-    token = str((await request.form()).get("token", ""))
+    token = form.get("token", "")
     try:
         with session_scope(sv.sessions) as s:
             new = accounts.consume_login(s, token, request.headers.get("user-agent", ""))
