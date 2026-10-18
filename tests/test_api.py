@@ -19,7 +19,7 @@ def test_create_and_read_order(client):
 
 
 def test_unsupported_or_invalid_answers(client):
-    r = client.post("/api/orders", json={"email": "a@b.co", "answers": {**ANSWERS, "business_type": "real_estate"}})
+    r = client.post("/api/orders", json={"email": "a@b.co", "answers": {**ANSWERS, "business_type": "other"}})
     assert r.status_code == 422 and "not available" in r.text
     r = client.post("/api/orders", json={"email": "a@b.co", "answers": {**ANSWERS, "horizon_years": 7}})
     assert r.status_code == 422

@@ -38,7 +38,7 @@ def test_key_numbers_api(client):
     fields = {f["key"]: f for f in r.json()["fields"]}
     assert set(fields) == set(wizard.KEY_NUMBERS["saas"])
     assert fields["churn_m"]["percent"] is True and fields["churn_m"]["default"] == 3.0
-    assert client.get("/api/key-numbers", params={"business_type": "real_estate"}).json() == {
+    assert client.get("/api/key-numbers", params={"business_type": "other"}).json() == {
         "available": False,
         "fields": [],
     }
@@ -74,7 +74,7 @@ def test_sample_data_ignores_key_numbers(client, services):
     "change,message",
     [
         ({"business_type": ""}, "Choose your business type"),
-        ({"business_type": "real_estate"}, "not available yet"),
+        ({"business_type": "other"}, "not available yet"),
         ({"email": "nope"}, "email address"),
         ({"kn_arpa": "abc"}, "enter a number"),
         ({"kn_churn_m": "80"}, "must be between"),

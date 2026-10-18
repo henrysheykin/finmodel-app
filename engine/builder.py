@@ -22,6 +22,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from engine import style as st
 from engine.brief import Brief
 from engine.core import (
+    LAND_LINE,
     balance_sheet_lines,
     headcount_lines,
     liability_delta_lines,
@@ -161,8 +162,9 @@ def _calc_lines(tpl: Template, brief: Brief, t: Timing) -> tuple[list[Line], lis
     top = tpl.revenue_lines(t) + pnl_head_lines() + tpl.opex_lines(t)
     liabs = tpl.liability_lines(t)
     liab_keys = [ln.key for ln in liabs]
-    core = pnl_tail_lines(tpl.opex_keys(t), liab_keys)
     capex = tpl.capex_lines(t)
+    land = any(ln.key == LAND_LINE for ln in capex)
+    core = pnl_tail_lines(tpl.opex_keys(t), liab_keys, loan_style=tpl.loan_style, land=land)
     capex[0] = replace(capex[0], section="Fixed assets & capital spending")
     at = next(i for i, ln in enumerate(core) if ln.key == "ppe_gross")
     core = core[:at] + capex + core[at:]
@@ -320,7 +322,7 @@ def plan(brief: Brief, tpl: Template) -> Plan:
         selector = ("Inputs", "B3")
         calc_sheet = "P&L"
     mods = modules_for(brief.goal)
-    sheets = (["Summary"] if "summary" in mods else []) + sheets[:-1]
+    sheets = (["Summary"] if "summary" in mods else []) + sheets[:-1] + (["Returns"] if tpl.returns else [])
     sheets += [name for m, name in (("breakeven", "Break-even"), ("dcf", "Valuation")) if m in mods] + ["Checks"]
     for g in grids:
         _layout_grid(g)
@@ -337,6 +339,10 @@ def plan(brief: Brief, tpl: Template) -> Plan:
         from engine.goal_sheets import plan_modules
 
         plan_modules(pl)
+    if tpl.returns:
+        from engine.returns import plan_returns
+
+        plan_returns(pl)
     return pl
 
 
@@ -647,6 +653,10 @@ def _write_checks(wb: Workbook, pl: Plan) -> str:
         from engine.goal_sheets import module_checks
 
         checks += module_checks(pl)
+    if "returns" in pl.modules:
+        from engine.returns import returns_checks
+
+        checks += returns_checks(pl)
     err_terms = []
     for g in pl.grids:
         rng = f"{q(g.sheet)}!${L(FIRST_COL)}${g.period_row}:${L(FIRST_COL + pl.t.periods - 1)}${g.end_row}"

@@ -123,9 +123,13 @@ def test_back_button_and_keyboard(page, live_server):
     assert page.get_by_label("Restaurant / cafe").is_checked()
 
 
-def test_unavailable_type_is_blocked(page, live_server):
+def test_unavailable_type_is_blocked(page, live_server, monkeypatch):
+    from app import wizard
+
+    # an announced industry without a template (engine.templates.PLANNED) is listed but cannot be ordered
+    monkeypatch.setattr(wizard, "BUSINESS_TYPES", [*wizard.BUSINESS_TYPES, ("hotel", "Hotel (coming soon)")])
     page.goto(f"{live_server}/start")
-    page.get_by_label("Real estate (coming soon)").check()
+    page.get_by_label("Hotel (coming soon)").check()
     page.get_by_role("button", name="Next").click()
     assert "not available yet" in page.get_by_role("alert").inner_text()
 
