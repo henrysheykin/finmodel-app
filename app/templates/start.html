@@ -77,6 +77,13 @@
       <p class="hint" id="kn-empty">Choose a business type to see its key numbers.</p>
       {% endfor %}
     </div>
+    {% if notes_enabled %}
+    <div class="field">
+      <label for="notes">Anything else about your plans? <span class="opt">(optional)</span></label>
+      <p class="hint" id="notes-hint">For example your location, opening date, prices, team or financing. We use it to set the starting assumptions; every number stays editable in the file.</p>
+      <textarea id="notes" name="notes" rows="4" maxlength="2000" aria-describedby="notes-hint">{{ form.notes }}</textarea>
+    </div>
+    {% endif %}
   </section>
 
   <section class="step" data-step="6" aria-labelledby="s6">

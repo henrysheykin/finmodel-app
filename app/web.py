@@ -16,7 +16,7 @@ from pydantic import ValidationError
 
 from adapters.payments import CheckoutRequest, FakeProvider, PaymentError, PaymentEvent, SignatureError
 from app import ratelimit, wizard
-from app.briefing import Answers
+from app.briefing import Answers, build_with_usage
 from app.db import session_scope
 from app.models import Order
 from app.orders import AlreadyPaid, DuplicatePayment, OrderError, create_order, mark_paid
@@ -62,6 +62,7 @@ DEFAULT_FORM = {
     "tier": "full",
     "email": "",
     "sample_data": "",
+    "notes": "",
 }
 
 router = APIRouter()
@@ -120,6 +121,7 @@ def _render_start(request: Request, form: dict, errors: list[str], status: int =
             "prices": sv.cfg.prices,
             "key_numbers": kn,
             "wizard_data": data,
+            "notes_enabled": bool(sv.cfg.brief_model),
         },
         status_code=status,
     )
@@ -205,15 +207,16 @@ def start_submit(request: Request, raw: FormData):
                 tier=form["tier"],
                 business_name=form["business_name"].strip()[:60],
                 key_numbers=key_numbers,
+                notes=form.get("notes", "").strip()[:2000] if sv.cfg.brief_model else "",
             )
-            brief = sv.briefs.build_brief(answers)
+            brief, brief_usage = build_with_usage(sv.briefs, answers)
         except (ValidationError, ValueError, BriefError) as exc:
             errors.append(f"Some answers could not be used: {_short(exc)}")
     if errors:
         return _render_start(request, form, errors, status=422)
     try:
         with session_scope(sv.sessions) as s:
-            order = create_order(s, sv.cfg, email, brief, answers.model_dump())
+            order = create_order(s, sv.cfg, email, brief, answers.model_dump(), brief_usage=brief_usage)
             oid = order.id
     except OrderError as exc:
         return _render_start(request, form, [str(exc)], status=422)

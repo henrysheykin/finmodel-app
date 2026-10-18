@@ -21,9 +21,17 @@ scenario-year within $1, and the in-file Checks sheet must not FAIL. A model tha
 delivered. The prototype of all three is in `poc/` (cafe template: 894 formulas, 0 errors, all 9
 scenario-years match).
 
-Today briefs come from `app/briefing.PrefillBriefSource` (template stage defaults + the customer's key
-numbers, no LLM). The LLM brief builder (E08) plugs in behind the same `BriefSource` interface;
-`adapters/llm.py` holds its model choice (`BRIEF_MODEL`), prompt-caching layout and per-order token log.
+Briefs come from `app/briefing.PrefillBriefSource` (template stage defaults + the customer's key
+numbers, no LLM) while `BRIEF_MODEL` is empty. When it is set (plus `ANTHROPIC_API_KEY`),
+`LLMBriefSource` starts from that same prefill brief and `engine/brief_builder.py` asks the model, in one
+forced `submit_brief` tool call, to change only the drivers the customer's notes give a reason for
+(Low / Base / High + a short reason each). Structure (template, tier, horizon, roles) and the customer's
+typed key numbers are never the model's to change. Its answer passes the same `Brief` + template
+validation; errors go back to the model as a tool result, at most 2 retries; after that the prefill brief
+is used, so the LLM can make a model better but never block or break one. The wizard shows the
+free-text "notes" field only when the LLM is on. `adapters/llm.py` holds the model choice, the
+prompt-caching layout (fixed prefix = instruction + per-template driver description), a minimal
+httpx Messages API client and the per-order token log (`brief_llm order=… calls=…`).
 
 ## Stack (ADR-001)
 

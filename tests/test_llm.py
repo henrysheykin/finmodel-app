@@ -35,6 +35,7 @@ def test_brief_model_default_is_off(monkeypatch):
 @pytest.mark.parametrize("model", BRIEF_MODELS)
 def test_brief_model_accepts_the_three_ids(monkeypatch, model):
     monkeypatch.setenv("BRIEF_MODEL", model)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key-not-real")
     assert load_settings().brief_model == model
 
 

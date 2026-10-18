@@ -48,6 +48,8 @@ class Settings:
     client_ip_header: str = ""
     #: Claude model for the LLM brief builder (adapters/llm.py BRIEF_MODELS); empty = LLM off, prefill briefs
     brief_model: str = ""
+    #: Claude API key, read only when BRIEF_MODEL is set (never logged: repr=False)
+    anthropic_api_key: str = field(default="", repr=False)
 
     @property
     def is_prod(self) -> bool:
@@ -67,6 +69,8 @@ class Settings:
             validate_brief_model(self.brief_model)
         except LLMConfigError as e:
             raise RuntimeError(str(e)) from e
+        if self.brief_model and not self.anthropic_api_key:
+            raise RuntimeError("BRIEF_MODEL is set but ANTHROPIC_API_KEY is empty (or unset BRIEF_MODEL = LLM off)")
 
 
 def normalize_database_url(url: str) -> str:
@@ -106,6 +110,7 @@ def load_settings() -> Settings:
         rate_limit_per_10min=_int("RATE_LIMIT_PER_10MIN", 30),
         client_ip_header=env("CLIENT_IP_HEADER", "").strip(),
         brief_model=env("BRIEF_MODEL", "").strip(),
+        anthropic_api_key=env("ANTHROPIC_API_KEY", "").strip(),
     )
     s.check()
     return s

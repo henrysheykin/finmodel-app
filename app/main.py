@@ -18,7 +18,13 @@ from adapters.notify import Notifier
 from adapters.payments import PaymentProvider, make_provider
 from adapters.storage import Storage, make_storage
 from app import __version__, links, ratelimit
-from app.briefing import Answers, BriefSource, PrefillBriefSource, supported_business_types
+from app.briefing import (
+    Answers,
+    BriefSource,
+    build_with_usage,
+    make_brief_source,
+    supported_business_types,
+)
 from app.config import Settings, load_settings
 from app.db import make_engine, make_sessionmaker, migrate, session_scope
 from app.emails import EmailNotifier
@@ -99,7 +105,7 @@ def create_app(services: Services | None = None) -> FastAPI:
                 cfg,
                 make_sessionmaker(make_engine(cfg.database_url)),
                 make_storage(cfg.storage_backend, cfg.storage_dir, cfg.s3_bucket, cfg.s3_endpoint_url),
-                PrefillBriefSource(),
+                make_brief_source(cfg.brief_model, cfg.anthropic_api_key),
                 make_provider(
                     cfg.payment_provider,
                     cfg.public_base_url,
@@ -175,12 +181,12 @@ def create_app(services: Services | None = None) -> FastAPI:
         if wait:
             raise HTTPException(429, "too many orders from this address; try again later", {"Retry-After": str(wait)})
         try:
-            brief = sv.briefs.build_brief(body.answers)
+            brief, brief_usage = build_with_usage(sv.briefs, body.answers)
         except (BriefError, ValidationError) as exc:
             raise HTTPException(422, f"cannot build a model from these answers: {exc}") from None
         try:
             with session_scope(sv.sessions) as s:
-                order = create_order(s, sv.cfg, body.email, brief, body.answers.model_dump())
+                order = create_order(s, sv.cfg, body.email, brief, body.answers.model_dump(), brief_usage=brief_usage)
                 out = _public(order)
         except OrderError as exc:
             raise HTTPException(422, str(exc)) from None

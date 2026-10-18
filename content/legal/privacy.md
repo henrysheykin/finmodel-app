@@ -9,7 +9,7 @@ The data controller is StartupModels LLC, a limited liability company organised 
 # What we collect
 
 - **Email address.** You give it in the wizard or when you sign in. We use it to send your receipt, your model, sign-in links and messages about your order.
-- **Your wizard answers.** Business type, goal, stage, planning horizon, plan and the key numbers you enter (for example prices, volumes or costs). They are used to build your model. Enter business figures only; the wizard does not ask for personal data about other people.
+- **Your wizard answers.** Business type, goal, stage, planning horizon, plan, the key numbers you enter (for example prices, volumes or costs) and any notes you add about your plans. They are used to build your model. Enter business figures only; the wizard does not ask for personal data about other people.
 - **Order and payment records.** What you bought, the price, the dates, and the payment and refund references Stripe returns to us. We never see or store your card details: you pay on a page run by Stripe.
 - **Your model files.** The Excel workbook built for your order, so you can download it again from "My models".
 - **Sign-in data.** When you sign in we store a hashed one-time link token with the IP address it was requested from (to stop abuse), and, once you are signed in, a hashed session token with your browser type (so you can recognise your sessions).
@@ -33,6 +33,7 @@ We use these service providers. Each processes data only on our instructions und
 - **Railway** — hosting of the application, its database and the model files.
 - **Cloudflare** — domain, DNS, network security and delivery of the site.
 - **Resend** — sending our emails.
+- **Anthropic** — its Claude AI model may be used to turn your wizard answers and any notes you type into the starting assumptions of your model. It receives those answers and notes, not your email address or payment details.
 
 We are based in the United States, so your data is processed in the United States and in the other countries where these providers operate. Where a provider receives personal data of people in the European Economic Area or the United Kingdom, it is protected by the EU–US Data Privacy Framework where the provider is certified, or by the European Commission's Standard Contractual Clauses.
 
