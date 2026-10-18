@@ -68,7 +68,7 @@ webhook, Resend domain).
 - [x] A3 (Resend key done 2026-10-17; domain verified by Henry 2026-10-18 — set `EMAIL_FROM` to `StartupModel <models@startup-model.com>` in Railway if not yet) Email provider (Resend or Postmark) + DNS records for the domain.
 - [x] A4 (done: https://finmodel-app-production.up.railway.app, Postgres, all variables; end-to-end test order 539a9c52 ready, Checks PASS) Railway account (project with app, worker and Postgres services).
 - [ ] A5 Domain (after D1).
-- [ ] A6 (from E15, 1 minute) Railway → app service → Variables: add `CLIENT_IP_HEADER` = `X-Real-IP`, so the new rate
+- [x] A6 (done by Henry 2026-10-18) (from E15, 1 minute) Railway → app service → Variables: add `CLIENT_IP_HEADER` = `X-Real-IP`, so the new rate
       limits (30 orders / 30 checkouts per visitor per 10 min) count real visitor addresses (docs/DEPLOY.md "Rate limits").
 
 ## Reviews
@@ -98,10 +98,10 @@ Railway deploy log). It disappears when everything is done.
       Agents cannot push tags from their sandbox.
 - [ ] G1 Go live — the exact steps, in order (runbook section in brackets):
   - [ ] G1.1 Decide what to launch with: R1 sign-offs for the templates you will promote; D9; VAT with your adviser (§0).
-  - [ ] G1.2 Railway Variables: `CLIENT_IP_HEADER=X-Real-IP` (= A6), `ADMIN_EMAIL` = your inbox (§1).
-  - [ ] G1.3 `PUBLIC_BASE_URL=https://startup-model.com` — the domain already answers (checked 2026-10-18), but the
+  - [x] G1.2 (Henry, 2026-10-18) Railway Variables: `CLIENT_IP_HEADER=X-Real-IP` (= A6), `ADMIN_EMAIL` = your inbox (§1).
+  - [x] G1.3 (done; sitemap now on startup-model.com, verified 2026-10-18) `PUBLIC_BASE_URL=https://startup-model.com` — the domain already answers (checked 2026-10-18), but the
         sitemap and links still use the Railway address (§2).
-  - [ ] G1.4 Resend domain verified (Henry, 2026-10-18); still check in Railway: `EMAIL_FROM=StartupModel <models@startup-model.com>`,
+  - [x] G1.4 Resend domain verified, Railway email variables set (Henry, 2026-10-18): `EMAIL_FROM=StartupModel <models@startup-model.com>`,
         `SUPPORT_EMAIL=support@startup-model.com`, Cloudflare Email Routing for support@ (§3).
   - [x] G1.5 Legal texts (= L1, done 2026-10-18) (§4).
   - [ ] G1.6 Test-mode order on https://startup-model.com with card 4242…: emails, file, Checks PASS, refund (§5).

@@ -283,8 +283,8 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ### E18 — Release candidate v0.1.0
 - status: DONE (2026-10-18, https://github.com/henrysheykin/finmodel-app/pull/34)
-- note: git tag `v0.1.0` not created — the agents' git proxy refuses tag pushes and Henry chose not to bother (optional,
-  HUMAN_TODO G0); the version is visible in /healthz and the deploy log.
+- note: git tag `v0.1.0` not created — the agents' git proxy refuses tag pushes; optional, Henry may skip it
+  (HUMAN_TODO G0); the version is visible in /healthz and the deploy log.
 - note (2026-10-18): the agents' git proxy refuses tag pushes (branch pushes work), so the tag is the only part left.
   Done: version 0.1.0 (/healthz, deploy log), go-live preflight (`app/golive.py`, deploy log + /admin box),
   `docs/RUNBOOK_GO_LIVE.md`, `CHANGELOG.md`, `docs/reviews/E18-release-checklist.md`, HUMAN_TODO G1.1–G1.9.
