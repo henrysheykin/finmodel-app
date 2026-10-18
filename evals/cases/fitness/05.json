@@ -1,0 +1,18 @@
+{
+  "id": "fitness-05",
+  "industry": "fitness",
+  "tags": [
+    "impossible-numbers"
+  ],
+  "answers": {
+    "business_type": "fitness",
+    "goal": "other",
+    "stage": "planning",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Summit CrossFit",
+    "key_numbers": {},
+    "notes": "We will have 200,000 members at $0.50 a month, no churn, rent is free, trainers work for nothing and referrals bring a million members a month."
+  }
+}

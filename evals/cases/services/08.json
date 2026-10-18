@@ -1,0 +1,23 @@
+{
+  "id": "services-08",
+  "industry": "services",
+  "tags": [
+    "locked-numbers",
+    "conflicting-notes"
+  ],
+  "answers": {
+    "business_type": "professional_services",
+    "goal": "revenue_profit",
+    "stage": "growing",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Bridge Marketing Co",
+    "key_numbers": {
+      "senior_rate": 380,
+      "staff_rate": 190,
+      "realisation": 0.9
+    },
+    "notes": "Partner rate is really $380 an hour and consultants $190, although the wizard shows 350 and 175. Realisation about 90%. We also have a sales person on commission."
+  }
+}

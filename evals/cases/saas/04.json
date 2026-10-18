@@ -1,0 +1,20 @@
+{
+  "id": "saas-04",
+  "industry": "saas",
+  "tags": [
+    "locked-numbers"
+  ],
+  "answers": {
+    "business_type": "saas",
+    "goal": "investor_pitch",
+    "stage": "established",
+    "horizon_years": 3,
+    "granularity": "annual",
+    "tier": "light",
+    "business_name": "NotePath",
+    "key_numbers": {
+      "arpa": 220.0
+    },
+    "notes": "Established product with 1,200 customers, ARPA around $220 a month, 2% monthly churn, 15% of revenue goes to hosting."
+  }
+}

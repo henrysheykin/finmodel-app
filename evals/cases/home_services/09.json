@@ -1,0 +1,18 @@
+{
+  "id": "home_services-09",
+  "industry": "home_services",
+  "tags": [
+    "vague-notes"
+  ],
+  "answers": {
+    "business_type": "home_services",
+    "goal": "investor_pitch",
+    "stage": "established",
+    "horizon_years": 5,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Handy Hank & Sons",
+    "key_numbers": {},
+    "notes": "A friendly neighborhood service company that customers trust. We just want to grow steadily and keep the vans busy."
+  }
+}

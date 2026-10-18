@@ -1,0 +1,18 @@
+{
+  "id": "saas-03",
+  "industry": "saas",
+  "tags": [
+    "long-notes"
+  ],
+  "answers": {
+    "business_type": "saas",
+    "goal": "dcf_valuation",
+    "stage": "growing",
+    "horizon_years": 5,
+    "granularity": "annual",
+    "tier": "full",
+    "business_name": "FleetPilot",
+    "key_numbers": {},
+    "notes": "We sell workflow software to logistics companies with 20 to 200 trucks. We have 310 customers at an average of $420 per month and 70% of them are on annual contracts. Monthly churn is about 1.4% and net expansion adds roughly 0.8% a month through extra seats. Marketing spend is $38,000 a month and a new customer costs about $2,900 to acquire. Hosting and third-party APIs take 9% of revenue, support costs $6 per customer per month. Engineering is 11 people, sales and marketing 6, customer success 4, finance and admin 2. We expect organic sign-ups to grow 20% a year and plan a Series A in 18 months, so we need a valuation-ready model."
+  }
+}

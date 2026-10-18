@@ -1,0 +1,18 @@
+{
+  "id": "fitness-01",
+  "industry": "fitness",
+  "tags": [
+    "short-notes"
+  ],
+  "answers": {
+    "business_type": "fitness",
+    "goal": "revenue_profit",
+    "stage": "planning",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Iron Orchard Gym",
+    "key_numbers": {},
+    "notes": "Boutique studio, 4,000 sq ft, rent $12,000 a month, membership $99 a month with a $49 joining fee. We expect to reach about 450 members and lose 6% a month."
+  }
+}

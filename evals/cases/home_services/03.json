@@ -1,0 +1,18 @@
+{
+  "id": "home_services-03",
+  "industry": "home_services",
+  "tags": [
+    "long-notes"
+  ],
+  "answers": {
+    "business_type": "home_services",
+    "goal": "dcf_valuation",
+    "stage": "growing",
+    "horizon_years": 5,
+    "granularity": "annual",
+    "tier": "full",
+    "business_name": "SparkRight Electric",
+    "key_numbers": {},
+    "notes": "We are a 14 technician electrical contractor. Average ticket $610 with 3 jobs per tech per day over 21 working days, 55% of leads book. Google and Angi cost $14,000 a month at about $58 per lead. Repeat customers give around 80 jobs a month. We sell a maintenance plan with 240 members at $25 a month and expect to double that in a year. Materials are 24% of revenue, vehicles cost $1,600 per van per month, insurance $2,400 a month, card fees 2.7%. Summer peak adds about 20% to demand. We plan to buy four new vans at $45,000 each and want to present a valuation to a private equity buyer."
+  }
+}

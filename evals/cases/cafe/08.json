@@ -1,0 +1,23 @@
+{
+  "id": "cafe-08",
+  "industry": "cafe",
+  "tags": [
+    "locked-numbers",
+    "conflicting-notes"
+  ],
+  "answers": {
+    "business_type": "restaurant_cafe",
+    "goal": "revenue_profit",
+    "stage": "growing",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Oak Street Kitchen",
+    "key_numbers": {
+      "ticket": 11.0,
+      "rent": 7500,
+      "cogs_pct": 0.31
+    },
+    "notes": "We estimate the average ticket at $9 even though I typed $11 in the form, and rent is around $7,500 but could drop if the landlord agrees. Food cost about 33%."
+  }
+}

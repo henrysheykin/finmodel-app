@@ -1,0 +1,18 @@
+{
+  "id": "retail-06",
+  "industry": "retail",
+  "tags": [
+    "foreign-language"
+  ],
+  "answers": {
+    "business_type": "retail_ecommerce",
+    "goal": "revenue_profit",
+    "stage": "early",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Brick Lane Toys",
+    "key_numbers": {},
+    "notes": "Tienda online de ceramica artesanal. Unas 4.000 visitas al mes, conversion del 1,8 por ciento, pedido medio de 55 euros, gastos de envio de 6 euros por pedido."
+  }
+}

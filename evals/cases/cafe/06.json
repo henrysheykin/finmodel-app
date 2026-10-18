@@ -1,0 +1,18 @@
+{
+  "id": "cafe-06",
+  "industry": "cafe",
+  "tags": [
+    "foreign-language"
+  ],
+  "answers": {
+    "business_type": "restaurant_cafe",
+    "goal": "revenue_profit",
+    "stage": "early",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Sunny Side Brunch",
+    "key_numbers": {},
+    "notes": "Cafe pequena en el centro de Valencia, unos 90 clientes al dia, ticket medio de 6 euros, alquiler de 2.800 al mes. Queremos abrir los sabados tambien."
+  }
+}

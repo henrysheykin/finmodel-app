@@ -1,0 +1,22 @@
+{
+  "id": "fitness-02",
+  "industry": "fitness",
+  "tags": [
+    "locked-numbers",
+    "short-notes"
+  ],
+  "answers": {
+    "business_type": "fitness",
+    "goal": "startup_breakeven",
+    "stage": "early",
+    "horizon_years": 1,
+    "granularity": "monthly",
+    "tier": "light",
+    "business_name": "Flow State Yoga",
+    "key_numbers": {
+      "fee": 119.0,
+      "rent": 9500
+    },
+    "notes": "We opened 5 months ago with 120 members. Fee is $119 a month, rent is $9,500. About 8% of members buy personal training sessions."
+  }
+}

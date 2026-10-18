@@ -1,0 +1,18 @@
+{
+  "id": "services-01",
+  "industry": "services",
+  "tags": [
+    "short-notes"
+  ],
+  "answers": {
+    "business_type": "professional_services",
+    "goal": "revenue_profit",
+    "stage": "planning",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Northfield Advisory",
+    "key_numbers": {},
+    "notes": "Boutique management consultancy. Two partners billing $350 an hour at about 55% utilisation and three consultants at $175 an hour at 75%. About 40% of revenue is on monthly retainers."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "saas-09",
+  "industry": "saas",
+  "tags": [
+    "vague-notes"
+  ],
+  "answers": {
+    "business_type": "saas",
+    "goal": "investor_pitch",
+    "stage": "established",
+    "horizon_years": 5,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "BrightRoster",
+    "key_numbers": {},
+    "notes": "A platform helping teams collaborate better. We are growing nicely and customers love it."
+  }
+}

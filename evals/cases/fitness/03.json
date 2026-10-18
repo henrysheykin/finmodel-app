@@ -1,0 +1,18 @@
+{
+  "id": "fitness-03",
+  "industry": "fitness",
+  "tags": [
+    "long-notes"
+  ],
+  "answers": {
+    "business_type": "fitness",
+    "goal": "dcf_valuation",
+    "stage": "growing",
+    "horizon_years": 5,
+    "granularity": "annual",
+    "tier": "full",
+    "business_name": "Peak Cycle Studio",
+    "key_numbers": {},
+    "notes": "We run a 6,500 sq ft strength gym with 380 members now and a capacity of about 650. The fee is $109 a month and we add roughly 3% a year; joining fee $60. Monthly churn is 4.5%. We spend $6,500 a month on marketing at $28 per lead and convert 14% of leads. Referrals bring 22 new members a month. Personal training is 12% of members buying about 5 sessions at $70 with a 50% trainer payout. We run 55 classes a week at $42 each. Rent is $16,500, utilities $3,100, maintenance $2,200. A second location would need $400,000 of equipment and build-out. We want a five-year model for a valuation."
+  }
+}

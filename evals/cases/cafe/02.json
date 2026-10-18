@@ -1,0 +1,22 @@
+{
+  "id": "cafe-02",
+  "industry": "cafe",
+  "tags": [
+    "locked-numbers",
+    "short-notes"
+  ],
+  "answers": {
+    "business_type": "restaurant_cafe",
+    "goal": "startup_breakeven",
+    "stage": "early",
+    "horizon_years": 1,
+    "granularity": "monthly",
+    "tier": "light",
+    "business_name": "Maple & Rye",
+    "key_numbers": {
+      "ticket": 9.0,
+      "rent": 6200
+    },
+    "notes": "We are 8 months in. Average check is $9 and we run 22 days of full service a month because we close on Mondays and some Sundays. Rent went up to $6,200 with the new lease."
+  }
+}

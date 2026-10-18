@@ -1,0 +1,20 @@
+{
+  "id": "cafe-04",
+  "industry": "cafe",
+  "tags": [
+    "locked-numbers"
+  ],
+  "answers": {
+    "business_type": "restaurant_cafe",
+    "goal": "investor_pitch",
+    "stage": "established",
+    "horizon_years": 3,
+    "granularity": "annual",
+    "tier": "light",
+    "business_name": "Daily Crumb",
+    "key_numbers": {
+      "cogs_pct": 0.3
+    },
+    "notes": "Seven years old, two staff shifts, steady traffic. Average ticket is $12 after the food menu. Please keep it conservative for the investor deck."
+  }
+}

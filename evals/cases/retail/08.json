@@ -1,0 +1,23 @@
+{
+  "id": "retail-08",
+  "industry": "retail",
+  "tags": [
+    "locked-numbers",
+    "conflicting-notes"
+  ],
+  "answers": {
+    "business_type": "retail_ecommerce",
+    "goal": "revenue_profit",
+    "stage": "growing",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Velo Parts Online",
+    "key_numbers": {
+      "aov": 72.0,
+      "conv": 0.025,
+      "cogs_pct": 0.44
+    },
+    "notes": "The average order is about $72 and conversion nearer 2.5%, product cost is around 44%, although the form says different numbers because I rounded them. Returns are low, under 5%."
+  }
+}

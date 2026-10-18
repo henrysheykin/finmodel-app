@@ -1,0 +1,18 @@
+{
+  "id": "home_services-10",
+  "industry": "home_services",
+  "tags": [
+    "financing"
+  ],
+  "answers": {
+    "business_type": "home_services",
+    "goal": "startup_breakeven",
+    "stage": "planning",
+    "horizon_years": 5,
+    "granularity": "annual",
+    "tier": "light",
+    "business_name": "PureWash Windows",
+    "key_numbers": {},
+    "notes": "We open in May after buying a used van for $28,000, financed with a $35,000 bank loan at 7.5%. Plan: one technician at first, average ticket $300, and a second technician after 8 months."
+  }
+}

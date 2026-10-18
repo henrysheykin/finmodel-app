@@ -1,0 +1,18 @@
+{
+  "id": "home_services-06",
+  "industry": "home_services",
+  "tags": [
+    "foreign-language"
+  ],
+  "answers": {
+    "business_type": "home_services",
+    "goal": "revenue_profit",
+    "stage": "early",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "CleanSlate Maids",
+    "key_numbers": {},
+    "notes": "Servicio de climatizacion en Madrid, dos tecnicos, ticket medio de 350 euros, unos 2 trabajos por tecnico al dia. Gastamos 1.800 euros al mes en publicidad."
+  }
+}

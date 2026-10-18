@@ -1,0 +1,18 @@
+{
+  "id": "fitness-06",
+  "industry": "fitness",
+  "tags": [
+    "foreign-language"
+  ],
+  "answers": {
+    "business_type": "fitness",
+    "goal": "revenue_profit",
+    "stage": "early",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Pulse Pilates",
+    "key_numbers": {},
+    "notes": "Studio di yoga a Milano, 60 iscritti, quota mensile di 75 euro, affitto 3.500 euro al mese. Vogliamo arrivare a 200 iscritti in due anni."
+  }
+}

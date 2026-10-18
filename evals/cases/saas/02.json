@@ -1,0 +1,22 @@
+{
+  "id": "saas-02",
+  "industry": "saas",
+  "tags": [
+    "locked-numbers",
+    "short-notes"
+  ],
+  "answers": {
+    "business_type": "saas",
+    "goal": "startup_breakeven",
+    "stage": "early",
+    "horizon_years": 1,
+    "granularity": "monthly",
+    "tier": "light",
+    "business_name": "LedgerLoop",
+    "key_numbers": {
+      "arpa": 99.0,
+      "churn_m": 0.04
+    },
+    "notes": "Launched 6 months ago with 40 paying clinics. Our price is $99 and churn is running at 4% a month. Most customers pay monthly."
+  }
+}

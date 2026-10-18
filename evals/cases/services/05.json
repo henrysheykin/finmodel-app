@@ -1,0 +1,18 @@
+{
+  "id": "services-05",
+  "industry": "services",
+  "tags": [
+    "impossible-numbers"
+  ],
+  "answers": {
+    "business_type": "professional_services",
+    "goal": "other",
+    "stage": "planning",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Pinecrest Accounting",
+    "key_numbers": {},
+    "notes": "Everyone bills 100 percent of their hours at $5,000 an hour with 120% utilisation, contractors cost nothing, retainers are 100% of revenue and realisation is 150%."
+  }
+}

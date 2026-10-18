@@ -1,0 +1,18 @@
+{
+  "id": "services-06",
+  "industry": "services",
+  "tags": [
+    "foreign-language"
+  ],
+  "answers": {
+    "business_type": "professional_services",
+    "goal": "revenue_profit",
+    "stage": "early",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "Lumen HR Partners",
+    "key_numbers": {},
+    "notes": "Boutique de conseil en strategie a Lyon. Deux associes a 280 euros de l'heure, taux d'utilisation de 50 pour cent. Environ 30 pour cent du chiffre d'affaires en forfaits mensuels."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "home_services-05",
+  "industry": "home_services",
+  "tags": [
+    "impossible-numbers"
+  ],
+  "answers": {
+    "business_type": "home_services",
+    "goal": "other",
+    "stage": "planning",
+    "horizon_years": 3,
+    "granularity": "monthly",
+    "tier": "full",
+    "business_name": "SwiftFix Appliance",
+    "key_numbers": {},
+    "notes": "Each technician will do 40 jobs a day at an average ticket of $90,000, materials cost nothing, 100% of leads book and the maintenance plan has a million members in the first month."
+  }
+}
