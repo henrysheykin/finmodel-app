@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-18 · E · E24 derived goal defaults + fallback usage · DONE · https://github.com/henrysheykin/finmodel-app/pull/42
+  `merge` recomputes `cash_buffer` (3 months of costs) after the model's changes unless the model moved it or the customer locked it;
+  echoed-unchanged keys don't count; derived value clamped to its range [0, 1e9]. Usage of calls already made is kept on every fallback (`exc.usage`).
+  6 new tests; CI green; reviewer PASS (medium clamp + 2 lows fixed before merge). For Henry: nothing new; E23 still waits on A1 (OpenAI key). Next E: none ready besides E23.
 - 2026-10-18 · E · E25 brief builder on OpenAI · DONE · https://github.com/henrysheykin/finmodel-app/pull/41
   OpenAI Responses API over httpx (Chat Completions can't do function calls with reasoning on gpt-6; astra can't turn it off):
   strict forced `submit_brief`, reasoning low, store=false, usage uncached/cached/cache-write; no retry on 4xx except 429.

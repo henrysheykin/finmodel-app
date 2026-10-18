@@ -12,7 +12,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ## Track E — Engineering (daily)
 
-> **Priority:** E23 → E24. (E25, the switch to OpenAI per ADR-012, is done: #41.) All earlier E tasks are done (`docs/DONE.md`).
+> **Priority:** E23 (waits on the OpenAI key, A1). (E25 OpenAI done #41; E24 done #42.) All earlier E tasks are done (`docs/DONE.md`).
 > New industries are one file each (ADR-009, `docs/templates/ADDING_A_TEMPLATE.md`; follow E21/E22, Model: sonnet).
 > Customer login = passwordless magic link by email (ADR-006).
 
@@ -32,18 +32,6 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: `docs/memos/brief-model-eval.md` with the table and a recommendation: the cheapest model whose
   pass share is not below the reference and whose p95 ≤ 15 s. Reference = gpt-6-astra pass share (no model is in
   production yet; BRIEF_MODEL is empty). Henry sets `BRIEF_MODEL` from it (add to HUMAN_TODO).
-
-### E24 — LLM brief: refresh derived goal defaults, count usage on every fallback
-- status: IN_PROGRESS (2026-10-18)
-- Model: sonnet
-- depends: E08
-- skills: engineering:testing-strategy
-- do: (from the E08 review, low) (1) `apply_goal` defaults that are computed from other drivers (e.g.
-  `cash_buffer` ≈ 3 months of costs) are set before the model changes costs in `engine/brief_builder.merge`;
-  recompute them after the merge for goal keys the model did not change and the customer did not lock.
-  (2) `app/briefing.LLMBriefSource`: on an unexpected exception the usage of calls already made is lost
-  (logged as none); carry the running usage on the error so `brief_llm order=…` stays complete.
-- done when: tests show a cost change moves `cash_buffer` Base and that usage is logged on every fallback.
 
 ---
 
