@@ -4,9 +4,9 @@ Newest first. One entry per scheduled run: date · track · task · result · PR
 
 - 2026-10-18 · E · interactive with Henry: L1 legal texts · https://github.com/henrysheykin/finmodel-app/pull/35
   privacy/terms/refunds written from what the app does; seller StartupModels LLC (Wyoming), Wyoming law (Henry gives no address/tax ID).
-  Legal pages with unfilled [PLACEHOLDERS] are never published. D9 decided: fix within 2 business days or full refund (email + refunds.md).
+  Legal pages with unfilled [PLACEHOLDERS] are never published. D9 decided (PR #36): failed build → only Henry gets the alert, no customer email; refunds.md: full refund if a passing model can't be delivered.
   D13 (EU withdrawal checkbox): Henry — ignore. Retention purge (`manage purge`, every start). E18 set DONE (tag optional, G0).
-  Henry done today: Resend domain, Stripe name + activation, PUBLIC_BASE_URL, CLIENT_IP_HEADER, EMAIL_FROM. Verified live: /healthz 0.1.0.
+  Henry done today: Resend domain, Stripe name + activation, PUBLIC_BASE_URL, CLIENT_IP_HEADER, EMAIL_FROM. Verified live: /healthz 0.1.0; /privacy, /terms, /refunds published and in the sitemap.
   Left before live money: R1 CFO review, test order on the domain (G1.6), live keys (G1.8), first real order (G1.9).
 - 2026-10-18 · E · E18 release candidate v0.1.0 · NEEDS_HENRY (tag only) · https://github.com/henrysheykin/finmodel-app/pull/34
   Version 0.1.0 (/healthz, deploy log). Go-live preflight `app/golive.py`: domain, Stripe live, webhook, sender domain, support,
