@@ -49,8 +49,22 @@ pack") needs E11 support.
 
 Facts come from `engine/templates/{saas,retail,services}.py` and `docs/templates/*.md`. The
 three templates still await CFO sign-off (HUMAN_TODO R1): publish these pages only together
-with signed-off templates. Remaining plan pages: rental pro forma (#8, after E05) and DCF for
-owners (#14, after E07).
+with signed-off templates. Rental pro forma (#8) and DCF (#14) are in batch 4.
+
+## Batch 4 (M12, 2026-10-18)
+
+| File | Slug | Sample | Plan # |
+|---|---|---|---|
+| rental-property-pro-forma-for-lenders.md | /models/rental-property-pro-forma-for-lenders | /samples/real_estate-full.xlsx | 8 |
+| dcf-valuation-small-business.md | /guides/dcf-valuation-small-business | /samples/cafe-full.xlsx (no Valuation sheet) | 14 |
+| fitness-studio-financial-projections.md | /models/fitness-studio-financial-projections | /samples/fitness-full.xlsx | new |
+| home-services-financial-projections.md | /models/home-services-financial-projections | /samples/home_services-full.xlsx | new |
+| startup-costs-and-break-even-analysis.md | /guides/startup-costs-and-break-even-analysis | /samples/cafe-full.xlsx (no Break-even sheet) | new |
+
+Facts come from `docs/templates/{real_estate,fitness,home_services,goal-modules}.md`. Older pages
+that said only the café template exists were refreshed. The new templates await CFO sign-off
+(HUMAN_TODO R1): publish these pages only with signed-off templates. Open point: a public sample
+with the Valuation and Break-even sheets (goal samples are not served today).
 
 ## Notes for E16 / E10
 

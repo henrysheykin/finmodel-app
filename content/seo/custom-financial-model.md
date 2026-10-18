@@ -99,7 +99,7 @@ A good analyst still adds things a template can't: judgement on your market and 
 Yes. It is a normal Excel file. Change any blue input and every sheet recalculates.
 
 **Which industries are covered?**
-Café and restaurant first, with software, retail and e-commerce, rental property and professional services following. If yours isn't listed yet, the questionnaire will say so before you pay.
+Today: restaurants and cafés, SaaS and software, retail and e-commerce, professional services, rental real estate, fitness studios and gyms, and home services and trades. More follow. If yours isn't listed yet, the questionnaire will say so before you pay.
 
 **What if the model doesn't fit my business?**
 Write to us within 7 days and we refund the full amount.
