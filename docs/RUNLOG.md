@@ -2,6 +2,12 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-18 · E · E17 hardening · DONE · https://github.com/henrysheykin/finmodel-app/pull/32
+  Fixed: a webhook delivered twice at the same moment could build/receipt twice (conditional UPDATE claim); blocking Stripe/email/DB
+  work ran on the event loop (one slow email froze the site); admin login global cap; one client-address rule for all limits;
+  cross-site POSTs refused; CSP; tokens redacted from access logs; 1 MB body cap; pinned deps + pip-audit job (clean).
+  New: browser journey E2E with the real engine and real email copy; load test 50 orders / one worker = 50 ready, 7.8 s per model.
+  Report docs/reviews/E17-hardening.md. 714 tests local. For Henry: A6 still open. E05 skipped again (stale claim, no continue:).
 - 2026-10-17 · E · E15 ops (rest) · DONE · https://github.com/henrysheykin/finmodel-app/pull/31
   Per-IP rate limits: wizard + /api/orders share 30/10 min, checkout sessions 30/10 min (RATE_LIMIT_PER_10MIN), 429 + Retry-After,
   answers kept. docker-compose.yml (production image + Postgres 16); compose E2E (wizard → test payment → build → Checks PASS) in CI.

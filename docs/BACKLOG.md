@@ -267,7 +267,9 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: every page in content/seo builds and passes the SEO tests.
 
 ### E17 — Hardening: end-to-end, security, performance
-- status: IN_PROGRESS (2026-10-18, scheduled E run)
+- status: DONE (2026-10-18, https://github.com/henrysheykin/finmodel-app/pull/32)
+- note: report `docs/reviews/E17-hardening.md` (10 findings fixed, none open high); load test `scripts/load_test.py`
+  (50 orders, one worker: 50/50 ready, ~460 models/h). Runtime versions pinned in `constraints.txt`, CI job `audit`.
 - depends: E10, E11, E12, E14, E15
 - skills: engineering:code-review, engineering:testing-strategy, engineering:tech-debt
 - do: full E2E (landing → wizard → Stripe test → worker → email → download) in CI,
