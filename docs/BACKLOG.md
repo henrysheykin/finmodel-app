@@ -17,7 +17,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 > Customer login = passwordless magic link by email (ADR-006).
 
 ### E25 — Brief builder on OpenAI instead of Anthropic (ADR-012)
-- status: TODO
+- status: IN_PROGRESS (2026-10-18)
 - Model: opus
 - depends: E08 (done #39), E23 harness (done #40)
 - skills: engineering:testing-strategy
