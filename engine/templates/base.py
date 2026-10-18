@@ -64,6 +64,11 @@ class Template(ABC):
         """Annual KPI table (``StmtRow`` list) shown on the Dashboard (Full) or P&L (Light)."""
         return []
 
+    #: loan repayment: "straight" (equal principal) or "annuity" (level mortgage payment) — engine/core.py
+    loan_style: str = "straight"
+    #: add the property Returns sheet (engine/returns.py): IRR / NPV of a purchase with an exit at the horizon
+    returns: bool = False
+
     kpi_title: str = "Key metrics"
     #: KPI rows the challenger recomputes: kpi row key -> reference series key
     kpi_checked: dict[str, str] = {}

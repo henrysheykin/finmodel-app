@@ -80,6 +80,8 @@ webhook, Resend domain).
       - [ ] Professional services: sample `samples/services-full.xlsx`, memo `docs/templates/services.md` (questions at the end).
       - [ ] Home services / trades: sample `samples/home_services-full.xlsx`, memo `docs/templates/home_services.md` (questions at the end).
       - [ ] Fitness studio / gym: sample `samples/fitness-full.xlsx`, memo `docs/templates/fitness.md` (questions at the end).
+      - [ ] Real estate / rental property (incl. annuity mortgage, land, Returns sheet with IRR/NPV): sample
+            `samples/real_estate-full.xlsx`, memo `docs/templates/real_estate.md` (questions at the end).
       - [ ] Goal modules (break-even, DCF valuation, investor summary — all templates): sample
             `samples/cafe-investor_pitch.xlsx`, memo `docs/templates/goal-modules.md` (questions at the end).
 - [x] R2 Lawyer review of legal drafts — n/a: Henry cancelled M08 (2026-10-17); legal texts are his to provide.

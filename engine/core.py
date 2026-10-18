@@ -66,19 +66,90 @@ def pnl_head_lines() -> list[Line]:
     return [Line("gp", "Gross profit", "={rev}+{cogs}", "core", bold=True, total=True)]
 
 
-def pnl_tail_lines(opex_keys: list[str], liab_keys: list[str] = ()) -> list[Line]:
-    opex_sum = "+".join(f"{{{k}}}" for k in opex_keys) or "0"
-    liab_terms = "".join(f"+{{d_{k}}}" for k in liab_keys)
-    return [
-        Line("opex_total", "Total operating expenses", f"={opex_sum}", "core", bold=True, total=True),
-        Line("ebitda", "EBITDA", "={gp}+{opex_total}", "core", bold=True, total=True),
-        Line("ebit", "EBIT", "={ebitda}+{dep}", "core", bold=True, section="Profit after depreciation, interest, tax"),
-        Line(
+#: loan styles a template can choose (``Template.loan_style``)
+LOAN_STYLES = ("straight", "annuity")
+#: capex line a template defines (inside ``capex``) for the land share of a purchase — never depreciated
+LAND_LINE = "capex_land"
+
+
+def _loan_lines(loan_style: str) -> tuple[Line, list[Line]]:
+    """(interest line, debt lines) for ``straight`` (equal principal) or ``annuity`` (level payment)."""
+    if loan_style == "straight":
+        interest = Line(
             "interest",
             "Interest on loan (average balance after drawdown)",
             "=-({loan_open}+{loan_draw}+{loan_close})/2*{in:loan_rate}/{ppy}",
             "core",
-        ),
+        )
+        repay = [
+            Line(
+                "loan_repay",
+                "Loan repayment",
+                "=-MIN({loan_open},{in:loan_amount}/MAX(1,{in:loan_term_years}*{ppy}))",
+                "core",
+            )
+        ]
+    elif loan_style == "annuity":
+        interest = Line(
+            "interest",
+            "Interest on loan (balance after drawdown, start of period)",
+            "=-({loan_open}+{loan_draw})*{in:loan_rate}/{ppy}",
+            "core",
+        )
+        repay = [
+            Line(
+                "loan_pmt",
+                "Scheduled loan payment (principal + interest, level)",
+                # Excel's PMT: level payment over the term; a 0% rate repays in equal instalments
+                "=-PMT({in:loan_rate}/{ppy},MAX(1,{in:loan_term_years}*{ppy}),{in:loan_amount})",
+                "core",
+                agg="none",
+            ),
+            Line(
+                "loan_repay",
+                "Loan repayment (principal)",
+                "=-MIN({loan_open}+{loan_draw},{loan_pmt}+{interest})",
+                "core",
+            ),
+            Line("debt_service", "Debt service (interest + principal)", "={interest}+{loan_repay}", "core"),
+        ]
+    else:
+        raise ValueError(f"unknown loan style {loan_style!r}; known: {LOAN_STYLES}")
+    return interest, repay
+
+
+def pnl_tail_lines(
+    opex_keys: list[str], liab_keys: list[str] = (), loan_style: str = "straight", land: bool = False
+) -> list[Line]:
+    """P&L tail, fixed assets, debt, working capital and cash flow.
+
+    ``loan_style`` = ``straight`` (equal principal, interest on the average balance) or ``annuity``
+    (level payment, interest on the balance at the start of the period). ``land`` = the template's capex
+    includes a ``capex_land`` line: land is carried at cost and excluded from depreciation.
+    """
+    opex_sum = "+".join(f"{{{k}}}" for k in opex_keys) or "0"
+    liab_terms = "".join(f"+{{d_{k}}}" for k in liab_keys)
+    interest, repay = _loan_lines(loan_style)
+    if land:
+        dep_base, dep_left, dep_first = "({ppe_gross}-{land})", "{ppe_net[-1]}+{capex}-{land}", "{capex}-{land}"
+        land_lines = [
+            Line(
+                "land",
+                "Land at cost (not depreciated)",
+                "={land[-1]}+{" + LAND_LINE + "}",
+                "core",
+                first="={" + LAND_LINE + "}",
+                agg="last",
+            )
+        ]
+    else:
+        dep_base, dep_left, dep_first = "{ppe_gross}", "{ppe_net[-1]}+{capex}", "{capex}"
+        land_lines = []
+    return [
+        Line("opex_total", "Total operating expenses", f"={opex_sum}", "core", bold=True, total=True),
+        Line("ebitda", "EBITDA", "={gp}+{opex_total}", "core", bold=True, total=True),
+        Line("ebit", "EBIT", "={ebitda}+{dep}", "core", bold=True, section="Profit after depreciation, interest, tax"),
+        interest,
         Line("ebt", "Pre-tax income", "={ebit}+{interest}", "core", bold=True, total=True),
         Line(
             "cum_ebt", "Helper: cumulative pre-tax income", "={cum_ebt[-1]}+{ebt}", "core", first="={ebt}", agg="none"
@@ -100,12 +171,13 @@ def pnl_tail_lines(opex_keys: list[str], liab_keys: list[str] = ()) -> list[Line
         ),
         Line("ni", "Net income", "={ebt}+{tax}", "core", bold=True, total=True),
         Line("ppe_gross", "Fixed assets at cost", "={ppe_gross[-1]}+{capex}", "core", first="={capex}", agg="last"),
+        *land_lines,
         Line(
             "dep",
             "Depreciation",
-            "=-MIN({ppe_gross}/MAX(1,{in:dep_years}*{ppy}),{ppe_net[-1]}+{capex})",
+            f"=-MIN({dep_base}/MAX(1,{{in:dep_years}}*{{ppy}}),{dep_left})",
             "core",
-            first="=-MIN({ppe_gross}/MAX(1,{in:dep_years}*{ppy}),{capex})",
+            first=f"=-MIN({dep_base}/MAX(1,{{in:dep_years}}*{{ppy}}),{dep_first})",
         ),
         Line("acc_dep", "Accumulated depreciation", "={acc_dep[-1]}+{dep}", "core", first="={dep}", agg="last"),
         Line("ppe_net", "Net fixed assets", "={ppe_gross}+{acc_dep}", "core", agg="last", bold=True),
@@ -113,12 +185,7 @@ def pnl_tail_lines(opex_keys: list[str], liab_keys: list[str] = ()) -> list[Line
             "loan_open", "Loan — opening balance", "={loan_close[-1]}", "core", first="=0", agg="first", section="Debt"
         ),
         Line("loan_draw", "Loan drawdown", "=IF({p}=1,{in:loan_amount},0)", "core"),
-        Line(
-            "loan_repay",
-            "Loan repayment",
-            "=-MIN({loan_open},{in:loan_amount}/MAX(1,{in:loan_term_years}*{ppy}))",
-            "core",
-        ),
+        *repay,
         Line(
             "loan_close",
             "Loan — closing balance",
@@ -204,6 +271,7 @@ class Top:
     opex: dict[str, float]  # negative
     capex: float  # positive
     liabilities: dict[str, float] = field(default_factory=dict)  # working-capital balances, e.g. deferred revenue
+    land: float = 0.0  # part of ``capex`` that is land (never depreciated); needs a ``capex_land`` line
     kpis: dict[str, float] = field(default_factory=dict)  # extra series checked by the challenger
 
 
@@ -219,12 +287,16 @@ def role_period(d: dict, key: str, p: int, t: Timing) -> tuple[float, float]:
     return fte, cost
 
 
-def reference_run(d: dict, roles: list[Role], t: Timing, top: TopFn) -> dict[str, list[float]]:
+def reference_run(
+    d: dict, roles: list[Role], t: Timing, top: TopFn, loan_style: str = "straight"
+) -> dict[str, list[float]]:
     """Run the whole model in plain Python. Returns per-period series (index 0 = period 1).
 
     ``top(d, p, y, timing, hc)`` is the template's own revenue/cost logic;
-    ``hc`` (payroll cost and FTE) is computed here from the roles.
+    ``hc`` (payroll cost and FTE) is computed here from the roles. ``loan_style``: see ``pnl_tail_lines``.
     """
+    if loan_style not in LOAN_STYLES:
+        raise ValueError(f"unknown loan style {loan_style!r}")
     s: dict[str, list[float]] = {
         k: []
         for k in (
@@ -257,7 +329,9 @@ def reference_run(d: dict, roles: list[Role], t: Timing, top: TopFn) -> dict[str
             "cff",
         )
     }
-    ppe_gross = acc_dep = loan = cash = cum_ebt = peak = paid_in = retained = 0.0
+    ppe_gross = acc_dep = land = loan = cash = cum_ebt = peak = paid_in = retained = 0.0
+    n_pay, r_pay = max(1, d["loan_term_years"] * t.ppy), d["loan_rate"] / t.ppy
+    pmt = d["loan_amount"] / n_pay if d["loan_rate"] == 0 else d["loan_amount"] * r_pay / (1 - (1 + r_pay) ** -n_pay)
     ar0 = inv0 = ap0 = 0.0
     liab0: dict[str, float] = {}
     for p in range(1, t.periods + 1):
@@ -272,14 +346,20 @@ def reference_run(d: dict, roles: list[Role], t: Timing, top: TopFn) -> dict[str
         opex = sum(tp.opex.values())
         ebitda = gp + opex
         ppe_gross += tp.capex
+        land += tp.land
         net_before = ppe_gross + acc_dep
-        dep = -min(ppe_gross / max(1, d["dep_years"] * t.ppy), net_before)
+        dep = -min((ppe_gross - land) / max(1, d["dep_years"] * t.ppy), net_before - land)
         acc_dep += dep
         loan_open = loan
         draw = d["loan_amount"] if p == 1 else 0.0
-        repay = -min(loan_open, d["loan_amount"] / max(1, d["loan_term_years"] * t.ppy))
-        loan = loan_open + draw + repay
-        interest = -(loan_open + draw + loan) / 2 * d["loan_rate"] / t.ppy
+        if loan_style == "annuity":
+            interest = -(loan_open + draw) * r_pay
+            repay = -min(loan_open + draw, pmt + interest)
+            loan = loan_open + draw + repay
+        else:
+            repay = -min(loan_open, d["loan_amount"] / max(1, d["loan_term_years"] * t.ppy))
+            loan = loan_open + draw + repay
+            interest = -(loan_open + draw + loan) / 2 * d["loan_rate"] / t.ppy
         ebit = ebitda + dep
         ebt = ebit + interest
         cum_ebt += ebt
@@ -330,6 +410,7 @@ def reference_run(d: dict, roles: list[Role], t: Timing, top: TopFn) -> dict[str
             "cfi": cfi,
             "cff": cff,
             "loan_repay": repay,
+            "debt_service": interest + repay,
         }
         row.update(tp.liabilities)
         row.update(tp.kpis)
@@ -356,6 +437,7 @@ FLOW_KEYS = {
     "cfi",
     "cff",
     "loan_repay",
+    "debt_service",
 }
 
 

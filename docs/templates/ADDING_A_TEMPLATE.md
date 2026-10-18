@@ -25,6 +25,11 @@ class FitnessTemplate(Template):
     def default_brief(self, stage): ...  # stage defaults: planning / early / growing / established
 ```
 
+Optional economics (ADR-011): `loan_style = "annuity"` for a level-payment mortgage (default `"straight"`);
+a `capex_land` line inside `capex` (with `Top.land` in the twin) keeps land out of depreciation;
+`returns = True` adds the property Returns sheet (needs the drivers in `engine/returns.py`
+`REQUIRED_DRIVERS` and a `capex_buy` line) — see `engine/templates/real_estate.py`.
+
 Rules that do not change (CLAUDE.md): Excel-2007 functions only, every assumption in its own labelled
 cell, guarded denominators, zero formula errors, challenger within $1 in every scenario-year.
 

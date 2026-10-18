@@ -39,7 +39,7 @@ def test_business_name_goes_into_model_name():
 
 def test_rejections():
     with pytest.raises(BriefError, match="not available"):
-        SRC.build_brief(Answers(business_type="real_estate"))
+        SRC.build_brief(Answers(business_type="other"))
     with pytest.raises(BriefError, match="unknown key numbers"):
         SRC.build_brief(Answers(business_type="saas", key_numbers={"bogus": 1}))
     with pytest.raises(BriefError):  # out of the template's bounds

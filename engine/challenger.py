@@ -5,8 +5,9 @@
 2. Recomputes the same economics in plain Python from the brief (the
    template's ``reference_top`` + ``engine.core.reference_run``, which share no
    code with the formula builder) and compares every scenario-year within $1.
-   Goal modules (Break-even, Valuation, Summary) are recomputed by ``engine.goals.reference`` and
-   compared cell by cell (money within $1, ratios within 1e-6, periods and texts exactly).
+   Goal modules (Break-even, Valuation, Summary) are recomputed by ``engine.goals.reference`` and the
+   property Returns sheet by ``engine.returns.reference``; both are compared cell by cell (money within $1,
+   ratios within 1e-6, IRR within 0.01 pp, periods and texts exactly).
 3. Requires the in-file Checks verdict to be PASS (or PASS WITH WARNINGS), the
    balance sheet to balance (full tier), and revenue Low < Base < High.
 
@@ -17,6 +18,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import shutil
 import sys
 import tempfile
@@ -30,6 +32,8 @@ from engine.core import annualise, reference_run
 from engine.goals import TOLERANCE as GOAL_TOLERANCE
 from engine.goals import reference as goal_reference
 from engine.recalc import RecalcError, recalc
+from engine.returns import TOLERANCE as RETURNS_TOLERANCE
+from engine.returns import reference as returns_reference
 from engine.spec import Timing
 from engine.templates import get_template
 
@@ -52,7 +56,7 @@ METRIC_SOURCE = {
 def python_model(brief: Brief, scenario: int) -> dict[str, dict[int, float]]:
     tpl = get_template(brief.template)
     t = Timing(brief.granularity, brief.horizon_years)
-    series = reference_run(brief.values(scenario), brief.roles, t, tpl.reference_top)
+    series = reference_run(brief.values(scenario), brief.roles, t, tpl.reference_top, tpl.loan_style)
     return annualise(series, t, tpl.kpi_flows)
 
 
@@ -61,8 +65,21 @@ def python_goal_model(brief: Brief, scenario: int) -> dict:
     tpl = get_template(brief.template)
     t = Timing(brief.granularity, brief.horizon_years)
     d = brief.values(scenario)
-    series = reference_run(d, brief.roles, t, tpl.reference_top)
-    return goal_reference(brief, d, series, t)
+    series = reference_run(d, brief.roles, t, tpl.reference_top, tpl.loan_style)
+    out = goal_reference(brief, d, series, t)
+    if tpl.returns:
+        out["cells"].update(returns_reference(d, series, t)["cells"])
+    return out
+
+
+def _tolerance(name: str) -> float:
+    """Goal / Returns cell tolerance by name (``dscr_3`` → ``dscr``); money cells default to $1."""
+    base = name.split(" ")[0]
+    stem = re.sub(r"_\d+$", "", base)
+    for key in (base, stem):
+        if key in RETURNS_TOLERANCE:
+            return RETURNS_TOLERANCE[key]
+    return GOAL_TOLERANCE.get(base, TOLERANCE_USD)
 
 
 def _same(got, exp, tol: float) -> bool:
@@ -152,7 +169,7 @@ def challenge(brief: Brief | dict, model_path: str | Path) -> dict:
                 ]
                 for name, ref, exp in checked:
                     got = val(ref)
-                    if not _same(got, exp, GOAL_TOLERANCE.get(name.split(" ")[0], TOLERANCE_USD)):
+                    if not _same(got, exp, _tolerance(name)):
                         report["problems"].append(f"scenario {scen} goal {name}: workbook {got!r} vs python {exp!r}")
                 out["goal"] = {n: val(ref) for n, ref in man.goal_cells.items()}
             if verdict not in ("PASS", "PASS WITH WARNINGS"):

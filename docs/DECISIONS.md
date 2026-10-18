@@ -328,3 +328,31 @@ was the same for every goal.
 **Consequences.** The LLM brief builder (E08) must fill the goal drivers or call `apply_goal`. Light-plan
 customers who pick "Investor-ready pitch model" get the Summary, Break-even and Valuation sheets on top of
 Light (HUMAN_TODO D12 asks whether that goal should require Full).
+
+## ADR-011 — Property economics: annuity loans, land, Returns sheet (2026-10-18, E05)
+
+**Context.** A rental-property model needs three things the shared engine did not have: a mortgage with a
+level payment, land that is never depreciated, and investor returns (IRR / NPV with a sale at the horizon).
+
+**Decision.**
+- `Template.loan_style`: `"straight"` (default, unchanged: equal principal, interest on the average balance)
+  or `"annuity"` (level payment from Excel `PMT`, interest on the balance after drawdown at the start of the
+  period, principal = payment − interest, capped at the balance). Grid lines `loan_pmt` and `debt_service`
+  appear only for annuity loans. `engine.core.reference_run(..., loan_style)` is the plain-Python twin.
+- Land: a template whose capex includes a `capex_land` line gets a `land` line (at cost); depreciation runs
+  on fixed assets less land and stops at the building value. `Top.land` carries it in the twin.
+- `Template.returns = True` adds the **Returns** sheet (`engine/returns.py`, both tiers, before goal
+  sheets): year 0 = purchase (price + closing costs, less the loan for equity), years 1..H = NOI (EBITDA) −
+  capital reserves (capex other than `capex_buy`) and, levered, interest + principal; sale at the end of
+  year H = next-year NOI ÷ exit cap rate less selling costs, levered repays the loan balance. Unlevered and
+  levered IRR (Excel `IRR` with a starting estimate (inflows ÷ outflows)^(1/H) − 1; "n/a" unless the flows
+  change sign exactly once and return at least 25% of the money put in, so the IRR is unique and Excel's
+  search is reliable — the twin applies the same rule), NPV at a discount rate,
+  multiple, going-in cap rate, DSCR and cash-on-cash by year. Cash flows are before income tax.
+- The challenger recomputes every Returns cell (`returns.reference`; IRR by bisection, within 0.01 pp;
+  ratios 1e-6; money $1). New in-file checks: NOI ties to EBITDA, purchase ties to capex, loan fully repaid
+  at sale, both IRRs discount their flows to zero; WARN when DSCR < 1.0x in any year.
+
+**Consequences.** Existing templates build byte-for-byte the same formulas (straight loans, no land, no
+Returns sheet). If Excel's IRR cannot find the root the bisection finds (e.g. flows with several sign
+changes) the cell shows "n/a", the challenger fails the model and it is not delivered.
