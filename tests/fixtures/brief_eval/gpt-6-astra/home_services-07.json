@@ -1,0 +1,41 @@
+{
+ "calls": [
+  {
+   "response": {
+    "id": "resp_fx_h7o",
+    "object": "response",
+    "status": "completed",
+    "model": "gpt-6-astra",
+    "output": [
+     {
+      "type": "reasoning",
+      "id": "rs_fx_h7o",
+      "summary": [],
+      "encrypted_content": "gAAAAb87c352a97cbf2eeeb9c8fe717db59821009d0de"
+     },
+     {
+      "type": "function_call",
+      "id": "fc_fx_h7o",
+      "call_id": "call_fx_h7o",
+      "name": "submit_brief",
+      "arguments": "{\"assumption_note\":\"Based on your notes.\",\"changes\":[{\"key\":\"ticket\",\"low\":255.0,\"base\":300,\"high\":345.0,\"note\":\"You said ticket is about 300.\"},{\"key\":\"jobs_per_tech\",\"low\":1.7,\"base\":2.0,\"high\":2.3,\"note\":\"You said jobs_per_tech is about 2.\"}]}",
+      "status": "completed"
+     }
+    ],
+    "usage": {
+     "input_tokens": 4000,
+     "input_tokens_details": {
+      "cached_tokens": 1800,
+      "cache_write_tokens": 0
+     },
+     "output_tokens": 260,
+     "output_tokens_details": {
+      "reasoning_tokens": 0
+     },
+     "total_tokens": 4260
+    }
+   },
+   "latency_ms": 3900
+  }
+ ]
+}

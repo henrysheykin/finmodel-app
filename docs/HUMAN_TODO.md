@@ -60,12 +60,11 @@ the answer next to the item (agents read this file every run).
 ## Accounts & keys (put keys only into the hosting provider's env vars, never in chat or the repo)
 Step-by-step for all of these: `docs/DEPLOY.md` (Railway service + Postgres + volume, Cloudflare DNS, Stripe
 webhook, Resend domain).
-- [ ] A1 OpenAI API key with a monthly spend limit (for the brief builder). Henry 2026-10-18: OpenAI replaces Anthropic
-      (ADR-012; agents switch the code in E25). The builder stays OFF until both Railway variables are set:
+- [ ] A1 OpenAI API key with a monthly spend limit (for the brief builder; ADR-012, code on OpenAI since E25). The builder stays OFF until both Railway variables are set:
       `OPENAI_API_KEY` and `BRIEF_MODEL` (which model: from the E23 memo `docs/memos/brief-model-eval.md`).
       For the E23 live run: add `OPENAI_API_KEY` as an environment variable of the Claude cloud environment these
       scheduled runs use (never in chat or the repo) — the next E run after E25 fills the memo. Worth a glance before
-      switching on: OpenAI's API data-usage / DPA terms (privacy.md makes no claim about training or retention).
+      switching on: OpenAI's API data-usage / DPA terms (privacy.md makes no claim about training or retention; the app sends `store: false`, so OpenAI keeps no retrievable copy of the conversation).
 - [x] A2 (test mode done 2026-10-17: keys + webhook on the Railway URL, test purchase delivered) Stripe account, test-mode keys first (put them only into Railway env vars). Exact steps (keys, webhook
       endpoint `/webhooks/stripe` and its 3 events, local test with the Stripe CLI): `docs/PAYMENTS.md`.
 - [x] A3 (Resend key done 2026-10-17; domain verified by Henry 2026-10-18 — set `EMAIL_FROM` to `StartupModel <models@startup-model.com>` in Railway if not yet) Email provider (Resend or Postmark) + DNS records for the domain.

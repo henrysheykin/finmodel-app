@@ -105,7 +105,7 @@ def create_app(services: Services | None = None) -> FastAPI:
                 cfg,
                 make_sessionmaker(make_engine(cfg.database_url)),
                 make_storage(cfg.storage_backend, cfg.storage_dir, cfg.s3_bucket, cfg.s3_endpoint_url),
-                make_brief_source(cfg.brief_model, cfg.anthropic_api_key),
+                make_brief_source(cfg.brief_model, cfg.openai_api_key),
                 make_provider(
                     cfg.payment_provider,
                     cfg.public_base_url,

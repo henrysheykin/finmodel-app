@@ -1,5 +1,5 @@
 {
- "_about": "Claude Messages API responses in the API's JSON shape, written for E08 tests (no live calls). 'valid' cases must end in a valid tailored brief; 'fallback' cases exhaust the retries.",
+ "_about": "OpenAI Responses API responses in the API's JSON shape (function_call items, usage with input_tokens_details), re-recorded from the E08 fixtures for E25 (no live calls). 'valid' cases must end in a valid tailored brief; 'fallback' cases exhaust the retries.",
  "valid": [
   {
    "id": "saas-dental-pricing",
@@ -11,42 +11,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_001",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_001",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_001",
+       "type": "reasoning",
+       "id": "rs_fixture_001",
+       "summary": [],
+       "encrypted_content": "gAAAA102ef84200bb08b09eac5f5bd049880cefa0206e"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_001",
+       "call_id": "call_fixture_001",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Pricing and churn from your notes; other drivers are typical for an early B2B SaaS.",
-        "changes": [
-         {
-          "key": "arpa",
-          "low": 119,
-          "base": 149,
-          "high": 179,
-          "note": "You said $149 per clinic per month."
-         },
-         {
-          "key": "churn_m",
-          "low": 0.04,
-          "base": 0.03,
-          "high": 0.022,
-          "note": "You expect about 3% monthly churn."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Pricing and churn from your notes; other drivers are typical for an early B2B SaaS.\",\"changes\":[{\"key\":\"arpa\",\"low\":119,\"base\":149,\"high\":179,\"note\":\"You said $149 per clinic per month.\"},{\"key\":\"churn_m\",\"low\":0.04,\"base\":0.03,\"high\":0.022,\"note\":\"You expect about 3% monthly churn.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 0,
+       "cache_write_tokens": 1600
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 0,
-      "cache_creation_input_tokens": 1600
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -78,42 +73,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_002",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_002",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_002",
+       "type": "reasoning",
+       "id": "rs_fixture_002",
+       "summary": [],
+       "encrypted_content": "gAAAAa3cb9122b8b0fccb6844181e028fe4951007513f"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_002",
+       "call_id": "call_fixture_002",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Customer base and seed round from your notes.",
-        "changes": [
-         {
-          "key": "start_customers",
-          "low": 120,
-          "base": 120,
-          "high": 120,
-          "note": "You have 120 paying customers today."
-         },
-         {
-          "key": "equity",
-          "low": 1000000,
-          "base": 1500000,
-          "high": 1500000,
-          "note": "Seed round of $1.5M; Low assumes a smaller close."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Customer base and seed round from your notes.\",\"changes\":[{\"key\":\"start_customers\",\"low\":120,\"base\":120,\"high\":120,\"note\":\"You have 120 paying customers today.\"},{\"key\":\"equity\",\"low\":1000000,\"base\":1500000,\"high\":1500000,\"note\":\"Seed round of $1.5M; Low assumes a smaller close.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -144,42 +134,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_003",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_003",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_003",
+       "type": "reasoning",
+       "id": "rs_fixture_003",
+       "summary": [],
+       "encrypted_content": "gAAAA60a3c5086b3e7d5994ae4fd09f98788d37688e05"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_003",
+       "call_id": "call_fixture_003",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Rent from your lease and ticket from your notes; traffic is typical for a new specialty coffee shop.",
-        "changes": [
-         {
-          "key": "rent",
-          "low": 6200,
-          "base": 6200,
-          "high": 6200,
-          "note": "Your signed lease: $6,200 a month."
-         },
-         {
-          "key": "ticket",
-          "low": 7.5,
-          "base": 8.5,
-          "high": 9.5,
-          "note": "You said the average ticket is around $8.50."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Rent from your lease and ticket from your notes; traffic is typical for a new specialty coffee shop.\",\"changes\":[{\"key\":\"rent\",\"low\":6200,\"base\":6200,\"high\":6200,\"note\":\"Your signed lease: $6,200 a month.\"},{\"key\":\"ticket\",\"low\":7.5,\"base\":8.5,\"high\":9.5,\"note\":\"You said the average ticket is around $8.50.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -213,42 +198,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_004",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_004",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_004",
+       "type": "reasoning",
+       "id": "rs_fixture_004",
+       "summary": [],
+       "encrypted_content": "gAAAA7bc47dff8c0530f6efed5999c7358cabf3817ca7"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_004",
+       "call_id": "call_fixture_004",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Traffic from your notes; ticket is the number you typed.",
-        "changes": [
-         {
-          "key": "ticket",
-          "low": 9,
-          "base": 10,
-          "high": 11,
-          "note": "Tried to change a locked number."
-         },
-         {
-          "key": "cust_full",
-          "low": 180,
-          "base": 220,
-          "high": 260,
-          "note": "You see about 220 customers a day."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Traffic from your notes; ticket is the number you typed.\",\"changes\":[{\"key\":\"ticket\",\"low\":9,\"base\":10,\"high\":11,\"note\":\"Tried to change a locked number.\"},{\"key\":\"cust_full\",\"low\":180,\"base\":220,\"high\":260,\"note\":\"You see about 220 customers a day.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -276,42 +256,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_005",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_005",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_005",
+       "type": "reasoning",
+       "id": "rs_fixture_005",
+       "summary": [],
+       "encrypted_content": "gAAAA691e7325c3cd969b31563e50fa0399a4dd5b97c8"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_005",
+       "call_id": "call_fixture_005",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Order value and conversion from your notes.",
-        "changes": [
-         {
-          "key": "aov",
-          "low": 62,
-          "base": 72,
-          "high": 82,
-          "note": "You expect a $72 average order."
-         },
-         {
-          "key": "conv",
-          "low": 0.014,
-          "base": 0.018,
-          "high": 0.022,
-          "note": "You expect about 1.8% conversion."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Order value and conversion from your notes.\",\"changes\":[{\"key\":\"aov\",\"low\":62,\"base\":72,\"high\":82,\"note\":\"You expect a $72 average order.\"},{\"key\":\"conv\",\"low\":0.014,\"base\":0.018,\"high\":0.022,\"note\":\"You expect about 1.8% conversion.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -342,35 +317,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_006",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_006",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_006",
+       "type": "reasoning",
+       "id": "rs_fixture_006",
+       "summary": [],
+       "encrypted_content": "gAAAAea012391a2904d66c2c751f264ad5a798899a33a"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_006",
+       "call_id": "call_fixture_006",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Store count from your notes.",
-        "changes": [
-         {
-          "key": "stores",
-          "low": 3,
-          "base": 3,
-          "high": 3,
-          "note": "You run 3 physical stores."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Store count from your notes.\",\"changes\":[{\"key\":\"stores\",\"low\":3,\"base\":3,\"high\":3,\"note\":\"You run 3 physical stores.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -396,35 +373,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_007",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_007",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_007",
+       "type": "reasoning",
+       "id": "rs_fixture_007",
+       "summary": [],
+       "encrypted_content": "gAAAA99afeff43a1032a342dcbfb11db67972c1a040fd"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_007",
+       "call_id": "call_fixture_007",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Partner rate from your notes.",
-        "changes": [
-         {
-          "key": "senior_rate",
-          "low": 270,
-          "base": 300,
-          "high": 330,
-          "note": "Partners bill $300 an hour."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Partner rate from your notes.\",\"changes\":[{\"key\":\"senior_rate\",\"low\":270,\"base\":300,\"high\":330,\"note\":\"Partners bill $300 an hour.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -450,35 +429,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_008",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_008",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_008",
+       "type": "reasoning",
+       "id": "rs_fixture_008",
+       "summary": [],
+       "encrypted_content": "gAAAA025166b4ab528a5586613c621e447d4e66220ed0"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_008",
+       "call_id": "call_fixture_008",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Payment terms from your notes.",
-        "changes": [
-         {
-          "key": "ar_days",
-          "low": 75,
-          "base": 60,
-          "high": 50,
-          "note": "Your clients pay in about 60 days."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Payment terms from your notes.\",\"changes\":[{\"key\":\"ar_days\",\"low\":75,\"base\":60,\"high\":50,\"note\":\"Your clients pay in about 60 days.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -503,35 +484,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_009",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_009",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_009",
+       "type": "reasoning",
+       "id": "rs_fixture_009",
+       "summary": [],
+       "encrypted_content": "gAAAA29402ac5bd7ac5b23a5822f6bb39492c532a140b"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_009",
+       "call_id": "call_fixture_009",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Average job value from your notes.",
-        "changes": [
-         {
-          "key": "ticket",
-          "low": 470,
-          "base": 520,
-          "high": 570,
-          "note": "Your average job is about $520."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Average job value from your notes.\",\"changes\":[{\"key\":\"ticket\",\"low\":470,\"base\":520,\"high\":570,\"note\":\"Your average job is about $520.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -557,35 +540,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_010",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_010",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_010",
+       "type": "reasoning",
+       "id": "rs_fixture_010",
+       "summary": [],
+       "encrypted_content": "gAAAAb77a8b371dd4fad3167ba3148e246729ec248084"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_010",
+       "call_id": "call_fixture_010",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Lead cost from your notes.",
-        "changes": [
-         {
-          "key": "cpl",
-          "low": 80,
-          "base": 70,
-          "high": 60,
-          "note": "You pay roughly $70 per lead."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Lead cost from your notes.\",\"changes\":[{\"key\":\"cpl\",\"low\":80,\"base\":70,\"high\":60,\"note\":\"You pay roughly $70 per lead.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -611,42 +596,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_011",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_011",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_011",
+       "type": "reasoning",
+       "id": "rs_fixture_011",
+       "summary": [],
+       "encrypted_content": "gAAAA6b73e21c3d4c131e35f812f9263d42cde7463107"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_011",
+       "call_id": "call_fixture_011",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Members and price from your notes.",
-        "changes": [
-         {
-          "key": "members_start",
-          "low": 120,
-          "base": 150,
-          "high": 150,
-          "note": "150 founding members signed up; Low allows for no-shows."
-         },
-         {
-          "key": "fee",
-          "low": 119,
-          "base": 129,
-          "high": 139,
-          "note": "Founding price $129 a month."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Members and price from your notes.\",\"changes\":[{\"key\":\"members_start\",\"low\":120,\"base\":150,\"high\":150,\"note\":\"150 founding members signed up; Low allows for no-shows.\"},{\"key\":\"fee\",\"low\":119,\"base\":129,\"high\":139,\"note\":\"Founding price $129 a month.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -677,35 +657,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_012",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_012",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_012",
+       "type": "reasoning",
+       "id": "rs_fixture_012",
+       "summary": [],
+       "encrypted_content": "gAAAA874b4eb25ca7363b020c9ddb5a2de7e8fbf3ba20"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_012",
+       "call_id": "call_fixture_012",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Rent from your notes.",
-        "changes": [
-         {
-          "key": "rent",
-          "low": 9000,
-          "base": 9000,
-          "high": 9000,
-          "note": "Your rent: $9,000 a month."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Rent from your notes.\",\"changes\":[{\"key\":\"rent\",\"low\":9000,\"base\":9000,\"high\":9000,\"note\":\"Your rent: $9,000 a month.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -730,49 +712,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_013",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_013",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_013",
+       "type": "reasoning",
+       "id": "rs_fixture_013",
+       "summary": [],
+       "encrypted_content": "gAAAAf4b352a33783e006316b225abad71b8a7161b613"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_013",
+       "call_id": "call_fixture_013",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Purchase price and rents from your notes.",
-        "changes": [
-         {
-          "key": "price",
-          "low": 780000,
-          "base": 780000,
-          "high": 780000,
-          "note": "Purchase price $780k."
-         },
-         {
-          "key": "units",
-          "low": 4,
-          "base": 4,
-          "high": 4,
-          "note": "A fourplex has 4 units."
-         },
-         {
-          "key": "rent",
-          "low": 1550,
-          "base": 1650,
-          "high": 1750,
-          "note": "Units rent for about $1,650."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Purchase price and rents from your notes.\",\"changes\":[{\"key\":\"price\",\"low\":780000,\"base\":780000,\"high\":780000,\"note\":\"Purchase price $780k.\"},{\"key\":\"units\",\"low\":4,\"base\":4,\"high\":4,\"note\":\"A fourplex has 4 units.\"},{\"key\":\"rent\",\"low\":1550,\"base\":1650,\"high\":1750,\"note\":\"Units rent for about $1,650.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -808,35 +778,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_014",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_014",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_014",
+       "type": "reasoning",
+       "id": "rs_fixture_014",
+       "summary": [],
+       "encrypted_content": "gAAAA407a188bb1fe621c30347cc33cc455a8ea30ab66"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_014",
+       "call_id": "call_fixture_014",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Mortgage rate from your notes.",
-        "changes": [
-         {
-          "key": "loan_rate",
-          "low": 0.0675,
-          "base": 0.0675,
-          "high": 0.0675,
-          "note": "Your bank offered 6.75%."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Mortgage rate from your notes.\",\"changes\":[{\"key\":\"loan_rate\",\"low\":0.0675,\"base\":0.0675,\"high\":0.0675,\"note\":\"Your bank offered 6.75%.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -861,67 +833,71 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_015",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_015",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_015",
+       "type": "reasoning",
+       "id": "rs_fixture_015",
+       "summary": [],
+       "encrypted_content": "gAAAA24d7643bc07ea6d65a865f1936db0faa1a0321b9"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_015",
+       "call_id": "call_fixture_015",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Churn from notes.",
-        "changes": [
-         {
-          "key": "churn_m",
-          "low": 4,
-          "base": 3,
-          "high": 2,
-          "note": "Churn 3%."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Churn from notes.\",\"changes\":[{\"key\":\"churn_m\",\"low\":4,\"base\":3,\"high\":2,\"note\":\"Churn 3%.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     },
     {
-     "id": "msg_fixture_016",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_016",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_016",
+       "type": "reasoning",
+       "id": "rs_fixture_016",
+       "summary": [],
+       "encrypted_content": "gAAAAcb5cc9c3e9a6b26615ff5b8772bb20d761075763"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_016",
+       "call_id": "call_fixture_016",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Churn from your notes.",
-        "changes": [
-         {
-          "key": "churn_m",
-          "low": 0.04,
-          "base": 0.03,
-          "high": 0.02,
-          "note": "You said churn is about 3% a month."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Churn from your notes.\",\"changes\":[{\"key\":\"churn_m\",\"low\":0.04,\"base\":0.03,\"high\":0.02,\"note\":\"You said churn is about 3% a month.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -946,67 +922,71 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_017",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_017",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_017",
+       "type": "reasoning",
+       "id": "rs_fixture_017",
+       "summary": [],
+       "encrypted_content": "gAAAA47d5ddfb046b8fc4d4fa513b35d1d4efb8e92905"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_017",
+       "call_id": "call_fixture_017",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Team from notes.",
-        "changes": [
-         {
-          "key": "barista_count",
-          "low": 4,
-          "base": 4,
-          "high": 4,
-          "note": "4 baristas."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Team from notes.\",\"changes\":[{\"key\":\"barista_count\",\"low\":4,\"base\":4,\"high\":4,\"note\":\"4 baristas.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     },
     {
-     "id": "msg_fixture_018",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_018",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_018",
+       "type": "reasoning",
+       "id": "rs_fixture_018",
+       "summary": [],
+       "encrypted_content": "gAAAAe3005070fd5b2776d2219b7657f7bd80527a83b9"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_018",
+       "call_id": "call_fixture_018",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Team size from your notes.",
-        "changes": [
-         {
-          "key": "staff_fte",
-          "low": 3.5,
-          "base": 4,
-          "high": 4.5,
-          "note": "You plan 4 baristas."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Team size from your notes.\",\"changes\":[{\"key\":\"staff_fte\",\"low\":3.5,\"base\":4,\"high\":4.5,\"note\":\"You plan 4 baristas.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -1031,67 +1011,71 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_019",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_019",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_019",
+       "type": "reasoning",
+       "id": "rs_fixture_019",
+       "summary": [],
+       "encrypted_content": "gAAAA0e4a613bb9b111ccce32b94d7166ede86c5671fa"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_019",
+       "call_id": "call_fixture_019",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Members from notes.",
-        "changes": [
-         {
-          "key": "members_start",
-          "low": 140,
-          "base": 100,
-          "high": 70,
-          "note": "100 at opening."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Members from notes.\",\"changes\":[{\"key\":\"members_start\",\"low\":140,\"base\":100,\"high\":70,\"note\":\"100 at opening.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     },
     {
-     "id": "msg_fixture_020",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_020",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_020",
+       "type": "reasoning",
+       "id": "rs_fixture_020",
+       "summary": [],
+       "encrypted_content": "gAAAAcfa16671d72226e1b98c86e17417a6916a3b04e3"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_020",
+       "call_id": "call_fixture_020",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Opening members from your notes.",
-        "changes": [
-         {
-          "key": "members_start",
-          "low": 70,
-          "base": 100,
-          "high": 140,
-          "note": "You expect about 100 members at opening."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Opening members from your notes.\",\"changes\":[{\"key\":\"members_start\",\"low\":70,\"base\":100,\"high\":140,\"note\":\"You expect about 100 members at opening.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -1116,84 +1100,110 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_021",
-     "type": "message",
-     "role": "assistant",
-     "content": [
+     "id": "resp_fixture_021",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "text",
-       "text": "Here are the assumptions: AOV 48."
+       "type": "reasoning",
+       "id": "rs_fixture_021",
+       "summary": [],
+       "encrypted_content": "gAAAA0fbf7d745804e376afb7350826b5fce8683acec7"
+      },
+      {
+       "type": "message",
+       "id": "msg_fixture_021",
+       "role": "assistant",
+       "status": "completed",
+       "content": [
+        {
+         "type": "output_text",
+         "text": "Here are the assumptions: AOV 48.",
+         "annotations": []
+        }
+       ]
       }
      ],
-     "stop_reason": "end_turn",
      "usage": {
       "input_tokens": 1900,
+      "input_tokens_details": {
+       "cached_tokens": 0,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 60,
-      "cache_read_input_tokens": 0,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 1960
      }
     },
     {
-     "id": "msg_fixture_022",
-     "type": "message",
-     "role": "assistant",
-     "content": [
+     "id": "resp_fixture_022",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_022",
+       "type": "reasoning",
+       "id": "rs_fixture_022",
+       "summary": [],
+       "encrypted_content": "gAAAA3b7031ebcbd5d4e8ddeb045369fa79fc01998092"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_022",
+       "call_id": "call_fixture_022",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "AOV",
-        "changes": [
-         {
-          "key": "aov",
-          "low": "forty",
-          "base": 48,
-          "high": 55,
-          "note": ""
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"AOV\",\"changes\":[{\"key\":\"aov\",\"low\":\"forty\",\"base\":48,\"high\":55,\"note\":\"\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
       "input_tokens": 1900,
+      "input_tokens_details": {
+       "cached_tokens": 0,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 0,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 2320
      }
     },
     {
-     "id": "msg_fixture_023",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_023",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_023",
+       "type": "reasoning",
+       "id": "rs_fixture_023",
+       "summary": [],
+       "encrypted_content": "gAAAA54d4d810ec9f0bb11dcad94f9e99022fcfac4662"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_023",
+       "call_id": "call_fixture_023",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Average order from your notes.",
-        "changes": [
-         {
-          "key": "aov",
-          "low": 42,
-          "base": 48,
-          "high": 54,
-          "note": "Your average order is $48."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"Average order from your notes.\",\"changes\":[{\"key\":\"aov\",\"low\":42,\"base\":48,\"high\":54,\"note\":\"Your average order is $48.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -1218,27 +1228,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_024",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_024",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_024",
+       "type": "reasoning",
+       "id": "rs_fixture_024",
+       "summary": [],
+       "encrypted_content": "gAAAAb4b4ee73ba770101e8793ba1c27b656c6b6f72c1"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_024",
+       "call_id": "call_fixture_024",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "Your notes contain no figures we can use, so the typical values for your stage are kept.",
-        "changes": []
-       }
+       "arguments": "{\"assumption_note\":\"Your notes contain no figures we can use, so the typical values for your stage are kept.\",\"changes\":[]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -1257,35 +1277,37 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_025",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_025",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_025",
+       "type": "reasoning",
+       "id": "rs_fixture_025",
+       "summary": [],
+       "encrypted_content": "gAAAA35da6bd88aefd15900297f82dce268ba45c58d60"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_025",
+       "call_id": "call_fixture_025",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "+cmd|' /C calc'!A0 Average job value from your notes.",
-        "changes": [
-         {
-          "key": "ticket",
-          "low": 340,
-          "base": 380,
-          "high": 420,
-          "note": "=HYPERLINK(\"http://example.invalid\",\"click\")"
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"+cmd|' /C calc'!A0 Average job value from your notes.\",\"changes\":[{\"key\":\"ticket\",\"low\":340,\"base\":380,\"high\":420,\"note\":\"=HYPERLINK(\\\"http://example.invalid\\\",\\\"click\\\")\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -1310,38 +1332,40 @@
    },
    "responses": [
     {
-     "raise": "Claude API HTTP 500 api_error"
+     "raise": "OpenAI API HTTP 500 server_error"
     },
     {
-     "id": "msg_fixture_035",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_035",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_035",
+       "type": "reasoning",
+       "id": "rs_fixture_035",
+       "summary": [],
+       "encrypted_content": "gAAAA15d19fa3c1329f191aa1b49b5522756d6501de60"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_035",
+       "call_id": "call_fixture_035",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "ARPA from your notes.",
-        "changes": [
-         {
-          "key": "arpa",
-          "low": 40,
-          "base": 50,
-          "high": 60,
-          "note": "Your ARPA is $50."
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"ARPA from your notes.\",\"changes\":[{\"key\":\"arpa\",\"low\":40,\"base\":50,\"high\":60,\"note\":\"Your ARPA is $50.\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -1368,99 +1392,105 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_026",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_026",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_026",
+       "type": "reasoning",
+       "id": "rs_fixture_026",
+       "summary": [],
+       "encrypted_content": "gAAAA87d44b1764c263c56fd3826a399237a3679985bb"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_026",
+       "call_id": "call_fixture_026",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "x",
-        "changes": [
-         {
-          "key": "churn_m",
-          "low": 4,
-          "base": 3,
-          "high": 2,
-          "note": ""
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"x\",\"changes\":[{\"key\":\"churn_m\",\"low\":4,\"base\":3,\"high\":2,\"note\":\"\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     },
     {
-     "id": "msg_fixture_027",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_027",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_027",
+       "type": "reasoning",
+       "id": "rs_fixture_027",
+       "summary": [],
+       "encrypted_content": "gAAAA4248064046baf1d6cb194545440f02d0ad1e5106"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_027",
+       "call_id": "call_fixture_027",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "x",
-        "changes": [
-         {
-          "key": "churn_m",
-          "low": 4,
-          "base": 3,
-          "high": 2,
-          "note": ""
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"x\",\"changes\":[{\"key\":\"churn_m\",\"low\":4,\"base\":3,\"high\":2,\"note\":\"\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     },
     {
-     "id": "msg_fixture_028",
-     "type": "message",
-     "role": "assistant",
-     "model": "claude-sonnet-5-5",
-     "content": [
+     "id": "resp_fixture_028",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_028",
+       "type": "reasoning",
+       "id": "rs_fixture_028",
+       "summary": [],
+       "encrypted_content": "gAAAAe29d9abce9f25e90f4d3b4392d17d33e668dff42"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_028",
+       "call_id": "call_fixture_028",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "x",
-        "changes": [
-         {
-          "key": "churn_m",
-          "low": 5,
-          "base": 3,
-          "high": 2,
-          "note": ""
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"x\",\"changes\":[{\"key\":\"churn_m\",\"low\":5,\"base\":3,\"high\":2,\"note\":\"\"}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
-      "input_tokens": 1900,
+      "input_tokens": 3500,
+      "input_tokens_details": {
+       "cached_tokens": 1600,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 1600,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 3920
      }
     }
    ],
@@ -1479,57 +1509,120 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_029",
-     "type": "message",
-     "role": "assistant",
-     "content": [
+     "id": "resp_fixture_029",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "text",
-       "text": "Rent 5000."
+       "type": "reasoning",
+       "id": "rs_fixture_029",
+       "summary": [],
+       "encrypted_content": "gAAAA2537989054cc26eb85794fd84d012f2d1c40629b"
+      },
+      {
+       "type": "message",
+       "id": "msg_fixture_029",
+       "role": "assistant",
+       "status": "completed",
+       "content": [
+        {
+         "type": "output_text",
+         "text": "Rent 5000.",
+         "annotations": []
+        }
+       ]
       }
      ],
-     "stop_reason": "end_turn",
      "usage": {
       "input_tokens": 1900,
+      "input_tokens_details": {
+       "cached_tokens": 0,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 60,
-      "cache_read_input_tokens": 0,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 1960
      }
     },
     {
-     "id": "msg_fixture_030",
-     "type": "message",
-     "role": "assistant",
-     "content": [
+     "id": "resp_fixture_030",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "text",
-       "text": "I think rent is 5000."
+       "type": "reasoning",
+       "id": "rs_fixture_030",
+       "summary": [],
+       "encrypted_content": "gAAAAa5406b7f84e5f40aec01094befcf58b6471d9fdf"
+      },
+      {
+       "type": "message",
+       "id": "msg_fixture_030",
+       "role": "assistant",
+       "status": "completed",
+       "content": [
+        {
+         "type": "output_text",
+         "text": "I think rent is 5000.",
+         "annotations": []
+        }
+       ]
       }
      ],
-     "stop_reason": "end_turn",
      "usage": {
       "input_tokens": 1900,
+      "input_tokens_details": {
+       "cached_tokens": 0,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 60,
-      "cache_read_input_tokens": 0,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 1960
      }
     },
     {
-     "id": "msg_fixture_031",
-     "type": "message",
-     "role": "assistant",
-     "content": [
+     "id": "resp_fixture_031",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "text",
-       "text": "5000"
+       "type": "reasoning",
+       "id": "rs_fixture_031",
+       "summary": [],
+       "encrypted_content": "gAAAA522eb913939aa447f09e3b79895e6e6e7668691e"
+      },
+      {
+       "type": "message",
+       "id": "msg_fixture_031",
+       "role": "assistant",
+       "status": "completed",
+       "content": [
+        {
+         "type": "output_text",
+         "text": "5000",
+         "annotations": []
+        }
+       ]
       }
      ],
-     "stop_reason": "end_turn",
      "usage": {
       "input_tokens": 1900,
+      "input_tokens_details": {
+       "cached_tokens": 0,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 60,
-      "cache_read_input_tokens": 0,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 1960
      }
     }
    ],
@@ -1548,13 +1641,13 @@
    },
    "responses": [
     {
-     "raise": "Claude API HTTP 529 overloaded_error"
+     "raise": "OpenAI API HTTP 503 server_error"
     },
     {
-     "raise": "Claude API HTTP 529 overloaded_error"
+     "raise": "OpenAI API HTTP 503 server_error"
     },
     {
-     "raise": "Claude API unreachable: ReadTimeout"
+     "raise": "OpenAI API unreachable: ReadTimeout"
     }
    ],
    "expect": {
@@ -1572,81 +1665,105 @@
    },
    "responses": [
     {
-     "id": "msg_fixture_032",
-     "type": "message",
-     "role": "assistant",
-     "content": [
+     "id": "resp_fixture_032",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_032",
+       "type": "reasoning",
+       "id": "rs_fixture_032",
+       "summary": [],
+       "encrypted_content": "gAAAA15f6093ab41dd82b67fb3ff82eabee79445a826f"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_032",
+       "call_id": "call_fixture_032",
        "name": "submit_brief",
-       "input": {
-        "changes": [
-         {
-          "key": "price",
-          "base": 700000
-         }
-        ]
-       }
+       "arguments": "{\"changes\":[{\"key\":\"price\",\"base\":700000}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
       "input_tokens": 1900,
+      "input_tokens_details": {
+       "cached_tokens": 0,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 0,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 2320
      }
     },
     {
-     "id": "msg_fixture_033",
-     "type": "message",
-     "role": "assistant",
-     "content": [
+     "id": "resp_fixture_033",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_033",
+       "type": "reasoning",
+       "id": "rs_fixture_033",
+       "summary": [],
+       "encrypted_content": "gAAAAe3e438fa86b6daf83d39a4754abbc82307c3d3d7"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_033",
+       "call_id": "call_fixture_033",
        "name": "submit_brief",
-       "input": {
-        "assumption_note": "",
-        "changes": [
-         {
-          "key": "price",
-          "base": 700000,
-          "low": 700000
-         }
-        ]
-       }
+       "arguments": "{\"assumption_note\":\"\",\"changes\":[{\"key\":\"price\",\"base\":700000,\"low\":700000}]}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
       "input_tokens": 1900,
+      "input_tokens_details": {
+       "cached_tokens": 0,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 0,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 2320
      }
     },
     {
-     "id": "msg_fixture_034",
-     "type": "message",
-     "role": "assistant",
-     "content": [
+     "id": "resp_fixture_034",
+     "object": "response",
+     "status": "completed",
+     "model": "gpt-6.1-sol",
+     "output": [
       {
-       "type": "tool_use",
-       "id": "toolu_fixture_034",
+       "type": "reasoning",
+       "id": "rs_fixture_034",
+       "summary": [],
+       "encrypted_content": "gAAAA2ba52fd33fe25cefe1123f1f821b1c1b8f598582"
+      },
+      {
+       "type": "function_call",
+       "id": "fc_fixture_034",
+       "call_id": "call_fixture_034",
        "name": "submit_brief",
-       "input": {
-        "changes": "price=700000"
-       }
+       "arguments": "{\"changes\":\"price=700000\"}",
+       "status": "completed"
       }
      ],
-     "stop_reason": "tool_use",
      "usage": {
       "input_tokens": 1900,
+      "input_tokens_details": {
+       "cached_tokens": 0,
+       "cache_write_tokens": 0
+      },
       "output_tokens": 420,
-      "cache_read_input_tokens": 0,
-      "cache_creation_input_tokens": 0
+      "output_tokens_details": {
+       "reasoning_tokens": 0
+      },
+      "total_tokens": 2320
      }
     }
    ],

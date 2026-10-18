@@ -35,20 +35,20 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   run logs); all tests green on OpenAI fixtures; HUMAN_TODO A1 says OpenAI.
 
 ### E23 — Eval: which model fills the brief
-- status: NEEDS_HENRY: live run needs `OPENAI_API_KEY` (HUMAN_TODO A1) and E25 (OpenAI) first. continue: harness merged (PR #40);
+- status: NEEDS_HENRY: live run needs `OPENAI_API_KEY` in the cloud environment (HUMAN_TODO A1); E25 (OpenAI) done. continue: harness merged (PR #40), on OpenAI since E25;
   run `python -m evals.brief_model_eval --record evals/runs/<date> --memo`, commit the filled memo, then DONE.
 - Model: sonnet
 - depends: E08 (LLM brief builder, done #39), BRIEF_MODEL plumbing (token-budget PR, done), E25 (OpenAI)
-- skills: product-self-knowledge, engineering:testing-strategy
+- skills: engineering:testing-strategy
 - do: `evals/brief_model_eval.py`: 6 industries × 10 wizard-answer variants (fixed, committed in `evals/cases/`)
-  through `claude-haiku-5-5`, `claude-sonnet-5-5` and `claude-opus-5-5` via the E08 builder. Each brief goes
+  through `gpt-6-luna`, `gpt-6.1-sol` and `gpt-6-astra` (ADR-012) via the E08 builder. Each brief goes
   through the existing brief validation (template `validate`) and the challenger (build → recalc → challenge).
   Per model: share of briefs that pass, mean and p95 response time, mean cost per order in $ from the API's
-  token usage (input, output, cache read/write) × current prices — check prices with product-self-knowledge.
-  Live API calls only when run by hand with `ANTHROPIC_API_KEY` set; not part of CI (CI tests the script on
+  token usage (input, output, cached input, cache write) × current prices (developers.openai.com pricing).
+  Live API calls only when run by hand with `OPENAI_API_KEY` set; not part of CI (CI tests the script on
   recorded fixtures).
 - done when: `docs/memos/brief-model-eval.md` with the table and a recommendation: the cheapest model whose
-  pass share is not below the reference and whose p95 ≤ 15 s. Reference = opus pass share (no model is in
+  pass share is not below the reference and whose p95 ≤ 15 s. Reference = gpt-6-astra pass share (no model is in
   production yet; BRIEF_MODEL is empty). Henry sets `BRIEF_MODEL` from it (add to HUMAN_TODO).
 
 ### E24 — LLM brief: refresh derived goal defaults, count usage on every fallback

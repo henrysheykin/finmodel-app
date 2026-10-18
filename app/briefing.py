@@ -102,16 +102,16 @@ class PrefillBriefSource:
 
 
 def make_brief_source(brief_model: str, api_key: str) -> BriefSource:
-    """Prefill when ``BRIEF_MODEL`` is empty, otherwise the LLM source on the Claude API."""
+    """Prefill when ``BRIEF_MODEL`` is empty, otherwise the LLM source on the OpenAI API."""
     if not brief_model:
         return PrefillBriefSource()
-    from adapters.llm import AnthropicHTTPClient
+    from adapters.llm import OpenAIHTTPClient
 
-    return LLMBriefSource(AnthropicHTTPClient(api_key), brief_model)
+    return LLMBriefSource(OpenAIHTTPClient(api_key), brief_model)
 
 
 class LLMBriefSource:
-    """Prefill brief tailored by a Claude model; falls back to the prefill brief if the model fails.
+    """Prefill brief tailored by an OpenAI model; falls back to the prefill brief if the model fails.
 
     Answers the prefill rejects (unknown business type, out-of-range key numbers) are rejected here too,
     before any API call.

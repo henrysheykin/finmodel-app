@@ -1,12 +1,12 @@
-# Brief model eval (E23): which Claude model should fill the brief?
+# Brief model eval (E23): which OpenAI model should fill the brief?
 
-Status: harness done, live run pending (needs `ANTHROPIC_API_KEY`).
+Status: harness done, live run pending (needs `OPENAI_API_KEY`). Provider: OpenAI (ADR-012, E25).
 
 ## Purpose
 
 `BRIEF_MODEL` (see `adapters/llm.py`) selects the model that tailors a customer's driver values from the wizard
 answers and notes (E08 builder). Unset means the deterministic prefill path. This eval decides which of
-`claude-haiku-5-5`, `claude-sonnet-5-5` and `claude-opus-5-5` should become the default: the cheapest one that
+`gpt-6-luna`, `gpt-6.1-sol` and `gpt-6-astra` should become the default: the cheapest one that
 is as reliable as the best one and fast enough for a customer waiting on a form post.
 
 ## Method
@@ -35,33 +35,37 @@ The reason for each failure is kept in the JSON results.
 - Pass share: passed cases / 60.
 - Mean and p95 latency in seconds per order: the sum of the wall time of all API requests of the order (retries
   and failed requests included). p95 is the nearest-rank 95th percentile over the 60 orders.
-- Mean cost per order in USD: token usage of every request (input, output, cache read, cache write) times the
+- Mean cost per order in USD: token usage of every request (uncached input, cached input, cache write, output incl. reasoning) times the
   prices below, averaged over all 60 orders, failed orders included (they were paid for).
 - Calls per order: API requests made, including transport errors and retries.
 
-**Prices** (`PRICES_PER_MTOK` in `evals/brief_model_eval.py`), USD per million tokens, from
-https://platform.claude.com/docs/en/about-claude/pricing, checked 2026-10-18:
+**Prices** (`PRICES_PER_MTOK` in `evals/brief_model_eval.py`), USD per million tokens, Standard tier, from
+https://developers.openai.com/api/docs/pricing and the model pages, checked 2026-10-18:
 
-| Model | Input | Cache write (5 min) | Cache read | Output |
+| Model | Input | Cached input | Cache write | Output |
 |---|---|---|---|---|
-| claude-haiku-5-5 | 0.10 | 0.125 | 0.01 | 0.50 |
-| claude-sonnet-5-5 | 2 | 2.50 | 0.10 | 10 |
-| claude-opus-5-5 | 4 | 5 | 0.20 | 20 |
+| gpt-6-luna | 0.10 | 0.01 | 0.125 | 0.50 |
+| gpt-6.1-sol | 2 | 0.10 | 2.50 | 10 |
+| gpt-6-astra | 10 | 1 | 12.50 | 50 |
 
-Haiku 5.5 has a long-prompt rate for requests whose total input (input + cache read + cache write) exceeds
-100,000 tokens: 0.50 / 0.625 / 0.05 / 2.50. The harness records usage per request and applies the long rate per
-request, so no approximation is needed (our prompts are around 2-5k tokens, so it should never trigger). The
-cache-write price is the 5-minute one because the adapter marks the prefix `{"type": "ephemeral"}` without a `ttl`,
-and the default time to live is 5 minutes.
+Each input token is billed at one rate only: uncached, cached (read) or cache write; the API reports
+`input_tokens` (total) with `input_tokens_details.cached_tokens` and `cache_write_tokens`, and the adapter splits
+them. Caching is automatic (prefix of at least 1,024 tokens; the adapter adds `prompt_cache_key` = the template).
+Reasoning tokens are billed as output and are included in `output_tokens`. Long-context rates apply to the whole
+request when its input exceeds 272,000 tokens (2x input and cache rates, 1.5x output); the harness applies them per
+request, though our prompts are around 2-5k tokens so it should never trigger.
 
-**Recommendation rule.** Reference = the pass share of `claude-opus-5-5`. Among the models whose pass share is at
+**Settings under test.** OpenAI Responses API, forced `submit_brief` function call with a strict JSON schema,
+`reasoning.effort` = `low` (all three models accept it; gpt-6-astra cannot switch reasoning off), `store` = false.
+
+**Recommendation rule.** Reference = the pass share of `gpt-6-astra` (the strongest of the three). Among the models whose pass share is at
 least the reference and whose p95 latency is at most 15 s, pick the cheapest by mean cost per order. If no model
 qualifies, no model is recommended and the prefill path stays the default.
 
 ## How to run by hand
 
 ```
-ANTHROPIC_API_KEY=... python -m evals.brief_model_eval --record evals/runs/<date> --memo
+OPENAI_API_KEY=... python -m evals.brief_model_eval --record evals/runs/<date> --memo
 ```
 
 Live mode needs the key and refuses to start without it (exit status 2); the key is never printed or logged.
@@ -80,11 +84,11 @@ live run (`meta.json`).
 <!-- RESULTS:START -->
 | Model | Pass share | Mean s | p95 s | Mean $/order | Calls/order |
 |---|---|---|---|---|---|
-| claude-haiku-5-5 | — | — | — | — | — |
-| claude-sonnet-5-5 | — | — | — | — | — |
-| claude-opus-5-5 | — | — | — | — | — |
+| gpt-6-luna | — | — | — | — | — |
+| gpt-6.1-sol | — | — | — | — | — |
+| gpt-6-astra | — | — | — | — | — |
 
-Not run yet: needs ANTHROPIC_API_KEY (HUMAN_TODO A1)
+Not run yet: needs OPENAI_API_KEY (HUMAN_TODO A1)
 <!-- RESULTS:END -->
 
 ## Recommendation

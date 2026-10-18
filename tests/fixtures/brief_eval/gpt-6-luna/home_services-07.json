@@ -1,0 +1,115 @@
+{
+ "calls": [
+  {
+   "response": {
+    "id": "resp_fx_h7h0",
+    "object": "response",
+    "status": "completed",
+    "model": "gpt-6-luna",
+    "output": [
+     {
+      "type": "reasoning",
+      "id": "rs_fx_h7h0",
+      "summary": [],
+      "encrypted_content": "gAAAAf22605fd259c8541314319f8073e112982aec1da"
+     },
+     {
+      "type": "function_call",
+      "id": "fc_fx_h7h0",
+      "call_id": "call_fx_h7h0",
+      "name": "submit_brief",
+      "arguments": "{\"assumption_note\":\"Based on your notes.\",\"changes\":[{\"key\":\"evil_driver\",\"low\":0,\"base\":0,\"high\":0,\"note\":\"=HYPERLINK(\\\"http://evil.example\\\")\"}]}",
+      "status": "completed"
+     }
+    ],
+    "usage": {
+     "input_tokens": 4000,
+     "input_tokens_details": {
+      "cached_tokens": 1800,
+      "cache_write_tokens": 0
+     },
+     "output_tokens": 150,
+     "output_tokens_details": {
+      "reasoning_tokens": 0
+     },
+     "total_tokens": 4150
+    }
+   },
+   "latency_ms": 700
+  },
+  {
+   "response": {
+    "id": "resp_fx_h7h1",
+    "object": "response",
+    "status": "completed",
+    "model": "gpt-6-luna",
+    "output": [
+     {
+      "type": "reasoning",
+      "id": "rs_fx_h7h1",
+      "summary": [],
+      "encrypted_content": "gAAAA1710d13c15ace3707e6b6cb3ff741b84f6cbb27b"
+     },
+     {
+      "type": "function_call",
+      "id": "fc_fx_h7h1",
+      "call_id": "call_fx_h7h1",
+      "name": "submit_brief",
+      "arguments": "{\"assumption_note\":\"Based on your notes.\",\"changes\":[{\"key\":\"evil_driver\",\"low\":0,\"base\":0,\"high\":0,\"note\":\"=HYPERLINK(\\\"http://evil.example\\\")\"}]}",
+      "status": "completed"
+     }
+    ],
+    "usage": {
+     "input_tokens": 4000,
+     "input_tokens_details": {
+      "cached_tokens": 1800,
+      "cache_write_tokens": 0
+     },
+     "output_tokens": 150,
+     "output_tokens_details": {
+      "reasoning_tokens": 0
+     },
+     "total_tokens": 4150
+    }
+   },
+   "latency_ms": 700
+  },
+  {
+   "response": {
+    "id": "resp_fx_h7h2",
+    "object": "response",
+    "status": "completed",
+    "model": "gpt-6-luna",
+    "output": [
+     {
+      "type": "reasoning",
+      "id": "rs_fx_h7h2",
+      "summary": [],
+      "encrypted_content": "gAAAA7bf1a0f2d20c4131806032cc4167886f7a66fd6f"
+     },
+     {
+      "type": "function_call",
+      "id": "fc_fx_h7h2",
+      "call_id": "call_fx_h7h2",
+      "name": "submit_brief",
+      "arguments": "{\"assumption_note\":\"Based on your notes.\",\"changes\":[{\"key\":\"evil_driver\",\"low\":0,\"base\":0,\"high\":0,\"note\":\"=HYPERLINK(\\\"http://evil.example\\\")\"}]}",
+      "status": "completed"
+     }
+    ],
+    "usage": {
+     "input_tokens": 4000,
+     "input_tokens_details": {
+      "cached_tokens": 1800,
+      "cache_write_tokens": 0
+     },
+     "output_tokens": 150,
+     "output_tokens_details": {
+      "reasoning_tokens": 0
+     },
+     "total_tokens": 4150
+    }
+   },
+   "latency_ms": 700
+  }
+ ]
+}
