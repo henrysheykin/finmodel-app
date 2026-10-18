@@ -1,0 +1,46 @@
+{
+ "calls": [
+  {
+   "response": {
+    "id": "msg_fx_c1h",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-haiku-5-5",
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "toolu_fx_c1h",
+      "name": "submit_brief",
+      "input": {
+       "assumption_note": "Based on your notes.",
+       "changes": [
+        {
+         "key": "ticket",
+         "low": 6.375,
+         "base": 7.5,
+         "high": 8.625,
+         "note": "You said ticket is about 7.5."
+        },
+        {
+         "key": "rent",
+         "low": 3780.0,
+         "base": 4200,
+         "high": 4620.0,
+         "note": "You said rent is about 4200."
+        }
+       ]
+      }
+     }
+    ],
+    "stop_reason": "tool_use",
+    "usage": {
+     "input_tokens": 2100,
+     "output_tokens": 380,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 1700
+    }
+   },
+   "latency_ms": 900
+  }
+ ]
+}

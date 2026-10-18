@@ -1,0 +1,46 @@
+{
+ "calls": [
+  {
+   "response": {
+    "id": "msg_fx_h7o",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-opus-5-5",
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "toolu_fx_h7o",
+      "name": "submit_brief",
+      "input": {
+       "assumption_note": "Based on your notes.",
+       "changes": [
+        {
+         "key": "ticket",
+         "low": 255.0,
+         "base": 300,
+         "high": 345.0,
+         "note": "You said ticket is about 300."
+        },
+        {
+         "key": "jobs_per_tech",
+         "low": 1.7,
+         "base": 2.0,
+         "high": 2.3,
+         "note": "You said jobs_per_tech is about 2."
+        }
+       ]
+      }
+     }
+    ],
+    "stop_reason": "tool_use",
+    "usage": {
+     "input_tokens": 2200,
+     "output_tokens": 260,
+     "cache_read_input_tokens": 1800,
+     "cache_creation_input_tokens": 0
+    }
+   },
+   "latency_ms": 3900
+  }
+ ]
+}
