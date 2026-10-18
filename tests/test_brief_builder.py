@@ -27,6 +27,7 @@ from engine.brief_builder import (
     plain_text,
     template_description,
 )
+from engine.goals import DERIVED_KEYS, apply_goal, refresh_derived
 from engine.templates import TEMPLATES, get_template
 
 CASES = json.loads((Path(__file__).parent / "fixtures" / "brief_llm" / "cases.json").read_text(encoding="utf-8"))
@@ -83,6 +84,8 @@ def test_valid_cases_give_a_valid_tailored_brief(case):
         if d.key in changed:
             assert [d.low, d.base, d.high] == changed[d.key], d.key
             assert d.note is None or not d.note.startswith(("=", "+", "-", "@"))
+        elif d.key in DERIVED_KEYS:  # follows the (possibly changed) costs, never stale
+            assert refresh_derived(brief).driver(d.key) == d, d.key
         else:
             assert (d.low, d.base, d.high, d.note) == (s.low, s.base, s.high, s.note), d.key
     for k, v in exp.get("locked_base", {}).items():
@@ -477,3 +480,60 @@ def test_model_keys_must_be_driver_shaped():
     bad = {"changes": [{"key": "x\nINFO forged log line", "low": 1, "base": 1, "high": 1}]}
     with pytest.raises(BriefError, match="schema"):
         merge(start, bad, ())
+
+
+def _changes(*items):
+    return {
+        "assumption_note": "",
+        "changes": [dict(zip(("key", "low", "base", "high"), i, strict=True)) for i in items],
+    }
+
+
+def _cost_bump(start):
+    """A cost change big enough to move the 3-month buffer (rent x10)."""
+    rent = start.driver("rent")
+    return ("rent", rent.low * 10, rent.base * 10, rent.high * 10)
+
+
+def test_cost_change_moves_the_derived_cash_buffer():
+    start = PREFILL.build_brief(Answers(business_type="restaurant_cafe", goal="startup_breakeven"))
+    brief, changed = merge(start, _changes(_cost_bump(start)), ())
+    assert changed == ("rent",)
+    b0, b1 = start.driver("cash_buffer"), brief.driver("cash_buffer")
+    assert b1.base > b0.base and b1.low == b1.base == b1.high  # same derivation as the default
+    assert (
+        b1.base
+        == apply_goal(brief.model_copy(update={"drivers": [d for d in brief.drivers if d.key != "cash_buffer"]}))
+        .driver("cash_buffer")
+        .base
+    )
+
+
+def test_buffer_kept_when_model_set_it_or_customer_locked_it():
+    start = PREFILL.build_brief(Answers(business_type="restaurant_cafe", goal="startup_breakeven"))
+    own = ("cash_buffer", 1000, 2000, 3000)
+    brief, _ = merge(start, _changes(_cost_bump(start), own), ())
+    assert (brief.driver("cash_buffer").low, brief.driver("cash_buffer").base) == (1000, 2000)
+    brief, _ = merge(start, _changes(_cost_bump(start)), {"cash_buffer"})
+    assert brief.driver("cash_buffer").base == start.driver("cash_buffer").base
+
+
+def test_goal_without_buffer_is_untouched_by_the_refresh():
+    start = PREFILL.build_brief(Answers(business_type="restaurant_cafe"))
+    brief, _ = merge(start, _changes(_cost_bump(start)), ())
+    assert not any(d.key == "cash_buffer" for d in brief.drivers)
+
+
+def test_unexpected_error_keeps_the_usage_of_calls_already_made(caplog):
+    class Flaky(FakeClient):
+        def create(self, **request):
+            if self.requests:
+                raise TypeError("odd response shape")
+            return super().create(**request)
+
+    bad = _call("not json")
+    client = Flaky([bad])
+    a = Answers(business_type="fitness", notes="x")
+    brief, usage = LLMBriefSource(client, MODEL).build_brief_with_usage(a)
+    assert brief == PREFILL.build_brief(a) and "unexpected TypeError" in caplog.text
+    assert usage is not None and usage.calls == 1 and usage.input_tokens == 100

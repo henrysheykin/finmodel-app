@@ -29,7 +29,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from adapters.llm import LLMTransportError, LLMUsage, build_brief_request, call_responses
 from engine.brief import Brief, BriefError
 from engine.core import HEADCOUNT_DRIVERS
-from engine.goals import MODULES, goal_specs
+from engine.goals import MODULES, goal_specs, refresh_derived
 from engine.spec import STANDARD_DRIVERS, DriverSpec
 from engine.templates import get_template
 from engine.templates.base import Template
@@ -341,6 +341,8 @@ def merge(start: Brief, output: Any, locked: Collection[str]) -> tuple[Brief, tu
         brief = Brief.model_validate(data)
     except ValidationError as exc:
         raise BriefError("; ".join(e["msg"] for e in exc.errors()[:10])) from None
+    # goal defaults computed from other drivers (cash buffer = 3 months of costs) followed the old costs
+    brief = refresh_derived(brief, set(changed) | set(locked))
     get_template(brief.template).validate(brief)
     return brief, tuple(changed)
 
@@ -350,6 +352,7 @@ def build_brief(client: Any, model: str, start: Brief, inp: CustomerInput) -> Bu
 
     Raises ``BriefBuildError`` (with the usage of every call) when the model's answer is still invalid
     after ``MAX_RETRIES`` corrections, or the API fails as many times.
+    Any other exception propagates with the running usage on its ``usage`` attribute.
     """
     get_template(start.template).validate(start)  # the starting point itself must be sound
     request = build_request(model, start, inp)
@@ -357,49 +360,57 @@ def build_brief(client: Any, model: str, start: Brief, inp: CustomerInput) -> Bu
     usage: LLMUsage | None = None
     last_error = ""
     t0 = time.monotonic()
-    for attempt in range(MAX_RETRIES + 1):
-        if attempt and time.monotonic() - t0 > DEADLINE_S:
-            last_error = f"out of time after {attempt} attempts ({last_error})"
-            break
-        request["input"] = conversation
-        try:
-            response, u = call_responses(client, request)
-        except LLMTransportError as exc:
-            last_error = str(exc)
-            log.warning("brief_llm attempt=%d transport error: %s", attempt + 1, last_error)
-            if not exc.retryable:
+    try:
+        for attempt in range(MAX_RETRIES + 1):
+            if attempt and time.monotonic() - t0 > DEADLINE_S:
+                last_error = f"out of time after {attempt} attempts ({last_error})"
                 break
-            continue
-        usage = u if usage is None else usage + u
-        call = _tool_call(response)
-        if call is None:
-            status = _get(response, "status", "") or ""
-            last_error = f"no {TOOL_NAME} call in the answer" + (f" (status {status})" if status != "completed" else "")
-            conversation = [
-                *conversation,
-                *_replayable(_output_items(response)),
-                {"role": "user", "content": f"Please answer by calling {TOOL_NAME}."},
-            ]
-            continue
-        call_id, raw_args = call
-        try:
-            brief, changed = merge(start, _parse_arguments(raw_args), inp.locked)
-        except BriefError as exc:
-            last_error = str(exc)[:1500]
-            log.info("brief_llm attempt=%d invalid answer: %s", attempt + 1, last_error)
-            # the whole answer goes back (reasoning items included, as the API requires with a
-            # function call), then the error as the call's output
-            conversation = [
-                *conversation,
-                *_output_items(response),
-                {
-                    "type": "function_call_output",
-                    "call_id": call_id,
-                    "output": f"Not accepted: {last_error}. Call {TOOL_NAME} again with corrected values.",
-                },
-            ]
-            continue
-        return BuildResult(brief, usage, changed)
+            request["input"] = conversation
+            try:
+                response, u = call_responses(client, request)
+            except LLMTransportError as exc:
+                last_error = str(exc)
+                log.warning("brief_llm attempt=%d transport error: %s", attempt + 1, last_error)
+                if not exc.retryable:
+                    break
+                continue
+            usage = u if usage is None else usage + u
+            call = _tool_call(response)
+            if call is None:
+                status = _get(response, "status", "") or ""
+                last_error = f"no {TOOL_NAME} call in the answer" + (
+                    f" (status {status})" if status != "completed" else ""
+                )
+                conversation = [
+                    *conversation,
+                    *_replayable(_output_items(response)),
+                    {"role": "user", "content": f"Please answer by calling {TOOL_NAME}."},
+                ]
+                continue
+            call_id, raw_args = call
+            try:
+                brief, changed = merge(start, _parse_arguments(raw_args), inp.locked)
+            except BriefError as exc:
+                last_error = str(exc)[:1500]
+                log.info("brief_llm attempt=%d invalid answer: %s", attempt + 1, last_error)
+                # the whole answer goes back (reasoning items included, as the API requires with a
+                # function call), then the error as the call's output
+                conversation = [
+                    *conversation,
+                    *_output_items(response),
+                    {
+                        "type": "function_call_output",
+                        "call_id": call_id,
+                        "output": f"Not accepted: {last_error}. Call {TOOL_NAME} again with corrected values.",
+                    },
+                ]
+                continue
+            return BuildResult(brief, usage, changed)
+    except BriefError:
+        raise
+    except Exception as exc:
+        exc.usage = usage  # type: ignore[attr-defined]  # calls already paid for stay accounted
+        raise
     raise BriefBuildError(f"no valid brief from the model: {last_error}", usage)
 
 
