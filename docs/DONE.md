@@ -29,6 +29,7 @@ New lines go at the end of the table (protocol step 9).
 | E20 | Template catalog: a new industry is one file | #25 | done 2026-10-17 |
 | E21 | Template: Home services / trades | #25 | done 2026-10-17 |
 | E22 | Template: Fitness studio / gym | #25 | done 2026-10-17 |
+| E25 | Brief builder on OpenAI (Responses API) instead of Anthropic, ADR-012 | #41 | done 2026-10-18 |
 | M01 | Competitor & market map | #2 | done 2026-10-16 |
 | M02 | ICP, positioning, brand name options | #3 | done 2026-10-16 |
 | M03 | Final landing copy (EN) | #5 | done 2026-10-16 |

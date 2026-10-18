@@ -12,33 +12,15 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ## Track E — Engineering (daily)
 
-> **Priority:** E25 → E23 → E24. (E25 first: Henry 2026-10-18 — OpenAI replaces Anthropic, ADR-012.) All earlier E tasks are done (`docs/DONE.md`).
+> **Priority:** E23 → E24. (E25, the switch to OpenAI per ADR-012, is done: #41.) All earlier E tasks are done (`docs/DONE.md`).
 > New industries are one file each (ADR-009, `docs/templates/ADDING_A_TEMPLATE.md`; follow E21/E22, Model: sonnet).
 > Customer login = passwordless magic link by email (ADR-006).
-
-### E25 — Brief builder on OpenAI instead of Anthropic (ADR-012)
-- status: IN_PROGRESS (2026-10-18)
-- Model: opus
-- depends: E08 (done #39), E23 harness (done #40)
-- skills: engineering:testing-strategy
-- do: replace the Anthropic Messages client in `adapters/llm.py` / `engine/brief_builder.py` with an OpenAI
-  client (httpx, no SDK unless already pinned; forced function / tool call with a strict JSON schema for
-  `submit_brief`; usage incl. cached input tokens; latency; retry rules: no retry on 4xx except 429).
-  `OPENAI_API_KEY` replaces `ANTHROPIC_API_KEY` in `app/config.py`, `.env.example`, docs (ARCHITECTURE,
-  DEPLOY, RUNBOOK_GO_LIVE, golive preflight if it mentions the key); `validate_brief_model` accepts OpenAI ids.
-  Re-record the E08 fixtures in OpenAI response shape; keep every E08 test's intent (locked numbers,
-  injection text, fallback, retries, deadline). E23: models → `gpt-6-luna`, `gpt-6.1-sol`, `gpt-6-astra`
-  (verify ids, function-calling support and prices on developers.openai.com/api/docs/pricing; cached-input
-  rate, long-context rate), reference = `gpt-6-astra`; re-record its fixtures; memo text updated.
-  `content/legal/privacy.md`: OpenAI instead of Anthropic (same wording otherwise). Remove the Anthropic code.
-- done when: no `ANTHROPIC` / `anthropic` left in app, engine, adapters, evals, config, docs (except ADRs and
-  run logs); all tests green on OpenAI fixtures; HUMAN_TODO A1 says OpenAI.
 
 ### E23 — Eval: which model fills the brief
 - status: NEEDS_HENRY: live run needs `OPENAI_API_KEY` in the cloud environment (HUMAN_TODO A1); E25 (OpenAI) done. continue: harness merged (PR #40), on OpenAI since E25;
   run `python -m evals.brief_model_eval --record evals/runs/<date> --memo`, commit the filled memo, then DONE.
 - Model: sonnet
-- depends: E08 (LLM brief builder, done #39), BRIEF_MODEL plumbing (token-budget PR, done), E25 (OpenAI)
+- depends: E08 (LLM brief builder, done #39), BRIEF_MODEL plumbing (token-budget PR, done), E25 (OpenAI, done #41)
 - skills: engineering:testing-strategy
 - do: `evals/brief_model_eval.py`: 6 industries × 10 wizard-answer variants (fixed, committed in `evals/cases/`)
   through `gpt-6-luna`, `gpt-6.1-sol` and `gpt-6-astra` (ADR-012) via the E08 builder. Each brief goes

@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-18 · E · E25 brief builder on OpenAI · DONE · https://github.com/henrysheykin/finmodel-app/pull/41
+  OpenAI Responses API over httpx (Chat Completions can't do function calls with reasoning on gpt-6; astra can't turn it off):
+  strict forced `submit_brief`, reasoning low, store=false, usage uncached/cached/cache-write; no retry on 4xx except 429.
+  BRIEF_MODELS gpt-6-luna / gpt-6.1-sol / gpt-6-astra; OPENAI_API_KEY; E23 prices from the OpenAI pricing page (2026-10-18), reference astra;
+  fixtures re-recorded, privacy.md names OpenAI. 1017 tests local, CI green, reviewer PASS. For Henry: A1 (key in Railway + cloud env for E23). Next E: E24 (E23 waits on the key).
 - 2026-10-18 · E · interactive with Henry: LLM provider → OpenAI (replace Anthropic) · ADR-012
   New E25 (Model: opus) first in track E: OpenAI client, OPENAI_API_KEY, E23 on gpt-6-luna / gpt-6.1-sol / gpt-6-astra, privacy.md. A1 now = OpenAI key.
 - 2026-10-18 · E · E23 brief-model eval · harness merged, NEEDS_HENRY (live run) · https://github.com/henrysheykin/finmodel-app/pull/40
@@ -47,33 +52,3 @@ Newest first. One entry per scheduled run: date · track · task · result · PR
   cross-site POSTs refused; CSP; tokens redacted from access logs; 1 MB body cap; pinned deps + pip-audit job (clean).
   New: browser journey E2E with the real engine and real email copy; load test 50 orders / one worker = 50 ready, 7.8 s per model.
   Report docs/reviews/E17-hardening.md. 714 tests local. For Henry: A6 still open. E05 skipped again (stale claim, no continue:).
-- 2026-10-17 · E · E15 ops (rest) · DONE · https://github.com/henrysheykin/finmodel-app/pull/31
-  Per-IP rate limits: wizard + /api/orders share 30/10 min, checkout sessions 30/10 min (RATE_LIMIT_PER_10MIN), 429 + Retry-After,
-  answers kept. docker-compose.yml (production image + Postgres 16); compose E2E (wizard → test payment → build → Checks PASS) in CI.
-  668 tests (666 local + 2 compose). For Henry: set CLIENT_IP_HEADER=X-Real-IP in Railway (HUMAN_TODO A6). E05 skipped again (stale claim, no continue:),
-  please reset to TODO; E17 is now unblocked.
-- 2026-10-18 · E · interactive with Henry: hero looks like real Excel
-  Henry: the hero preview "isn't Excel, it's a parody". Now the whole sample workbook (8 sheets) in a spreadsheet window:
-  ribbon following the selection, name box, formula bar, gridlines, frozen panes, B4 list + input message, F2 precedents, range sums.
-  app/xlview.py + landing.js render the same cells (browser test compares); data /preview/workbook.json?v=<hash>.
-  Engine: scenario-cell validation now has an input message. PR https://github.com/henrysheykin/finmodel-app/pull/30 (669 tests).
-  For Henry: workbook title/section bands are still navy (#1F3864 / #2F5597); the site shows them in ink/pine (ADR-005). Switch the files too?
-- 2026-10-17 · E · E16 SEO pages engine · DONE · https://github.com/henrysheykin/finmodel-app/pull/29
-  All 15 content/seo pages live at /models/… and /guides/… (shared layout, breadcrumbs, CTA to the wizard on the page's template,
-  sample download, related links, canonical/OG, JSON-LD); /models and /guides indexes; sitemap + llms.txt list them. Sample names
-  `<key>-<tier>[-Ny]` served at /samples/; built missing cafe-light and cafe-full-5y (pages linked to 404s). 76 new tests; 648 local green.
-  For M: 9 titles exceed ~70 chars (Google truncates), tests allow ≤ 90. For Henry/P: E05 claimed 13:33 with no branch/PR/continue: —
-  skipped a 2nd time per protocol; please reset to TODO. E17 waits on E15 (IN_PROGRESS). frontend-design skill not installed.
-- 2026-10-17 · E · interactive with Henry: production check on Railway (test mode) — healthz, landing, wizard, Stripe test payment,
-  webhook, build, Resend email, download, Checks PASS all OK. Left: custom domain + Resend domain (A5), Stripe account name "FRANCHISE"
-  → StartupModel before go-live. Copy issues for M/E: model-ready email promises a "tomorrow" note that is not sent yet, and says the
-  scenario switch is on Inputs (Full tier has it on Dashboard).
-- 2026-10-17 · E · interactive with Henry: stale CSS after deploy
-  Returning visitors saw hero v3 unstyled: Cloudflare cached /static/site.css for 4 h under a fixed URL.
-  Fix: asset() adds a content hash (?v=…) to CSS/JS links; versioned static files are immutable, plain ones revalidate.
-  PR https://github.com/henrysheykin/finmodel-app/pull/28 (575 tests green), verified live.
-- 2026-10-17 · E · interactive with Henry: landing hero v3
-  Hero is now a clickable spreadsheet of the real cafe workbook: Dashboard / Inputs / P&L / Checks tabs, formula bar, B4 Low/Base/High switch, keyboard navigation; numbers tested against the independent Python model.
-  How it works: interactive 3-question demo brief that opens a prefilled /start; pipeline and sample file card.
-  PR https://github.com/henrysheykin/finmodel-app/pull/27 (571 tests green).
-  For Henry: "how-to" guide pages are E16 (SEO pages engine), still TODO.
