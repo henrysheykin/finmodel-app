@@ -75,7 +75,7 @@ Pack credits stay valid for 12 months from purchase.
 
 ## Which client businesses are covered
 
-Café, coffee shop, restaurant and bakery are available today; other industries follow as their templates are released. The questionnaire lists only what can be ordered, so you'll know before you buy whether a client's business is covered.
+Templates today cover restaurants and cafés, SaaS and software, retail and e-commerce, professional services, rental real estate, fitness studios and gyms, and home services and trades. The questionnaire lists only what can be ordered, so you'll know before you buy whether a client's business is covered.
 
 ## Sample
 

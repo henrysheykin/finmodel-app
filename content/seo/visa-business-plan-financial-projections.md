@@ -70,7 +70,7 @@ Once the client has the file, they or you can change any input without coming ba
 
 ## Which businesses are covered
 
-Café, coffee shop, restaurant and bakery are available today. Other industries follow as their templates are released, and the questionnaire lists only what can be ordered. If a client's business doesn't fit a template, we'd rather say so than sell a model that misrepresents it.
+Templates today cover restaurants and cafés, SaaS and software, retail and e-commerce, professional services, rental real estate, fitness studios and gyms, and home services and trades, and the questionnaire lists only what can be ordered. If a client's business doesn't fit a template, we'd rather say so than sell a model that misrepresents it.
 
 ## Sample
 

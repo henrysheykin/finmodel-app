@@ -68,7 +68,12 @@ The model gives you the numbers. These habits make them persuasive.
 The questionnaire starts with your business type, because the revenue logic differs:
 
 - Café, coffee shop, restaurant or bakery: customers per day × average ticket × operating days, with a traffic ramp. See [restaurant and coffee shop financial projections](/models/restaurant-coffee-shop-financial-projections).
-- Other industries follow as their templates are released. The questionnaire lists only the ones you can order today.
+- Retail store or online shop: see [retail store financial projections](/models/retail-store-financial-projections).
+- Consulting firm or agency: see [professional services financial projections](/models/professional-services-financial-projections).
+- Rental property: see [rental property pro forma for lenders](/models/rental-property-pro-forma-for-lenders).
+- Gym or studio: see [fitness studio financial projections](/models/fitness-studio-financial-projections).
+- Plumbing, HVAC, electrical and other trades: see [home services financial projections](/models/home-services-financial-projections).
+- The questionnaire lists every business type you can order today.
 
 For a broader guide to preparing projections for any lender, see [financial projections for a bank loan](/guides/financial-projections-for-bank-loan). For the whole range, see [custom financial models](/models/custom-financial-model).
 
