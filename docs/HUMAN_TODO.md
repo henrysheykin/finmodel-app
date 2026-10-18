@@ -89,6 +89,9 @@ webhook, Resend domain).
 ## Go-live (v0.1.0, E18 — step by step with checks: `docs/RUNBOOK_GO_LIVE.md`)
 Where you stand at any moment: the "Before live payments" box at the top of `/admin` (also printed in every
 Railway deploy log). It disappears when everything is done.
+- [ ] G0 (1 minute) Tag the release: GitHub → finmodel-app → Releases → Draft a new release → "Choose a tag" → type
+      `v0.1.0` → target: commit `0deedd7` (E18 merge on main) → title "v0.1.0", notes from `CHANGELOG.md` → Publish.
+      Agents cannot push tags from their sandbox.
 - [ ] G1 Go live — the exact steps, in order (runbook section in brackets):
   - [ ] G1.1 Decide what to launch with: R1 sign-offs for the templates you will promote; D9; VAT with your adviser (§0).
   - [ ] G1.2 Railway Variables: `CLIENT_IP_HEADER=X-Real-IP` (= A6), `ADMIN_EMAIL` = your inbox (§1).

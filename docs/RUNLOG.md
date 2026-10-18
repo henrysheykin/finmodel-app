@@ -2,6 +2,12 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-18 · E · E18 release candidate v0.1.0 · NEEDS_HENRY (tag only) · https://github.com/henrysheykin/finmodel-app/pull/34
+  Version 0.1.0 (/healthz, deploy log). Go-live preflight `app/golive.py`: domain, Stripe live, webhook, sender domain, support,
+  admin, client IP, legal texts, email copy. It runs in every deploy log and shows as a box on /admin. docs/RUNBOOK_GO_LIVE.md
+  (variables, steps 0–9, rollback), CHANGELOG.md, docs/reviews/E18-release-checklist.md, HUMAN_TODO G1.1–G1.9. 800 tests local, CI green.
+  Tag v0.1.0 NOT pushed: the sandbox git proxy refuses tag pushes → HUMAN_TODO G0. Observed: startup-model.com already serves the
+  app, but PUBLIC_BASE_URL is still the Railway URL (sitemap). Next E by priority: E08 (brief builder; needs A1 key only for live use).
 - 2026-10-18 · E · E05 real estate template · DONE · https://github.com/henrysheykin/finmodel-app/pull/33
   Took over the stale E05 claim (no branch/PR since 2026-10-17 13:33; it blocked E18). Framework (ADR-011): annuity mortgage
   (PMT), land excluded from depreciation, Returns sheet in both tiers — purchase at year 0, NOI − reserves, sale at next-year
