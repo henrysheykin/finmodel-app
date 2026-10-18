@@ -17,7 +17,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 > Customer login = passwordless magic link by email (ADR-006).
 
 ### E08 — Brief builder (Claude API)
-- status: TODO
+- status: IN_PROGRESS (2026-10-18)
 - Model: opus
 - note (2026-10-18, token-budget PR): plumbing is ready in `adapters/llm.py` — use it, don't duplicate it.
   `BRIEF_MODEL` (empty = LLM off = today's prefill; unknown id fails at start), `build_brief_request` puts the
