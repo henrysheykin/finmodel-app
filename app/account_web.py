@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy import select
 
-from app import accounts, links, wizard
+from app import accounts, links, ratelimit, wizard
 from app.db import session_scope
 from app.models import Order
 from app.web import _label, templates
@@ -30,7 +30,7 @@ router = APIRouter()
 
 
 def _client_ip(request: Request) -> str:
-    return request.client.host if request.client else ""
+    return ratelimit.client_ip(request)
 
 
 def _set_cookie(resp, token: str, secure: bool) -> None:

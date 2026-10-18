@@ -150,7 +150,8 @@ def test_wizard_pay_build_and_see_ready(page, live_server, services, notifier):
     assert "Payment received" in page.get_by_role("status").inner_text()
 
     make(services, notifier).run_once()  # the worker builds and checks the model
-    page.wait_for_function("document.getElementById('status-text').dataset.status === 'ready'", timeout=10000)
+    # the page's own script (web/static/success.js) polls the order and reloads; no string eval (CSP)
+    sync_api.expect(page.locator("#status-text")).to_have_attribute("data-status", "ready", timeout=10000)
     assert "Your model is ready" in page.get_by_role("status").inner_text()
     ((email, _, link),) = notifier.ready
     assert email == "buyer@example.com" and "/download/" in link

@@ -64,9 +64,15 @@ _init_lock = threading.Lock()
 
 
 def client_ip(request: Request) -> str:
-    """The visitor's address. With CLIENT_IP_HEADER set (e.g. ``X-Real-IP`` on a host whose edge
-    proxy sets it), that header wins; otherwise the peer address uvicorn derived from the proxy
-    headers. The header must be one the edge overwrites, or callers could choose their own key."""
+    """The visitor's address: the key of every per-address limit (orders, checkout, magic links,
+    admin login — E17 made them all use this one function).
+
+    With CLIENT_IP_HEADER set (e.g. ``X-Real-IP`` on a host whose edge proxy sets it), that header
+    wins; otherwise the peer address uvicorn derived from ``X-Forwarded-For`` (its left-most entry,
+    because the container trusts every proxy). That is only safe behind an edge that overwrites
+    the caller's ``X-Forwarded-For`` (Railway does, and puts the visitor first while the right-most
+    entry is an internal hop); on any other host set CLIENT_IP_HEADER, or callers choose their key.
+    """
     sv = getattr(request.app.state, "services", None)
     header = sv.cfg.client_ip_header if sv is not None else ""
     if header:
