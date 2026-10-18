@@ -2,6 +2,12 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-18 · E · E05 real estate template · DONE · https://github.com/henrysheykin/finmodel-app/pull/33
+  Took over the stale E05 claim (no branch/PR since 2026-10-17 13:33; it blocked E18). Framework (ADR-011): annuity mortgage
+  (PMT), land excluded from depreciation, Returns sheet in both tiers — purchase at year 0, NOI − reserves, sale at next-year
+  NOI ÷ exit cap, unlevered/levered IRR, NPV, multiple, DSCR, cash-on-cash; challenger recomputes every cell (IRR ±0.01 pp).
+  Template: rent roll, vacancy, property costs, 4 stage defaults, sample + memo. 787 tests local; 200-case random LO sweep clean.
+  For Henry: R1 CFO review of real estate (6 questions in the memo). Next E: E18 release candidate (all depends DONE).
 - 2026-10-18 · E · E17 hardening · DONE · https://github.com/henrysheykin/finmodel-app/pull/32
   Fixed: a webhook delivered twice at the same moment could build/receipt twice (conditional UPDATE claim); blocking Stripe/email/DB
   work ran on the event loop (one slow email froze the site); admin login global cap; one client-address rule for all limits;
