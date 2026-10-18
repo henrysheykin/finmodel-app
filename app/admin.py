@@ -25,7 +25,7 @@ from app import links, ratelimit
 from app.db import session_scope, utcnow
 from app.models import Job, Order
 from app.orders import OrderError, rebuild, refund_order
-from app.web import STATUS_LABEL, templates
+from app.web import STATUS_LABEL, FormData, templates
 
 log = logging.getLogger("admin")
 COOKIE = "sm_admin"
@@ -77,9 +77,8 @@ def _require(request: Request) -> str:
     return cookie
 
 
-async def _require_post(request: Request) -> dict:
+def _require_post(request: Request, form: dict) -> dict:
     cookie = _require(request)
-    form = dict(await request.form())
     if not hmac.compare_digest(str(form.get("csrf", "")), _csrf(request, cookie)):
         raise HTTPException(403, "bad csrf token")
     return form
@@ -104,7 +103,7 @@ def login_page(request: Request) -> HTMLResponse:
 
 
 @router.post("/login")
-async def login(request: Request):
+def login(request: Request, form: FormData):
     cfg = _cfg(request)
     ip, now = _ip(request), time.time()
     q, everyone = _recent(ip, now), _recent(ALL, now)
@@ -112,7 +111,6 @@ async def login(request: Request):
         return templates.TemplateResponse(
             request, "admin/login.html", {"error": "Too many attempts. Try again later."}, status_code=429
         )
-    form = await request.form()
     user_ok = hmac.compare_digest(str(form.get("user", "")).encode(), cfg.admin_user.encode())
     pass_ok = hmac.compare_digest(str(form.get("password", "")).encode(), cfg.admin_password.encode())
     if not (user_ok and pass_ok):
@@ -138,8 +136,8 @@ async def login(request: Request):
 
 
 @router.post("/logout")
-async def logout(request: Request):
-    await _require_post(request)
+def logout(request: Request, form: FormData):
+    _require_post(request, form)
     resp = RedirectResponse("/admin/login", status_code=303)
     resp.delete_cookie(COOKIE, path="/admin")
     return resp
@@ -256,8 +254,8 @@ def _back(order_id: str, msg: str) -> RedirectResponse:
 
 
 @router.post("/orders/{order_id}/rebuild")
-async def do_rebuild(order_id: str, request: Request):
-    await _require_post(request)
+def do_rebuild(order_id: str, request: Request, form: FormData):
+    _require_post(request, form)
     sv = request.app.state.services
     try:
         with session_scope(sv.sessions) as s:
@@ -272,8 +270,8 @@ async def do_rebuild(order_id: str, request: Request):
 
 
 @router.post("/orders/{order_id}/refund")
-async def do_refund(order_id: str, request: Request):
-    form = await _require_post(request)
+def do_refund(order_id: str, request: Request, form: FormData):
+    _require_post(request, form)
     if form.get("confirm") != "yes":
         return _back(order_id, "Tick the confirmation box to refund.")
     sv = request.app.state.services
@@ -295,8 +293,8 @@ async def do_refund(order_id: str, request: Request):
 
 
 @router.post("/orders/{order_id}/resend")
-async def do_resend(order_id: str, request: Request):
-    await _require_post(request)
+def do_resend(order_id: str, request: Request, form: FormData):
+    _require_post(request, form)
     sv = request.app.state.services
     with session_scope(sv.sessions) as s:
         o = s.get(Order, order_id)
