@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-19 · P · weekly PM review · STATUS.md rewritten
+  E 24/25 done, M 12/12 closed (3 cancelled); no open PRs, CI on main green, startup-model.com /healthz 0.1.0.
+  No stuck tasks (nothing IN_PROGRESS); only E23 open, NEEDS_HENRY (A1). E and M scheduled tasks are switched off since 2026-10-18.
+  For Henry: R1 sign-offs are the critical path to live payments; then VAT (G1.1), G1.6, G1.8–G1.9; A1 + switch E back on for E23.
+
 - 2026-10-18 · E · E24 derived goal defaults + fallback usage · DONE · https://github.com/henrysheykin/finmodel-app/pull/42
   `merge` recomputes `cash_buffer` (3 months of costs) after the model's changes unless the model moved it or the customer locked it;
   echoed-unchanged keys don't count; derived value clamped to its range [0, 1e9]. Usage of calls already made is kept on every fallback (`exc.usage`).
