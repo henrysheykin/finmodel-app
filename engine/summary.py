@@ -309,13 +309,13 @@ def _write_charts(ws, lay: SumLayout) -> None:
             f"{CHART_TITLES['cf']} by {by}",
             cats("cf"),
             [ser("cf", "cfo"), ser("cf", "cfi"), ser("cf", "cff")],
-            [ser("cf", "cash_close", "Closing cash (right axis)", st.INK)],
+            [ser("cf", "cash_close", color=st.INK)],  # right axis
             **kw,
         ),
         "bs": ch.combo(
             f"{CHART_TITLES['bs']} at {by} end",
             cats("bs"),
-            [ser("bs", "cash"), ser("bs", "ar", "Receivables"), ser("bs", "ppe_net", "Fixed assets")],
+            [ser("bs", "cash"), ser("bs", "ar"), ser("bs", "ppe_net")],
             [ser("bs", "total_equity", color=st.INK)],
             stacked=True,
             secondary=False,

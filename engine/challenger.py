@@ -172,7 +172,9 @@ def challenge(brief: Brief | dict, model_path: str | Path) -> dict:
                     v = val(cells[y])
                     exp = expected[SUMMARY_SOURCE[name]][y]
                     if not _num(v) or abs(v - exp) > TOLERANCE_USD:
-                        report["problems"].append(f"scenario {scen} year {y} {name}: workbook {v!r} vs python {exp:,.2f}")
+                        report["problems"].append(
+                            f"scenario {scen} year {y} {name}: workbook {v!r} vs python {exp:,.2f}"
+                        )
                 out["years"][y] = got
             if man.goal_cells or man.goal_years or man.dash_cells or man.dash_years:
                 gexp = python_goal_model(brief, scen)
