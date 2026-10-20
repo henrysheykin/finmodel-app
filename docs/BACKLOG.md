@@ -30,7 +30,8 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   of each monthly block. Annual granularity: years only, charts by year. Summary's range joins the "No error
   values" check.
 - done when: new in-file check "Summary ties to statements" (revenue, net income, closing cash for every year)
-  passes in all templates; charts present after recalc.
+  passes in all templates; charts present after recalc; a test asserts that in Full the Dashboard Core financials
+  equal the P&L / Cash Flow / Balance Sheet cells every year (E27 review).
 
 ### E29 — Scenarios sheet, live Low / Base / High
 - status: TODO
@@ -69,7 +70,13 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   current ratio, debt ÷ equity, ROA, ROE), DuPont (net margin × asset turnover × equity multiplier = ROE), the
   template's KPI table moved here from the Dashboard, a blank "Target" input column, 4 charts 2×2 (margins,
   ROA / ROE + two template charts via a hook). Ratios with a zero or negative denominator (equity ≤ 0, revenue = 0,
-  assets = 0) show "n/a". Challenger recomputes the ratios and the DuPont identity.
+  assets = 0) show "n/a". Challenger recomputes the ratios and the DuPont identity. From the E27 review: every KPI
+  row shown on the Dashboard's industry block and the KPIs sheet is recomputed by the challenger (add the missing
+  rows to each template's `kpi_checked` — SaaS ARR, LTV ÷ CAC; real estate NOI, occupancy, debt service, DSCR;
+  services utilisation, rate, revenue per FTE; home services utilisation, revenue per job; fitness capacity, MRR;
+  retail store sales; cafe's customers / ticket roll-ups and team FTE); drop the interim `DASH_USD_K` format
+  (standard $'000); compare tile sub-lines numerically (not the TEXT() rounding) so a value on an x.x5 boundary
+  cannot fail a model.
 - done when: all templates PASS; in-file check: DuPont product equals ROE in every year where both are defined
   (years with "n/a" are skipped); a planning-stage model with negative equity passes.
 
