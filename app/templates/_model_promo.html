@@ -1,0 +1,24 @@
+{# Model promotion block (ADR-014): shared by calculator pages and business-model pages. Context: promo (see app/calculators.py promo_context). #}
+<aside class="promo cta" aria-labelledby="promo-title">
+  <div class="promo__copy">
+    <h2 id="promo-title">{% if promo.template_title %}Get a {{ promo.template_title }} model built on your numbers{% else %}Get a financial model built on your numbers{% endif %}</h2>
+    <p>A calculator answers one question with one set of numbers. A real decision rarely stays that small: a higher price changes how many customers come, more customers change the hours you staff, and rent, loan repayments and tax all have to be paid out of what is left. A full model keeps those links in one workbook, so you can change an assumption and see the profit, the cash balance and the break-even point move together.</p>
+    <p>That is also what a lender, an investor or a partner will ask to see: the assumptions in one place, a low, a base and a high case, and proof that the arithmetic holds. You answer a short brief and get an Excel file with live formulas and a Checks sheet. Every scenario is recomputed independently before delivery.</p>
+  </div>
+  <div class="promo__tiers">
+    {% for tier in promo.tiers %}
+    <div class="promo__tier{% if tier.key == 'full' %} promo__tier--main{% endif %}">
+      <h3>{{ tier.name }} <span>{{ tier.price }}</span></h3>
+      <ul>
+        {% for f in tier.features %}<li>{{ f }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="cta__row">
+    <a class="btn" href="{{ promo.start_href }}">Start a model</a>
+    {% if promo.sample %}<a class="btn btn--ghost" href="/samples/{{ promo.sample.filename }}" download>Download the sample (.xlsx)</a>{% endif %}
+  </div>
+  <p class="cta__note">One payment, no subscription, full refund within 7 days.{% if promo.sample %} The sample is a {{ promo.sample.tier | capitalize }} {{ promo.template_title }} workbook generated and checked by the same engine that builds customer models.{% endif %}</p>
+</aside>

@@ -1,0 +1,102 @@
+{% extends "site_base.html" %}
+{% block title %}{{ calc.title }}{% endblock %}
+{% block meta %}
+<meta name="description" content="{{ calc.description }}">
+<link rel="canonical" href="{{ base_url }}{{ calc.slug }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="StartupModel">
+<meta property="og:url" content="{{ base_url }}{{ calc.slug }}">
+<meta property="og:title" content="{{ calc.h1 }}">
+<meta property="og:description" content="{{ calc.description }}">
+<meta name="twitter:card" content="summary">
+{% for ld in ld_json %}<script type="application/ld+json">{{ ld }}</script>
+{% endfor %}
+{% endblock %}
+{% block main %}
+<article class="doc seo calc-page">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/calculators">Calculators</a></li>
+        <li aria-current="page">{{ calc.h1 }}</li>
+      </ol>
+    </nav>
+    <div class="calc-prose">{{ intro }}</div>
+
+    <div class="calc" data-calc>
+      <script type="application/json" data-calc-spec>{{ spec_json }}</script>
+      <section class="calc__in" aria-labelledby="calc-in-h">
+        <h2 id="calc-in-h" class="calc__h">Your numbers</h2>
+        <p class="calc__note">The starting numbers are example values, not benchmarks. Replace them with yours.</p>
+        {% for inp in calc.inputs %}
+        <div class="calc-field">
+          <label for="in-{{ inp.key }}">{{ inp.label }}</label>
+          <div class="calc-field__box">
+            {% if inp.unit == '$' %}<span class="calc-field__unit" aria-hidden="true">$</span>{% endif %}
+            <input id="in-{{ inp.key }}" type="number" inputmode="decimal" data-key="{{ inp.key }}" value="{{ inp.attrs.default }}" min="{{ inp.attrs.min }}" max="{{ inp.attrs.max }}" step="{{ inp.attrs.step }}" aria-describedby="msg-{{ inp.key }}">
+            {% if inp.unit and inp.unit != '$' %}<span class="calc-field__unit" aria-hidden="true">{{ inp.unit }}</span>{% endif %}
+          </div>
+          <p class="calc-field__msg" id="msg-{{ inp.key }}" data-msg="{{ inp.key }}" data-hint="{{ inp.hint }}">{{ inp.hint }}</p>
+        </div>
+        {% endfor %}
+      </section>
+
+      <section class="calc__out" aria-labelledby="calc-out-h">
+        <h2 id="calc-out-h" class="calc__h">Results</h2>
+        <dl class="calc-results">
+          {% for r in outputs %}
+          <div class="calc-row{% if r.o.highlight %} is-hero{% endif %}">
+            <dt>{{ r.o.label }}{% if r.o.note %}<small>{{ r.o.note }}</small>{% endif %}</dt>
+            <dd data-out="{{ r.o.key }}">{{ r.text }}</dd>
+          </div>
+          {% endfor %}
+        </dl>
+        <p class="sr-only" role="status" aria-live="polite" data-live></p>
+      </section>
+
+      {% if table %}
+      <section class="calc__table" aria-labelledby="calc-table-h">
+        <h2 id="calc-table-h" class="calc__h">{{ table.title }}</h2>
+        <div class="table-wrap" role="region" aria-labelledby="calc-table-h" tabindex="0">
+          <table class="calc-table">
+            <thead>
+              <tr>
+                <th scope="col">{{ table.input.label }}</th>
+                {% for o in table.columns %}<th scope="col">{{ o.label }}</th>{% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in table.rows %}
+              <tr data-row="{{ row.index }}"{% if row.base %} class="is-base"{% endif %}>
+                <th scope="row" data-sweep>{{ row.sweep }}</th>
+                {% for key, text in row.cells %}<td data-cell="{{ key }}">{{ text }}</td>{% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <p class="calc__note">{% if calc.table.relative %}Rows move {{ table.input.label | lower }} up and down from your number; every other input stays as entered.{% else %}Every other input stays as entered.{% endif %}</p>
+      </section>
+      {% endif %}
+    </div>
+
+    <div class="calc-prose">{{ body }}</div>
+
+    {% include "_model_promo.html" %}
+
+    {% if related or guide %}
+    <nav class="related calc-prose" aria-labelledby="related-title">
+      <h2 id="related-title">Related</h2>
+      <ul>
+        {% if guide %}<li><a href="{{ guide.slug }}">{{ guide.h1 }}</a> (guide)</li>{% endif %}
+        {% for c in related %}<li><a href="{{ c.slug }}">{{ c.h1 }}</a></li>
+        {% endfor %}
+      </ul>
+      <p><a href="/calculators">All calculators</a> · <a href="/models">All financial models</a></p>
+    </nav>
+    {% endif %}
+  </div>
+</article>
+{% endblock %}
+{% block scripts %}<script src="{{ asset('calc.js') }}" defer></script>{% endblock %}
