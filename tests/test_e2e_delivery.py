@@ -38,7 +38,7 @@ def test_paid_order_is_built_checked_and_downloadable(client, services, notifier
         row[1].value for row in wb["Checks"].iter_rows(min_col=1, max_col=2) if row[0].value == "Overall verdict"
     ]
     assert verdict[0] in ("PASS", "PASS WITH WARNINGS")
-    assert wb.sheetnames == ["Inputs", "P&L", "Checks"]  # light tier
+    assert wb.sheetnames == ["Cover", "Dashboard", "Break-even", "Inputs", "P&L", "Checks"]  # light tier (ADR-013)
     with session_scope(services.sessions) as s:
         rep = s.get(Order, oid).artifact("check_report")
         assert b'"verdict": "PASS"' in services.storage.get(rep.storage_key)
