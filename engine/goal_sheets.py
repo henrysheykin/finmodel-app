@@ -366,7 +366,7 @@ def write_modules(wb, pl: Plan) -> None:
         st.title(ws, lay.title, lay.sub, lay.width, link_col=lay.width + 2)
         ws.cell(row=3, column=1, value="Scenario shown").font = st.font(bold=True)
         c = ws.cell(row=3, column=2, value=_scenario_label(pl))
-        c.font = st.font(st.ORANGE, bold=True)
+        c.font = st.font(st.PINE, bold=True)
         for r, text in lay.sections.items():
             st.section(ws, r, text, lay.width)
         for r, cols in lay.headers.items():
@@ -377,15 +377,19 @@ def write_modules(wb, pl: Plan) -> None:
                 if isinstance(text, str) and text.startswith("="):
                     cell.number_format = FORMATS["pct"]
         for row in lay.rows:
+            all_pct = all(f == FORMATS["pct"] for f in row.fmt.values())  # percentages: italic grey (standard §4)
             if row.label:
                 lab = ws.cell(row=row.row, column=1, value=row.label)
-                lab.font = st.font(bold=row.bold)
+                lab.font = st.font(st.GREY, italic=True) if all_pct else st.font(bold=row.bold)
                 if row.label.startswith(KEY_TOTAL_LABELS):
                     lab.border = st.KEY_TOTAL
             for col, f in row.values.items():
                 cell = ws[f"{col}{row.row}"]
                 cell.value = f
-                cell.font = st.font(st.GREEN if PURE_LINK.match(f) else "000000", bold=row.bold)
+                pct = row.fmt[col] == FORMATS["pct"]
+                cell.font = st.font(
+                    st.GREEN if PURE_LINK.match(f) else st.GREY if pct else "000000", bold=row.bold, italic=pct
+                )
                 cell.number_format = row.fmt[col]
                 if row.total:
                     cell.border = st.TOTAL_TOP

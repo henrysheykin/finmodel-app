@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from engine.brief import Brief, BriefError
 from engine.core import HC, Top, role_period
-from engine.spec import DriverSpec, Line, StmtRow, Timing
+from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
 from engine.templates.base import Template
 
 BILLABLE = ("senior", "staff")
@@ -268,6 +268,17 @@ class ServicesTemplate(Template):
 
     def capex_lines(self, t: Timing) -> list[Line]:
         return [Line("capex", "Capital spending", "=IF({p}=1,{in:capex},0)", "top")]
+
+    def dashboard_metrics(self, t: Timing) -> list[DashMetric]:
+        return [
+            DashMetric("hours", "Billable hours", "kpi:hours", "int"),
+            DashMetric("util", "Utilisation of billable employees", "kpi:util", "pct"),
+            DashMetric("rate", "Effective rate per billable hour", "kpi:eff_rate", "usd2"),
+            DashMetric("rev_fte", "Revenue per billable FTE", "kpi:rev_fte", "usdk"),
+        ]
+
+    def dashboard_chart(self, t: Timing) -> DashChart:
+        return DashChart("Billable hours & utilisation", bars=("hours",), lines=("util",))
 
     def kpi_rows(self, t: Timing) -> list[StmtRow]:
         return [

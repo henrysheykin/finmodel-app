@@ -78,6 +78,32 @@ class StmtRow:
 
 
 @dataclass(frozen=True)
+class DashMetric:
+    """One industry line of the Dashboard (docs/WORKBOOK_STANDARD.md §2): where it comes from and how it shows.
+
+    ``src`` = ``"kpi:<row key>"`` (a row of the template's KPI table, already annual) or the key of a period-grid
+    line, rolled up to years by ``agg`` ("sum" for flows, "last" for balances and rates at year end).
+    ``fmt`` = ``usdk`` ($'000), ``usd2``, ``int``, ``dec1``, ``pct`` or ``x``.
+    """
+
+    key: str
+    label: str
+    src: str
+    fmt: str = "usdk"
+    agg: Literal["sum", "last"] = "last"
+
+
+@dataclass(frozen=True)
+class DashChart:
+    """The industry chart (fourth chart of the Dashboard): bars from metric keys, optional line(s) on a right axis."""
+
+    title: str
+    bars: tuple[str, ...]
+    lines: tuple[str, ...] = ()
+    stacked: bool = False
+
+
+@dataclass(frozen=True)
 class Timing:
     granularity: str
     years: int

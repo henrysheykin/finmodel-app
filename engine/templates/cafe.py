@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from engine.core import HC, Top
-from engine.spec import DriverSpec, Line, Timing
+from engine.spec import DashChart, DashMetric, DriverSpec, Line, Timing
 from engine.templates.base import Template
 
 
@@ -16,6 +16,7 @@ class CafeTemplate(Template):
     sample_title = "Neighborhood cafe"
     sample_desc = "Full workbook, three years, monthly detail"
     sample_stage = "early"
+    kpi_title = "Cafe metrics"
 
     def default_brief(self, stage: str = "planning", **opts):
         """The cafe has one illustrative brief (engine/briefs/cafe.json) for every stage."""
@@ -102,6 +103,15 @@ class CafeTemplate(Template):
 
     def capex_lines(self, t: Timing) -> list[Line]:
         return [Line("capex", "Capital spending", "=IF({p}=1,{in:capex},0)", "top", section="Capital spending")]
+
+    def dashboard_metrics(self, t: Timing) -> list[DashMetric]:
+        return [
+            DashMetric("cust", "Customers per day (year end)", "cust", "dec1"),
+            DashMetric("ticket", "Average ticket (year end)", "ticket", "usd2"),
+        ]
+
+    def dashboard_chart(self, t: Timing) -> DashChart:
+        return DashChart("Customers per day & average ticket", bars=("cust",), lines=("ticket",))
 
     def reference_top(self, d: dict, p: int, y: int, t: Timing, hc: HC) -> Top:
         a, r = d["open_pct"], max(1, d["ramp_months"])

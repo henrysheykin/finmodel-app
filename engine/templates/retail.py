@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from engine.brief import Brief
 from engine.core import HC, Top
-from engine.spec import DriverSpec, Line, StmtRow, Timing
+from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
 from engine.templates.base import Template
 
 ROLES = [
@@ -296,6 +296,17 @@ class RetailTemplate(Template):
                 "top",
             )
         ]
+
+    def dashboard_metrics(self, t: Timing) -> list[DashMetric]:
+        return [
+            DashMetric("online", "Online gross sales", "kpi:online_sales", "usdk"),
+            DashMetric("store", "Store gross sales", "kpi:store_sales", "usdk"),
+            DashMetric("orders", "Online orders", "kpi:orders", "int"),
+            DashMetric("stores", "Stores open (year end)", "kpi:stores_end", "int"),
+        ]
+
+    def dashboard_chart(self, t: Timing) -> DashChart:
+        return DashChart("Sales by channel", bars=("online", "store"), stacked=True)
 
     def kpi_rows(self, t: Timing) -> list[StmtRow]:
         return [
