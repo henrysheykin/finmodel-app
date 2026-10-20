@@ -386,12 +386,15 @@ charts, break-even, valuation, sources & uses, ratios. Two prototype rounds on a
 (`design/workbook-standard-v1-prototype.xlsx`); Henry approved the result and the Light / Full split on 2026-10-20.
 
 **Decision.** `docs/WORKBOOK_STANDARD.md` is binding for every template and tier:
-- Sheet set by **tier**, not by goal. Light ($149): Cover, Dashboard, Inputs, P&L, Break-even, Checks.
-  Full ($349): Cover, Dashboard, Summary, Scenarios, Break-even, Valuation, Sources & Uses, KPIs, [industry
-  sheets], Inputs, P&L, Cash Flow, Balance Sheet, calculation sheets, Checks.
+- Sheet set by **tier**, not by goal. Light ($149): Cover, Dashboard, Break-even, [industry sheets], Inputs,
+  P&L, Checks. Full ($349): Cover, Dashboard, Summary, Scenarios, Break-even, Valuation, Sources & Uses, KPIs,
+  [industry sheets], Inputs, P&L, Cash Flow, Balance Sheet, Monthly / Annual, Headcount, Checks. Industry sheets
+  keep their tiers (real estate Returns: both, ADR-011 unchanged).
 - The wizard goal sets the Cover's purpose line only (supersedes the "goal adds sheets" part of ADR-010; the
   module code and its challenger coverage stay, driven by the tier). The investor Summary sheet is retired: its
-  content moves to the Dashboard (tiles, Funding & valuation). Closes HUMAN_TODO D12.
+  content moves to the Dashboard (tiles, Funding & valuation), and the challenger checks of its cells (CAGR, EV
+  average, funding gap) move with it (E27). Briefs stored before this ADR are completed with their tier's module
+  drivers at build time. Closes HUMAN_TODO D12.
 - The scenario selector is Dashboard!B4 in both tiers (Light used Inputs!B3).
 - Scenarios shows Low / Base / High **live** (parallel calculation chains on the inputs' B / C / D columns),
   recomputed by the challenger like the active scenario.

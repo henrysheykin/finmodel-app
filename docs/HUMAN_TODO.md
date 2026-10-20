@@ -45,8 +45,8 @@ the answer next to the item (agents read this file every run).
       difference) or add them to checkout (an E task)?
 
 - [x] D12 Investor pitch on the Light plan — Henry 2026-10-20: settled by the workbook standard (ADR-013): sheets
-      follow the tier, not the goal. Light = Cover, Dashboard, Inputs, P&L, Break-even, Checks; Full adds Summary,
-      Scenarios, Valuation, Sources & Uses, KPIs and the statements. The goal sets the Cover's purpose line.
+      follow the tier, not the goal. Light = Cover, Dashboard, Break-even, Inputs, P&L, Checks (+ Returns for real
+      estate); Full adds Summary, Scenarios, Valuation, Sources & Uses, KPIs and the statements. The goal sets the Cover's purpose line.
 
 ## Legal (from E13, blocks Stripe live activation)
 - [x] D13 EU 14-day withdrawal checkbox at checkout — Henry 2026-10-18: ignore, no checkbox. (Refund policy keeps

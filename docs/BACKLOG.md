@@ -27,17 +27,19 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - skills: xlsx, engineering:testing-strategy
 - do: ADR-013 §1, §4. `engine/style.py` v2 (tokens, title block with "◂ Contents" link, bands, headers, totals,
   key totals, tab colours, print setup, input / view-switch / active fills, presentation link colour). Restyle every
-  engine sheet (Inputs, grid sheets, statements, Break-even, Valuation, Checks, Returns). Sheet set by tier:
-  Light = Cover, Dashboard, Inputs, P&L, Break-even, Checks; Full = Cover, Dashboard, [Summary, Scenarios,
-  Sources & Uses, KPIs placeholders until E28–E31], Break-even, Valuation, [industry], Inputs, statements, grid,
-  Headcount, Checks — goal modules switched by tier (`breakeven` both, `dcf` Full), investor Summary retired,
-  goal → Cover purpose line. Selector Dashboard!B4 in both tiers (temporary minimal Dashboard until E27). Cover
+  engine sheet (Inputs, grid sheets, statements, Break-even, Valuation, Checks, Returns). Sheet set and order
+  by tier exactly as `docs/WORKBOOK_STANDARD.md` §1 (Summary, Scenarios, Sources & Uses, KPIs join in E28–E31)
+  — modules switched by tier (`breakeven` both, `dcf` Full, so `validate_goal` applies to every Full brief),
+  investor Summary retired, goal → Cover purpose line (static build date). Selector Dashboard!B4 in both tiers (temporary minimal Dashboard until E27). Cover
   with contents (HYPERLINK), legend, checks verdict with PASS/WARN/FAIL colours. Brief defaults: the goal drivers
   (cash buffer, WACC, growth, multiple…) are always present for the sheets of the tier — check apply_goal,
-  prefill, the LLM merge (E24) and fixtures. Update samples / golden only as far as tests need; full rebuild is E33.
+  prefill, the LLM merge (E24) and fixtures — and are **added at build time** (build, challenger and worker
+  normalise the brief), so orders stored before E26 (`order.brief_json`) still build and re-build. Update samples
+  / golden only as far as tests need; full rebuild is E33.
 - done when: every template × tier × horizon 1/3/5 × monthly/annual builds, recalc 0 errors, challenger PASS;
   tests for the sheet set per tier, the selector location, the Cover links, the style tokens (fonts, fills, tab
-  colours) and that no navy (`1F3864`, `2F5597`) is left in any workbook.
+  colours), that no navy (`1F3864`, `2F5597`) is left in any workbook, and that an old-format stored brief (Light
+  without `cash_buffer`, Full without DCF drivers) builds and passes the challenger.
 
 ### E27 — Dashboard v2 and the chart kit
 - status: TODO
@@ -50,7 +52,9 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   without CF / BS sheets), industry metrics (new template hook, e.g. `dashboard_metrics` + `dashboard_chart`;
   defaults for all 7 templates), Funding & valuation, 4 charts.
 - done when: Dashboard matches the reference for SaaS Full; Light and annual variants render; a test opens the
-  recalculated file and finds 4 charts with live references; all templates PASS.
+  recalculated file and finds 4 charts with live references; the challenger recomputes every tile and every
+  Funding & valuation cell (the CAGR, EV average and funding-gap checks of the retired investor Summary move here;
+  CAGR shows "n/a" for a 1-year horizon); all templates PASS.
 
 ### E28 — Summary sheet (statements, selected year by month)
 - status: TODO
@@ -59,14 +63,15 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - skills: xlsx
 - do: ADR-013 §1, §3. Full only. IS / CF / BS: 5 years left (links to statements), selected year by month right
   (INDEX into the grid with the "Select detailed year" switch), blocks padded to the chart height, one chart right
-  of each monthly block. Annual granularity: years only, charts by year. Error range added to Checks.
-- done when: Summary ties to the statements (new check: revenue, net income, closing cash for every year) in all
-  templates; charts present after recalc.
+  of each monthly block. Annual granularity: years only, charts by year. Summary's range joins the "No error
+  values" check.
+- done when: new in-file check "Summary ties to statements" (revenue, net income, closing cash for every year)
+  passes in all templates; charts present after recalc.
 
 ### E29 — Scenarios sheet, live Low / Base / High
 - status: TODO
 - Model: opus
-- depends: E26
+- depends: E26, E27
 - skills: xlsx, engineering:testing-strategy
 - do: ADR-013 §1. Full only. Parallel calculation chains for scenarios 1/2/3 that read the inputs' B / C / D
   columns directly (e.g. one "Scenario calc" grid sheet with three stacked copies of the annual-relevant lines,
@@ -84,10 +89,12 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - depends: E27
 - skills: xlsx
 - do: ADR-013 §1. Full only. Funding structure (equity, loan, total, shares, gearing, funding required, surplus)
-  + doughnut; sources and uses for the first N months (input, default 12): equity, loan drawdowns, cash generated by
+  + doughnut; sources and uses for the first N months (input, default 12, capped at the number of months in the
+  model; annual granularity: the first N years, default 1): equity, loan drawdowns, cash generated by
   operations / cash used by operations, capital spending, loan repayments, cash at the end of the period; shares;
   uses bar chart; new check "Sources & uses balance". Challenger recomputes the table for N = 12.
-- done when: the check and the challenger pass in all templates (incl. real estate with a loan).
+- done when: the check and the challenger pass in all templates (incl. real estate with a loan), monthly and
+  annual, with N at its default, at 1 and above the horizon (capped).
 
 ### E31 — KPIs & ratios sheet
 - status: TODO
@@ -97,8 +104,10 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - do: ADR-013 §1, §3. Full only. Financial ratios (growth, margins, payroll / marketing / opex % of revenue,
   current ratio, debt ÷ equity, ROA, ROE), DuPont (net margin × asset turnover × equity multiplier = ROE), the
   template's KPI table moved here from the Dashboard, a blank "Target" input column, 4 charts 2×2 (margins,
-  ROA / ROE + two template charts via a hook). Challenger recomputes the ratios and the DuPont identity.
-- done when: all templates PASS; DuPont product equals ROE every year (in-file check).
+  ROA / ROE + two template charts via a hook). Ratios with a zero or negative denominator (equity ≤ 0, revenue = 0,
+  assets = 0) show "n/a". Challenger recomputes the ratios and the DuPont identity.
+- done when: all templates PASS; in-file check: DuPont product equals ROE in every year where both are defined
+  (years with "n/a" are skipped); a planning-stage model with negative equity passes.
 
 ### E32 — Break-even chart and Valuation layout
 - status: TODO
@@ -117,7 +126,8 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - do: rebuild every sample (`scripts/build_samples.py`, `--seo`, goal review files), golden tests, the landing
   preview (`app/xlview.py` + `web/static/landing.js`: new sheet set; charts shown as a labelled placeholder or a
   static rendering — keep it faithful to the file), wizard / landing / SEO / email copy that describes sheets or
-  says the goal adds sheets, `docs/templates/*.md` (sheet list), HUMAN_TODO R1 line for the new sheets
+  says the goal adds sheets, `docs/templates/*.md` (sheet list; real_estate.md keeps "Returns in both tiers"),
+  HUMAN_TODO R1 line for the new sheets
   (Scenarios, Sources & Uses, ratios) and refresh `Documents\StartupModel-review` guidance in the RUNLOG.
 - done when: CI green with the new samples; landing tests pass; no copy promises sheets a tier does not have.
 
