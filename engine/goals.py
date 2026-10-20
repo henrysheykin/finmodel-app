@@ -1,12 +1,13 @@
-"""Goal modules (E07): extra sheets a model gets from the brief's ``goal``.
+"""Standard modules (E07, ADR-013): sheets every model of a tier gets.
 
-- ``startup_breakeven`` → **Break-even** sheet: uses and sources of funds up to the lowest cash point,
+ADR-013 replaced "the goal adds sheets" with "the tier decides the sheets"; the brief's ``goal`` now only sets
+the Cover's purpose line.
+
+- ``breakeven`` (Light and Full) → **Break-even** sheet: uses and sources of funds up to the lowest cash point,
   funding surplus / shortfall after a minimum cash buffer, first period of positive EBITDA / net income,
   payback of the cash invested, and annual break-even revenue.
-- ``dcf_valuation`` → **Valuation** sheet: unlevered free cash flow from the model, discounting at the
+- ``dcf`` (Full) → **Valuation** sheet: unlevered free cash flow from the model, discounting at the
   WACC, terminal value by perpetual growth and by exit multiple, and a WACC × growth sensitivity table.
-- ``investor_pitch`` → **Summary** sheet (headline financials, investment highlights, the template's KPI
-  table) plus both sheets above.
 
 This file holds what does not need openpyxl: the extra drivers, their defaults, the extra grid lines
 and the plain-Python twin the challenger compares against. Sheets are written by
@@ -20,10 +21,18 @@ from collections.abc import Collection
 from engine.brief import Brief, BriefError
 from engine.spec import DriverSpec, Line, Timing
 
+#: modules by tier (ADR-013, docs/WORKBOOK_STANDARD.md §1)
 MODULES: dict[str, tuple[str, ...]] = {
-    "startup_breakeven": ("breakeven",),
-    "dcf_valuation": ("dcf",),
-    "investor_pitch": ("summary", "breakeven", "dcf"),
+    "light": ("breakeven",),
+    "full": ("breakeven", "dcf"),
+}
+#: the Cover's purpose line by wizard goal
+PURPOSE: dict[str, str] = {
+    "revenue_profit": "Revenue and profit plan",
+    "startup_breakeven": "Startup costs, funding need and break-even",
+    "dcf_valuation": "Business valuation (DCF)",
+    "investor_pitch": "Investor-ready plan",
+    "other": "Financial plan",
 }
 
 NOT_WITHIN = "Not within horizon"
@@ -53,17 +62,21 @@ DCF_DEFAULTS: dict[str, dict[str, tuple[float, float, float]]] = {
 }
 
 
-def modules_for(goal: str) -> tuple[str, ...]:
-    return MODULES.get(goal, ())
+def modules_for(tier: str) -> tuple[str, ...]:
+    return MODULES.get(tier, ())
 
 
-def goal_specs(goal: str) -> list[DriverSpec]:
-    mods = modules_for(goal)
+def purpose(goal: str) -> str:
+    return PURPOSE.get(goal, "Financial plan")
+
+
+def goal_specs(tier: str) -> list[DriverSpec]:
+    mods = modules_for(tier)
     return (BREAKEVEN_SPECS if "breakeven" in mods else []) + (DCF_SPECS if "dcf" in mods else [])
 
 
 def validate_goal(brief: Brief) -> None:
-    if "dcf" not in modules_for(brief.goal):
+    if "dcf" not in modules_for(brief.tier):
         return
     errs = []
     for scen, name in ((1, "low"), (2, "base"), (3, "high")):
@@ -75,10 +88,10 @@ def validate_goal(brief: Brief) -> None:
 
 
 # --------------------------------------------------------------------------- defaults
-def default_values(goal: str, brief: Brief) -> list[dict]:
-    """Driver values a brief needs for its goal modules (stage defaults; buffer = 3 months of opex)."""
+def default_values(tier: str, brief: Brief) -> list[dict]:
+    """Driver values a brief needs for its tier's modules (stage defaults; buffer = 3 months of opex)."""
     out: list[dict] = []
-    mods = modules_for(goal)
+    mods = modules_for(tier)
     if "breakeven" in mods:
         buf = _three_months_opex(brief)
         out.append({"key": "cash_buffer", "low": buf, "base": buf, "high": buf, "note": "About 3 months of costs"})
@@ -117,7 +130,7 @@ def refresh_derived(brief: Brief, keep: Collection[str] = ()) -> Brief:
     """
     fresh = {
         dv["key"]: dv
-        for dv in default_values(brief.goal, brief)
+        for dv in default_values(brief.tier, brief)
         if dv["key"] in DERIVED_KEYS and dv["key"] not in keep and any(d.key == dv["key"] for d in brief.drivers)
     }
     if not fresh:
@@ -130,21 +143,28 @@ def refresh_derived(brief: Brief, keep: Collection[str] = ()) -> Brief:
 
 
 def apply_goal(brief: Brief, goal: str | None = None) -> Brief:
-    """Brief with ``goal`` set and exactly the goal-module drivers it needs (existing values are kept)."""
+    """Brief with ``goal`` set and exactly the module drivers its **tier** needs (existing values are kept).
+
+    Idempotent; the build, the challenger and the worker call it, so briefs stored before ADR-013 (a goal
+    without module drivers, or a Light brief with DCF drivers) still build.
+    """
     goal = goal or brief.goal
-    need = {s.key for s in goal_specs(goal)}
+    need = {s.key for s in goal_specs(brief.tier)}
     data = brief.model_dump()
     data["goal"] = goal
     data["drivers"] = [d for d in data["drivers"] if d["key"] not in ALL_GOAL_KEYS or d["key"] in need]
     have = {d["key"] for d in data["drivers"]}
     base = Brief.model_validate(data)
-    data["drivers"] += [dv for dv in default_values(goal, base) if dv["key"] not in have]
+    data["drivers"] += [dv for dv in default_values(brief.tier, base) if dv["key"] not in have]
     return Brief.model_validate(data)
 
 
+standardize = apply_goal
+
+
 # --------------------------------------------------------------------------- grid lines
-def module_lines(goal: str) -> list[Line]:
-    mods = modules_for(goal)
+def module_lines(tier: str) -> list[Line]:
+    mods = modules_for(tier)
     out: list[Line] = []
     if "breakeven" in mods:
         out += [
@@ -224,7 +244,7 @@ def reference(brief: Brief, d: dict, s: dict[str, list[float]], t: Timing) -> di
     Returns ``{"cells": {name: value}, "years": {name: {year: value}}}``; values are floats or the
     exact text the workbook shows (e.g. "Not within horizon").
     """
-    mods = modules_for(brief.goal)
+    mods = modules_for(brief.tier)
     cells: dict[str, float | str] = {}
     years: dict[str, dict[int, float | str]] = {}
     n, ppy, H = t.periods, t.ppy, t.years
@@ -306,9 +326,4 @@ def reference(brief: Brief, d: dict, s: dict[str, list[float]], t: Timing) -> di
             implied_g=(tv_m * w - fcf[H]) / (tv_m + fcf[H]) if tv_m + fcf[H] != 0 else NA,
             sens_centre=ev_g,
         )
-    if "summary" in mods:
-        r1, rh = ysum("rev", 1), ysum("rev", H)
-        cells["cagr"] = (rh / r1) ** (1 / (H - 1)) - 1 if H > 1 and r1 > 0 and rh > 0 else NA
-        cells["sum_ev_avg"] = cells["ev_avg"]
-        cells["sum_gap"] = cells["gap"]
     return {"cells": cells, "years": years}

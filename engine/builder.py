@@ -29,11 +29,13 @@ from engine.core import (
     pnl_head_lines,
     pnl_tail_lines,
 )
-from engine.goals import module_lines, modules_for
+from engine.goals import apply_goal, module_lines, modules_for, purpose
 from engine.spec import FORMATS, DriverSpec, Line, StmtRow, Timing
 from engine.templates.base import Template
 
 FIRST_COL = 3  # period 1 is column C on every grid sheet
+#: (block, row) shown as key totals with a double underline (docs/WORKBOOK_STANDARD.md §4)
+KEY_TOTALS = {("pl", "ni"), ("cf", "cash_close"), ("bs", "total_le"), ("sum", "ni"), ("sum", "cash")}
 DASH_KPI_ROW = 25  # template KPI table on the Dashboard starts here (below Health)
 TOKEN = re.compile(r"\{([^{}]+)\}")
 PURE_LINK = re.compile(r"^=(?:'[^']+'|[A-Za-z0-9_]+)!\$?[A-Z]{1,3}\$?\d+$")
@@ -171,7 +173,7 @@ def _calc_lines(tpl: Template, brief: Brief, t: Timing) -> tuple[list[Line], lis
     at = next(i for i, ln in enumerate(core) if ln.key == "d_ap") + 1
     core = core[:at] + liabs + liability_delta_lines(liabs) + core[at:]
     hc = headcount_lines(brief.roles)
-    return top + core + tpl.extra_lines(t) + module_lines(brief.goal), hc, balance_sheet_lines(liab_keys)
+    return top + core + tpl.extra_lines(t) + module_lines(brief.tier), hc, balance_sheet_lines(liab_keys)
 
 
 def _layout_grid(g: GridPlan) -> None:
@@ -282,6 +284,7 @@ def _summary_rows() -> list[StmtRow]:
 
 
 def plan(brief: Brief, tpl: Template) -> Plan:
+    brief = apply_goal(brief)  # tier module drivers, also for briefs stored before ADR-013
     tpl.validate(brief)
     t = Timing(brief.granularity, brief.horizon_years)
     calc, hc, bs = _calc_lines(tpl, brief, t)
@@ -304,7 +307,6 @@ def plan(brief: Brief, tpl: Template) -> Plan:
         kpis = tpl.kpi_rows(t)
         if kpis:
             blocks["kpi"] = Block("kpi", "Dashboard", DASH_KPI_ROW, kpis, tpl.kpi_title)
-        selector = ("Dashboard", "B4")
         calc_sheet = grid_name
     else:
         sheets = ["Inputs", "P&L", "Checks"]
@@ -319,23 +321,21 @@ def plan(brief: Brief, tpl: Template) -> Plan:
             blocks["kpi"] = kb
             start = max(kb.placed.values()) + 3
         grids = [GridPlan("P&L", start, calc + hc)]
-        selector = ("Inputs", "B3")
         calc_sheet = "P&L"
-    mods = modules_for(brief.goal)
-    sheets = (["Summary"] if "summary" in mods else []) + sheets[:-1] + (["Returns"] if tpl.returns else [])
-    sheets += [name for m, name in (("breakeven", "Break-even"), ("dcf", "Valuation")) if m in mods] + ["Checks"]
+    selector = ("Dashboard", "B4")  # both tiers (ADR-013)
+    sheets = sheet_order(brief.tier, grid_name, tpl.returns)
     for g in grids:
         _layout_grid(g)
     for b in blocks.values():
         if not b.placed:
             _layout_block(b)
-    specs = tpl.all_specs(brief.roles, brief.goal)
+    specs = tpl.all_specs(brief.roles, brief.tier)
     input_row = _input_rows(specs)
     pl = Plan(brief, tpl, t, specs, lines, grids, blocks, sheets, selector, input_row, calc_sheet)
     for g in grids:
         for k, r in g.rows.items():
             pl.line_at[k] = (g.sheet, r)
-    if mods:
+    if modules_for(brief.tier):
         from engine.goal_sheets import plan_modules
 
         plan_modules(pl)
@@ -344,6 +344,17 @@ def plan(brief: Brief, tpl: Template) -> Plan:
 
         plan_returns(pl)
     return pl
+
+
+def sheet_order(tier: str, grid_name: str = "Monthly", returns: bool = False) -> list[str]:
+    """Sheet set and order per tier — docs/WORKBOOK_STANDARD.md §1 (copied verbatim)."""
+    industry = ["Returns"] if returns else []
+    if tier == "light":
+        return ["Cover", "Dashboard", "Break-even", *industry, "Inputs", "P&L", "Checks"]
+    return [
+        "Cover", "Dashboard", "Break-even", "Valuation", *industry,
+        "Inputs", "P&L", "Cash Flow", "Balance Sheet", grid_name, "Headcount", "Checks",
+    ]
 
 
 def _input_rows(specs: list[DriverSpec]) -> dict[str, int]:
@@ -361,11 +372,17 @@ def _input_rows(specs: list[DriverSpec]) -> dict[str, int]:
 # --------------------------------------------------------------------------- writing
 def _write_inputs(wb: Workbook, pl: Plan) -> None:
     ws = wb["Inputs"]
-    st.title(ws, "Inputs — Low / Base / High", pl.brief.assumption_note or None, 7)
+    st.title(
+        ws,
+        "Inputs — Low / Base / High",
+        pl.brief.assumption_note
+        or "Every assumption lives here once. Change the yellow cells; the active scenario is chosen on the Dashboard.",
+        7,
+    )
     sel_sheet, sel_cell = pl.selector
     if sel_sheet == "Inputs":
         _write_selector(ws, 3, pl.brief.default_scenario)
-    hdr = ["Driver", "Low", "Base", "High", "Active", "Unit", "Note"]
+    hdr = ["Driver", "Low", "Base", "High", "Active", "Unit", "Source / comment"]
     for i, h in enumerate(hdr, 1):
         st.header(ws.cell(row=5, column=i, value=h), right=i not in (1, 6, 7))
     sel = f"{q(sel_sheet)}!${sel_cell[0]}${sel_cell[1:]}"
@@ -380,36 +397,40 @@ def _write_inputs(wb: Workbook, pl: Plan) -> None:
         ws.cell(row=r, column=1, value=s.label).font = st.font()
         for col, v in ((2, d.low), (3, d.base), (4, d.high)):
             c = ws.cell(row=r, column=col, value=int(v) if s.integer else v)
-            c.font = st.font(st.BLUE)
+            st.input_cell(c)
             c.number_format = FORMATS[s.fmt]
         act = ws.cell(row=r, column=5, value=f"=CHOOSE({sel},B{r},C{r},D{r})")
         act.font = st.font(bold=True)
+        act.fill = st.ACTIVE_FILL
         act.number_format = FORMATS[s.fmt]
-        ws.cell(row=r, column=6, value=s.unit).font = st.font(st.GREY)
+        ws.cell(row=r, column=6, value=s.unit).font = st.font(st.GREY, italic=True)
         note = d.note or {"asc": "Low ≤ Base ≤ High", "desc": "Low ≥ Base ≥ High (lower is better)"}.get(s.order, "")
-        ws.cell(row=r, column=7, value=note).font = st.font(st.GREY, size=9)
+        nc = ws.cell(row=r, column=7, value=note)
+        nc.font = st.font(st.GREY)
+        nc.border = st.HAIRLINE
     last = max(pl.input_row.values())
     ws.cell(
         row=last + 2,
         column=1,
         value=(
-            "Legend: blue = input you can change · black = formula · green = link to another sheet · "
-            "yellow = scenario selector. Column E follows the selected scenario."
+            "Legend: yellow cell with blue figure = input you can change · black = formula · "
+            "green = link to another sheet · grey = active value (column E follows the scenario on the Dashboard)."
         ),
-    ).font = st.font(st.GREY, size=9, italic=True)
-    for col, w in zip("ABCDEFG", (46, 12, 12, 12, 12, 12, 30), strict=True):
+    ).font = st.font(st.GREY, size=8, italic=True)
+    for col, w in zip("ABCDEFG", (46, 12, 12, 12, 12, 12, 34), strict=True):
         ws.column_dimensions[col].width = w
     ws.freeze_panes = "B6"
 
 
 def _write_selector(ws, row: int, default: int) -> None:
-    ws.cell(row=row, column=1, value="Scenario selector (1 = Low, 2 = Base, 3 = High)").font = st.font(bold=True)
+    ws.cell(row=row, column=1, value="Active scenario").font = st.font(st.INK, bold=True)
     c = ws.cell(row=row, column=2, value=int(default))
-    c.font = st.font(st.BLUE, bold=True)
-    c.fill = st.YELLOW_FILL
-    c.alignment = Alignment(horizontal="center")
+    st.switch_cell(c)
     lab = ws.cell(row=row, column=3, value=f'=CHOOSE(B{row},"Low","Base","High")')
-    lab.font = st.font(st.ORANGE, bold=True)
+    lab.font = st.font(st.PINE, bold=True, size=11)
+    note = ws.cell(row=row, column=4, value="1 = Low · 2 = Base · 3 = High — every sheet follows this cell")
+    note.font = st.font(st.GREY, italic=True, size=8)
+    ws.row_dimensions[row].height = 20
     dv = DataValidation(
         type="list",
         formula1='"1,2,3"',
@@ -430,29 +451,31 @@ def _write_grid(wb: Workbook, pl: Plan, g: GridPlan, title: str, sub: str) -> No
     n = pl.t.periods
     width = min(2 + n, 16)
     if g.start_row == 3:
-        st.title(ws, title, sub, width)
+        st.title(ws, title, sub, width, link_col=4)
     else:
         st.section(ws, g.start_row - 1, title, width)
     word = "M" if pl.t.granularity == "monthly" else "Y"
     ws.cell(row=g.start_row, column=1, value=f"{pl.t.period_word.capitalize()}").font = st.font(bold=True)
-    ws.cell(row=g.period_row, column=1, value="Period #").font = st.font(st.GREY, size=9)
-    ws.cell(row=g.year_row, column=1, value="Year #").font = st.font(st.GREY, size=9)
+    st.header(ws.cell(row=g.start_row, column=1))
+    ws.cell(row=g.period_row, column=1, value="Period #").font = st.font(st.FAINT, size=7)
+    ws.cell(row=g.year_row, column=1, value="Year #").font = st.font(st.FAINT, size=7)
     for p in range(1, n + 1):
         col = FIRST_COL + p - 1
         st.header(ws.cell(row=g.start_row, column=col, value=f"{word}{p}"), right=True)
         c = ws.cell(row=g.period_row, column=col, value=p)
-        c.font = st.font(st.BLUE, size=9)
+        c.font = st.font(st.FAINT, size=7)
         y = ws.cell(row=g.year_row, column=col, value=f"=ROUNDUP({L(col)}{g.period_row}*{pl.t.mpp}/12,0)")
-        y.font = st.font(st.GREY, size=9)
+        y.font = st.font(st.FAINT, size=7)
         ws.column_dimensions[L(col)].width = 11
     for r, text in g.sections.items():
         st.section(ws, r, text, width)
     for ln in g.lines:
         r = g.rows[ln.key]
         helper = ln.label.startswith("Helper")
-        ws.cell(row=r, column=1, value=ln.label).font = st.font(
-            st.GREY if helper else "000000", bold=ln.bold, size=9 if helper else 10
-        )
+        lab = ws.cell(row=r, column=1, value=ln.label)
+        lab.font = st.font(st.GREY if helper else "000000", bold=ln.bold, size=8 if helper else st.SIZE)
+        if ln.total:
+            lab.border = st.TOTAL_TOP
         for p in range(1, n + 1):
             f = pl.render(ln, p, g.sheet)
             c = ws.cell(row=r, column=FIRST_COL + p - 1, value=f)
@@ -477,14 +500,20 @@ def _write_block(wb: Workbook, pl: Plan, b: Block, sub: str | None) -> None:
         )
     elif b.title:
         st.section(ws, b.start_row - 1, b.title, max(3, 1 + years))
-    ws.cell(row=b.year_row, column=1, value="Year #").font = st.font(st.GREY, size=9)
+    ws.cell(row=b.year_row, column=1, value="Year #").font = st.font(st.FAINT, size=7)
+    st.header(ws.cell(row=b.year_row + 1, column=1))
     for y in range(1, years + 1):
-        ws.cell(row=b.year_row, column=1 + y, value=y).font = st.font(st.GREY, size=9)
+        ws.cell(row=b.year_row, column=1 + y, value=y).font = st.font(st.FAINT, size=7)
         st.header(ws.cell(row=b.year_row + 1, column=1 + y, value=f"Year {y}"), right=True)
         ws.column_dimensions[L(1 + y)].width = 14
     for row in b.rows:
         r = b.placed[row.key]
-        ws.cell(row=r, column=1, value=row.label).font = st.font(bold=row.bold)
+        pct = row.fmt == "pct"
+        key_total = (b.name, row.key) in KEY_TOTALS
+        lab = ws.cell(row=r, column=1, value=row.label)
+        lab.font = st.font(st.GREY, italic=True) if pct else st.font(bold=row.bold)
+        if row.total or key_total:
+            lab.border = st.KEY_TOTAL if key_total else st.TOTAL_TOP
         for y in range(1, years + 1):
             col = L(1 + y)
             if row.kind == "line":
@@ -498,10 +527,10 @@ def _write_block(wb: Workbook, pl: Plan, b: Block, sub: str | None) -> None:
             else:
                 raise ValueError(row.kind)
             c = ws.cell(row=r, column=1 + y, value=f)
-            c.font = st.font(bold=row.bold)
+            c.font = st.font(st.GREY, italic=True) if pct else st.font(bold=row.bold)
             c.number_format = FORMATS[row.fmt]
-            if row.total:
-                c.border = st.TOTAL_TOP
+            if row.total or key_total:
+                c.border = st.KEY_TOTAL if key_total else st.TOTAL_TOP
     ws.column_dimensions["A"].width = max(ws.column_dimensions["A"].width or 0, 44)
     if b.start_row == 3:
         ws.freeze_panes = f"B{b.year_row + 2}"

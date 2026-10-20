@@ -80,20 +80,20 @@ class Template(ABC):
         raise NotImplementedError(f"template {self.key!r} has no stage defaults")
 
     # -- provided ----------------------------------------------------------
-    def all_specs(self, roles: list[Role], goal: str = "revenue_profit") -> list[DriverSpec]:
-        """Template + headcount + standard drivers, plus the goal modules' drivers (engine/goals.py)."""
+    def all_specs(self, roles: list[Role], tier: str = "full") -> list[DriverSpec]:
+        """Template + headcount + standard drivers, plus the tier's module drivers (engine/goals.py)."""
         specs = list(self.driver_specs())
         if roles:
             for r in roles:
                 specs += role_driver_specs(r.key, r.title)
             specs += HEADCOUNT_DRIVERS
-        return specs + STANDARD_DRIVERS + goal_specs(goal)
+        return specs + STANDARD_DRIVERS + goal_specs(tier)
 
     def opex_keys(self, t: Timing) -> list[str]:
         return [ln.key for ln in self.opex_lines(t)]
 
     def validate(self, brief: Brief) -> None:
-        validate_against(brief, self.all_specs(brief.roles, brief.goal))
+        validate_against(brief, self.all_specs(brief.roles, brief.tier))
         validate_goal(brief)
         if any("{payroll_total}" in ln.formula for ln in self.opex_lines(Timing("monthly", 1))) and not brief.roles:
             from engine.brief import BriefError
