@@ -2,6 +2,12 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-20 · E · E27 Dashboard v2 and the chart kit · PR open (reviewer next) · https://github.com/henrysheykin/finmodel-app/pull/45
+  engine/charts.py (bar, hbar, line, combo with secondary axis, doughnut; 14.2 × 8.3 cm grid slots; value-only data labels) +
+  engine/dashboard.py: selector + checks verdict, 6 tiles, Core financials rolled up from grid lines (Light too), industry block
+  from the new Template hooks `dashboard_metrics` / `dashboard_chart` (all 7 templates), Funding & valuation, 4 charts; KPI table
+  moved to row 47. Challenger recomputes every tile, Funding & valuation cell and Core line (`goals.dashboard_reference`).
+  Also: ink report links, pine "Scenario shown", italic grey % lines on grid and module sheets. For Henry: nothing.
 - 2026-10-20 · E · E26 workbook standard: style kit v2, sheet set by tier, Cover · DONE · https://github.com/henrysheykin/finmodel-app/pull/44
   engine/style.py v2 (ink/pine, Arial 9, yellow inputs, view-switch fill, tab colours, print setup, ◂ Contents links);
   sheets by tier (Light: Cover, Dashboard, Break-even, Inputs, P&L, Checks; Full adds Valuation, statements, grid, Headcount);

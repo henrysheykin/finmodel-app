@@ -17,6 +17,7 @@ and the plain-Python twin the challenger compares against. Sheets are written by
 from __future__ import annotations
 
 from collections.abc import Collection
+from decimal import ROUND_HALF_UP, Decimal
 
 from engine.brief import Brief, BriefError
 from engine.spec import DriverSpec, Line, Timing
@@ -231,6 +232,22 @@ TOLERANCE = {
     "implied_mult": 1e-4,
     "implied_g": 1e-6,
     "cagr": 1e-6,
+    # periods must match exactly (a one-period slip is not "within $1")
+    "low_p": 0.0,
+    "first_ebitda": 0.0,
+    "first_ni": 0.0,
+    "payback": 0.0,
+    # Dashboard (engine/dashboard.py): ratios, and periods that must match exactly
+    "dash_t1_sub": 1e-6,
+    "dash_t2": 1e-6,
+    "dash_t3_sub": 1e-6,
+    "dash_gm": 1e-6,
+    "dash_ebitda_m": 1e-6,
+    "dash_ni_m": 1e-6,
+    "dash_t4_sub": 0.0,
+    "dash_t6_first": 0.0,
+    "dash_fv_first": 0.0,
+    "dash_fv_payback": 0.0,
 }
 
 
@@ -329,5 +346,84 @@ def reference(brief: Brief, d: dict, s: dict[str, list[float]], t: Timing) -> di
             implied_mult=tv_g / ebitda_h if ebitda_h > 0 else NA,
             implied_g=(tv_m * w - fcf[H]) / (tv_m + fcf[H]) if tv_m + fcf[H] != 0 else NA,
             sens_centre=ev_g,
+        )
+    return {"cells": cells, "years": years}
+
+
+# --------------------------------------------------------------------------- Dashboard twin
+def _m1(x: float) -> str:
+    """Millions with one decimal, half rounded up: what the sheet's TEXT(x/1000000,"0.0") shows."""
+    return str(Decimal(repr(abs(x) / 1_000_000)).quantize(Decimal("0.1"), ROUND_HALF_UP))
+
+
+def dashboard_reference(brief: Brief, d: dict, s: dict[str, list[float]], t: Timing, goal: dict) -> dict:
+    """Plain-Python values of every Dashboard tile, Funding & valuation cell and Core financials line.
+
+    ``goal`` = the ``cells`` dict of ``reference`` (Break-even and Valuation values). The names are the manifest's
+    ``dash_cells`` / ``dash_years`` keys (engine/dashboard.py). Texts are exactly what the workbook shows.
+    """
+    from engine.core import annualise
+
+    ann = annualise(s, t)
+    H, word = t.years, t.period_word
+    rev, ebitda, ni = ann["rev"], ann["ebitda"], ann["ni"]
+    full = "dcf" in modules_for(brief.tier)
+    years: dict[str, dict[int, float]] = {}
+    for name, key in (
+        ("dash_rev", "rev"),
+        ("dash_gp", "gp"),
+        ("dash_opex", "opex_total"),
+        ("dash_ebitda", "ebitda"),
+        ("dash_ni", "ni"),
+        ("dash_cfo", "cfo"),
+        ("dash_cfi", "cfi"),
+        ("dash_cff", "cff"),
+        ("dash_cash", "cash_close"),
+    ):
+        years[name] = dict(ann[key])
+    years["dash_net_cf"] = {y: ann["cfo"][y] + ann["cfi"][y] + ann["cff"][y] for y in range(1, H + 1)}
+    for name, num in (("dash_gm", "gp"), ("dash_ebitda_m", "ebitda"), ("dash_ni_m", "ni")):
+        years[name] = {y: (ann[num][y] / rev[y] if rev[y] else 0.0) for y in range(1, H + 1)}
+    cagr: float | str = "CAGR n/a"
+    if H > 1 and rev[1] > 0 and rev[H] >= 0:
+        cagr = (rev[H] / rev[1]) ** (1 / (H - 1)) - 1
+    gap = goal["gap"]
+    cells: dict[str, float | str] = {
+        "dash_t1": rev[H],
+        "dash_t1_sub": cagr,
+        "dash_t2": years["dash_ebitda_m"][H],
+        "dash_t2_sub": ebitda[H],
+        "dash_t3": ni[H],
+        "dash_t3_sub": years["dash_ni_m"][H],
+        "dash_t4": goal["min_cash"],
+        "dash_t4_sub": goal["low_p"],
+        "dash_t5": goal["required"],
+        "dash_t5_sub": "Covered by funding raised" if gap >= 0 else f"Shortfall ${_m1(gap)}M",
+        "dash_fv_equity": d["equity"],
+        "dash_fv_loan": d["loan_amount"],
+        "dash_fv_required": goal["required"],
+        "dash_fv_gap": gap,
+        "dash_fv_low_label": f"Lowest cash balance ({word} {goal['low_p']})",
+        "dash_fv_low": goal["min_cash"],
+        "dash_fv_first": goal["first_ebitda"],
+        "dash_fv_payback": goal["payback"],
+    }
+    if full:
+        cells.update(
+            dash_t6_ev=goal["ev_avg"],
+            dash_t6_ev_sub="Average of 2 methods",
+            dash_fv_ev_g=goal["ev_g"],
+            dash_fv_ev_m=goal["ev_m"],
+            dash_fv_ev_avg=goal["ev_avg"],
+        )
+    else:
+        first_ni = goal["first_ni"]
+        cells.update(
+            dash_t6_first=goal["first_ebitda"],
+            dash_t6_first_sub=(
+                f"Net income positive from {word} {first_ni}"
+                if isinstance(first_ni, int | float)
+                else "Net income not positive within horizon"
+            ),
         )
     return {"cells": cells, "years": years}

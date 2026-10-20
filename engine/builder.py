@@ -37,7 +37,9 @@ from engine.templates.base import Template
 FIRST_COL = 3  # period 1 is column C on every grid sheet
 #: (block, row) shown as key totals with a double underline (docs/WORKBOOK_STANDARD.md §4)
 KEY_TOTALS = {("pl", "ni"), ("cf", "cash_close"), ("bs", "total_le"), ("sum", "ni"), ("sum", "cash")}
-DASH_KPI_ROW = 25  # template KPI table on the Dashboard starts here (below Health)
+DASH_KPI_ROW = 47  # template KPI table on the Dashboard (Full) starts here, below Funding & valuation and the charts
+#: dollar amounts of the KPI table when it sits on the Dashboard's narrow grid: $135, $4.5k, $8.7M
+DASH_USD_K = '[>=1000000]$#,##0.0,,"M";[>=1000]$#,##0.0,"k";$#,##0'
 TOKEN = re.compile(r"\{([^{}]+)\}")
 PURE_LINK = re.compile(r"^=(?:'[^']+'|[A-Za-z0-9_]+)!\$?[A-Z]{1,3}\$?\d+$")
 
@@ -83,6 +85,9 @@ class Manifest:
     #: goal modules (E07): single cells and per-year cells the challenger recomputes
     goal_cells: dict[str, str] = field(default_factory=dict)
     goal_years: dict[str, dict[int, str]] = field(default_factory=dict)
+    #: Dashboard (E27): tiles and Funding & valuation cells, and the Core financials lines per year
+    dash_cells: dict[str, str] = field(default_factory=dict)
+    dash_years: dict[str, dict[int, str]] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return self.__dict__.copy()
@@ -104,6 +109,8 @@ class Plan:
     line_at: dict[str, tuple[str, int]] = field(default_factory=dict)
     #: goal-module layouts (engine/goal_sheets.py), filled by ``plan``
     modules: dict = field(default_factory=dict)
+    #: Dashboard layout (engine/dashboard.py), filled by ``plan``
+    dash: object = None
 
     # ---- references ------------------------------------------------------
     def period_cell(self, key: str, p: int, from_sheet: str, absolute: bool = False) -> str:
@@ -306,7 +313,7 @@ def plan(brief: Brief, tpl: Template) -> Plan:
         blocks["bs"] = Block("bs", "Balance Sheet", 3, _bs_rows(liabs), "Balance sheet at year end")
         kpis = tpl.kpi_rows(t)
         if kpis:
-            blocks["kpi"] = Block("kpi", "Dashboard", DASH_KPI_ROW, kpis, tpl.kpi_title)
+            blocks["kpi"] = Block("kpi", "Dashboard", DASH_KPI_ROW, kpis, f"{tpl.kpi_title} — detail")
         calc_sheet = grid_name
     else:
         summary = Block("sum", "P&L", 3, _summary_rows(), "Annual summary")
@@ -342,6 +349,9 @@ def plan(brief: Brief, tpl: Template) -> Plan:
         from engine.returns import plan_returns
 
         plan_returns(pl)
+    from engine.dashboard import plan_dashboard
+
+    plan_dashboard(pl)
     return pl
 
 
@@ -481,14 +491,17 @@ def _write_grid(wb: Workbook, pl: Plan, g: GridPlan, title: str, sub: str) -> No
     for ln in g.lines:
         r = g.rows[ln.key]
         helper = ln.label.startswith("Helper")
+        pct = ln.fmt == "pct"  # percentages and margins: italic grey (standard §4)
         lab = ws.cell(row=r, column=1, value=ln.label)
-        lab.font = st.font(st.GREY if helper else "000000", bold=ln.bold, size=8 if helper else st.SIZE)
+        lab.font = st.font(
+            st.GREY if helper or pct else "000000", bold=ln.bold, size=8 if helper else st.SIZE, italic=pct
+        )
         if ln.total:
             lab.border = st.TOTAL_TOP
         for p in range(1, n + 1):
             f = pl.render(ln, p, g.sheet)
             c = ws.cell(row=r, column=FIRST_COL + p - 1, value=f)
-            c.font = st.font(st.GREEN if PURE_LINK.match(f) else "000000", bold=ln.bold)
+            c.font = st.font(st.GREEN if PURE_LINK.match(f) else st.GREY if pct else "000000", bold=ln.bold, italic=pct)
             c.number_format = FORMATS[ln.fmt]
             if ln.total:
                 c.border = st.TOTAL_TOP
@@ -500,6 +513,7 @@ def _write_grid(wb: Workbook, pl: Plan, g: GridPlan, title: str, sub: str) -> No
 def _write_block(wb: Workbook, pl: Plan, b: Block, sub: str | None) -> None:
     ws = wb[b.sheet]
     years = pl.t.years
+    on_dash = b.sheet == "Dashboard"  # the Dashboard grid (engine/dashboard.py) fixes its own widths
     if b.start_row == 3:
         st.title(
             ws,
@@ -514,7 +528,8 @@ def _write_block(wb: Workbook, pl: Plan, b: Block, sub: str | None) -> None:
     for y in range(1, years + 1):
         ws.cell(row=b.year_row, column=1 + y, value=y).font = st.font(st.FAINT, size=7)
         st.header(ws.cell(row=b.year_row + 1, column=1 + y, value=f"Year {y}"), right=True)
-        ws.column_dimensions[L(1 + y)].width = 14
+        if not on_dash:
+            ws.column_dimensions[L(1 + y)].width = 14
     for row in b.rows:
         r = b.placed[row.key]
         pct = row.fmt == "pct"
@@ -537,10 +552,11 @@ def _write_block(wb: Workbook, pl: Plan, b: Block, sub: str | None) -> None:
                 raise ValueError(row.kind)
             c = ws.cell(row=r, column=1 + y, value=f)
             c.font = st.font(st.GREY, italic=True) if pct else st.font(bold=row.bold)
-            c.number_format = FORMATS[row.fmt]
+            c.number_format = DASH_USD_K if on_dash and row.fmt == "usd" else FORMATS[row.fmt]
             if row.total or key_total:
                 c.border = st.KEY_TOTAL if key_total else st.TOTAL_TOP
-    ws.column_dimensions["A"].width = max(ws.column_dimensions["A"].width or 0, 44)
+    if not on_dash:
+        ws.column_dimensions["A"].width = max(ws.column_dimensions["A"].width or 0, 44)
     if b.start_row == 3:
         ws.freeze_panes = f"B{b.year_row + 2}"
 
@@ -567,63 +583,6 @@ def _rollup(pl: Plan, ln: Line, col: str, year_row: int) -> str:
     if ln.agg == "first":
         return f"=INDEX({rng},({col}${year_row}-1)*{ppy}+1)"
     raise ValueError(f"line {ln.key!r} has agg={ln.agg!r} and cannot be rolled up")
-
-
-def _write_dashboard(wb: Workbook, pl: Plan, checks_verdict: str) -> None:
-    ws = wb["Dashboard"]
-    years = pl.t.years
-    st.title(ws, "Dashboard", pl.brief.model_name, max(3, 1 + years), link_col=8)
-    _write_selector(ws, 4, pl.brief.default_scenario)
-    full = "pl" in pl.blocks
-    stmt = {"pl": "pl" if full else "sum", "bs": "bs" if full else "sum"}
-    st.section(ws, 6, "Key metrics", max(3, 1 + years))
-    for y in range(1, years + 1):
-        st.header(ws.cell(row=7, column=1 + y, value=f"Year {y}"), right=True)
-    metrics = [
-        ("Revenue", "pl", "rev", "usd"),
-        ("Gross profit", "pl", "gp", "usd"),
-        ("EBITDA", "pl", "ebitda", "usd"),
-        ("EBITDA margin", "pl", "ebitda_m", "pct"),
-        ("Net income", "pl", "ni", "usd"),
-        ("Year-end cash", "bs", "cash", "usd"),
-        ("Year-end loan balance", "bs", "loan", "usd"),
-    ]
-    metrics = [(label, stmt[block] if block else None, key, fmt) for label, block, key, fmt in metrics] + [
-        ("Total FTE (year end)", None, "fte_total", "dec1"),
-    ]
-    r = 8
-    for label, block, key, fmt in metrics:
-        ws.cell(row=r, column=1, value=label).font = st.font(bold=label in ("Revenue", "EBITDA"))
-        for y in range(1, years + 1):
-            if block:
-                f = f"={pl.stmt_cell(block, key, y)}"
-            else:
-                f = f"=INDEX({pl.grid_range(key)},{y * pl.t.ppy})"
-            c = ws.cell(row=r, column=1 + y, value=f)
-            c.font = st.font(st.GREEN if PURE_LINK.match(f) else "000000")
-            c.number_format = FORMATS[fmt]
-        r += 1
-    r += 1
-    st.section(ws, r, "Health", max(3, 1 + years))
-    word = pl.t.period_word
-    pos, cash = pl.grid_range("pos_flag"), pl.grid_range("cash_close")
-    low_row = r + 2
-    health = [
-        (f"First {word} with positive EBITDA", f'=IFERROR(MATCH(1,{pos},0),"Not within horizon")', "0"),
-        ("Lowest cash balance", f"=MIN({cash})", FORMATS["usd"]),
-        (f"{word.capitalize()} of lowest cash", f"=MATCH(B{low_row},{cash},0)", "0"),
-        ("Model checks", f"={checks_verdict}", "@"),
-    ]
-    for i, (label, f, fmt) in enumerate(health):
-        ws.cell(row=r + 1 + i, column=1, value=label).font = st.font()
-        c = ws.cell(row=r + 1 + i, column=2, value=f)
-        c.font = st.font(st.GREEN if PURE_LINK.match(f) else "000000", bold=True)
-        c.number_format = fmt
-        if label == "Model checks":
-            st.verdict_colours(ws, c.coordinate, c.coordinate)
-    ws.column_dimensions["A"].width = 40
-    for y in range(1, max(3, years) + 1):
-        ws.column_dimensions[L(1 + y)].width = 14
 
 
 def _write_checks(wb: Workbook, pl: Plan) -> str:
@@ -704,6 +663,7 @@ def _write_checks(wb: Workbook, pl: Plan) -> str:
         err_terms.append(f"SUMPRODUCT(--ISERROR({q(b.sheet)}!$B${b.year_row}:${L(1 + pl.t.years)}${last}))")
     for rng in (m.error_range for m in pl.modules.values()):
         err_terms.append(f"SUMPRODUCT(--ISERROR({rng}))")
+    err_terms.append(f"SUMPRODUCT(--ISERROR(Dashboard!$A$6:$W${pl.dash.end}))")  # not row 4: it holds the verdict
     checks.append(
         (
             "No error values",
@@ -806,7 +766,7 @@ def _write_cover(wb: Workbook, pl: Plan, verdict: str, built_on: date) -> None:
         r = 5 + i
         ws.cell(row=r, column=2, value=label).font = st.font(st.INK, bold=True)
         c = ws.cell(row=r, column=4, value=value)
-        c.font = st.font(colour or "000000", bold=label != "Prepared")
+        c.font = st.font(colour or (st.INK if label == "Model checks" else "000000"), bold=label != "Prepared")
         if label == "Model checks":
             st.verdict_colours(ws, c.coordinate, c.coordinate)
     st.section(ws, 10, "Contents", 3, first_col=2)
@@ -893,6 +853,8 @@ def manifest_for(pl: Plan, verdict: str) -> Manifest:
         {k: pl.grid_range(k) for k in ("rev", "ebitda", "ni", "cash_close")},
         goal_cells,
         goal_years,
+        dict(pl.dash.cells),
+        {k: dict(v) for k, v in pl.dash.years.items()},
     )
 
 
@@ -914,7 +876,9 @@ def build(brief: Brief, tpl: Template, out_path: str | Path, built_on: date | No
     for b in pl.blocks.values():
         _write_block(wb, pl, b, "Rolled up from the period detail (SUMIF on the year row; balances at year end).")
     verdict = _write_checks(wb, pl)
-    _write_dashboard(wb, pl, verdict)
+    from engine.dashboard import write_dashboard
+
+    write_dashboard(wb, pl, verdict)
     _write_cover(wb, pl, verdict, built_on or date.today())
     if pl.modules:
         from engine.goal_sheets import write_modules

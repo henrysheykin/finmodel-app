@@ -13,7 +13,7 @@ def test_cafe_recalculates_with_zero_errors(cafe_xlsx):
     assert res.total_errors == 0
     vals = load_workbook(cafe_xlsx, data_only=True)
     assert vals["P&L"]["B5"].value == pytest.approx(319800)
-    assert vals["Dashboard"]["B8"].value == pytest.approx(319800)
+    assert vals["Dashboard"]["B12"].value == pytest.approx(319800)  # Core financials, revenue of year 1
 
 
 def test_formulas_survive_recalc(cafe_xlsx):

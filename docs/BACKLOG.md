@@ -12,30 +12,13 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ## Track E — Engineering (daily)
 
-> **Priority (Henry, 2026-10-20):** workbook standard v1 (ADR-013, `docs/WORKBOOK_STANDARD.md`): E26 (done) → E27 →
+> **Priority (Henry, 2026-10-20):** workbook standard v1 (ADR-013, `docs/WORKBOOK_STANDARD.md`): E26, E27 (done) →
 > E28, E30, E31, E32 (any order) → E29 → E33. E23 still waits on the OpenAI key (A1).
 > Visual reference for every E26–E33 task: `design/workbook-standard-v1-prototype.xlsx` (compare your build with it).
 >
 > Earlier: **E23** (waits on the OpenAI key, A1). (E25 OpenAI done #41; E24 done #42.) All earlier E tasks are done (`docs/DONE.md`).
 > New industries are one file each (ADR-009, `docs/templates/ADDING_A_TEMPLATE.md`; follow E21/E22, Model: sonnet).
 > Customer login = passwordless magic link by email (ADR-006).
-
-### E27 — Dashboard v2 and the chart kit
-- status: TODO
-- Model: sonnet
-- depends: E26
-- skills: xlsx, dataviz
-- do: ADR-013 §2–§3. `engine/charts.py`: bar / line / combo with secondary axis / doughnut / horizontal bar, the
-  standard size and grid placement, text sizes, colours, data-label flags, labels at the bottom. Dashboard on the
-  68 px grid: row 4 selector + checks, 6 tiles, Core financials (rolled up from grid lines — works in Light
-  without CF / BS sheets), industry metrics (new template hook, e.g. `dashboard_metrics` + `dashboard_chart`;
-  defaults for all 7 templates), Funding & valuation, 4 charts. Report-sheet links in ink (Dashboard and the Cover's
-  checks link — E26 left the interim Dashboard green); align the off-token styles noted in the E26 review (module
-  sheets' orange "Scenario shown", italic grey percentage lines on grid and module sheets).
-- done when: Dashboard matches the reference for SaaS Full; Light and annual variants render; a test opens the
-  recalculated file and finds 4 charts with live references; the challenger recomputes every tile and every
-  Funding & valuation cell (the CAGR, EV average and funding-gap checks of the retired investor Summary move here;
-  CAGR shows "n/a" for a 1-year horizon); all templates PASS.
 
 ### E28 — Summary sheet (statements, selected year by month)
 - status: TODO
@@ -47,7 +30,8 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   of each monthly block. Annual granularity: years only, charts by year. Summary's range joins the "No error
   values" check.
 - done when: new in-file check "Summary ties to statements" (revenue, net income, closing cash for every year)
-  passes in all templates; charts present after recalc.
+  passes in all templates; charts present after recalc; a test asserts that in Full the Dashboard Core financials
+  equal the P&L / Cash Flow / Balance Sheet cells every year (E27 review).
 
 ### E29 — Scenarios sheet, live Low / Base / High
 - status: TODO
@@ -86,7 +70,13 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   current ratio, debt ÷ equity, ROA, ROE), DuPont (net margin × asset turnover × equity multiplier = ROE), the
   template's KPI table moved here from the Dashboard, a blank "Target" input column, 4 charts 2×2 (margins,
   ROA / ROE + two template charts via a hook). Ratios with a zero or negative denominator (equity ≤ 0, revenue = 0,
-  assets = 0) show "n/a". Challenger recomputes the ratios and the DuPont identity.
+  assets = 0) show "n/a". Challenger recomputes the ratios and the DuPont identity. From the E27 review: every KPI
+  row shown on the Dashboard's industry block and the KPIs sheet is recomputed by the challenger (add the missing
+  rows to each template's `kpi_checked` — SaaS ARR, LTV ÷ CAC; real estate NOI, occupancy, debt service, DSCR;
+  services utilisation, rate, revenue per FTE; home services utilisation, revenue per job; fitness capacity, MRR;
+  retail store sales; cafe's customers / ticket roll-ups and team FTE); drop the interim `DASH_USD_K` format
+  (standard $'000); compare tile sub-lines numerically (not the TEXT() rounding) so a value on an x.x5 boundary
+  cannot fail a model.
 - done when: all templates PASS; in-file check: DuPont product equals ROE in every year where both are defined
   (years with "n/a" are skipped); a planning-stage model with negative equity passes.
 

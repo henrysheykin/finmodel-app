@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from engine.brief import Brief, BriefError
 from engine.core import HC, Top, role_period
-from engine.spec import DriverSpec, Line, StmtRow, Timing
+from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
 from engine.templates.base import Template
 
 TECH = "tech"
@@ -289,6 +289,16 @@ class HomeServicesTemplate(Template):
                 first="={in:capex}+MAX(0,{tech_fte}-{in:equipped_start})*{in:capex_tech}",
             )
         ]
+
+    def dashboard_metrics(self, t: Timing) -> list[DashMetric]:
+        return [
+            DashMetric("jobs", "Jobs completed", "kpi:jobs", "int"),
+            DashMetric("util", "Technician utilisation", "kpi:util", "pct"),
+            DashMetric("rev_job", "Average revenue per job", "kpi:rev_job", "usd2"),
+        ]
+
+    def dashboard_chart(self, t: Timing) -> DashChart:
+        return DashChart("Jobs completed & technician utilisation", bars=("jobs",), lines=("util",))
 
     def kpi_rows(self, t: Timing) -> list[StmtRow]:
         return [

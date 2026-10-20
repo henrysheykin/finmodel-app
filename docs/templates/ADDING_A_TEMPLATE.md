@@ -37,8 +37,15 @@ If the business type was announced as "coming soon", remove it from `PLANNED` in
 `engine/templates/__init__.py` in the same PR (the registry also hides a planned entry automatically as
 soon as a template serves it).
 
-Goal modules (Break-even, Valuation, investor Summary — ADR-010) need nothing from the template: they read
-the standard grid lines, and `tests/test_goals.py` runs the investor pitch for every registered template.
+Tier modules (Break-even, Valuation) need nothing from the template: they read the standard grid lines, and
+`tests/test_goals.py` runs the investor pitch for every registered template.
+
+The Dashboard (ADR-013, `engine/dashboard.py`) needs two optional hooks so the industry block and the fourth chart
+fit the business: `dashboard_metrics(t)` returns 2–4 `DashMetric(key, label, src, fmt)` lines (`src` = `"kpi:<row key>"`
+of your `kpi_rows`, or a period-grid line key rolled up by `agg`; the builder adds the team line itself) and
+`dashboard_chart(t)` returns a `DashChart(title, bars=<metric keys>, lines=<metric keys on the right axis>)`. The block
+band uses `kpi_title`. Without them the Dashboard shows no industry lines and charts gross profit and margin
+(`tests/test_dashboard.py` expects every registered template to define both).
 
 ## 2. Tests — `tests/test_<key>.py`
 

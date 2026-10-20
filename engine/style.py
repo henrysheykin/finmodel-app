@@ -20,7 +20,6 @@ BLUE = "0000FF"
 GREEN = "008000"
 GREY = "6B7280"
 FAINT = "A3ABA8"
-ORANGE = "C55A11"
 WHITE = "FFFFFF"
 
 INPUT_FILL = PatternFill("solid", fgColor="FFF2CC")

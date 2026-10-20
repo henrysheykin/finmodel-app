@@ -11,7 +11,16 @@ from abc import ABC, abstractmethod
 from engine.brief import Brief, Role
 from engine.core import HC, HEADCOUNT_DRIVERS, Top
 from engine.goals import ALL_GOAL_KEYS, apply_goal, goal_specs, validate_goal
-from engine.spec import STANDARD_DRIVERS, DriverSpec, Line, Timing, role_driver_specs, validate_against
+from engine.spec import (
+    STANDARD_DRIVERS,
+    DashChart,
+    DashMetric,
+    DriverSpec,
+    Line,
+    Timing,
+    role_driver_specs,
+    validate_against,
+)
 
 
 class Template(ABC):
@@ -63,6 +72,14 @@ class Template(ABC):
     def kpi_rows(self, t: Timing) -> list:
         """Annual KPI table (``StmtRow`` list) shown on the Dashboard (Full) or P&L (Light)."""
         return []
+
+    def dashboard_metrics(self, t: Timing) -> list[DashMetric]:
+        """Industry lines of the Dashboard (3-5 with the team line the builder adds); see ``DashMetric``."""
+        return []
+
+    def dashboard_chart(self, t: Timing) -> DashChart | None:
+        """The industry chart of the Dashboard, built from the metric keys above; None = gross profit & margin."""
+        return None
 
     #: loan repayment: "straight" (equal principal) or "annuity" (level mortgage payment) — engine/core.py
     loan_style: str = "straight"

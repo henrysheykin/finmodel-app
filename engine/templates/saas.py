@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from engine.brief import Brief
 from engine.core import HC, Top
-from engine.spec import DriverSpec, Line, StmtRow, Timing
+from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
 from engine.templates.base import Template
 
 ROLES = [
@@ -296,6 +296,16 @@ class SaasTemplate(Template):
             ),
             Line("churn_rate", "Customer churn per month", "={in:churn_m}", "top", "pct", agg="last"),
         ]
+
+    def dashboard_metrics(self, t: Timing) -> list[DashMetric]:
+        return [
+            DashMetric("cust", "Paying customers (year end)", "kpi:cust_end", "int"),
+            DashMetric("arr", "ARR (year-end MRR × 12)", "kpi:arr", "usdk"),
+            DashMetric("ltv_cac", "LTV ÷ CAC", "kpi:ltv_cac", "x"),
+        ]
+
+    def dashboard_chart(self, t: Timing) -> DashChart:
+        return DashChart("ARR & paying customers", bars=("arr",), lines=("cust",))
 
     def kpi_rows(self, t: Timing) -> list[StmtRow]:
         return [

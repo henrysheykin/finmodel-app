@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from engine.brief import Brief
 from engine.core import HC, Top
-from engine.spec import DriverSpec, Line, StmtRow, Timing
+from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
 from engine.templates.base import Template
 
 # Illustrative defaults per wizard stage: (low, base, high). Not market data — the customer replaces
@@ -209,6 +209,17 @@ class RealEstateTemplate(Template):
             ),
             Line("capex", "Capital spending", "={capex_buy}+{capex_res}", "top", bold=True),
         ]
+
+    def dashboard_metrics(self, t: Timing) -> list[DashMetric]:
+        return [
+            DashMetric("noi", "Net operating income (NOI)", "kpi:noi", "usdk"),
+            DashMetric("occ", "Economic occupancy", "kpi:occ", "pct"),
+            DashMetric("ds", "Debt service (interest + principal)", "kpi:ds", "usdk"),
+            DashMetric("dscr", "Debt service coverage", "kpi:dscr", "x"),
+        ]
+
+    def dashboard_chart(self, t: Timing) -> DashChart:
+        return DashChart("NOI, debt service & coverage", bars=("noi", "ds"), lines=("dscr",))
 
     def kpi_rows(self, t: Timing) -> list[StmtRow]:
         return [

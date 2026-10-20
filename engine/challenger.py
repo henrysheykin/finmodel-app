@@ -30,7 +30,7 @@ from engine.brief import Brief
 from engine.builder import manifest_for, plan
 from engine.core import annualise, reference_run
 from engine.goals import TOLERANCE as GOAL_TOLERANCE
-from engine.goals import apply_goal
+from engine.goals import apply_goal, dashboard_reference
 from engine.goals import reference as goal_reference
 from engine.recalc import RecalcError, recalc
 from engine.returns import TOLERANCE as RETURNS_TOLERANCE
@@ -62,13 +62,16 @@ def python_model(brief: Brief, scenario: int) -> dict[str, dict[int, float]]:
 
 
 def python_goal_model(brief: Brief, scenario: int) -> dict:
-    """Tier-module values (Break-even, Valuation) recomputed in plain Python."""
+    """Tier-module values (Break-even, Valuation) and every Dashboard tile / cell recomputed in plain Python."""
     brief = apply_goal(brief)
     tpl = get_template(brief.template)
     t = Timing(brief.granularity, brief.horizon_years)
     d = brief.values(scenario)
     series = reference_run(d, brief.roles, t, tpl.reference_top, tpl.loan_style)
     out = goal_reference(brief, d, series, t)
+    dash = dashboard_reference(brief, d, series, t, out["cells"])
+    out["cells"].update(dash["cells"])
+    out["years"].update(dash["years"])
     if tpl.returns:
         out["cells"].update(returns_reference(d, series, t)["cells"])
     return out
@@ -162,12 +165,12 @@ def challenge(brief: Brief | dict, model_path: str | Path) -> dict:
                     if abs(ta - tle) > 0.5:
                         report["problems"].append(f"scenario {scen} year {y}: balance sheet off by {ta - tle:,.2f}")
                 out["years"][y] = got
-            if man.goal_cells or man.goal_years:
+            if man.goal_cells or man.goal_years or man.dash_cells or man.dash_years:
                 gexp = python_goal_model(brief, scen)
-                checked = [(n, ref, gexp["cells"][n]) for n, ref in man.goal_cells.items()]
+                checked = [(n, ref, gexp["cells"][n]) for n, ref in {**man.goal_cells, **man.dash_cells}.items()]
                 checked += [
                     (f"{n} year {y}", ref, gexp["years"][n][y])
-                    for n, refs in man.goal_years.items()
+                    for n, refs in {**man.goal_years, **man.dash_years}.items()
                     for y, ref in refs.items()
                 ]
                 for name, ref, exp in checked:
@@ -175,6 +178,7 @@ def challenge(brief: Brief | dict, model_path: str | Path) -> dict:
                     if not _same(got, exp, _tolerance(name)):
                         report["problems"].append(f"scenario {scen} goal {name}: workbook {got!r} vs python {exp!r}")
                 out["goal"] = {n: val(ref) for n, ref in man.goal_cells.items()}
+                out["dash"] = {n: val(ref) for n, ref in man.dash_cells.items()}
             if verdict not in ("PASS", "PASS WITH WARNINGS"):
                 report["problems"].append(f"scenario {scen}: in-file checks {verdict!r}")
             revenue[scen] = [out["years"][y].get("rev") for y in range(1, brief.horizon_years + 1)]

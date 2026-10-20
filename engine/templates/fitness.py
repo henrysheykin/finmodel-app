@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from engine.brief import Brief
 from engine.core import HC, Top
-from engine.spec import DriverSpec, Line, StmtRow, Timing
+from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
 from engine.templates.base import Template
 
 ROLES = [
@@ -284,6 +284,16 @@ class FitnessTemplate(Template):
 
     def capex_lines(self, t: Timing) -> list[Line]:
         return [Line("capex", "Capital spending (fit-out & equipment)", "=IF({p}=1,{in:capex},0)", "top")]
+
+    def dashboard_metrics(self, t: Timing) -> list[DashMetric]:
+        return [
+            DashMetric("members", "Members (year end)", "kpi:members_end", "int"),
+            DashMetric("cap", "Capacity used (year end)", "kpi:cap_use", "pct"),
+            DashMetric("mrr", "Membership fees per month (year end)", "kpi:mrr", "usdk"),
+        ]
+
+    def dashboard_chart(self, t: Timing) -> DashChart:
+        return DashChart("Members & capacity used", bars=("members",), lines=("cap",))
 
     def kpi_rows(self, t: Timing) -> list[StmtRow]:
         return [
