@@ -299,7 +299,6 @@ def plan(brief: Brief, tpl: Template) -> Plan:
     grid_name = "Monthly" if t.granularity == "monthly" else "Annual"
     blocks: dict[str, Block] = {}
     if brief.tier == "full":
-        sheets = ["Dashboard", "Inputs", grid_name, "P&L", "Cash Flow", "Balance Sheet", "Headcount", "Checks"]
         grids = [GridPlan(grid_name, 3, calc + bs), GridPlan("Headcount", 3, hc)]
         blocks["pl"] = Block("pl", "P&L", 3, _pl_rows(tpl, t, lines), "Annual profit & loss")
         liabs = tpl.liability_lines(t)
@@ -310,7 +309,6 @@ def plan(brief: Brief, tpl: Template) -> Plan:
             blocks["kpi"] = Block("kpi", "Dashboard", DASH_KPI_ROW, kpis, tpl.kpi_title)
         calc_sheet = grid_name
     else:
-        sheets = ["Inputs", "P&L", "Checks"]
         summary = Block("sum", "P&L", 3, _summary_rows(), "Annual summary")
         _layout_block(summary)
         blocks["sum"] = summary

@@ -29,7 +29,9 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   standard size and grid placement, text sizes, colours, data-label flags, labels at the bottom. Dashboard on the
   68 px grid: row 4 selector + checks, 6 tiles, Core financials (rolled up from grid lines — works in Light
   without CF / BS sheets), industry metrics (new template hook, e.g. `dashboard_metrics` + `dashboard_chart`;
-  defaults for all 7 templates), Funding & valuation, 4 charts.
+  defaults for all 7 templates), Funding & valuation, 4 charts. Report-sheet links in ink (Dashboard and the Cover's
+  checks link — E26 left the interim Dashboard green); align the off-token styles noted in the E26 review (module
+  sheets' orange "Scenario shown", italic grey percentage lines on grid and module sheets).
 - done when: Dashboard matches the reference for SaaS Full; Light and annual variants render; a test opens the
   recalculated file and finds 4 charts with live references; the challenger recomputes every tile and every
   Funding & valuation cell (the CAGR, EV average and funding-gap checks of the retired investor Summary move here;

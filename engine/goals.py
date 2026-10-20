@@ -166,9 +166,6 @@ def apply_goal(brief: Brief, goal: str | None = None, tpl=None) -> Brief:
     return Brief.model_validate(data)
 
 
-standardize = apply_goal
-
-
 # --------------------------------------------------------------------------- grid lines
 def module_lines(tier: str) -> list[Line]:
     mods = modules_for(tier)

@@ -72,6 +72,26 @@ def test_purpose_line():
     assert purpose("anything else") == "Financial plan"
 
 
+@pytest.mark.parametrize("key,tier", [("saas", "light"), ("real_estate", "full"), ("real_estate", "light")])
+def test_no_navy_anywhere(tmp_path, key, tier):
+    from engine.builder import build
+
+    p = tmp_path / "m.xlsx"
+    build(apply_goal(_brief(key, tier=tier)), TEMPLATES[key], p)
+    wb = load_workbook(p)
+    for ws in wb.worksheets:
+        tab = ws.sheet_properties.tabColor
+        assert not (tab and tab.rgb[-6:] in NAVY), ws.title
+        for row in ws.iter_rows():
+            for c in row:
+                b = c.border
+                colours = [c.fill.fgColor, c.font.color if c.font else None]
+                colours += [getattr(s, "color", None) for s in (b.left, b.right, b.top, b.bottom)]
+                for col in colours:
+                    rgb = getattr(col, "rgb", None)
+                    assert not (isinstance(rgb, str) and rgb[-6:] in NAVY), (ws.title, c.coordinate)
+
+
 @pytest.fixture(scope="module")
 def saas_full(tmp_path_factory):
     p = tmp_path_factory.mktemp("std") / "saas.xlsx"
@@ -148,3 +168,21 @@ def test_orders_stored_before_the_standard_still_build(tmp_path, tier, goal, dro
     build_model(old, path)
     rep = challenge(old.model_dump(), path)
     assert rep["verdict"].startswith("PASS"), rep["problems"][:3]
+
+
+@pytest.mark.libreoffice
+def test_stored_full_brief_keeps_its_own_buffer(tmp_path):
+    # an old break-even-goal Full order: has its own cash buffer, lacks the DCF drivers
+    b = apply_goal(_brief("cafe", tier="full", horizon_years=3, granularity="annual"))
+    data = b.model_dump()
+    data["drivers"] = [d for d in data["drivers"] if d["key"] not in {s.key for s in DCF_SPECS}]
+    for d in data["drivers"]:
+        if d["key"] == "cash_buffer":
+            d.update(low=123000, base=123000, high=123000)
+    old = Brief.model_validate(data)
+    path = tmp_path / "old.xlsx"
+    build_model(old, path)
+    pl = plan(old, TEMPLATES["cafe"])
+    r = pl.input_row["cash_buffer"]
+    assert load_workbook(path)["Inputs"][f"C{r}"].value == 123000
+    assert challenge(old.model_dump(), path)["verdict"].startswith("PASS")
