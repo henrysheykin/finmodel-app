@@ -203,13 +203,20 @@ def combo(
     line_fmt: str = PERCENT,
     cat_fmt: str | None = None,
     stacked: bool = False,
+    secondary: bool = True,
     size: tuple[float, float] = (WIDTH_CM, HEIGHT_CM),
 ) -> BarChart:
-    """Bars on the left axis plus line(s) on a secondary right axis (colours continue the standard order)."""
+    """Bars on the left axis plus line(s) on a secondary right axis (colours continue the standard order).
+
+    ``secondary=False`` draws the lines on the bars' own axis (same unit, e.g. revenue bars and an EBITDA line).
+    """
     base = bar(title, cats, bars, fmt=fmt, cat_fmt=cat_fmt, stacked=stacked, legend=True, size=size)
     top = LineChart()
     for i, ser in enumerate(lines):
         top.series.append(_series(ser, cats, line=True, color=PALETTE[2 + i % (len(PALETTE) - 2)]))
+    if not secondary:
+        base += top
+        return base
     top.y_axis.axId = 200
     top.y_axis.crosses = "max"
     top.y_axis.delete = False

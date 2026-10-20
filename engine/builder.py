@@ -88,6 +88,8 @@ class Manifest:
     #: Dashboard (E27): tiles and Funding & valuation cells, and the Core financials lines per year
     dash_cells: dict[str, str] = field(default_factory=dict)
     dash_years: dict[str, dict[int, str]] = field(default_factory=dict)
+    #: Summary (E28, Full): revenue / net income / closing cash cells per year (links to the statements)
+    summary_years: dict[str, dict[int, str]] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return self.__dict__.copy()
@@ -111,6 +113,8 @@ class Plan:
     modules: dict = field(default_factory=dict)
     #: Dashboard layout (engine/dashboard.py), filled by ``plan``
     dash: object = None
+    #: Summary layout (engine/summary.py, Full only), filled by ``plan``
+    summary: object = None
 
     # ---- references ------------------------------------------------------
     def period_cell(self, key: str, p: int, from_sheet: str, absolute: bool = False) -> str:
@@ -352,6 +356,9 @@ def plan(brief: Brief, tpl: Template) -> Plan:
     from engine.dashboard import plan_dashboard
 
     plan_dashboard(pl)
+    from engine.summary import plan_summary
+
+    plan_summary(pl)  # Full only
     return pl
 
 
@@ -363,6 +370,7 @@ def sheet_order(tier: str, grid_name: str = "Monthly", returns: bool = False) ->
     return [
         "Cover",
         "Dashboard",
+        "Summary",
         "Break-even",
         "Valuation",
         *industry,
@@ -664,6 +672,8 @@ def _write_checks(wb: Workbook, pl: Plan) -> str:
     for rng in (m.error_range for m in pl.modules.values()):
         err_terms.append(f"SUMPRODUCT(--ISERROR({rng}))")
     err_terms.append(f"SUMPRODUCT(--ISERROR(Dashboard!$A$6:$W${pl.dash.end}))")  # not row 4: it holds the verdict
+    if pl.summary:
+        err_terms.append(f"SUMPRODUCT(--ISERROR({pl.summary.error_range}))")
     checks.append(
         (
             "No error values",
@@ -671,6 +681,17 @@ def _write_checks(wb: Workbook, pl: Plan) -> str:
             "No error values (divide-by-zero, broken references) on any calculation sheet",
         )
     )
+    if pl.summary:
+        from engine.summary import tie_condition
+
+        checks.append(
+            (
+                "Summary ties to statements",
+                ok(tie_condition(pl)),
+                "Summary revenue, net income and closing cash equal the statements every year; "
+                "the detailed year adds up to its annual figure",
+            )
+        )
     if "bs" in pl.blocks:
         checks.append(
             (
@@ -732,6 +753,7 @@ SHEET_DESC = {
     "Headcount": "Team and payroll",
     "Checks": "Live integrity checks and the overall verdict",
 }
+SUMMARY_DESC_ANNUAL = "Income statement, cash flow and balance sheet — every year, with charts"
 GROUPS = (
     ("Presentation", st.PRESENTATION),
     ("Inputs", {"Inputs"}),
@@ -783,7 +805,10 @@ def _write_cover(wb: Workbook, pl: Plan, verdict: str, built_on: date) -> None:
             ws.cell(row=r, column=2).alignment = Alignment(horizontal="right")
             link = ws.cell(row=r, column=3, value=f'=HYPERLINK("#{q(name)}!A1","{name}")')
             link.font = st.font(st.PINE, bold=True, underline="single")
-            ws.cell(row=r, column=4, value=SHEET_DESC.get(name, "")).font = st.font()
+            desc = SHEET_DESC.get(name, "")
+            if name == "Summary" and pl.t.granularity != "monthly":
+                desc = SUMMARY_DESC_ANNUAL
+            ws.cell(row=r, column=4, value=desc).font = st.font()
             for col in (2, 3, 4):
                 ws.cell(row=r, column=col).border = st.HAIRLINE
             r += 1
@@ -855,6 +880,7 @@ def manifest_for(pl: Plan, verdict: str) -> Manifest:
         goal_years,
         dict(pl.dash.cells),
         {k: dict(v) for k, v in pl.dash.years.items()},
+        {k: dict(v) for k, v in pl.summary.cells.items()} if pl.summary else {},
     )
 
 
@@ -879,6 +905,10 @@ def build(brief: Brief, tpl: Template, out_path: str | Path, built_on: date | No
     from engine.dashboard import write_dashboard
 
     write_dashboard(wb, pl, verdict)
+    if pl.summary:
+        from engine.summary import write_summary
+
+        write_summary(wb, pl)
     _write_cover(wb, pl, verdict, built_on or date.today())
     if pl.modules:
         from engine.goal_sheets import write_modules
