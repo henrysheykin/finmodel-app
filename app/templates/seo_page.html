@@ -38,6 +38,8 @@
     <nav class="related" aria-labelledby="related-title">
       <h2 id="related-title">Related</h2>
       <ul>
+        {% if business_model %}<li><a href="{{ business_model.slug }}">{{ business_model.h1 }}</a></li>
+        {% endif %}
         {% for p in related %}<li><a href="{{ p.slug }}">{{ p.h1 }}</a></li>
         {% endfor %}
       </ul>

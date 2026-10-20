@@ -8,6 +8,8 @@ Copy that the app renders. Code never hard-codes these texts.
 - `seo/` — industry and guide pages (E16, rendered by `app/seo.py`).
 - `calculators/` — one spec file per calculator (E34, ADR-014, rendered by `app/calculators.py`); format below.
 
+- `business-models/` — one page per template, tables and charts computed from its sample (E35, `app/bizmodel.py`).
+
 ## SEO pages (`content/seo/*.md`)
 
 Each file becomes a page at its `slug` with the shared layout: breadcrumbs, the Markdown body, a call to
@@ -93,3 +95,20 @@ features per tier as `docs/WORKBOOK_STANDARD.md` section 1 sets them.
 Tests: `tests/test_calculators.py` (specs, Python evaluator, Node parity, pages, sitemap/llms) and
 `tests/test_browser_calculators.py` (Chromium: fill the inputs, read the results, no script errors, no layout shift).
 The parity test needs `node`; locally it skips when node is missing, in CI (the `CI` variable) a missing node fails it.
+
+## Business-model pages (`content/business-models/<template key>.md`)
+
+`/business-models/<key>` explains how a kind of business makes money; the `/models/…` pages above sell the model.
+Same front matter as SEO pages with `slug: /business-models/<key>`, `template: <key>` and
+`sample: <key>, full, monthly, 5 years` (the committed `samples/<key>-full-5y.xlsx`). The body is Markdown plus
+placeholders on the numbers, so copy cannot drift from the model; an unknown placeholder fails the build:
+
+- `{{table:drivers}}`, `startup`, `pnl`, `costs`, `unit`, `breakeven` — a table on its own line;
+- `{{chart:revenue_costs}}`, `cost_structure` — an inline SVG chart on its own line;
+- `{{num:<table>.<row>[.<column>][|abs]}}` — one figure formatted as in the table, e.g. `{{num:pnl.rev.y1}}`,
+  `{{num:startup.required}}`, `{{num:drivers.ticket.base}}`, `{{num:breakeven.first_ebitda}}` (`|abs` drops the
+  brackets of a cost). Row and column keys: see `app/bizmodel.py`.
+
+Rules (`tests/test_bizmodel.py`): 900–1,500 words; no `[UPPER]` placeholders except prices; a `$` or `%` figure typed
+by hand needs an external source link in its sentence, otherwise use `{{num:…}}`; no invented statistics.
+

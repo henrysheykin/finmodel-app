@@ -426,3 +426,50 @@ h1, h2, h3, dt, .brand, .plan__price { font-variant-numeric: normal; }
 .promo__tier li { margin: 4px 0; font-size: 15px; }
 @media (max-width: 860px) { .calc { grid-template-columns: minmax(0, 1fr); gap: 24px; } }
 @media (min-width: 861px) { .calc__out { position: sticky; top: 84px; } }
+
+/* business-model pages (E35): copy stays in the narrow column, tables and charts use the wider one */
+.bm .wrap { max-width: 860px; }
+.bm p, .bm li { max-width: 68ch; }
+.bm .cta p { max-width: none; }
+.bm h2 { margin-top: 40px; }
+.bm-table { margin: 24px 0; }
+.bm-table .table-wrap { margin: 0; }
+.bm-table table { min-width: 520px; }
+.bm-table figcaption { padding: 0 0 10px; font-size: 14px; line-height: 1.45; color: var(--text-3); }
+.bm-table figcaption strong { display: block; font-family: var(--head); font-size: 16px; color: var(--ink); }
+.bm-table tbody th { background: #fff; font-weight: 400; color: var(--text-2); min-width: 190px; }
+.bm-table thead th:first-child { color: var(--text-3); font-weight: 500; }
+.bm-table .num { text-align: right; white-space: nowrap; }
+.bm-table .bm-text { color: var(--text-2); font-style: italic; }
+.bm-table .bm-bold th, .bm-table .bm-bold td { font-weight: 700; color: var(--ink); }
+.bm-table .bm-total th, .bm-table .bm-total td { border-top: 1px solid var(--ink); }
+@media (max-width: 600px) { .bm-table tbody th { position: sticky; left: 0; min-width: 150px; box-shadow: 1px 0 0 var(--rule-soft); } }
+
+.bm-chart {
+  --bm-surface: #fff; --bm-text: var(--text-2); --bm-ink: var(--ink); --bm-grid: var(--rule); --bm-axis: var(--text-3);
+  --bm-s1: #2A9D7C; --bm-s2: #C98418; --bm-y1: #6DBBA0; --bm-y5: #1B7F66;
+  margin: 24px 0;
+}
+:root[data-theme="dark"] .bm-chart {
+  --bm-surface: var(--ink); --bm-text: var(--on-ink-2); --bm-ink: var(--on-ink); --bm-grid: var(--ink-rule); --bm-axis: var(--foot-text);
+}
+.bm-chart__scroll { overflow-x: auto; background: var(--bm-surface); border: 1px solid var(--panel-rule); border-radius: 8px; padding: 12px 8px 4px; }
+.bm-svg { display: block; width: 100%; min-width: 460px; height: auto; font-family: var(--body); font-size: 12px; font-variant-numeric: tabular-nums; }
+.bm-svg text { fill: var(--bm-text); }
+.bm-svg .bm-val, .bm-svg .bm-legend text { fill: var(--bm-ink); }
+.bm-svg .bm-grid { stroke: var(--bm-grid); stroke-width: 1; }
+.bm-svg .bm-axis { stroke: var(--bm-axis); stroke-width: 1; }
+.bm-svg .bm-s1 { fill: var(--bm-s1); } .bm-svg .bm-s2 { fill: var(--bm-s2); }
+.bm-svg .bm-y1 { fill: var(--bm-y1); } .bm-svg .bm-y5 { fill: var(--bm-y5); }
+.bm-chart figcaption { margin-top: 8px; font-size: 14px; color: var(--text-3); }
+.bm-chart figcaption strong { color: var(--ink); }
+.bm-chart__scroll:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.bm-cards { list-style: none; padding: 0; margin: 24px 0; }
+.bm-card { padding: 22px 0; border-bottom: 1px solid var(--rule-soft); }
+.bm-card h2 { margin: 0 0 6px; font-size: 22px; }
+.bm-card p { margin: 0 0 12px; }
+.bm-facts { display: flex; flex-wrap: wrap; gap: 8px 36px; margin: 0 0 8px; }
+.bm-facts dt { font-family: var(--body); font-size: 14px; color: var(--text-3); }
+.bm-facts dd { margin: 0; font-family: var(--head); font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+.bm-card .bm-card__note { margin: 0; font-size: 13px; color: var(--text-3); }
