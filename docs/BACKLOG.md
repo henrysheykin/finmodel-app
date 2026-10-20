@@ -12,34 +12,13 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ## Track E — Engineering (daily)
 
-> **Priority (Henry, 2026-10-20):** workbook standard v1 (ADR-013, `docs/WORKBOOK_STANDARD.md`): E26 → E27 →
+> **Priority (Henry, 2026-10-20):** workbook standard v1 (ADR-013, `docs/WORKBOOK_STANDARD.md`): E26 (done) → E27 →
 > E28, E30, E31, E32 (any order) → E29 → E33. E23 still waits on the OpenAI key (A1).
 > Visual reference for every E26–E33 task: `design/workbook-standard-v1-prototype.xlsx` (compare your build with it).
 >
 > Earlier: **E23** (waits on the OpenAI key, A1). (E25 OpenAI done #41; E24 done #42.) All earlier E tasks are done (`docs/DONE.md`).
 > New industries are one file each (ADR-009, `docs/templates/ADDING_A_TEMPLATE.md`; follow E21/E22, Model: sonnet).
 > Customer login = passwordless magic link by email (ADR-006).
-
-### E26 — Workbook standard: style kit v2, sheet set by tier, Cover
-- status: TODO
-- Model: opus
-- depends: —
-- skills: xlsx, engineering:testing-strategy
-- do: ADR-013 §1, §4. `engine/style.py` v2 (tokens, title block with "◂ Contents" link, bands, headers, totals,
-  key totals, tab colours, print setup, input / view-switch / active fills, presentation link colour). Restyle every
-  engine sheet (Inputs, grid sheets, statements, Break-even, Valuation, Checks, Returns). Sheet set and order
-  by tier exactly as `docs/WORKBOOK_STANDARD.md` §1 (Summary, Scenarios, Sources & Uses, KPIs join in E28–E31)
-  — modules switched by tier (`breakeven` both, `dcf` Full, so `validate_goal` applies to every Full brief),
-  investor Summary retired, goal → Cover purpose line (static build date). Selector Dashboard!B4 in both tiers (temporary minimal Dashboard until E27). Cover
-  with contents (HYPERLINK), legend, checks verdict with PASS/WARN/FAIL colours. Brief defaults: the goal drivers
-  (cash buffer, WACC, growth, multiple…) are always present for the sheets of the tier — check apply_goal,
-  prefill, the LLM merge (E24) and fixtures — and are **added at build time** (build, challenger and worker
-  normalise the brief), so orders stored before E26 (`order.brief_json`) still build and re-build. Update samples
-  / golden only as far as tests need; full rebuild is E33.
-- done when: every template × tier × horizon 1/3/5 × monthly/annual builds, recalc 0 errors, challenger PASS;
-  tests for the sheet set per tier, the selector location, the Cover links, the style tokens (fonts, fills, tab
-  colours), that no navy (`1F3864`, `2F5597`) is left in any workbook, and that an old-format stored brief (Light
-  without `cash_buffer`, Full without DCF drivers) builds and passes the challenger.
 
 ### E27 — Dashboard v2 and the chart kit
 - status: TODO

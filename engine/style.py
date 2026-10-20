@@ -50,8 +50,9 @@ PRESENTATION = frozenset(
 STATEMENTS = frozenset({"P&L", "Cash Flow", "Balance Sheet"})
 
 
-def font(color: str = "000000", bold: bool = False, size: int = SIZE, italic: bool = False,
-         underline: str | None = None) -> Font:
+def font(
+    color: str = "000000", bold: bool = False, size: int = SIZE, italic: bool = False, underline: str | None = None
+) -> Font:
     return Font(name=FONT, color=color, bold=bold, size=size, italic=italic, underline=underline)
 
 

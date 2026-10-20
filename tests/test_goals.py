@@ -1,4 +1,4 @@
-"""Goal modules (E07): Break-even, Valuation, investor Summary."""
+"""Tier modules (E07, ADR-013): Break-even (both tiers) and Valuation (Full)."""
 
 import pytest
 from openpyxl import load_workbook
@@ -22,29 +22,32 @@ from engine.spec import Timing
 from engine.templates import TEMPLATES, get_template
 
 GOALS = ["startup_breakeven", "dcf_valuation", "investor_pitch"]
+BE_KEYS = {"cash_buffer"}
 
 
 # --------------------------------------------------------------------------- drivers & validation
-def test_modules_per_goal():
-    assert modules_for("revenue_profit") == () and modules_for("other") == ()
-    assert modules_for("startup_breakeven") == ("breakeven",)
-    assert modules_for("dcf_valuation") == ("dcf",)
-    assert set(modules_for("investor_pitch")) == {"summary", "breakeven", "dcf"}
+def test_modules_per_tier():
+    # ADR-013: the tier decides the modules; the goal only sets the Cover's purpose line
+    assert modules_for("light") == ("breakeven",)
+    assert modules_for("full") == ("breakeven", "dcf")
+    assert modules_for("investor_pitch") == ()
 
 
-@pytest.mark.parametrize("goal", GOALS)
-def test_apply_goal_adds_exactly_the_needed_drivers(cafe_brief, goal):
-    b = apply_goal(cafe_brief, goal)
+@pytest.mark.parametrize("tier", ["light", "full"])
+@pytest.mark.parametrize("goal", GOALS + ["revenue_profit"])
+def test_apply_goal_adds_exactly_the_tier_drivers(cafe_brief, goal, tier):
+    b = apply_goal(cafe_brief.with_options(tier=tier), goal)
     keys = {d.key for d in b.drivers}
     assert b.goal == goal
-    assert keys & ALL_GOAL_KEYS == {s.key for s in goal_specs(goal)}
+    assert keys & ALL_GOAL_KEYS == {s.key for s in goal_specs(tier)}
     get_template(b.template).validate(b)
-    back = apply_goal(b, "revenue_profit")
-    assert {d.key for d in back.drivers} == {d.key for d in cafe_brief.drivers}
+    other = "full" if tier == "light" else "light"
+    switched = apply_goal(b.with_options(tier=other))
+    assert {d.key for d in switched.drivers} & ALL_GOAL_KEYS == {s.key for s in goal_specs(other)}
 
 
 def test_apply_goal_keeps_existing_values_and_buffer_is_three_months(cafe_brief):
-    b = apply_goal(cafe_brief, "investor_pitch")
+    b = apply_goal(cafe_brief.with_options(tier="full"), "investor_pitch")
     assert b.driver("cash_buffer").base > 0 and b.driver("cash_buffer").base % 1000 == 0
     d = b.model_dump()
     for drv in d["drivers"]:
@@ -54,11 +57,12 @@ def test_apply_goal_keeps_existing_values_and_buffer_is_three_months(cafe_brief)
     assert again.driver("wacc").base == 0.3
 
 
-def test_goal_drivers_are_required_and_bounded(cafe_brief):
+def test_goal_drivers_are_completed_and_bounded(cafe_brief):
     tpl = get_template("cafe")
-    with pytest.raises(BriefError, match="missing drivers"):
-        tpl.validate(cafe_brief.with_options(goal="dcf_valuation"))
-    b = apply_goal(cafe_brief, "dcf_valuation").model_dump()
+    bare = cafe_brief.model_dump()
+    bare["drivers"] = [d for d in bare["drivers"] if d["key"] not in ALL_GOAL_KEYS]
+    tpl.validate(type(cafe_brief).model_validate(bare))  # missing module drivers are added from defaults
+    b = apply_goal(cafe_brief.with_options(tier="full"), "dcf_valuation").model_dump()
     for drv in b["drivers"]:
         if drv["key"] == "tg":
             drv.update(low=0.01, base=0.02, high=0.06)
@@ -73,35 +77,33 @@ def test_goal_drivers_are_required_and_bounded(cafe_brief):
         tpl.validate(type(cafe_brief).model_validate(b))
 
 
+@pytest.mark.parametrize("tier", ["light", "full"])
 @pytest.mark.parametrize("goal", GOALS + ["revenue_profit"])
-def test_wizard_prefill_builds_valid_briefs_for_every_goal(goal):
+def test_wizard_prefill_builds_valid_briefs_for_every_goal(goal, tier):
     for bt in ("saas", "restaurant_cafe"):
-        b = PrefillBriefSource().build_brief(Answers(business_type=bt, goal=goal, stage="early"))
+        b = PrefillBriefSource().build_brief(Answers(business_type=bt, goal=goal, stage="early", tier=tier))
         assert b.goal == goal
-        assert {d.key for d in b.drivers} & ALL_GOAL_KEYS == {s.key for s in goal_specs(goal)}
+        assert {d.key for d in b.drivers} & ALL_GOAL_KEYS == {s.key for s in goal_specs(tier)}
 
 
+@pytest.mark.parametrize("goal", GOALS + ["revenue_profit"])
 @pytest.mark.parametrize(
-    "goal,tier,sheets",
+    "tier,sheets",
     [
-        ("revenue_profit", "light", ["Inputs", "P&L", "Checks"]),
-        ("startup_breakeven", "light", ["Inputs", "P&L", "Break-even", "Checks"]),
-        ("dcf_valuation", "light", ["Inputs", "P&L", "Valuation", "Checks"]),
-        ("investor_pitch", "light", ["Summary", "Inputs", "P&L", "Break-even", "Valuation", "Checks"]),
+        ("light", ["Cover", "Dashboard", "Break-even", "Inputs", "P&L", "Checks"]),
         (
-            "investor_pitch",
             "full",
             [
-                "Summary",
+                "Cover",
                 "Dashboard",
+                "Break-even",
+                "Valuation",
                 "Inputs",
-                "Monthly",
                 "P&L",
                 "Cash Flow",
                 "Balance Sheet",
+                "Monthly",
                 "Headcount",
-                "Break-even",
-                "Valuation",
                 "Checks",
             ],
         ),
@@ -125,8 +127,8 @@ def _series(fcf_like: list[float], **extra):
 
 
 def test_dcf_twin_matches_closed_form(cafe_brief):
-    b = apply_goal(cafe_brief.with_options(horizon_years=3, granularity="annual"), "dcf_valuation")
-    d = {"wacc": 0.10, "tg": 0.02, "exit_mult": 5.0, "tax_rate": 0.25}
+    b = apply_goal(cafe_brief.with_options(tier="full", horizon_years=3, granularity="annual"), "dcf_valuation")
+    d = {"wacc": 0.10, "tg": 0.02, "exit_mult": 5.0, "tax_rate": 0.25, "cash_buffer": 0, "equity": 0, "loan_amount": 0}
     s = _series([100.0, 100.0, 100.0], ebitda=[200.0, 200.0, 200.0])
     v = reference(b, d, s, Timing("annual", 3))["cells"]
     annuity = 100 / 1.1 + 100 / 1.1**2 + 100 / 1.1**3
@@ -138,8 +140,8 @@ def test_dcf_twin_matches_closed_form(cafe_brief):
 
 
 def test_interest_tax_shield_in_free_cash_flow(cafe_brief):
-    b = apply_goal(cafe_brief.with_options(horizon_years=1, granularity="annual"), "dcf_valuation")
-    d = {"wacc": 0.10, "tg": 0.02, "exit_mult": 5.0, "tax_rate": 0.25}
+    b = apply_goal(cafe_brief.with_options(tier="full", horizon_years=1, granularity="annual"), "dcf_valuation")
+    d = {"wacc": 0.10, "tg": 0.02, "exit_mult": 5.0, "tax_rate": 0.25, "cash_buffer": 0, "equity": 0, "loan_amount": 0}
     s = _series([100.0], interest=[-40.0], cfi=[-10.0])
     assert reference(b, d, s, Timing("annual", 1))["years"]["fcff"][1] == pytest.approx(100 + 30 - 10)
 
@@ -157,7 +159,7 @@ def test_breakeven_twin_on_the_cafe(cafe_brief):
 
 
 def test_payback_texts(cafe_brief):
-    b = apply_goal(cafe_brief.with_options(horizon_years=1, granularity="annual"), "startup_breakeven")
+    b = apply_goal(cafe_brief.with_options(tier="light", horizon_years=1, granularity="annual"), "startup_breakeven")
     d = {"cash_buffer": 0, "equity": 0, "loan_amount": 0}
     one = Timing("annual", 1)
     s = _series([5.0], cash_close=[5.0], rev=[10.0], gp=[5.0])
@@ -184,19 +186,19 @@ def _passes(build, brief):
 
 @pytest.mark.libreoffice
 @pytest.mark.parametrize("template", sorted(TEMPLATES))
-def test_investor_pitch_in_every_template(build, template):
+def test_full_modules_in_every_template(build, template):
     tpl = get_template(template)
-    brief = apply_goal(tpl.default_brief(tpl.sample_stage), "investor_pitch")
+    brief = apply_goal(tpl.default_brief(tpl.sample_stage).with_options(tier="full"), "investor_pitch")
     report = _passes(build, brief)
     goal = report["scenarios"][2]["goal"]
-    assert {"gap", "ev_g", "ev_m", "sens_centre", "sum_ev_avg", "cagr"} <= set(goal)
+    assert {"gap", "ev_g", "ev_m", "ev_avg", "sens_centre"} <= set(goal)
 
 
 CAFE_COMBOS = [
     ("investor_pitch", "light", "monthly", 1),
-    ("investor_pitch", "light", "annual", 5),
+    ("revenue_profit", "light", "annual", 5),
     ("investor_pitch", "full", "annual", 1),
-    ("investor_pitch", "full", "monthly", 5),
+    ("revenue_profit", "full", "monthly", 5),
     ("startup_breakeven", "light", "monthly", 3),
     ("dcf_valuation", "full", "annual", 3),
 ]
@@ -211,7 +213,7 @@ def test_cafe_goal_matrix(build, cafe_brief, goal, tier, g, years):
 
 @pytest.mark.libreoffice
 def test_tampered_free_cash_flow_is_caught(build, cafe_brief):
-    brief = apply_goal(cafe_brief, "dcf_valuation")
+    brief = apply_goal(cafe_brief.with_options(tier="full"), "dcf_valuation")
     path = build(brief)
     pl = plan(brief, get_template("cafe"))
     sheet, row = pl.line_at["fcff"]
@@ -228,7 +230,7 @@ def test_tampered_free_cash_flow_is_caught(build, cafe_brief):
 
 @pytest.mark.libreoffice
 def test_brief_mismatch_on_goal_driver_is_caught(build, cafe_brief):
-    brief = apply_goal(cafe_brief, "investor_pitch")
+    brief = apply_goal(cafe_brief.with_options(tier="full"), "investor_pitch")
     path = build(brief)
     d = brief.model_dump()
     for drv in d["drivers"]:
@@ -244,4 +246,4 @@ def test_build_cli_goal_option(tmp_path, capsys):
 
     out = tmp_path / "m.xlsx"
     assert main(["default:saas:early", str(out), "--goal", "dcf_valuation", "--tier", "light"]) == 0
-    assert load_workbook(out).sheetnames == ["Inputs", "P&L", "Valuation", "Checks"]
+    assert load_workbook(out).sheetnames == ["Cover", "Dashboard", "Break-even", "Inputs", "P&L", "Checks"]

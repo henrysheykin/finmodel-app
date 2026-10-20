@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field, replace
+from datetime import date
 from pathlib import Path
 
 from openpyxl import Workbook
@@ -284,7 +285,7 @@ def _summary_rows() -> list[StmtRow]:
 
 
 def plan(brief: Brief, tpl: Template) -> Plan:
-    brief = apply_goal(brief)  # tier module drivers, also for briefs stored before ADR-013
+    brief = apply_goal(brief, tpl=tpl)  # tier module drivers, also for briefs stored before ADR-013
     tpl.validate(brief)
     t = Timing(brief.granularity, brief.horizon_years)
     calc, hc, bs = _calc_lines(tpl, brief, t)
@@ -352,8 +353,18 @@ def sheet_order(tier: str, grid_name: str = "Monthly", returns: bool = False) ->
     if tier == "light":
         return ["Cover", "Dashboard", "Break-even", *industry, "Inputs", "P&L", "Checks"]
     return [
-        "Cover", "Dashboard", "Break-even", "Valuation", *industry,
-        "Inputs", "P&L", "Cash Flow", "Balance Sheet", grid_name, "Headcount", "Checks",
+        "Cover",
+        "Dashboard",
+        "Break-even",
+        "Valuation",
+        *industry,
+        "Inputs",
+        "P&L",
+        "Cash Flow",
+        "Balance Sheet",
+        grid_name,
+        "Headcount",
+        "Checks",
     ]
 
 
@@ -563,14 +574,10 @@ def _rollup(pl: Plan, ln: Line, col: str, year_row: int) -> str:
 def _write_dashboard(wb: Workbook, pl: Plan, checks_verdict: str) -> None:
     ws = wb["Dashboard"]
     years = pl.t.years
-    st.title(
-        ws,
-        pl.brief.model_name,
-        "Change the scenario in B4 (1 = Low, 2 = Base, 3 = High); every sheet recalculates.",
-        max(3, 1 + years),
-    )
+    st.title(ws, "Dashboard", pl.brief.model_name, max(3, 1 + years), link_col=8)
     _write_selector(ws, 4, pl.brief.default_scenario)
-    ws["A4"] = "Scenario selector"
+    full = "pl" in pl.blocks
+    stmt = {"pl": "pl" if full else "sum", "bs": "bs" if full else "sum"}
     st.section(ws, 6, "Key metrics", max(3, 1 + years))
     for y in range(1, years + 1):
         st.header(ws.cell(row=7, column=1 + y, value=f"Year {y}"), right=True)
@@ -582,6 +589,8 @@ def _write_dashboard(wb: Workbook, pl: Plan, checks_verdict: str) -> None:
         ("Net income", "pl", "ni", "usd"),
         ("Year-end cash", "bs", "cash", "usd"),
         ("Year-end loan balance", "bs", "loan", "usd"),
+    ]
+    metrics = [(label, stmt[block] if block else None, key, fmt) for label, block, key, fmt in metrics] + [
         ("Total FTE (year end)", None, "fte_total", "dec1"),
     ]
     r = 8
@@ -612,6 +621,8 @@ def _write_dashboard(wb: Workbook, pl: Plan, checks_verdict: str) -> None:
         c = ws.cell(row=r + 1 + i, column=2, value=f)
         c.font = st.font(st.GREEN if PURE_LINK.match(f) else "000000", bold=True)
         c.number_format = fmt
+        if label == "Model checks":
+            st.verdict_colours(ws, c.coordinate, c.coordinate)
     ws.column_dimensions["A"].width = 40
     for y in range(1, max(3, years) + 1):
         ws.column_dimensions[L(1 + y)].width = 14
@@ -735,11 +746,110 @@ def _write_checks(wb: Workbook, pl: Plan) -> str:
         ),
     )
     c.font = st.font(bold=True)
-    c.border = st.TOTAL_TOP
+    for col in (1, 2, 3):
+        ws.cell(row=vr, column=col).border = st.KEY_TOTAL
+    st.verdict_colours(ws, f"B{first}:B{vr}", f"B{first}")
     ws.column_dimensions["A"].width = 40
     ws.column_dimensions["B"].width = 22
     ws.column_dimensions["C"].width = 64
     return f"Checks!B{vr}"
+
+
+#: Cover contents: sheet -> what it shows (docs/WORKBOOK_STANDARD.md §1)
+SHEET_DESC = {
+    "Dashboard": "Scenario switch, key numbers, core financials",
+    "Summary": "Income statement, cash flow and balance sheet — every year and any year by month",
+    "Scenarios": "Low / Base / High side by side: drivers, outputs, charts",
+    "Break-even": "Startup costs, funding need, break-even timing and revenue",
+    "Valuation": "Free cash flow, DCF (perpetual growth and exit multiple), WACC × growth sensitivity",
+    "Sources & Uses": "Funding structure, sources and uses of cash for the first months",
+    "KPIs": "Financial ratios, DuPont analysis, industry metrics",
+    "Returns": "Property returns: unlevered and levered IRR, NPV, multiple",
+    "Inputs": "Every assumption, Low / Base / High, with units and comments",
+    "P&L": "Annual profit & loss",
+    "Cash Flow": "Annual cash flow statement",
+    "Balance Sheet": "Balance sheet at year end",
+    "Monthly": "Month-by-month engine of the model",
+    "Annual": "Year-by-year engine of the model",
+    "Headcount": "Team and payroll",
+    "Checks": "Live integrity checks and the overall verdict",
+}
+GROUPS = (
+    ("Presentation", st.PRESENTATION),
+    ("Inputs", {"Inputs"}),
+    ("Statements", st.STATEMENTS),
+    ("Calculations", {"Monthly", "Annual", "Headcount"}),
+    ("Control", {"Checks"}),
+)
+
+
+def _write_cover(wb: Workbook, pl: Plan, verdict: str, built_on: date) -> None:
+    ws = wb["Cover"]
+    b = pl.brief
+    ws.column_dimensions["A"].width = 3
+    ws.column_dimensions["B"].width = 5
+    ws.column_dimensions["C"].width = 24
+    ws.column_dimensions["D"].width = 72
+    ws["B2"] = b.model_name
+    ws["B2"].font = st.font(st.INK, bold=True, size=20)
+    plan_word = "Full" if b.tier == "full" else "Light"
+    ws["B3"] = (
+        f"{b.horizon_years}-year financial model · {b.granularity} detail · Low / Base / High scenarios · "
+        f"US dollars · {plan_word} plan"
+    )
+    ws["B3"].font = st.font(st.GREY, size=10)
+    rows = [
+        ("Purpose", purpose(b.goal), None),
+        ("Active scenario", '=Dashboard!C4&"  (change it on the Dashboard, cell B4)"', st.PINE),
+        ("Model checks", f"={verdict}", None),
+        ("Prepared", f"{built_on.day} {built_on:%B %Y}", None),
+    ]
+    for i, (label, value, colour) in enumerate(rows):
+        r = 5 + i
+        ws.cell(row=r, column=2, value=label).font = st.font(st.INK, bold=True)
+        c = ws.cell(row=r, column=4, value=value)
+        c.font = st.font(colour or "000000", bold=label != "Prepared")
+        if label == "Model checks":
+            st.verdict_colours(ws, c.coordinate, c.coordinate)
+    st.section(ws, 10, "Contents", 3, first_col=2)
+    r, n = 11, 0
+    for group, names in GROUPS:
+        shown = [s for s in pl.sheets if s in names and s != "Cover"]
+        if not shown:
+            continue
+        ws.cell(row=r, column=3, value=group.upper()).font = st.font(st.PINE, bold=True, size=8)
+        r += 1
+        for name in shown:
+            n += 1
+            ws.cell(row=r, column=2, value=n).font = st.font(st.GREY)
+            ws.cell(row=r, column=2).alignment = Alignment(horizontal="right")
+            link = ws.cell(row=r, column=3, value=f'=HYPERLINK("#{q(name)}!A1","{name}")')
+            link.font = st.font(st.PINE, bold=True, underline="single")
+            ws.cell(row=r, column=4, value=SHEET_DESC.get(name, "")).font = st.font()
+            for col in (2, 3, 4):
+                ws.cell(row=r, column=col).border = st.HAIRLINE
+            r += 1
+    r += 1
+    ws.cell(row=r, column=2, value="How to read this file").font = st.font(st.INK, bold=True)
+    legend = [
+        ("input", "Input you can change — yellow cell with a blue figure (Inputs sheet and the view switches)"),
+        ("formula", "Formula — calculated, do not overwrite"),
+        ("link", "Link to another sheet"),
+        ("active", "Active value the model uses (follows the scenario)"),
+    ]
+    for kind, text in legend:
+        r += 1
+        c = ws.cell(row=r, column=3, value=1000)
+        c.number_format = "#,##0"
+        c.alignment = Alignment(horizontal="center")
+        if kind == "input":
+            st.input_cell(c)
+        else:
+            c.font = st.font(st.GREEN if kind == "link" else "000000")
+            c.border = st.INPUT_BOX
+            if kind == "active":
+                c.fill = st.ACTIVE_FILL
+        ws.cell(row=r, column=4, value=text).font = st.font()
 
 
 def manifest_for(pl: Plan, verdict: str) -> Manifest:
@@ -788,7 +898,7 @@ def manifest_for(pl: Plan, verdict: str) -> Manifest:
     )
 
 
-def build(brief: Brief, tpl: Template, out_path: str | Path) -> Manifest:
+def build(brief: Brief, tpl: Template, out_path: str | Path, built_on: date | None = None) -> Manifest:
     pl = plan(brief, tpl)
     wb = Workbook()
     wb.active.title = pl.sheets[0]
@@ -806,13 +916,17 @@ def build(brief: Brief, tpl: Template, out_path: str | Path) -> Manifest:
     for b in pl.blocks.values():
         _write_block(wb, pl, b, "Rolled up from the period detail (SUMIF on the year row; balances at year end).")
     verdict = _write_checks(wb, pl)
-    if "Dashboard" in pl.sheets:
-        _write_dashboard(wb, pl, verdict)
+    _write_dashboard(wb, pl, verdict)
+    _write_cover(wb, pl, verdict, built_on or date.today())
     if pl.modules:
         from engine.goal_sheets import write_modules
 
         write_modules(wb, pl)
     for ws in wb.worksheets:
-        ws.sheet_view.showGridLines = False
+        st.finish_sheet(ws, landscape=ws.title != "Cover", zoom=90 if ws.title in ("Monthly", "Headcount") else 100)
+        ws.sheet_view.tabSelected = ws.title == "Cover"
+    wb.active = 0
+    wb.properties.creator = ""
+    wb.properties.title = pl.brief.model_name
     wb.save(out_path)
     return manifest_for(pl, verdict)

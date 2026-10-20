@@ -5,7 +5,7 @@
 2. Recomputes the same economics in plain Python from the brief (the
    template's ``reference_top`` + ``engine.core.reference_run``, which share no
    code with the formula builder) and compares every scenario-year within $1.
-   Goal modules (Break-even, Valuation, Summary) are recomputed by ``engine.goals.reference`` and the
+   Tier modules (Break-even, Valuation) are recomputed by ``engine.goals.reference`` and the
    property Returns sheet by ``engine.returns.reference``; both are compared cell by cell (money within $1,
    ratios within 1e-6, IRR within 0.01 pp, periods and texts exactly).
 3. Requires the in-file Checks verdict to be PASS (or PASS WITH WARNINGS), the
@@ -30,6 +30,7 @@ from engine.brief import Brief
 from engine.builder import manifest_for, plan
 from engine.core import annualise, reference_run
 from engine.goals import TOLERANCE as GOAL_TOLERANCE
+from engine.goals import apply_goal
 from engine.goals import reference as goal_reference
 from engine.recalc import RecalcError, recalc
 from engine.returns import TOLERANCE as RETURNS_TOLERANCE
@@ -61,7 +62,8 @@ def python_model(brief: Brief, scenario: int) -> dict[str, dict[int, float]]:
 
 
 def python_goal_model(brief: Brief, scenario: int) -> dict:
-    """Goal-module values (Break-even, Valuation, Summary) recomputed in plain Python."""
+    """Tier-module values (Break-even, Valuation) recomputed in plain Python."""
+    brief = apply_goal(brief)
     tpl = get_template(brief.template)
     t = Timing(brief.granularity, brief.horizon_years)
     d = brief.values(scenario)
@@ -113,6 +115,7 @@ def _run_scenario(src: Path, scen: int, selector: str, workdir: Path):
 
 def challenge(brief: Brief | dict, model_path: str | Path) -> dict:
     brief = brief if isinstance(brief, Brief) else Brief.model_validate(brief)
+    brief = apply_goal(brief)  # same tier module drivers the build added (ADR-013)
     tpl = get_template(brief.template)
     pl = plan(brief, tpl)
     man = manifest_for(pl, verdict="")  # cell addresses only

@@ -88,12 +88,12 @@ def validate_goal(brief: Brief) -> None:
 
 
 # --------------------------------------------------------------------------- defaults
-def default_values(tier: str, brief: Brief) -> list[dict]:
+def default_values(tier: str, brief: Brief, tpl=None) -> list[dict]:
     """Driver values a brief needs for its tier's modules (stage defaults; buffer = 3 months of opex)."""
     out: list[dict] = []
     mods = modules_for(tier)
     if "breakeven" in mods:
-        buf = _three_months_opex(brief)
+        buf = _three_months_opex(brief, tpl)
         out.append({"key": "cash_buffer", "low": buf, "base": buf, "high": buf, "note": "About 3 months of costs"})
     if "dcf" in mods:
         d = DCF_DEFAULTS.get(brief.stage, DCF_DEFAULTS["growing"])
@@ -107,11 +107,11 @@ def default_values(tier: str, brief: Brief) -> list[dict]:
     return out
 
 
-def _three_months_opex(brief: Brief) -> float:
+def _three_months_opex(brief: Brief, tpl=None) -> float:
     from engine.core import reference_run
     from engine.templates import get_template
 
-    tpl = get_template(brief.template)
+    tpl = tpl or get_template(brief.template)
     d = {k: v for k, v in brief.values(2).items() if k not in ALL_GOAL_KEYS}
     s = reference_run(d, brief.roles, Timing("monthly", 1), tpl.reference_top)
     spec = BREAKEVEN_SPECS[0]  # the buffer stays inside its own allowed range, whatever the costs
@@ -142,20 +142,27 @@ def refresh_derived(brief: Brief, keep: Collection[str] = ()) -> Brief:
     return Brief.model_validate(data)
 
 
-def apply_goal(brief: Brief, goal: str | None = None) -> Brief:
+def apply_goal(brief: Brief, goal: str | None = None, tpl=None) -> Brief:
     """Brief with ``goal`` set and exactly the module drivers its **tier** needs (existing values are kept).
 
     Idempotent; the build, the challenger and the worker call it, so briefs stored before ADR-013 (a goal
     without module drivers, or a Light brief with DCF drivers) still build.
     """
     goal = goal or brief.goal
+    from engine.templates import get_template
+
+    tpl = tpl or get_template(brief.template)
+    base_keys = {s.key for s in tpl.all_specs(brief.roles, brief.tier)} - ALL_GOAL_KEYS
+    if not base_keys <= {d.key for d in brief.drivers}:
+        # incomplete brief: leave the module drivers alone and let validation report what is missing
+        return brief if goal == brief.goal else brief.model_copy(update={"goal": goal})
     need = {s.key for s in goal_specs(brief.tier)}
     data = brief.model_dump()
     data["goal"] = goal
     data["drivers"] = [d for d in data["drivers"] if d["key"] not in ALL_GOAL_KEYS or d["key"] in need]
     have = {d["key"] for d in data["drivers"]}
     base = Brief.model_validate(data)
-    data["drivers"] += [dv for dv in default_values(brief.tier, base) if dv["key"] not in have]
+    data["drivers"] += [dv for dv in default_values(brief.tier, base, tpl) if dv["key"] not in have]
     return Brief.model_validate(data)
 
 

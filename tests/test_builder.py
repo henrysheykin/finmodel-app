@@ -21,22 +21,26 @@ def variants(brief):
 
 
 def test_sheets_per_tier(build, cafe_brief):
+    # docs/WORKBOOK_STANDARD.md §1 — the order is copied verbatim
     full = load_workbook(build(cafe_brief.with_options(tier="full"), "f.xlsx"))
     assert full.sheetnames == [
+        "Cover",
         "Dashboard",
+        "Break-even",
+        "Valuation",
         "Inputs",
-        "Monthly",
         "P&L",
         "Cash Flow",
         "Balance Sheet",
+        "Monthly",
         "Headcount",
         "Checks",
     ]
     annual = load_workbook(build(cafe_brief.with_options(granularity="annual"), "a.xlsx"))
-    assert annual.sheetnames[2] == "Annual"
+    assert annual.sheetnames[8] == "Annual"
     light = load_workbook(build(cafe_brief.with_options(tier="light"), "l.xlsx"))
-    assert light.sheetnames == ["Inputs", "P&L", "Checks"]
-    assert light["Inputs"]["B3"].value == 2
+    assert light.sheetnames == ["Cover", "Dashboard", "Break-even", "Inputs", "P&L", "Checks"]
+    assert light["Dashboard"]["B4"].value == 2 and light["Inputs"]["B3"].value is None
     assert full["Dashboard"]["B4"].value == 2
 
 
@@ -44,12 +48,16 @@ def test_sheets_per_tier(build, cafe_brief):
 def test_excel_rules(build, any_brief, tier, g, years):
     brief = any_brief.with_options(tier=tier, granularity=g, horizon_years=years)
     wb = load_workbook(build(brief))
-    yellow, formulas = [], 0
+    switches, inputs, formulas = [], [], 0
     for ws in wb.worksheets:
         for row in ws.iter_rows():
             for c in row:
-                if c.fill.fill_type == "solid" and c.fill.fgColor.rgb.endswith("FFFF00"):
-                    yellow.append(f"{ws.title}!{c.coordinate}")
+                rgb = c.fill.fgColor.rgb if c.fill.fill_type == "solid" else ""
+                assert not rgb.endswith("FFFF00"), f"old bright yellow at {ws.title}!{c.coordinate}"
+                if rgb.endswith("FFE08A"):
+                    switches.append(f"{ws.title}!{c.coordinate}")
+                if rgb.endswith("FFF2CC") and ws.title != "Cover":  # the Cover legend shows a sample input
+                    inputs.append((ws.title, c))
                 if c.value is None:
                     continue
                 assert c.font.name == "Arial", f"{ws.title}!{c.coordinate}"
@@ -59,14 +67,17 @@ def test_excel_rules(build, any_brief, tier, g, years):
                     assert "{" not in c.value, f"unrendered token in {ws.title}!{c.coordinate}: {c.value}"
                     color = c.font.color.rgb if c.font.color else ""
                     assert not color.endswith("0000FF"), f"formula in blue at {ws.title}!{c.coordinate}"
-    expected_sel = "Dashboard!B4" if tier == "full" else "Inputs!B3"
-    assert yellow == [expected_sel]
+    assert switches == ["Dashboard!B4"]  # the scenario selector, both tiers (ADR-013)
+    for sheet, c in inputs:  # input fill only on typed numbers on Inputs (Low / Base / High)
+        assert sheet == "Inputs" and c.column_letter in "BCD", f"{sheet}!{c.coordinate}"
+        assert not (isinstance(c.value, str) and c.value.startswith("=")), f"formula on input fill {c.coordinate}"
     assert formulas > 50
     inp = wb["Inputs"]
     pl = plan(brief, get_template(brief.template))
     for key, r in pl.input_row.items():
         for col in "BCD":
             assert inp[f"{col}{r}"].font.color.rgb.endswith("0000FF"), key
+            assert inp[f"{col}{r}"].fill.fgColor.rgb.endswith("FFF2CC"), key
         assert inp[f"E{r}"].value.startswith("=CHOOSE(")
 
 

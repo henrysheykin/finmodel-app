@@ -43,3 +43,4 @@ New lines go at the end of the table (protocol step 9).
 | M10 | Analytics & funnel spec | — | cancelled 2026-10-17 (Henry: not needed) |
 | M11 | SEO pages, batch 3 (templates now built) | #17 | done 2026-10-17 |
 | M12 | SEO pages, batch 4 (real estate, fitness, home services, goal modules) | #37 | done 2026-10-18 |
+| E26 | Workbook standard: style kit v2, sheet set by tier, Cover | PR_E26 | done 2026-10-20 |

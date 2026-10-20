@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 
 from engine.brief import Brief, Role
 from engine.core import HC, HEADCOUNT_DRIVERS, Top
-from engine.goals import goal_specs, validate_goal
+from engine.goals import ALL_GOAL_KEYS, apply_goal, goal_specs, validate_goal
 from engine.spec import STANDARD_DRIVERS, DriverSpec, Line, Timing, role_driver_specs, validate_against
 
 
@@ -93,7 +93,14 @@ class Template(ABC):
         return [ln.key for ln in self.opex_lines(t)]
 
     def validate(self, brief: Brief) -> None:
-        validate_against(brief, self.all_specs(brief.roles, brief.tier))
+        """Validate the brief as it will be built: with its tier's module drivers (``apply_goal``) added."""
+        specs = self.all_specs(brief.roles, brief.tier)
+        data = brief.model_dump()
+        data["drivers"] = [d for d in data["drivers"] if d["key"] not in ALL_GOAL_KEYS]
+        # template / standard drivers first, so a missing one is reported on its own
+        validate_against(Brief.model_validate(data), [s for s in specs if s.key not in ALL_GOAL_KEYS])
+        brief = apply_goal(brief, tpl=self)
+        validate_against(brief, specs)
         validate_goal(brief)
         if any("{payroll_total}" in ln.formula for ln in self.opex_lines(Timing("monthly", 1))) and not brief.roles:
             from engine.brief import BriefError
