@@ -18,6 +18,7 @@ LIGHT = ["Cover", "Dashboard", "Break-even", "Inputs", "P&L", "Checks"]
 FULL = [
     "Cover",
     "Dashboard",
+    "Summary",
     "Break-even",
     "Valuation",
     "Inputs",
@@ -45,7 +46,7 @@ def test_sheet_set_follows_the_tier_not_the_goal(tier, expected, goal):
 
 
 def test_sheet_order_annual_and_industry_sheets():
-    assert sheet_order("full", "Annual")[8] == "Annual"
+    assert sheet_order("full", "Annual")[9] == "Annual"
     assert sheet_order("light", returns=True) == [
         "Cover",
         "Dashboard",

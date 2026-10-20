@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-20 · E · E28 Summary sheet (statements, selected year by month) · PR open (reviewer next) · https://github.com/henrysheykin/finmodel-app/pull/46
+  engine/summary.py (Full only): IS / CF / BS with every year linked to the statements (left) and one selected year by month
+  (INDEX into the Monthly grid, switch R2) on the right, 3 charts beside the blocks; annual models: years only, charts by year;
+  1-year horizon works. New check "Summary ties to statements" + Summary range in "No error values"; challenger covers the
+  links; test: Dashboard Core financials = statement cells every year. For Henry: nothing.
 - 2026-10-20 · E · E27 Dashboard v2 and the chart kit · PR open (reviewer next) · https://github.com/henrysheykin/finmodel-app/pull/45
   engine/charts.py (bar, hbar, line, combo with secondary axis, doughnut; 14.2 × 8.3 cm grid slots; value-only data labels) +
   engine/dashboard.py: selector + checks verdict, 6 tiles, Core financials rolled up from grid lines (Light too), industry block
@@ -45,35 +50,3 @@ Newest first. One entry per scheduled run: date · track · task · result · PR
   2 retries, 15 s deadline, no retry on 4xx, then prefill fallback; no call without notes; formula-like text neutralised.
   httpx Messages API client (no SDK dependency). 21 fixture cases → valid briefs, all build + challenger PASS; 4 fallback cases.
   OFF by default: Henry sets ANTHROPIC_API_KEY + BRIEF_MODEL (A1, after E23). Skill product-self-knowledge not installed. Follow-up E24.
-- 2026-10-18 · E · interactive with Henry: token budget + model routing · https://github.com/henrysheykin/finmodel-app/pull/38
-  Subagents `.claude/agents/` (scout haiku, implementer sonnet, reviewer opus); CLAUDE.md 115 → 90 lines with Model routing
-  and Token budget, background moved to docs/ARCHITECTURE.md; finished tasks → docs/DONE.md, RUNLOG kept at 10 (rest in
-  docs/runlog/archive-2026-10.md); `Model:` on every open task; new E23 brief-model eval. BRIEF_MODEL = empty (LLM off):
-  no Claude API call exists yet (E08 TODO), so there was no current model to keep; `adapters/llm.py` has caching + token log.
-- 2026-10-18 · M · M12 SEO pages batch 4 · DONE · PR https://github.com/henrysheykin/finmodel-app/pull/37
-  5 new pages (rental pro forma, DCF, fitness, home services, break-even), 4 older pages refreshed; test_seo 99 passed.
-  New templates still await CFO review (R1); no public sample with Valuation/Break-even sheets.
-- 2026-10-18 · E · interactive with Henry: L1 legal texts · https://github.com/henrysheykin/finmodel-app/pull/35
-  privacy/terms/refunds written from what the app does; seller StartupModels LLC (Wyoming), Wyoming law (Henry gives no address/tax ID).
-  Legal pages with unfilled [PLACEHOLDERS] are never published. D9 decided (PR #36): failed build → only Henry gets the alert, no customer email; refunds.md: full refund if a passing model can't be delivered.
-  D13 (EU withdrawal checkbox): Henry — ignore. Retention purge (`manage purge`, every start). E18 set DONE (tag optional, G0).
-  Henry done today: Resend domain, Stripe name + activation, PUBLIC_BASE_URL, CLIENT_IP_HEADER, EMAIL_FROM. Verified live: /healthz 0.1.0; /privacy, /terms, /refunds published and in the sitemap.
-  Left before live money: R1 CFO review, test order on the domain (G1.6), live keys (G1.8), first real order (G1.9).
-- 2026-10-18 · E · E18 release candidate v0.1.0 · NEEDS_HENRY (tag only) · https://github.com/henrysheykin/finmodel-app/pull/34
-  Version 0.1.0 (/healthz, deploy log). Go-live preflight `app/golive.py`: domain, Stripe live, webhook, sender domain, support,
-  admin, client IP, legal texts, email copy. It runs in every deploy log and shows as a box on /admin. docs/RUNBOOK_GO_LIVE.md
-  (variables, steps 0–9, rollback), CHANGELOG.md, docs/reviews/E18-release-checklist.md, HUMAN_TODO G1.1–G1.9. 800 tests local, CI green.
-  Tag v0.1.0 NOT pushed: the sandbox git proxy refuses tag pushes → HUMAN_TODO G0. Observed: startup-model.com already serves the
-  app, but PUBLIC_BASE_URL is still the Railway URL (sitemap). Next E by priority: E08 (brief builder; needs A1 key only for live use).
-- 2026-10-18 · E · E05 real estate template · DONE · https://github.com/henrysheykin/finmodel-app/pull/33
-  Took over the stale E05 claim (no branch/PR since 2026-10-17 13:33; it blocked E18). Framework (ADR-011): annuity mortgage
-  (PMT), land excluded from depreciation, Returns sheet in both tiers — purchase at year 0, NOI − reserves, sale at next-year
-  NOI ÷ exit cap, unlevered/levered IRR, NPV, multiple, DSCR, cash-on-cash; challenger recomputes every cell (IRR ±0.01 pp).
-  Template: rent roll, vacancy, property costs, 4 stage defaults, sample + memo. 787 tests local; 200-case random LO sweep clean.
-  For Henry: R1 CFO review of real estate (6 questions in the memo). Next E: E18 release candidate (all depends DONE).
-- 2026-10-18 · E · E17 hardening · DONE · https://github.com/henrysheykin/finmodel-app/pull/32
-  Fixed: a webhook delivered twice at the same moment could build/receipt twice (conditional UPDATE claim); blocking Stripe/email/DB
-  work ran on the event loop (one slow email froze the site); admin login global cap; one client-address rule for all limits;
-  cross-site POSTs refused; CSP; tokens redacted from access logs; 1 MB body cap; pinned deps + pip-audit job (clean).
-  New: browser journey E2E with the real engine and real email copy; load test 50 orders / one worker = 50 ready, 7.8 s per model.
-  Report docs/reviews/E17-hardening.md. 714 tests local. For Henry: A6 still open. E05 skipped again (stale claim, no continue:).

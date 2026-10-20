@@ -54,6 +54,10 @@ METRIC_SOURCE = {
 }
 
 
+#: Summary sheet cells (manifest ``summary_years``) -> python series
+SUMMARY_SOURCE = {"sum_rev": "rev", "sum_ni": "ni", "sum_cash": "cash_close"}
+
+
 def python_model(brief: Brief, scenario: int) -> dict[str, dict[int, float]]:
     tpl = get_template(brief.template)
     t = Timing(brief.granularity, brief.horizon_years)
@@ -164,6 +168,13 @@ def challenge(brief: Brief | dict, model_path: str | Path) -> dict:
                     ta, tle = val(man.metrics["total_assets"][y]), val(man.metrics["total_le"][y])
                     if abs(ta - tle) > 0.5:
                         report["problems"].append(f"scenario {scen} year {y}: balance sheet off by {ta - tle:,.2f}")
+                for name, cells in man.summary_years.items():  # Summary (E28): its links equal the reference
+                    v = val(cells[y])
+                    exp = expected[SUMMARY_SOURCE[name]][y]
+                    if not _num(v) or abs(v - exp) > TOLERANCE_USD:
+                        report["problems"].append(
+                            f"scenario {scen} year {y} {name}: workbook {v!r} vs python {exp:,.2f}"
+                        )
                 out["years"][y] = got
             if man.goal_cells or man.goal_years or man.dash_cells or man.dash_years:
                 gexp = python_goal_model(brief, scen)

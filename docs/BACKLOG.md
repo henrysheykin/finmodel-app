@@ -12,26 +12,13 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ## Track E — Engineering (daily)
 
-> **Priority (Henry, 2026-10-20):** workbook standard v1 (ADR-013, `docs/WORKBOOK_STANDARD.md`): E26, E27 (done) →
-> E28, E30, E31, E32 (any order) → E29 → E33. E23 still waits on the OpenAI key (A1).
+> **Priority (Henry, 2026-10-20):** workbook standard v1 (ADR-013, `docs/WORKBOOK_STANDARD.md`): E26, E27, E28 (done) →
+> E30, E31, E32 (any order) → E29 → E33. E23 still waits on the OpenAI key (A1).
 > Visual reference for every E26–E33 task: `design/workbook-standard-v1-prototype.xlsx` (compare your build with it).
 >
 > Earlier: **E23** (waits on the OpenAI key, A1). (E25 OpenAI done #41; E24 done #42.) All earlier E tasks are done (`docs/DONE.md`).
 > New industries are one file each (ADR-009, `docs/templates/ADDING_A_TEMPLATE.md`; follow E21/E22, Model: sonnet).
 > Customer login = passwordless magic link by email (ADR-006).
-
-### E28 — Summary sheet (statements, selected year by month)
-- status: TODO
-- Model: sonnet
-- depends: E27
-- skills: xlsx
-- do: ADR-013 §1, §3. Full only. IS / CF / BS: 5 years left (links to statements), selected year by month right
-  (INDEX into the grid with the "Select detailed year" switch), blocks padded to the chart height, one chart right
-  of each monthly block. Annual granularity: years only, charts by year. Summary's range joins the "No error
-  values" check.
-- done when: new in-file check "Summary ties to statements" (revenue, net income, closing cash for every year)
-  passes in all templates; charts present after recalc; a test asserts that in Full the Dashboard Core financials
-  equal the P&L / Cash Flow / Balance Sheet cells every year (E27 review).
 
 ### E29 — Scenarios sheet, live Low / Base / High
 - status: TODO

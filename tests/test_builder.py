@@ -26,6 +26,7 @@ def test_sheets_per_tier(build, cafe_brief):
     assert full.sheetnames == [
         "Cover",
         "Dashboard",
+        "Summary",
         "Break-even",
         "Valuation",
         "Inputs",
@@ -37,7 +38,7 @@ def test_sheets_per_tier(build, cafe_brief):
         "Checks",
     ]
     annual = load_workbook(build(cafe_brief.with_options(granularity="annual"), "a.xlsx"))
-    assert annual.sheetnames[8] == "Annual"
+    assert annual.sheetnames[9] == "Annual"
     light = load_workbook(build(cafe_brief.with_options(tier="light"), "l.xlsx"))
     assert light.sheetnames == ["Cover", "Dashboard", "Break-even", "Inputs", "P&L", "Checks"]
     assert light["Dashboard"]["B4"].value == 2 and light["Inputs"]["B3"].value is None
@@ -67,7 +68,8 @@ def test_excel_rules(build, any_brief, tier, g, years):
                     assert "{" not in c.value, f"unrendered token in {ws.title}!{c.coordinate}: {c.value}"
                     color = c.font.color.rgb if c.font.color else ""
                     assert not color.endswith("0000FF"), f"formula in blue at {ws.title}!{c.coordinate}"
-    assert switches == ["Dashboard!B4"]  # the scenario selector, both tiers (ADR-013)
+    # the scenario selector, both tiers (ADR-013), and the Summary's detailed year (Full, monthly: E28)
+    assert switches == ["Dashboard!B4"] + (["Summary!R2"] if tier == "full" and g == "monthly" else [])
     for sheet, c in inputs:  # input fill only on typed numbers on Inputs (Low / Base / High)
         assert sheet == "Inputs" and c.column_letter in "BCD", f"{sheet}!{c.coordinate}"
         assert not (isinstance(c.value, str) and c.value.startswith("=")), f"formula on input fill {c.coordinate}"
