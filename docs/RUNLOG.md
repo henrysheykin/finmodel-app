@@ -2,7 +2,7 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
-- 2026-10-20 · E · E26 workbook standard: style kit v2, sheet set by tier, Cover · DONE · PR_E26
+- 2026-10-20 · E · E26 workbook standard: style kit v2, sheet set by tier, Cover · DONE · https://github.com/henrysheykin/finmodel-app/pull/44
   engine/style.py v2 (ink/pine, Arial 9, yellow inputs, view-switch fill, tab colours, print setup, ◂ Contents links);
   sheets by tier (Light: Cover, Dashboard, Break-even, Inputs, P&L, Checks; Full adds Valuation, statements, grid, Headcount);
   modules by tier, investor Summary retired, goal → Cover purpose line; selector Dashboard!B4 in both tiers; stored pre-ADR
