@@ -23,8 +23,8 @@ Never mention or link Henry's FinModelsLab.
 Sheet set, layout, charts and look: `docs/WORKBOOK_STANDARD.md` (ADR-013) — binding for every template and tier.
 Arial 9; input = yellow fill + blue font; formula = black; cross-sheet link = green (Inputs and calculation
 sheets; presentation sheets use ink). Formats `$#,##0;($#,##0);-` (presentation sheets `$#,##0,` in $'000),
-`0.0%;(0.0%);-`. Every assumption in its own labelled cell on Inputs (only view settings live elsewhere — list in
-the standard §5); same formula across every period; guard
+`0.0%;(0.0%);-`. Every assumption in its own labelled cell on Inputs (only view settings that change no figure outside
+their own sheet live elsewhere — list in the standard §5); same formula across every period; guard
 every denominator. Only Excel-2007 functions (INDEX, MATCH, SUMIF(S), SUMPRODUCT, IFERROR, CHOOSE, IRR, NPV,
 HYPERLINK) — never XLOOKUP, FILTER, SORT, UNIQUE, SEQUENCE, LET, LAMBDA. Zero formula errors after recalc.
 

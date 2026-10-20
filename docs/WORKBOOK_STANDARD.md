@@ -91,7 +91,7 @@ written as a static value (not TODAY()).
 ## 5. What stays as it is
 
 Inputs remains the only place assumptions live (Valuation and Break-even show them as links, because they follow the
-scenario). The only input cells elsewhere are view settings that change no figure of the model: the scenario
+scenario). The only input cells elsewhere are view settings that change no figure outside their own sheet: the scenario
 selector (Dashboard!B4), Summary's detailed year, the Sources & Uses period length and the KPIs Target column. Calculation sheets keep their layout (period columns from C, year row, same formula across periods).
 Every presentation cell is a link or a simple formula over statements / grid lines — no new financial logic
 outside the challenger's reach; new logic (Scenarios' parallel chains, Sources & Uses, ratios) is recomputed by
