@@ -36,7 +36,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   model measured and noted in the RUNLOG (worker budget).
 
 ### E30 — Sources & Uses sheet
-- status: TODO
+- status: IN_PROGRESS (2026-10-20)
 - Model: opus
 - depends: E27
 - skills: xlsx
