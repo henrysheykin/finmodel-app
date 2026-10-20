@@ -376,3 +376,36 @@ replace Anthropic?", he chose **replace**.
 
 **Consequences.** Task E25 does the switch before E23's live run. Agent sessions themselves still run on
 Claude (Claude Code); this ADR is about the product's runtime LLM only.
+
+## ADR-013 — Workbook standard v1: one sheet set, layout and look for every model (2026-10-20, Henry)
+
+**Context.** Delivered workbooks differed by goal (ADR-010 added Summary / Break-even / Valuation only for some
+goals), had no charts, and still used the v1 navy look in the files. Henry shared his own reference model and asked
+for one standard for the whole library: a visual dashboard, scenarios side by side, statements summary with
+charts, break-even, valuation, sources & uses, ratios. Two prototype rounds on a real engine workbook
+(`design/workbook-standard-v1-prototype.xlsx`); Henry approved the result and the Light / Full split on 2026-10-20.
+
+**Decision.** `docs/WORKBOOK_STANDARD.md` is binding for every template and tier:
+- Sheet set by **tier**, not by goal. Light ($149): Cover, Dashboard, Break-even, [industry sheets], Inputs,
+  P&L, Checks. Full ($349): Cover, Dashboard, Summary, Scenarios, Break-even, Valuation, Sources & Uses, KPIs,
+  [industry sheets], Inputs, P&L, Cash Flow, Balance Sheet, Monthly / Annual, Headcount, Checks. Industry sheets
+  keep their tiers (real estate Returns: both, ADR-011 unchanged).
+- The wizard goal sets the Cover's purpose line only (supersedes the "goal adds sheets" part of ADR-010; the
+  module code and its challenger coverage stay, driven by the tier). The investor Summary sheet is retired: its
+  content moves to the Dashboard (tiles, Funding & valuation), and the challenger checks of its cells (CAGR, EV
+  average, funding gap) move with it (E27). Briefs stored before this ADR are completed with their tier's module
+  drivers at build time. Closes HUMAN_TODO D12.
+- The scenario selector is Dashboard!B4 in both tiers (Light used Inputs!B3).
+- Scenarios shows Low / Base / High **live** (parallel calculation chains on the inputs' B / C / D columns),
+  recomputed by the challenger like the active scenario.
+- Look: Arial 9, ink / pine palette (the site's identity, ADR-005; ends the navy bands in files), yellow input cells
+  with blue figures, presentation sheets in $'000 with ink links, native charts in a two-column grid of one size.
+
+**Consequences.**
+- CLAUDE.md Excel rules change: yellow fill marks inputs (was: only the scenario selector); green links on
+  Inputs and calculation sheets only.
+- Engine work E26–E33 (BACKLOG); samples, golden tests, landing preview and SEO samples are rebuilt at the end
+  (E33). Customer-facing copy that says "the goal adds sheets" is updated in the same task.
+- Light → Full upgrade still never changes a figure (same calculation lines; Full adds sheets).
+- The R1 CFO reviews of template logic stay valid; the new sheets (Scenarios, Sources & Uses, ratios) get their
+  own R1 line after E33.
