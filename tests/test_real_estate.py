@@ -232,4 +232,4 @@ def test_investor_pitch_goal_modules_work_with_returns(build, re_brief):
     report = challenge(b, path)
     assert report["problems"] == []
     sheets = load_workbook(path).sheetnames
-    assert sheets.index("Returns") < sheets.index("Break-even") < sheets.index("Checks")
+    assert sheets.index("Break-even") < sheets.index("Valuation") < sheets.index("Returns") < sheets.index("Inputs")

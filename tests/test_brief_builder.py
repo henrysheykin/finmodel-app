@@ -518,8 +518,12 @@ def test_buffer_kept_when_model_set_it_or_customer_locked_it():
     assert brief.driver("cash_buffer").base == start.driver("cash_buffer").base
 
 
-def test_goal_without_buffer_is_untouched_by_the_refresh():
-    start = PREFILL.build_brief(Answers(business_type="restaurant_cafe"))
+def test_brief_without_buffer_is_untouched_by_the_refresh():
+    # every tier has the break-even module since ADR-013; a brief that lacks the buffer is left as it is
+    full = PREFILL.build_brief(Answers(business_type="restaurant_cafe"))
+    data = full.model_dump()
+    data["drivers"] = [d for d in data["drivers"] if d["key"] != "cash_buffer"]
+    start = type(full).model_validate(data)
     brief, _ = merge(start, _changes(_cost_bump(start)), ())
     assert not any(d.key == "cash_buffer" for d in brief.drivers)
 

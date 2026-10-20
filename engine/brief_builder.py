@@ -204,7 +204,7 @@ def template_description(tpl: Template) -> str:
         "Funding, working capital, tax and depreciation:",
         *(f"- {s.key}: {s.label} ({_rule(s)})" for s in STANDARD_DRIVERS),
         "",
-        "Goal drivers (present only when the customer's goal needs them):",
+        "Plan drivers (break-even in every plan; valuation in the Full plan only):",
         *(f"- {s.key}: {s.label} ({_rule(s)})" for s in _all_goal_specs()),
     ]
     return "\n".join(lines)
@@ -217,7 +217,7 @@ def _wrap(text: str, tag: str) -> str:
 
 
 def user_content(start: Brief, tpl: Template, inp: CustomerInput) -> str:
-    specs = {s.key: s for s in tpl.all_specs(start.roles, start.goal)}
+    specs = {s.key: s for s in tpl.all_specs(start.roles, start.tier)}
     rows = []
     for d in start.drivers:
         s = specs[d.key]

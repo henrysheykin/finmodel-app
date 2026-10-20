@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 
 from engine.brief import Brief, Role
 from engine.core import HC, HEADCOUNT_DRIVERS, Top
-from engine.goals import goal_specs, validate_goal
+from engine.goals import ALL_GOAL_KEYS, apply_goal, goal_specs, validate_goal
 from engine.spec import STANDARD_DRIVERS, DriverSpec, Line, Timing, role_driver_specs, validate_against
 
 
@@ -80,20 +80,27 @@ class Template(ABC):
         raise NotImplementedError(f"template {self.key!r} has no stage defaults")
 
     # -- provided ----------------------------------------------------------
-    def all_specs(self, roles: list[Role], goal: str = "revenue_profit") -> list[DriverSpec]:
-        """Template + headcount + standard drivers, plus the goal modules' drivers (engine/goals.py)."""
+    def all_specs(self, roles: list[Role], tier: str = "full") -> list[DriverSpec]:
+        """Template + headcount + standard drivers, plus the tier's module drivers (engine/goals.py)."""
         specs = list(self.driver_specs())
         if roles:
             for r in roles:
                 specs += role_driver_specs(r.key, r.title)
             specs += HEADCOUNT_DRIVERS
-        return specs + STANDARD_DRIVERS + goal_specs(goal)
+        return specs + STANDARD_DRIVERS + goal_specs(tier)
 
     def opex_keys(self, t: Timing) -> list[str]:
         return [ln.key for ln in self.opex_lines(t)]
 
     def validate(self, brief: Brief) -> None:
-        validate_against(brief, self.all_specs(brief.roles, brief.goal))
+        """Validate the brief as it will be built: with its tier's module drivers (``apply_goal``) added."""
+        specs = self.all_specs(brief.roles, brief.tier)
+        data = brief.model_dump()
+        data["drivers"] = [d for d in data["drivers"] if d["key"] not in ALL_GOAL_KEYS]
+        # template / standard drivers first, so a missing one is reported on its own
+        validate_against(Brief.model_validate(data), [s for s in specs if s.key not in ALL_GOAL_KEYS])
+        brief = apply_goal(brief, tpl=self)
+        validate_against(brief, specs)
         validate_goal(brief)
         if any("{payroll_total}" in ln.formula for ln in self.opex_lines(Timing("monthly", 1))) and not brief.roles:
             from engine.brief import BriefError

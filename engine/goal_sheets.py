@@ -17,7 +17,9 @@ from engine.builder import FIRST_COL, PURE_LINK, Block, Plan, StmtRow, _layout_b
 from engine.goals import NA, NOT_WITHIN, NOTHING_TO_PAY_BACK, modules_for
 from engine.spec import FORMATS
 
-SHEETS = {"breakeven": "Break-even", "dcf": "Valuation", "summary": "Summary"}
+SHEETS = {"breakeven": "Break-even", "dcf": "Valuation"}
+#: rows shown as key totals (double underline, docs/WORKBOOK_STANDARD.md §4)
+KEY_TOTAL_LABELS = ("Funding surplus", "Enterprise value — average")
 INT = "0"
 
 
@@ -302,73 +304,12 @@ def _plan_dcf(pl: Plan) -> ModuleLayout:
     return lay
 
 
-# --------------------------------------------------------------------------- Summary
-def _plan_summary(pl: Plan, be: ModuleLayout, dcf: ModuleLayout) -> ModuleLayout:
-    H = pl.t.years
-    lay = ModuleLayout(
-        "Summary",
-        f"{pl.brief.model_name} — investor summary",
-        "Headline numbers for the selected scenario; every figure links to the model.",
-    )
-    margin = "=IF({rev}=0,0,{%s}/{rev})"
-    rows = [
-        StmtRow("rev", "Revenue", "line", "rev", bold=True),
-        StmtRow("gp", "Gross profit", "line", "gp"),
-        StmtRow("gm", "Gross margin", "formula", margin % "gp", "pct"),
-        StmtRow("ebitda", "EBITDA", "line", "ebitda", bold=True, total=True),
-        StmtRow("ebitda_m", "EBITDA margin", "formula", margin % "ebitda", "pct"),
-        StmtRow("ni", "Net income", "line", "ni"),
-        StmtRow("cash", "Year-end cash", "line", "cash_close", bold=True),
-        StmtRow("fte", "Team (FTE, year end)", "line", "fte_total", "dec1"),
-    ]
-    blk = Block("inv", lay.sheet, 6, rows, "Headline financials")
-    _layout_block(blk)
-    pl.blocks["inv"] = blk
-    s = _Sheet(lay, max(blk.placed.values()) + 2)
-    s.section("Investment highlights")
-    last = L(1 + H)
-    r1, rh, hy = f"$B${blk.placed['rev']}", f"${last}${blk.placed['rev']}", f"${last}${blk.year_row}"
-    s.row(
-        "cagr",
-        "Revenue growth per year (CAGR, year 1 to final year)",
-        f'=IF(AND({hy}>1,{r1}>0,{rh}>0),({rh}/{r1})^(1/MAX(1,{hy}-1))-1,"{NA}")',
-        "pct",
-    )
-
-    def xlink(m: ModuleLayout, name: str) -> str:
-        return f"={q(m.sheet)}!{m.local[name]}"
-
-    s.row("sum_equity", "Equity raised", _link(pl, "equity"), checked=False)
-    s.row("sum_loan", "Loan drawn", _link(pl, "loan_amount"), checked=False)
-    s.row("sum_required", "Funding required (incl. cash buffer)", xlink(be, "required"), checked=False)
-    s.row("sum_gap", "Funding surplus / (shortfall)", xlink(be, "gap"), bold=True)
-    s.row("sum_min_cash", "Lowest cash balance", xlink(be, "min_cash"), checked=False)
-    word = pl.t.period_word
-    s.row("sum_first_ebitda", f"First {word} with positive EBITDA", xlink(be, "first_ebitda"), INT, checked=False)
-    s.row("sum_payback", f"Cash invested paid back ({word} #)", xlink(be, "payback"), INT, checked=False)
-    s.row("sum_ev_g", "Enterprise value — perpetual growth", xlink(dcf, "ev_g"), checked=False)
-    s.row("sum_ev_m", "Enterprise value — exit multiple", xlink(dcf, "ev_g_c"), checked=False)
-    s.row("sum_ev_avg", "Enterprise value — average", xlink(dcf, "ev_avg"), bold=True)
-    end = s.r
-    kpis = pl.template.kpi_rows(pl.t)
-    if kpis:
-        kb = Block("inv_kpi", lay.sheet, s.r + 2, list(kpis), pl.template.kpi_title)
-        _layout_block(kb)
-        pl.blocks["inv_kpi"] = kb
-        end = max(kb.placed.values())
-    lay.width = max(3, 1 + H)
-    lay.error_range = f"{q(lay.sheet)}!$B$3:${L(max(3, 1 + H))}${end}"
-    return lay
-
-
 def plan_modules(pl: Plan) -> None:
-    mods = modules_for(pl.brief.goal)
+    mods = modules_for(pl.brief.tier)
     if "breakeven" in mods:
         pl.modules["breakeven"] = _plan_breakeven(pl)
     if "dcf" in mods:
         pl.modules["dcf"] = _plan_dcf(pl)
-    if "summary" in mods:
-        pl.modules["summary"] = _plan_summary(pl, pl.modules["breakeven"], pl.modules["dcf"])
 
 
 # --------------------------------------------------------------------------- checks
@@ -415,14 +356,6 @@ def module_checks(pl: Plan) -> list[tuple[str, str, str]]:
                 "(often a 1-year plan still carrying start-up spending)",
             ),
         ]
-    if "summary" in pl.modules:
-        out.append(
-            (
-                "Summary ties to period detail",
-                ok(f"ABS(SUM({pl.stmt_range('inv', 'rev')})-SUM({pl.grid_range('rev')}))<0.5"),
-                "Revenue on the Summary sheet equals the sum of every period",
-            )
-        )
     return out
 
 
@@ -430,7 +363,7 @@ def module_checks(pl: Plan) -> list[tuple[str, str, str]]:
 def write_modules(wb, pl: Plan) -> None:
     for lay in pl.modules.values():
         ws = wb[lay.sheet]
-        st.title(ws, lay.title, lay.sub, lay.width)
+        st.title(ws, lay.title, lay.sub, lay.width, link_col=lay.width + 2)
         ws.cell(row=3, column=1, value="Scenario shown").font = st.font(bold=True)
         c = ws.cell(row=3, column=2, value=_scenario_label(pl))
         c.font = st.font(st.ORANGE, bold=True)
@@ -445,7 +378,10 @@ def write_modules(wb, pl: Plan) -> None:
                     cell.number_format = FORMATS["pct"]
         for row in lay.rows:
             if row.label:
-                ws.cell(row=row.row, column=1, value=row.label).font = st.font(bold=row.bold)
+                lab = ws.cell(row=row.row, column=1, value=row.label)
+                lab.font = st.font(bold=row.bold)
+                if row.label.startswith(KEY_TOTAL_LABELS):
+                    lab.border = st.KEY_TOTAL
             for col, f in row.values.items():
                 cell = ws[f"{col}{row.row}"]
                 cell.value = f
@@ -453,6 +389,8 @@ def write_modules(wb, pl: Plan) -> None:
                 cell.number_format = row.fmt[col]
                 if row.total:
                     cell.border = st.TOTAL_TOP
+                if row.label.startswith(KEY_TOTAL_LABELS):
+                    cell.border = st.KEY_TOTAL
             if row.note:
                 ws.cell(row=row.row, column=max(4, len(row.values) + 2), value=row.note).font = st.font(st.GREY, size=9)
         for r, text in lay.notes.items():
