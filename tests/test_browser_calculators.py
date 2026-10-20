@@ -1,4 +1,4 @@
-"""Playwright (E34): the calculator pages in Chromium. Fill the inputs, read the results, no script errors, no shifts."""
+"""Playwright (E34): the calculator pages in Chromium: fill the inputs, read the results, no errors, no shifts."""
 
 import pytest
 
@@ -85,7 +85,8 @@ def test_results_panel_causes_no_layout_shift(page, live_server, calc):  # noqa:
     _open(page, live_server, calc, width=360)
     page.wait_for_load_state("networkidle")
     page.evaluate(
-        """() => { window.__cls = 0; new PerformanceObserver((l) => { for (const e of l.getEntries()) window.__cls += e.value; })
+        """() => { window.__cls = 0; new PerformanceObserver((l) => {
+        for (const e of l.getEntries()) window.__cls += e.value; })
         .observe({type: 'layout-shift', buffered: false}); }"""
     )
     marks = ".calc__out", ".calc__table", ".calc-prose:last-of-type", ".promo"
