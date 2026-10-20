@@ -12,7 +12,7 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -36,7 +36,8 @@ jobs:
         env:
           REQUIRE_LIBREOFFICE: "1"
           REQUIRE_BROWSER: "1"
-        run: pytest -q
+        # LibreOffice and challenger runs dominate; spread them over the runner's cores (serial run > 20 min)
+        run: pytest -q -n auto
 
   audit:
     # known vulnerabilities in the exact runtime versions the image installs (E17)
