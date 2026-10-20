@@ -29,7 +29,9 @@ def _plan(key="saas", **kw):
 
 
 def _labels(ws, col=1, first=1):
-    return {r: ws.cell(row=r, column=col).value for r in range(first, ws.max_row + 1) if ws.cell(row=r, column=col).value}
+    return {
+        r: ws.cell(row=r, column=col).value for r in range(first, ws.max_row + 1) if ws.cell(row=r, column=col).value
+    }
 
 
 def _cell(ref: str) -> str:
@@ -107,7 +109,9 @@ def test_core_financials_are_the_same_13_lines(saas_dash):
 
 def test_sections_in_standard_order_and_template_metrics(saas_dash):
     lab = _labels(saas_dash)
-    bands = [r for r, v in lab.items() if v.startswith(("Core financials", "Funding & valuation")) or v == "SaaS metrics"]
+    bands = [
+        r for r, v in lab.items() if v.startswith(("Core financials", "Funding & valuation")) or v == "SaaS metrics"
+    ]
     assert [lab[r][:8] for r in bands] == ["Core fin", "SaaS met", "Funding "]
     assert [lab[r] for r in range(28, 32)] == [
         "Paying customers (year end)",
@@ -122,7 +126,7 @@ def test_sections_in_standard_order_and_template_metrics(saas_dash):
         "Funding required (incl. cash buffer)",
         "Funding surplus / (shortfall)",
     ]
-    assert fv[4].startswith('="Lowest cash balance (month "&\'Break-even\'!')
+    assert fv[4].startswith("=\"Lowest cash balance (month \"&'Break-even'!")
     assert fv[5:] == [
         "First month with positive EBITDA",
         "Cash invested paid back",
@@ -270,7 +274,10 @@ def test_twin_texts_and_cagr_rules():
     goal["gap"] = 0.0
     assert dashboard_reference(brief, d, series, t, goal)["cells"]["dash_t5_sub"] == "Covered by funding raised"
     goal["first_ni"] = 7
-    assert dashboard_reference(brief, d, series, t, goal)["cells"]["dash_t6_first_sub"] == "Net income positive from month 7"
+    assert (
+        dashboard_reference(brief, d, series, t, goal)["cells"]["dash_t6_first_sub"]
+        == "Net income positive from month 7"
+    )
 
 
 def test_manifest_lists_every_tile_and_funding_cell():
@@ -343,7 +350,13 @@ def test_chart_kit_style_flags(tmp_path):
     assert '<legendPos val="b"/>' in bars and '<legendPos val="b"/>' in donut
     assert "<legend>" not in hbar  # one series: no legend
     flags = re.search(r"<dLbls>.*?</dLbls>", bars, re.S).group(0)  # the value on, every other flag off
-    for flag, want in (("showVal", 1), ("showSerName", 0), ("showCatName", 0), ("showLegendKey", 0), ("showPercent", 0)):
+    for flag, want in (
+        ("showVal", 1),
+        ("showSerName", 0),
+        ("showCatName", 0),
+        ("showLegendKey", 0),
+        ("showPercent", 0),
+    ):
         assert f'<{flag} val="{want}"/>' in flags, flag
     assert "<dLbls>" not in lines
     assert '<invertIfNegative val="0"/>' in bars  # Excel would paint negative bars white
