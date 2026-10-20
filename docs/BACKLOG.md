@@ -12,9 +12,114 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 
 ## Track E — Engineering (daily)
 
-> **Priority:** E23 (waits on the OpenAI key, A1). (E25 OpenAI done #41; E24 done #42.) All earlier E tasks are done (`docs/DONE.md`).
+> **Priority (Henry, 2026-10-20):** workbook standard v1 (ADR-013, `docs/WORKBOOK_STANDARD.md`): E26 → E27 →
+> E28, E30, E31, E32 (any order) → E29 → E33. E23 still waits on the OpenAI key (A1).
+> Visual reference for every E26–E33 task: `design/workbook-standard-v1-prototype.xlsx` (compare your build with it).
+>
+> Earlier: **E23** (waits on the OpenAI key, A1). (E25 OpenAI done #41; E24 done #42.) All earlier E tasks are done (`docs/DONE.md`).
 > New industries are one file each (ADR-009, `docs/templates/ADDING_A_TEMPLATE.md`; follow E21/E22, Model: sonnet).
 > Customer login = passwordless magic link by email (ADR-006).
+
+### E26 — Workbook standard: style kit v2, sheet set by tier, Cover
+- status: TODO
+- Model: opus
+- depends: —
+- skills: xlsx, engineering:testing-strategy
+- do: ADR-013 §1, §4. `engine/style.py` v2 (tokens, title block with "◂ Contents" link, bands, headers, totals,
+  key totals, tab colours, print setup, input / view-switch / active fills, presentation link colour). Restyle every
+  engine sheet (Inputs, grid sheets, statements, Break-even, Valuation, Checks, Returns). Sheet set by tier:
+  Light = Cover, Dashboard, Inputs, P&L, Break-even, Checks; Full = Cover, Dashboard, [Summary, Scenarios,
+  Sources & Uses, KPIs placeholders until E28–E31], Break-even, Valuation, [industry], Inputs, statements, grid,
+  Headcount, Checks — goal modules switched by tier (`breakeven` both, `dcf` Full), investor Summary retired,
+  goal → Cover purpose line. Selector Dashboard!B4 in both tiers (temporary minimal Dashboard until E27). Cover
+  with contents (HYPERLINK), legend, checks verdict with PASS/WARN/FAIL colours. Brief defaults: the goal drivers
+  (cash buffer, WACC, growth, multiple…) are always present for the sheets of the tier — check apply_goal,
+  prefill, the LLM merge (E24) and fixtures. Update samples / golden only as far as tests need; full rebuild is E33.
+- done when: every template × tier × horizon 1/3/5 × monthly/annual builds, recalc 0 errors, challenger PASS;
+  tests for the sheet set per tier, the selector location, the Cover links, the style tokens (fonts, fills, tab
+  colours) and that no navy (`1F3864`, `2F5597`) is left in any workbook.
+
+### E27 — Dashboard v2 and the chart kit
+- status: TODO
+- Model: sonnet
+- depends: E26
+- skills: xlsx, dataviz
+- do: ADR-013 §2–§3. `engine/charts.py`: bar / line / combo with secondary axis / doughnut / horizontal bar, the
+  standard size and grid placement, text sizes, colours, data-label flags, labels at the bottom. Dashboard on the
+  68 px grid: row 4 selector + checks, 6 tiles, Core financials (rolled up from grid lines — works in Light
+  without CF / BS sheets), industry metrics (new template hook, e.g. `dashboard_metrics` + `dashboard_chart`;
+  defaults for all 7 templates), Funding & valuation, 4 charts.
+- done when: Dashboard matches the reference for SaaS Full; Light and annual variants render; a test opens the
+  recalculated file and finds 4 charts with live references; all templates PASS.
+
+### E28 — Summary sheet (statements, selected year by month)
+- status: TODO
+- Model: sonnet
+- depends: E27
+- skills: xlsx
+- do: ADR-013 §1, §3. Full only. IS / CF / BS: 5 years left (links to statements), selected year by month right
+  (INDEX into the grid with the "Select detailed year" switch), blocks padded to the chart height, one chart right
+  of each monthly block. Annual granularity: years only, charts by year. Error range added to Checks.
+- done when: Summary ties to the statements (new check: revenue, net income, closing cash for every year) in all
+  templates; charts present after recalc.
+
+### E29 — Scenarios sheet, live Low / Base / High
+- status: TODO
+- Model: opus
+- depends: E26
+- skills: xlsx, engineering:testing-strategy
+- do: ADR-013 §1. Full only. Parallel calculation chains for scenarios 1/2/3 that read the inputs' B / C / D
+  columns directly (e.g. one "Scenario calc" grid sheet with three stacked copies of the annual-relevant lines,
+  generated from the same Line formulas with a scenario-specific `{in:…}` resolver). Scenarios sheet: key drivers
+  table (template hook), outputs Low / Base / High / Active, per-year tables (revenue, EBITDA, net income, cash),
+  4 charts 2×2. Challenger: recompute every Low / Base / High cell with the Python reference for that scenario,
+  independent of the selector.
+- done when: changing an input on Inputs updates all three columns after recalc; the Active column equals the
+  matching scenario column for each selector value; challenger covers it; all templates PASS; build time per
+  model measured and noted in the RUNLOG (worker budget).
+
+### E30 — Sources & Uses sheet
+- status: TODO
+- Model: opus
+- depends: E27
+- skills: xlsx
+- do: ADR-013 §1. Full only. Funding structure (equity, loan, total, shares, gearing, funding required, surplus)
+  + doughnut; sources and uses for the first N months (input, default 12): equity, loan drawdowns, cash generated by
+  operations / cash used by operations, capital spending, loan repayments, cash at the end of the period; shares;
+  uses bar chart; new check "Sources & uses balance". Challenger recomputes the table for N = 12.
+- done when: the check and the challenger pass in all templates (incl. real estate with a loan).
+
+### E31 — KPIs & ratios sheet
+- status: TODO
+- Model: sonnet
+- depends: E27
+- skills: xlsx
+- do: ADR-013 §1, §3. Full only. Financial ratios (growth, margins, payroll / marketing / opex % of revenue,
+  current ratio, debt ÷ equity, ROA, ROE), DuPont (net margin × asset turnover × equity multiplier = ROE), the
+  template's KPI table moved here from the Dashboard, a blank "Target" input column, 4 charts 2×2 (margins,
+  ROA / ROE + two template charts via a hook). Challenger recomputes the ratios and the DuPont identity.
+- done when: all templates PASS; DuPont product equals ROE every year (in-file check).
+
+### E32 — Break-even chart and Valuation layout
+- status: TODO
+- Model: sonnet
+- depends: E27
+- skills: xlsx
+- do: ADR-013 §1. Break-even: one large chart (revenue bars + break-even revenue line). Valuation: layout and
+  formats to the standard, assumptions stay links to Inputs, no chart.
+- done when: chart present after recalc in both tiers; all templates PASS.
+
+### E33 — Roll-out: samples, golden tests, site, copy
+- status: TODO
+- Model: sonnet
+- depends: E26, E27, E28, E29, E30, E31, E32
+- skills: xlsx, frontend-design (opt)
+- do: rebuild every sample (`scripts/build_samples.py`, `--seo`, goal review files), golden tests, the landing
+  preview (`app/xlview.py` + `web/static/landing.js`: new sheet set; charts shown as a labelled placeholder or a
+  static rendering — keep it faithful to the file), wizard / landing / SEO / email copy that describes sheets or
+  says the goal adds sheets, `docs/templates/*.md` (sheet list), HUMAN_TODO R1 line for the new sheets
+  (Scenarios, Sources & Uses, ratios) and refresh `Documents\StartupModel-review` guidance in the RUNLOG.
+- done when: CI green with the new samples; landing tests pass; no copy promises sheets a tier does not have.
 
 ### E23 — Eval: which model fills the brief
 - status: NEEDS_HENRY: live run needs `OPENAI_API_KEY` in the cloud environment (HUMAN_TODO A1); E25 (OpenAI) done. continue: harness merged (PR #40), on OpenAI since E25;

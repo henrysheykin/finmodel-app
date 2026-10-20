@@ -44,9 +44,9 @@ the answer next to the item (agents read this file every run).
       yet — the landing says "write to us". Keep them manual (you invoice by Stripe payment link / refund the
       difference) or add them to checkout (an E task)?
 
-- [ ] D12 Investor pitch on the Light plan (from E07): the "Investor-ready pitch model" goal adds Summary,
-      Break-even and Valuation sheets to any plan. Keep it available on Light ($149), or make that goal
-      require Full ($349) in the wizard (an E task)? Non-blocking; today it works on both.
+- [x] D12 Investor pitch on the Light plan — Henry 2026-10-20: settled by the workbook standard (ADR-013): sheets
+      follow the tier, not the goal. Light = Cover, Dashboard, Inputs, P&L, Break-even, Checks; Full adds Summary,
+      Scenarios, Valuation, Sources & Uses, KPIs and the statements. The goal sets the Cover's purpose line.
 
 ## Legal (from E13, blocks Stripe live activation)
 - [x] D13 EU 14-day withdrawal checkbox at checkout — Henry 2026-10-18: ignore, no checkbox. (Refund policy keeps

@@ -34,7 +34,7 @@ app = ["migrations/*.py", "migrations/*.mako", "migrations/versions/*.py", "temp
 [tool.ruff]
 line-length = 120
 target-version = "py312"
-extend-exclude = ["poc"]
+extend-exclude = ["poc", "scripts/prototypes"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP"]

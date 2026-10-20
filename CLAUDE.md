@@ -20,11 +20,12 @@ Never mention or link Henry's FinModelsLab.
 - Layout: `engine/` `app/` `worker/` `adapters/` `web/` `content/` `tests/` `docs/` `evals/` `.claude/agents/`.
 
 ## Excel rules (load the `xlsx` skill before touching workbooks)
-Arial; blue font = input, black = formula, green = cross-sheet link; yellow fill only on the scenario
-selector. Formats `$#,##0;($#,##0);-`, `0.0%;(0.0%);-`. Every assumption in its own labelled cell; same
-formula across every period; guard every denominator. Only Excel-2007 functions (INDEX, MATCH, SUMIF(S),
-SUMPRODUCT, IFERROR, CHOOSE, IRR, NPV) — never XLOOKUP, FILTER, SORT, UNIQUE, SEQUENCE, LET, LAMBDA. Zero
-formula errors after recalc.
+Sheet set, layout, charts and look: `docs/WORKBOOK_STANDARD.md` (ADR-013) — binding for every template and tier.
+Arial 9; input = yellow fill + blue font; formula = black; cross-sheet link = green (Inputs and calculation
+sheets; presentation sheets use ink). Formats `$#,##0;($#,##0);-` (presentation sheets `$#,##0,` in $'000),
+`0.0%;(0.0%);-`. Every assumption in its own labelled cell on Inputs; same formula across every period; guard
+every denominator. Only Excel-2007 functions (INDEX, MATCH, SUMIF(S), SUMPRODUCT, IFERROR, CHOOSE, IRR, NPV,
+HYPERLINK) — never XLOOKUP, FILTER, SORT, UNIQUE, SEQUENCE, LET, LAMBDA. Zero formula errors after recalc.
 
 ## Design rules
 - Design v2 is the source of truth for look, copy and section order: `design/landing.dc.html`,

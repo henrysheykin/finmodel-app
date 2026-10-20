@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-20 · E · interactive with Henry: workbook standard v1 (ADR-013) · PR_LINK
+  Henry's reference model analysed; two prototype rounds on a real SaaS engine workbook (16,964 engine cells equal in all 3
+  scenarios, 0 errors) → approved. docs/WORKBOOK_STANDARD.md + ADR-013 (sheets by tier, goal = Cover line, live Scenarios,
+  ink/pine look, yellow inputs), CLAUDE.md Excel rules, D12 closed, E26–E33 queued (priority note in BACKLOG).
+  Reference: design/workbook-standard-v1-prototype.xlsx + scripts/prototypes/standard_v1/. Review folder on Henry's PC: Documents\StartupModel-review.
 - 2026-10-19 · P · weekly PM review · STATUS.md rewritten
   E 24/25 done, M 12/12 closed (3 cancelled); no open PRs, CI on main green, startup-model.com /healthz 0.1.0.
   No stuck tasks (nothing IN_PROGRESS); only E23 open, NEEDS_HENRY (A1). E and M scheduled tasks are switched off since 2026-10-18.
