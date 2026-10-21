@@ -15,8 +15,8 @@ from __future__ import annotations
 
 from engine.brief import Brief
 from engine.core import HC, Top
-from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
-from engine.templates.base import Template
+from engine.spec import DashChart, DashMetric, DriverSpec, KpiChart, Line, StmtRow, Timing
+from engine.templates.base import Template, div
 
 # Illustrative defaults per wizard stage: (low, base, high). Not market data — the customer replaces
 # them with their own numbers; the assumption memo says so.
@@ -112,7 +112,17 @@ class RealEstateTemplate(Template):
     loan_style = "annuity"
     returns = True
     kpi_title = "Property metrics"
-    kpi_checked = {"gpr": "gpr", "vac": "vac", "rent_unit": "rent_now"}
+    kpi_checked = {
+        "gpr": "gpr",
+        "vac": "vac",
+        "rent_unit": "rent_now",
+        "rev": "rev",
+        "noi": "ebitda",
+        "loan_end": "loan_close",
+    }
+    kpi_unit_rows = ("noi_unit",)
+    kpi_derived = ("occ", "noi_m", "opex_ratio", "noi_unit", "yield", "ds", "dscr", "ltv")
+    marketing_key = None  # no marketing line: the ratio is left out
     kpi_flows = ("gpr", "vac", "capex_buy")
 
     def driver_specs(self) -> list[DriverSpec]:
@@ -249,7 +259,28 @@ class RealEstateTemplate(Template):
             ),
         ]
 
+    def kpi_charts(self, t: Timing) -> list[KpiChart]:
+        return [
+            KpiChart("NOI and NOI margin", bars=("noi",), lines=("noi_m",)),
+            KpiChart("Rent per unit and occupancy", bars=("rent_unit",), lines=("occ",)),
+        ]
+
     # ------------------------------------------------------------------ python twin
+    def kpi_reference(self, ann: dict, d: dict, t: Timing) -> dict:
+        out: dict[str, dict] = {k: {} for k in self.kpi_derived}
+        for y in range(1, t.years + 1):
+            gpr, vac, rev, noi = ann["gpr"][y], ann["vac"][y], ann["rev"][y], ann["ebitda"][y]
+            ds = -ann["debt_service"][y]
+            out["occ"][y] = div(gpr + vac, gpr)
+            out["noi_m"][y] = div(noi, rev)
+            out["opex_ratio"][y] = 0.0 if rev == 0 else 1 - noi / rev
+            out["noi_unit"][y] = div(noi, d["units"])
+            out["yield"][y] = div(noi, d["price"])
+            out["ds"][y] = ds
+            out["dscr"][y] = noi / ds if ds > 0.5 else "n/a"
+            out["ltv"][y] = div(ann["loan_close"][y], d["price"])
+        return out
+
     def reference_top(self, d: dict, p: int, y: int, t: Timing, hc: HC) -> Top:
         rg = (1 + d["rent_g"]) ** (y - 1)
         cg = (1 + d["cost_g"]) ** (y - 1)

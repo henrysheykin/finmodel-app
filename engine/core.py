@@ -414,6 +414,7 @@ def reference_run(
         }
         row.update(tp.liabilities)
         row.update(tp.kpis)
+        row.update({f"opex_{k}": v for k, v in tp.opex.items()})  # cost lines (negative flows): ratios, KPI twins
         for k, v in row.items():
             s.setdefault(k, []).append(v)
     return s
@@ -449,5 +450,5 @@ def annualise(series: dict[str, list[float]], t: Timing, extra_flows=()) -> dict
         out[k] = {}
         for y in range(1, t.years + 1):
             chunk = vals[(y - 1) * t.ppy : y * t.ppy]
-            out[k][y] = sum(chunk) if k in flows else chunk[-1]
+            out[k][y] = sum(chunk) if k in flows or k.startswith("opex_") else chunk[-1]
     return out

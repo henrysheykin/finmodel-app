@@ -16,11 +16,17 @@ from engine.spec import (
     DashChart,
     DashMetric,
     DriverSpec,
+    KpiChart,
     Line,
     Timing,
     role_driver_specs,
     validate_against,
 )
+
+
+def div(a: float, b: float) -> float:
+    """``IF(b=0,0,a/b)`` — the guard every ratio row of a KPI table uses."""
+    return a / b if b else 0.0
 
 
 class Template(ABC):
@@ -80,6 +86,28 @@ class Template(ABC):
     def dashboard_chart(self, t: Timing) -> DashChart | None:
         """The industry chart of the Dashboard, built from the metric keys above; None = gross profit & margin."""
         return None
+
+    def kpi_charts(self, t: Timing) -> list[KpiChart]:
+        """The two industry charts of the KPIs sheet (bottom row of the 2x2); default = ratio charts."""
+        return [
+            KpiChart("Costs, % of revenue", bars=("r:payroll_pct", "r:mkt_pct", "r:opex_pct")),
+            KpiChart("Liquidity and leverage", bars=("r:current", "r:debt_eq")),
+        ]
+
+    def kpi_reference(self, ann: dict, d: dict, t: Timing) -> dict:
+        """Plain-Python twin of the KPI table's formula rows listed in ``kpi_derived``: row key -> {year: value}.
+
+        ``ann`` = the annualised reference series (flows summed, balances at year end; cost lines as ``opex_<key>``).
+        A text result (``"n/a"``) must match the workbook exactly.
+        """
+        return {}
+
+    #: opex line (workbook key = reference ``opex`` key) that holds marketing / ads; None = the ratio is left out
+    marketing_key: str | None = "mkt"
+    #: KPI-table "usd" rows that are per-unit amounts (would round to 0 in $'000): shown in $ and labelled "($)"
+    kpi_unit_rows: tuple[str, ...] = ()
+    #: KPI-table rows computed by ``kpi_reference`` (their cells go to the challenger beside ``kpi_checked``)
+    kpi_derived: tuple[str, ...] = ()
 
     #: loan repayment: "straight" (equal principal) or "annuity" (level mortgage payment) — engine/core.py
     loan_style: str = "straight"

@@ -17,7 +17,6 @@ and the plain-Python twin the challenger compares against. Sheets are written by
 from __future__ import annotations
 
 from collections.abc import Collection
-from decimal import ROUND_HALF_UP, Decimal
 
 from engine.brief import Brief, BriefError
 from engine.spec import DriverSpec, Line, Timing
@@ -351,11 +350,6 @@ def reference(brief: Brief, d: dict, s: dict[str, list[float]], t: Timing) -> di
 
 
 # --------------------------------------------------------------------------- Dashboard twin
-def _m1(x: float) -> str:
-    """Millions with one decimal, half rounded up: what the sheet's TEXT(x/1000000,"0.0") shows."""
-    return str(Decimal(repr(abs(x) / 1_000_000)).quantize(Decimal("0.1"), ROUND_HALF_UP))
-
-
 def dashboard_reference(brief: Brief, d: dict, s: dict[str, list[float]], t: Timing, goal: dict) -> dict:
     """Plain-Python values of every Dashboard tile, Funding & valuation cell and Core financials line.
 
@@ -398,7 +392,7 @@ def dashboard_reference(brief: Brief, d: dict, s: dict[str, list[float]], t: Tim
         "dash_t4": goal["min_cash"],
         "dash_t4_sub": goal["low_p"],
         "dash_t5": goal["required"],
-        "dash_t5_sub": "Covered by funding raised" if gap >= 0 else f"Shortfall ${_m1(gap)}M",
+        "dash_t5_sub": "Covered by funding raised" if gap >= 0 else -gap,
         "dash_fv_equity": d["equity"],
         "dash_fv_loan": d["loan_amount"],
         "dash_fv_required": goal["required"],
