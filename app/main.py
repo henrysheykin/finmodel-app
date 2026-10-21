@@ -153,8 +153,8 @@ def create_app(services: Services | None = None) -> FastAPI:
     app.mount("/static", StaticFiles(directory=str(STATIC)), name="static")
     from app.account_web import router as account_router
     from app.admin import router as admin_router
-    from app.calculators import router as calculators_router
     from app.bizmodel import router as bizmodel_router
+    from app.calculators import router as calculators_router
     from app.landing import router as landing_router
     from app.seo import router as seo_router
     from app.web import router as web_router

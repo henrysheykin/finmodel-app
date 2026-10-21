@@ -386,27 +386,19 @@ def test_titles_and_canonicals_differ_from_the_model_pages(client):
     assert len(set(all_titles)) == len(all_titles)
 
 
-def test_calculator_links_appear_when_the_folder_has_matching_pages(client, tmp_path, monkeypatch):
-    assert bizmodel.calculators_for("cafe") == [] or (ROOT / "content" / "calculators").is_dir()
-    monkeypatch.setattr(bizmodel, "CALCULATORS", tmp_path / "missing")
-    assert bizmodel.calculators_for("cafe") == []  # absent folder is fine
-    calc = tmp_path / "calcs"
-    calc.mkdir()
-    (calc / "menu-price.md").write_text(
-        "---\nslug: /calculators/cafe-menu-price\ntitle: Menu price | StartupModel\ntemplate: cafe\n---\n"
-        "# Cafe menu price calculator\n",
-        encoding="utf-8",
-    )
-    (calc / "other.md").write_text(
-        "---\nslug: /calculators/saas-x\ntitle: X | StartupModel\ntemplate: saas\n---\n# SaaS X\n", encoding="utf-8"
-    )
-    (calc / "broken.md").write_text("no front matter", encoding="utf-8")
-    monkeypatch.setattr(bizmodel, "CALCULATORS", calc)
-    assert bizmodel.calculators_for("cafe") == [
-        {"slug": "/calculators/cafe-menu-price", "title": "Cafe menu price calculator"}
-    ]
+def test_calculator_links_come_from_content_calculators(client, monkeypatch):
+    from app import calculators
+
+    real = [c for c in calculators.calculators().values() if c.template == "cafe"]
+    assert real, "content/calculators has cafe calculators"
     html = client.get("/business-models/cafe").text
-    assert 'href="/calculators/cafe-menu-price"' in html and "saas-x" not in html
+    for c in real:
+        assert f'href="{c.slug}"' in html and c.h1 in html
+    assert not any(c.template == "saas" and f'href="{c.slug}"' in html for c in calculators.calculators().values())
+    assert bizmodel.calculators_for("cafe") == [{"slug": c.slug, "title": c.h1} for c in real]
+    monkeypatch.setattr(calculators, "calculators", lambda: {})  # no calculators at all is fine
+    assert bizmodel.calculators_for("cafe") == []
+    assert "<h3>Calculators</h3>" not in client.get("/business-models/cafe").text
 
 
 def test_sample_spec_is_the_5y_full_monthly_file():

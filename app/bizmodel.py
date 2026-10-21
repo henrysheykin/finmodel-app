@@ -34,7 +34,7 @@ from fastapi.responses import HTMLResponse
 from markupsafe import Markup
 from openpyxl.utils import get_column_letter as L
 
-from app import seo
+from app import calculators, seo
 from app.web import templates
 from engine.brief import Brief
 from engine.builder import Plan, manifest_for, plan, q
@@ -48,7 +48,6 @@ from engine.templates import TEMPLATES
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTENT = ROOT / "content" / "business-models"
-CALCULATORS = ROOT / "content" / "calculators"
 
 SECTION = "business-models"
 SECTION_TITLE = "Business models"
@@ -1008,22 +1007,8 @@ def sitemap_paths() -> list[str]:
 
 
 def calculators_for(template: str) -> list[dict]:
-    """Calculator pages (content/calculators/*.md with ``template: <key>``); [] while that folder is absent."""
-    if not CALCULATORS.is_dir():
-        return []
-    out = []
-    for path in sorted(CALCULATORS.glob("*.md")):
-        try:
-            meta, body = seo.parse_front_matter(path.read_text(encoding="utf-8"))
-        except (ValueError, OSError):
-            continue
-        if seo.page_template(meta) != template or not str(meta.get("slug", "")).startswith("/calculators/"):
-            continue
-        h1 = next((ln[2:].strip() for ln in body.splitlines() if ln.startswith("# ")), "")
-        title = h1 or re.sub(r"\s*\|\s*StartupModel\s*$", "", meta.get("title", ""))
-        if title:
-            out.append({"slug": meta["slug"], "title": title})
-    return out
+    """Calculator pages of the template (``content/calculators``, loaded by ``app.calculators``); [] if none."""
+    return [{"slug": c.slug, "title": c.h1} for c in calculators.calculators().values() if c.template == template]
 
 
 def seo_pages_for(template: str) -> list[seo.SeoPage]:
