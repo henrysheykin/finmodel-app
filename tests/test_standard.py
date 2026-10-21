@@ -19,6 +19,7 @@ FULL = [
     "Cover",
     "Dashboard",
     "Summary",
+    "Scenarios",
     "Break-even",
     "Valuation",
     "Sources & Uses",
@@ -29,6 +30,7 @@ FULL = [
     "Balance Sheet",
     "Monthly",
     "Headcount",
+    "Scenario calc",
     "Checks",
 ]
 

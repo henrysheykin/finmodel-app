@@ -22,12 +22,13 @@ change sheets and formatting, not a single calculated figure.
 | 9 | Inputs | The single source of assumptions: sections, Low/Base/High, Active, Unit, Source/comment | ✓ | ✓ |
 | 10–12 | P&L, Cash Flow, Balance Sheet | Annual statements (Light: P&L with the annual summary and the period detail, as today) | P&L | ✓ |
 | 13–14 | Monthly (or Annual), Headcount | Calculation engine (template-specific) | | ✓ |
-| 15 | Checks | Live integrity checks; overall verdict shown on Cover and Dashboard | ✓ | ✓ |
+| 15 | Scenario calc | The period calculation copied three times (Low / Base / High), each copy reading its own Inputs column (B / C / D); feeds Scenarios only (E29) | | ✓ |
+| 16 | Checks | Live integrity checks; overall verdict shown on Cover and Dashboard | ✓ | ✓ |
 
 Sheet order, copied verbatim by the engine and every task:
 - **Light:** Cover, Dashboard, Break-even, [industry sheets], Inputs, P&L, Checks.
 - **Full:** Cover, Dashboard, Summary, Scenarios, Break-even, Valuation, Sources & Uses, KPIs, [industry sheets],
-  Inputs, P&L, Cash Flow, Balance Sheet, Monthly (or Annual), Headcount, Checks.
+  Inputs, P&L, Cash Flow, Balance Sheet, Monthly (or Annual), Headcount, Scenario calc, Checks.
 
 "5 years" in this document means every year of the model's horizon (1, 3 or 5).
 

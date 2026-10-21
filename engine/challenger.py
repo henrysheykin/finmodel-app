@@ -35,6 +35,8 @@ from engine.goals import reference as goal_reference
 from engine.recalc import RecalcError, recalc
 from engine.returns import TOLERANCE as RETURNS_TOLERANCE
 from engine.returns import reference as returns_reference
+from engine.scenarios import TOLERANCE as SCEN_TOLERANCE
+from engine.scenarios import reference as scenarios_reference
 from engine.spec import Timing
 from engine.templates import get_template
 
@@ -144,6 +146,8 @@ def challenge(brief: Brief | dict, model_path: str | Path) -> dict:
         "problems": [],
     }
     revenue: dict[int, list] = {}
+    # Scenarios (E29): every Low / Base / High column against its own scenario, whatever the selector says
+    scen_ref = {s: scenarios_reference(brief, s) for s in (1, 2, 3)} if man.scen_cells else {}
     with tempfile.TemporaryDirectory() as tmp:
         for scen in (1, 2, 3):
             res, wb = _run_scenario(Path(model_path), scen, man.selector, Path(tmp))
@@ -184,6 +188,21 @@ def challenge(brief: Brief | dict, model_path: str | Path) -> dict:
                             f"scenario {scen} year {y} {name}: workbook {v!r} vs python {exp:,.2f}"
                         )
                 out["years"][y] = got
+            for name, ref in man.scen_cells.items():
+                base, tag = name.rsplit("_", 1)
+                exp = scen_ref[scen if tag == "a" else int(tag)]["cells"][base]
+                got = val(ref)
+                if not _same(got, exp, SCEN_TOLERANCE.get(base, TOLERANCE_USD)):
+                    report["problems"].append(f"scenario {scen} scenarios {name}: workbook {got!r} vs python {exp!r}")
+            for name, cells in man.scen_years.items():
+                metric, tag = name.rsplit("_", 1)
+                for y, ref in cells.items():
+                    exp = scen_ref[int(tag)]["years"][metric][y]
+                    got = val(ref)
+                    if not _same(got, exp, TOLERANCE_USD):
+                        report["problems"].append(
+                            f"scenario {scen} scenarios {name} year {y}: workbook {got!r} vs python {exp!r}"
+                        )
             if man.goal_cells or man.goal_years or man.dash_cells or man.dash_years or man.kpi_years:
                 gexp = python_goal_model(brief, scen)
                 checked = [(n, ref, gexp["cells"][n]) for n, ref in {**man.goal_cells, **man.dash_cells}.items()]
