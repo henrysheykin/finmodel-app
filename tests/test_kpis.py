@@ -232,6 +232,7 @@ EXPECTED_ROWS = {  # E27 review: every KPI row shown on the Dashboard industry b
     "fitness": {"cap_use", "mrr", "members_end"},
     "retail": {"store_sales", "online_sales", "orders", "stores_end"},
     "cafe": {"cust", "ticket"},
+    "bakery": {"rev_retail", "rev_ws", "cust_day", "accounts_end"},
 }
 
 

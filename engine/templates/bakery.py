@@ -13,8 +13,8 @@ from __future__ import annotations
 
 from engine.brief import Brief
 from engine.core import HC, Top
-from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
-from engine.templates.base import Template
+from engine.spec import DashChart, DashMetric, DriverSpec, KpiChart, Line, StmtRow, Timing
+from engine.templates.base import Template, div
 
 ROLES = [
     ("baker", "Bakers & production"),
@@ -165,12 +165,17 @@ class BakeryTemplate(Template):
     kpi_checked = {
         "days": "days",
         "tx": "tx",
+        "accounts_end": "accounts",
+        "rev": "rev",
         "rev_retail": "rev_retail",
         "rev_ws": "rev_ws",
-        "accounts_end": "accounts",
         "waste_k": "waste",
         "deliv_k": "deliv",
+        "gp": "gp",
+        "ebitda": "ebitda",
     }
+    kpi_derived = ("cust_day", "ticket", "ws_share", "rev_day", "waste_share", "gm", "cogs_k", "pay_k", "prime", "em")
+    kpi_unit_rows = ("rev_day",)
     kpi_flows = ("days", "tx", "rev_retail", "rev_ws", "waste", "deliv")
 
     def driver_specs(self) -> list[DriverSpec]:
@@ -366,6 +371,29 @@ class BakeryTemplate(Template):
             StmtRow("ebitda", "EBITDA", "line", "ebitda"),
             StmtRow("em", "EBITDA margin", "formula", "=IF({rev}=0,0,{ebitda}/{rev})", "pct"),
         ]
+
+    def kpi_charts(self, t: Timing) -> list[KpiChart]:
+        return [
+            KpiChart("Retail transactions and average ticket", bars=("tx",), lines=("ticket",)),
+            KpiChart("Waste and delivery cost, with prime cost %", bars=("waste_k", "deliv_k"), lines=("prime",)),
+        ]
+
+    def kpi_reference(self, ann: dict, d: dict, t: Timing) -> dict:
+        out: dict[str, dict] = {k: {} for k in self.kpi_derived}
+        for y in range(1, t.years + 1):
+            rev, rev_retail = ann["rev"][y], ann["rev_retail"][y]
+            cogs, payroll = -ann["cogs"][y], -ann["opex_payroll"][y]
+            out["cust_day"][y] = div(ann["tx"][y], ann["days"][y])
+            out["ticket"][y] = div(rev_retail, ann["tx"][y])
+            out["ws_share"][y] = div(ann["rev_ws"][y], rev)
+            out["rev_day"][y] = div(rev_retail, ann["days"][y])
+            out["waste_share"][y] = div(ann["waste"][y], rev_retail)
+            out["gm"][y] = div(ann["gp"][y], rev)
+            out["cogs_k"][y] = cogs
+            out["pay_k"][y] = payroll
+            out["prime"][y] = div(cogs + payroll, rev)
+            out["em"][y] = div(ann["ebitda"][y], rev)
+        return out
 
     # ------------------------------------------------------------------ python twin
     def reference_top(self, d: dict, p: int, y: int, t: Timing, hc: HC) -> Top:
