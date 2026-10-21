@@ -30,39 +30,9 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - skills: xlsx
 - do: ADR-013 §1. Break-even: one large chart (revenue bars + break-even revenue line). Valuation: layout and
   formats to the standard, assumptions stay links to Inputs, no chart.
+- note (E35, 2026-10-21): Break-even changes alter the committed `<key>-full-5y.xlsx` samples — rebuild them
+  (`python scripts/build_samples.py`), or tests/test_bizmodel.py fails by design.
 - done when: chart present after recalc in both tiers; all templates PASS.
-
-### E35 — Business-model pages engine (ADR-014)
-- status: IN_PROGRESS (2026-10-21) — implementer agent of the dispatcher session
-- Model: sonnet
-- depends: —
-- skills: dataviz, frontend-design
-- do: section `/business-models/` and `/business-models/<slug>`: Markdown in `content/business-models/<key>.md`
-  (front matter as SEO pages + `template`) with table placeholders `{{table:<name>}}`, chart placeholders
-  `{{chart:<name>}}` and inline figures `{{num:<table>.<cell>}}` — every model figure in the prose uses `num`, so a
-  sample rebuild never leaves a stale number. Tables computed by `app/bizmodel.py` from the template's sample brief (Base scenario,
-  stage = `sample_stage`, Full, monthly, 5 years — exactly the sample `<key>-full-5y.xlsx`, which this task adds
-  to the built and committed samples for every template; the page offers that file and the test compares against it) through the engine's plain-Python reference (`reference_run`,
-  `annualise`, `engine/goals.py` break-even / funding): `drivers` (key numbers Low / Base / High with units),
-  `startup` (capital spending lines by item, then the Break-even funding lines exactly as the workbook labels
-  them: capital spending up to the lowest cash point, operating cash burn, loan repayments, cash buffer, funding
-  required, sources, surplus / shortfall),
-  `pnl` (revenue, cost of sales, gross margin, operating expenses by line, EBITDA, net income — 5 years),
-  `costs` (year-1 and year-5 cost structure as % of revenue), `unit` (the template's KPI rows, annual),
-  `breakeven` (first EBITDA-positive month, lowest cash month, funding required, payback). Charts as inline SVG
-  (revenue vs costs by year; cost structure bars) from the same data. Cached per template; a test rebuilds the
-  sample workbook, recalculates it and checks every table cell against the workbook (within $1). Page: H1, intro,
-  the tables with a caption "Illustrative Base case of the sample model — your model uses your numbers", the
-  sample download, CTA to the wizard, links to the industry's calculators (by `template`) and SEO page. Index page
-  with one card per template; sitemap + llms.txt; JSON-LD Article + breadcrumbs. Copy test for `content/business-models/`: no unknown placeholders, no
-  `[UPPER]` placeholders except prices, every `$` or `%` figure outside a placeholder sits in a sentence with an
-  external link, 900–1,500 words. Update `docs/templates/ADDING_A_TEMPLATE.md` §4 (business-model and calculator
-  pages may go live before the CFO sign-off, ADR-014). `/business-models/<key>` explains the business; the
-  `/models/…` SEO pages sell the model — cross-link them, distinct titles and canonicals. Ship one reference page
-  (`cafe`) with real copy.
-- review focus: every page figure equals the committed 5-year sample (no tolerance looser than $1).
-- done when: the cafe page renders with all six tables and both charts; the table-vs-workbook test passes for
-  every registered template; all tests green.
 
 ### E36–E45 — Ten local-business templates (ADR-014)
 One task per template, each one file + tests + sample + memo per `docs/templates/ADDING_A_TEMPLATE.md`
@@ -77,7 +47,7 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 | E37 | `salon` | Hair salon / barbershop | chairs × utilisation × services per hour × price, retail product attach, commission vs chair rent | IN_PROGRESS (2026-10-21) |
 | E38 | `dental` | Dental practice | operatories × patient visits × fee per visit, hygiene recall, insurance mix / collection rate | IN_PROGRESS (2026-10-21) |
 | E39 | `car_wash` | Car wash (express + memberships) | cars per day × price, unlimited-plan members × fee, chemicals & utilities per car | IN_PROGRESS (2026-10-21) |
-| E40 | `laundromat` | Laundromat (self-service + wash & fold) | machines × turns per day × price, wash & fold lbs × price, utilities per cycle | TODO |
+| E40 | `laundromat` | Laundromat (self-service + wash & fold) | machines × turns per day × price, wash & fold lbs × price, utilities per cycle | IN_PROGRESS (2026-10-21) |
 | E41 | `childcare` | Childcare / daycare centre | licensed capacity × enrollment % × tuition, staff-to-child ratio payroll | TODO |
 | E42 | `food_truck` | Food truck | service days × meals per day × ticket, events / catering, food cost %, permits | TODO |
 | E43 | `auto_repair` | Auto repair shop | bays × billed hours × labor rate, parts revenue × margin, technician productivity | TODO |

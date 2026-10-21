@@ -266,6 +266,8 @@ def _seo_page(request: Request, section: str, name: str) -> HTMLResponse:
     cfg = request.app.state.services.cfg
     base = cfg.public_base_url
     sample = page.sample if page.sample and sample_path(page.sample).is_file() else None
+    from app import bizmodel  # late: bizmodel builds on this module
+
     return templates.TemplateResponse(
         request,
         "seo_page.html",
@@ -281,6 +283,7 @@ def _seo_page(request: Request, section: str, name: str) -> HTMLResponse:
             "template_title": TEMPLATES[page.template].title if page.template else "",
             "sample": sample,
             "related": related(page),
+            "business_model": bizmodel.page_for(page.template) if page.template else None,
             "ld_json": [_json_script(x) for x in structured_data(page, base, cfg.prices)],
         },
     )

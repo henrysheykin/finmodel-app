@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-21 · E · E35 Business-model pages engine (ADR-014) · DONE · https://github.com/henrysheykin/finmodel-app/pull/55
+  /business-models/ from content/business-models/*.md ({{table}}, {{chart}}, {{num}}): six tables + two SVG charts from the
+  sample brief via the reference, every cell checked against the rebuilt and the committed <key>-full-5y.xlsx (all templates);
+  cafe page; copy rule (cited figures, 900–1,500 words). Reviewer opus PASS + 6 lows fixed. For Henry: glance at the SBA link.
 - 2026-10-21 · E · E34 Calculator engine (ADR-014) · DONE · https://github.com/henrysheykin/finmodel-app/pull/53
   /calculators section: spec files in content/calculators/, hand-written JS + Python evaluators (no eval), Node parity test
   in CI, model promotion block (tier features per ADR-013, configured prices), three cafe calculators. Implementer sonnet,

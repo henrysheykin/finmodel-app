@@ -90,6 +90,8 @@ webhook, Resend domain).
             `samples/real_estate-full.xlsx`, memo `docs/templates/real_estate.md` (questions at the end).
       - [ ] Goal modules (break-even, DCF valuation, investor summary — all templates): sample
             `samples/cafe-investor_pitch.xlsx`, memo `docs/templates/goal-modules.md` (questions at the end).
+- [ ] E35: open https://www.sba.gov/business-guide/plan-your-business/calculate-your-startup-costs once and confirm it is the
+      SBA start-up cost guide (the only external link on the cafe business-model page; the agents could not fetch it).
 - [x] R2 Lawyer review of legal drafts — n/a: Henry cancelled M08 (2026-10-17); legal texts are his to provide.
 
 ## Go-live (v0.1.0, E18 — step by step with checks: `docs/RUNBOOK_GO_LIVE.md`)
