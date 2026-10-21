@@ -46,8 +46,8 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 | E36 | `bakery` | Bakery (retail counter + wholesale) | daily customers × ticket, wholesale accounts × order, production waste % | IN_PROGRESS (2026-10-21) |
 | E38 | `dental` | Dental practice | operatories × patient visits × fee per visit, hygiene recall, insurance mix / collection rate | IN_PROGRESS (2026-10-21) |
 | E40 | `laundromat` | Laundromat (self-service + wash & fold) | machines × turns per day × price, wash & fold lbs × price, utilities per cycle | IN_PROGRESS (2026-10-21) |
-| E41 | `childcare` | Childcare / daycare centre | licensed capacity × enrollment % × tuition, staff-to-child ratio payroll | TODO |
-| E42 | `food_truck` | Food truck | service days × meals per day × ticket, events / catering, food cost %, permits | TODO |
+| E41 | `childcare` | Childcare / daycare centre | licensed capacity × enrollment % × tuition, staff-to-child ratio payroll | IN_PROGRESS (2026-10-21) |
+| E42 | `food_truck` | Food truck | service days × meals per day × ticket, events / catering, food cost %, permits | IN_PROGRESS (2026-10-21) |
 | E43 | `auto_repair` | Auto repair shop | bays × billed hours × labor rate, parts revenue × margin, technician productivity | TODO |
 | E44 | `pet_care` | Pet grooming & boarding | grooms per day × price, kennel runs × occupancy × nightly rate | TODO |
 | E45 | `guest_house` | Guest house / B&B | rooms × occupancy × ADR, breakfast / extras, cleaning per stay, property loan (annuity) | TODO |
