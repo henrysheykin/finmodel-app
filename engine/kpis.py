@@ -22,8 +22,8 @@ from openpyxl.utils import get_column_letter as L
 from engine import charts as ch
 from engine import style as st
 from engine.builder import Plan, _rollup
-from engine.dashboard import FMT, YEAR_FMT
-from engine.spec import KpiChart
+from engine.dashboard import FMT, MONEY_K, YEAR_FMT
+from engine.spec import FORMATS, KpiChart, StmtRow
 
 SHEET = "KPIs"
 BAND = 4  # "Financial ratios" band; the year header is the next row
@@ -42,7 +42,7 @@ AXIS = {
     "pct": "0%",
     "x": '0.0"x"',
 }
-CELL_FMT = {**FMT}  # ratios use the report formats; the KPI table keeps the engine's own (full dollars)
+CELL_FMT = {**FMT}  # ratios use the report formats
 
 #: financial ratios: (key, label, format); the marketing row is dropped for a template without one
 RATIOS = (
@@ -66,6 +66,22 @@ DUPONT = (
     ("dp_diff", "Check: product − return on equity (must be 0)", "pct"),
 )
 DUPONT_TITLE = "DuPont analysis — return on equity = net margin × asset turnover × equity multiplier"
+
+
+def is_unit_row(tpl, row: StmtRow) -> bool:
+    """A per-unit amount ($ per customer, per hour, per job): it would round to 0 in $'000."""
+    return row.fmt == "usd2" or (row.fmt == "usd" and row.key in tpl.kpi_unit_rows)
+
+
+def row_format(tpl, row: StmtRow) -> str:
+    """KPI-table number format on this report sheet: $'000 for money, whole or cent dollars for per-unit rows."""
+    if row.fmt == "usd":
+        return FORMATS["usd"] if is_unit_row(tpl, row) else MONEY_K
+    return FORMATS[row.fmt]
+
+
+def row_label(tpl, row: StmtRow) -> str:
+    return f"{row.label} ($)" if is_unit_row(tpl, row) else row.label
 
 
 def ratio_keys(tpl) -> list[str]:
@@ -140,11 +156,16 @@ def plan_kpis(pl: Plan) -> KpiLayout | None:
 
 
 # --------------------------------------------------------------------------- in-file check
-def dupont_condition(pl: Plan) -> str:
-    """Every year where the DuPont product and the ratio are both numbers: they agree (n/a years are skipped)."""
+def dupont_result(pl: Plan) -> str:
+    """Checks cell: FAIL if any year differs or only one side is n/a without cause (the diff row holds 1);
+    "n/a" when no year has both defined (nothing was compared); PASS otherwise."""
     lay: KpiLayout = pl.kpis
-    r = lay.dupont["dp_diff"]
-    return f"SUMPRODUCT(--(ABS({SHEET}!$B${r}:${lay.last_col}${r})>{TOL}))=0"
+    last = lay.last_col
+    diff = f"{SHEET}!$B${lay.dupont['dp_diff']}:${last}${lay.dupont['dp_diff']}"
+    dp = f"{SHEET}!$B${lay.dupont['dp_roe']}:${last}${lay.dupont['dp_roe']}"
+    roe = f"{SHEET}!$B${lay.ratios['roe']}:${last}${lay.ratios['roe']}"
+    compared = f"SUMPRODUCT(ISNUMBER({dp})*ISNUMBER({roe}))"
+    return f'=IF(SUMPRODUCT(--(ABS({diff})>{TOL}))>0,"FAIL",IF({compared}=0,"n/a","PASS"))'
 
 
 # --------------------------------------------------------------------------- writing
@@ -189,15 +210,15 @@ def _formulas(pl: Plan, lay: KpiLayout, y: int) -> dict[str, str]:
         out["payroll_pct"] = f'=IF({rev}<=0,"{NA}",0)'
     if pl.template.marketing_key:
         out["mkt_pct"] = over(f"-{c('pl', pl.template.marketing_key)}", rev)
-    if y == 1:
-        out["growth"] = NA  # no year before the first
-    else:
-        prev = pl.stmt_cell("pl", "rev", y - 1, from_sheet=SHEET)
-        out["growth"] = f'=IF({prev}<=0,"{NA}",{rev}/{prev}-1)'
+    prev = pl.stmt_cell("pl", "rev", y - 1, from_sheet=SHEET)  # year 1 reads the label column: N() = 0 -> n/a
+    out["growth"] = f'=IF(N({prev})<=0,"{NA}",{rev}/{prev}-1)'
     nm, turn, mult = (f"{col}{lay.dupont[k]}" for k in ("dp_nm", "dp_turn", "dp_mult"))
     out["dp_roe"] = f'=IF(AND(ISNUMBER({nm}),ISNUMBER({turn}),ISNUMBER({mult})),{nm}*{turn}*{mult},"{NA}")'
     dp, roe = f"{col}{lay.dupont['dp_roe']}", f"{col}{lay.ratios['roe']}"
-    out["dp_diff"] = f"=IF(AND(ISNUMBER({dp}),ISNUMBER({roe})),{dp}-{roe},0)"
+    nm_turn = f"ISNUMBER({nm}),ISNUMBER({turn})"
+    out["dp_diff"] = (
+        f"=IF(AND(ISNUMBER({dp}),ISNUMBER({roe})),{dp}-{roe},IF(ISNUMBER({dp}),1,IF(AND(ISNUMBER({roe}),{nm_turn}),1,0)))"
+    )
     return out
 
 
@@ -276,10 +297,17 @@ def write_kpis(wb, pl: Plan) -> None:
     # ---- the template's KPI table (written by the builder as the plan's "kpi" block): add Target and a full band
     if "kpi" in pl.blocks:
         b = pl.blocks["kpi"]
-        st.section(ws, b.start_row - 1, pl.template.kpi_title, tc)
+        st.section(ws, b.start_row - 1, f"{pl.template.kpi_title} ($'000; per-unit rows in $)", tc)
         st.header(ws.cell(row=b.year_row + 1, column=tc, value="Target"), right=True)
         for row in b.rows:
-            _target(ws, b.placed[row.key], tc, CELL_FMT.get(row.fmt) or "General")
+            r = b.placed[row.key]
+            fmt = row_format(pl.template, row)
+            ws.cell(row=r, column=1).value = row_label(pl.template, row)
+            for y in range(1, H + 1):  # report sheet: ink, percentages italic grey
+                x = ws.cell(row=r, column=1 + y)
+                x.font = st.font(st.GREY, italic=True) if row.fmt == "pct" else st.font(st.INK, bold=row.bold)
+                x.alignment = Alignment(horizontal="right")
+            _target(ws, r, tc, fmt)
     _write_charts(ws, pl, lay)
     ws.freeze_panes = "B4"
 

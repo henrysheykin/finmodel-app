@@ -120,6 +120,7 @@ class RealEstateTemplate(Template):
         "noi": "ebitda",
         "loan_end": "loan_close",
     }
+    kpi_unit_rows = ("noi_unit",)
     kpi_derived = ("occ", "noi_m", "opex_ratio", "noi_unit", "yield", "ds", "dscr", "ltv")
     marketing_key = None  # no marketing line: the ratio is left out
     kpi_flows = ("gpr", "vac", "capex_buy")

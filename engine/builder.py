@@ -526,6 +526,13 @@ def _write_grid(wb: Workbook, pl: Plan, g: GridPlan, title: str, sub: str) -> No
     ws.freeze_panes = ws.cell(row=g.year_row + 1, column=FIRST_COL)
 
 
+def row_format(tpl, row: StmtRow) -> str:
+    """Number format of a KPI-table row on the KPIs sheet (report sheet: $'000; per-unit amounts in $)."""
+    from engine.kpis import row_format as kpi_row_format
+
+    return kpi_row_format(tpl, row)
+
+
 def _write_block(wb: Workbook, pl: Plan, b: Block, sub: str | None) -> None:
     ws = wb[b.sheet]
     years = pl.t.years
@@ -568,7 +575,7 @@ def _write_block(wb: Workbook, pl: Plan, b: Block, sub: str | None) -> None:
                 raise ValueError(row.kind)
             c = ws.cell(row=r, column=1 + y, value=f)
             c.font = st.font(st.GREY, italic=True) if pct else st.font(bold=row.bold)
-            c.number_format = FORMATS[row.fmt]
+            c.number_format = row_format(pl.template, row) if b.sheet == "KPIs" else FORMATS[row.fmt]
             if row.total or key_total:
                 c.border = st.KEY_TOTAL if key_total else st.TOTAL_TOP
     if not fixed:
@@ -703,14 +710,14 @@ def _write_checks(wb: Workbook, pl: Plan) -> str:
             )
         )
     if pl.kpis:
-        from engine.kpis import dupont_condition
+        from engine.kpis import dupont_result
 
         checks.append(
             (
                 "DuPont ties to return on equity",
-                ok(dupont_condition(pl)),
-                "Net margin × asset turnover × equity multiplier equals return on equity every year "
-                "(years shown as n/a are skipped)",
+                dupont_result(pl),
+                "Net margin × asset turnover × equity multiplier equals return on equity every year; "
+                "n/a = no year where both are defined (a one-sided n/a is a FAIL)",
             )
         )
     if "bs" in pl.blocks:

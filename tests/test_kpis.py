@@ -63,9 +63,9 @@ def test_tables_titles_and_target_column(saas):
     ]
     kpi = pl.blocks["kpi"]
     assert kpi.sheet == "KPIs" and kpi.start_row == K.block_start(pl.template)
-    assert lab[kpi.start_row - 1] == "SaaS metrics"
+    assert lab[kpi.start_row - 1] == "SaaS metrics ($'000; per-unit rows in $)"
     for row in pl.template.kpi_rows(pl.t):  # the whole KPI table moved here
-        assert lab[kpi.placed[row.key]] == row.label
+        assert lab[kpi.placed[row.key]] == K.row_label(pl.template, row)
     assert ws.sheet_properties.tabColor.rgb[-6:] == "0F6E56"
 
 
@@ -147,9 +147,10 @@ def test_marketing_ratio_is_left_out_where_there_is_no_marketing_line():
 def test_ratio_formulas_link_to_the_statements_and_guard_denominators(saas):
     wb, pl = saas
     ws, lay = wb["KPIs"], pl.kpis
-    assert ws["B6"].value == "n/a"  # year 1 has no prior year
+    r0 = pl.stmt_cell("pl", "rev", 0, "KPIs")  # year 1 reads the label column: same formula in every year
+    assert ws["B6"].value == f'=IF(N({r0})<=0,"n/a",{pl.stmt_cell("pl", "rev", 1, "KPIs")}/{r0}-1)'
     rev1, rev2 = pl.stmt_cell("pl", "rev", 1, "KPIs"), pl.stmt_cell("pl", "rev", 2, "KPIs")
-    assert ws["C6"].value == f'=IF({rev1}<=0,"n/a",{rev2}/{rev1}-1)' and rev1.startswith("'P&L'!")
+    assert ws["C6"].value == f'=IF(N({rev1})<=0,"n/a",{rev2}/{rev1}-1)' and rev1.startswith("'P&L'!")
     f = ws.cell(row=lay.ratios["roe"], column=3).value
     assert f.startswith("=IF('Balance Sheet'!C") and '<=0,"n/a"' in f and "'P&L'!C" in f
     dp = ws.cell(row=lay.dupont["dp_roe"], column=3).value
@@ -309,7 +310,7 @@ def test_negative_equity_shows_n_a_and_the_model_passes(build):
                 assert ws.cell(row=lay.dupont[k], column=1 + y).value == "n/a"
             assert ws.cell(row=lay.dupont["dp_diff"], column=1 + y).value == 0
     checks = {r[0].value: r[1].value for r in wb["Checks"].iter_rows(min_col=1, max_col=2) if r[0].value}
-    assert checks["DuPont ties to return on equity"] == "PASS" and checks["No error values"] == "PASS"
+    assert checks["DuPont ties to return on equity"] in ("PASS", "n/a") and checks["No error values"] == "PASS"
     report = challenge(brief, path)
     assert report["problems"] == [] and report["verdict"] == "PASS"
 
@@ -381,3 +382,54 @@ def test_tile_sub_lines_are_numeric_not_text_rounded(build):
 def test_column_letters_helper_matches_layout():
     lay = K.KpiLayout(5)
     assert L(lay.target_col) == "G" and lay.chart_cols == ("I", "Q")
+
+
+def test_money_rows_are_thousands_and_per_unit_rows_are_dollars(saas):
+    wb, pl = saas
+    ws, kpi = wb["KPIs"], pl.blocks["kpi"]
+    money, unit = '$#,##0,;($#,##0,);"-"', "$#,##0;($#,##0);-"
+    assert ws.cell(row=kpi.placed["arr"], column=2).number_format == money
+    assert ws.cell(row=kpi.placed["mrr_end"], column=7).number_format == money  # Target follows the row
+    for key in ("arpa", "cac", "ltv"):
+        assert ws.cell(row=kpi.placed[key], column=2).number_format == unit
+        assert ws.cell(row=kpi.placed[key], column=1).value.endswith("($)")
+    assert ws.cell(row=kpi.placed["arr"], column=2).font.color.rgb[-6:] == "1B2A2F"  # ink, not black
+    for key in TEMPLATES:  # no usd2 row is left in thousands
+        tpl = get_template(key)
+        for r in tpl.kpi_rows(Timing_(3)):
+            if r.fmt == "usd2":
+                assert K.row_format(tpl, r) == "$#,##0.00;($#,##0.00);-" and K.is_unit_row(tpl, r)
+
+
+@lo
+def test_dupont_check_flags_a_one_sided_na_and_is_neutral_when_nothing_is_compared(build):
+    brief = _brief("saas", tier="full", horizon_years=3)
+    path = build(brief)
+    pl = plan(brief, get_template("saas"))
+    lay = pl.kpis
+
+    def verdict(edit):
+        wb = load_workbook(path)
+        edit(wb["KPIs"])
+        p2 = path.with_name("edited.xlsx")
+        wb.save(p2)
+        assert recalc(p2).ok
+        v = load_workbook(p2, data_only=True)["Checks"]
+        return {r[0].value: r[1].value for r in v.iter_rows(min_col=1, max_col=2) if r[0].value}[
+            "DuPont ties to return on equity"
+        ]
+
+    assert verdict(lambda ws: None) == "PASS"
+    assert (
+        verdict(lambda ws: ws.cell(row=lay.dupont["dp_roe"], column=3, value='="n/a"')) == "FAIL"
+    )  # product n/a, ROE not
+    assert (
+        verdict(lambda ws: ws.cell(row=lay.ratios["roe"], column=3, value='="n/a"')) == "FAIL"
+    )  # ROE n/a, product not
+
+    def nothing(ws):
+        for y in (1, 2, 3):
+            ws.cell(row=lay.ratios["roe"], column=1 + y, value='="n/a"')
+            ws.cell(row=lay.dupont["dp_roe"], column=1 + y, value='="n/a"')
+
+    assert verdict(nothing) == "n/a"

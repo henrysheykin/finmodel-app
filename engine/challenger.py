@@ -87,10 +87,10 @@ def python_goal_model(brief: Brief, scenario: int) -> dict:
 def _tolerance(name: str, exp=None) -> float:
     """Goal / Returns cell tolerance by name (``dscr_3`` → ``dscr``); money cells default to $1.
 
-    KPI-sheet cells and the Dashboard's industry lines (E31) are ratios and unit figures: 1e-6, relative to the value.
+    KPI-sheet cells and the Dashboard's industry lines (E31): 1e-6 relative to the value, never more than $1.
     """
     if name.startswith(("kpi_", "dash_m_")):
-        return 1e-6 * max(1.0, abs(exp)) if isinstance(exp, int | float) else 0.0
+        return min(TOLERANCE_USD, 1e-6 * max(1.0, abs(exp))) if isinstance(exp, int | float) else 0.0
     base = name.split(" ")[0]
     stem = re.sub(r"_\d+$", "", base)
     for key in (base, stem):

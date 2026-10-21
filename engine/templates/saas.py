@@ -149,6 +149,7 @@ class SaasTemplate(Template):
         "gp": "gp",
         "cash": "cash_close",
     }
+    kpi_unit_rows = ("arpa", "cac", "ltv")
     kpi_derived = ("arr", "arpa", "gm", "cac", "ltv", "ltv_cac", "payback")
     kpi_flows = ("new_total", "churned")
 

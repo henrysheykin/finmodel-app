@@ -150,7 +150,7 @@ def test_template_kpi_table_moved_to_the_kpis_sheet(build):
     assert kpi.sheet == "KPIs"
     lab = _labels(wb["Dashboard"])
     for row in get_template("saas").kpi_rows(pl.t):
-        assert row.label in _labels(wb["KPIs"]).values()
+        assert row.label in "".join(f"{v}|" for v in _labels(wb["KPIs"]).values())  # ($) suffix on per-unit rows
     assert "Runway at year-end burn (months; - = not burning)" not in lab.values()  # KPI-table-only row
     assert max(lab) == pl.dash.end  # the Dashboard ends with Funding & valuation
     for m, row in pl.dash.metrics:  # the industry block links to the KPIs sheet

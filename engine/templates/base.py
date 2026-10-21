@@ -104,6 +104,8 @@ class Template(ABC):
 
     #: opex line (workbook key = reference ``opex`` key) that holds marketing / ads; None = the ratio is left out
     marketing_key: str | None = "mkt"
+    #: KPI-table "usd" rows that are per-unit amounts (would round to 0 in $'000): shown in $ and labelled "($)"
+    kpi_unit_rows: tuple[str, ...] = ()
     #: KPI-table rows computed by ``kpi_reference`` (their cells go to the challenger beside ``kpi_checked``)
     kpi_derived: tuple[str, ...] = ()
 
