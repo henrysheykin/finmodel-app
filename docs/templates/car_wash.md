@@ -13,9 +13,10 @@ detail shops).
 
 ## How the model works
 
-**Retail cars.** Retail cars per operating day at maturity × operating days per month × a ramp-up factor × a winter
-factor. The ramp rises in a straight line from *volume in month 1* to 100 % over *months to reach mature volume*; an
-annual model uses the average of the months in the year, so annual and monthly agree exactly. In monthly models model
+**Retail cars.** Retail cars per operating day at maturity (growing at the *retail cars growth per year*) × operating days per month ×
+a ramp-up factor × a winter factor. The ramp rises in a straight line from *volume in month 1* to 100 % over *months to reach mature volume*; an
+annual model uses the average of the months in the year, so annual and monthly volumes agree exactly when there is no winter dip (with a dip during the ramp-up the two
+interact, so annual is close but not exact). In monthly models model
 month 1 is treated as January; December-February run below the average and the other nine months above it by a third of
 the dip, so the year's volume is unchanged. Annual models carry no seasonality.
 
@@ -41,8 +42,9 @@ growing with the cost increase, plus card processing fees on all revenue.
 cost (own yearly escalator), equipment maintenance & repairs, insurance, property tax, software & other G&A, marketing
 (a yearly growth rate; opening-heavy budgets use a negative one).
 
-**Capex and funding.** Tunnel equipment, building & site works and pay stations/signage/vacuums in month 1; an equipment
-refresh amount at the start of every year from year 2. One blended depreciation life. Equity and an optional loan at the start
+**Capex and funding.** Tunnel equipment, building & site works and pay stations/signage/vacuums in month 1; an optional
+land purchase (carried at cost, never depreciated; 0 for a leased site) and an equipment refresh amount at the start of every
+year from year 2. One blended depreciation life. Equity and an optional loan at the start
 (equal principal payments). Receivable days cover card settlement; plans are billed monthly in the month used, so no deferred
 revenue is modelled.
 
@@ -53,6 +55,7 @@ revenue is modelled.
 | Driver | Base (sample) | Unit | Source |
 |---|---:|---|---|
 | Retail cars per operating day at maturity (year 1) | 240 | cars | assumption (a mid-size express site; replace with the site's traffic study) |
+| Retail cars growth per year | 3% | % | assumption (traffic growth and local awareness after the ramp-up; 0 = flat) |
 | Operating days per month | 29 | days | assumption (daily opening less weather closures) |
 | Months to reach mature retail volume (0 = already mature) | 9 | months | assumption (new sites take most of a year to mature) |
 | Retail volume in month 1, % of mature | 45% | % | assumption |
@@ -115,6 +118,7 @@ revenue is modelled.
 | Tunnel equipment (month 1) | $1,650,000 | $ | [MMCG Invest tunnel build example](https://www.mmcginvest.com/post/tunnel-car-wash-construction-cost-breakdown-and-why-a-feasibility-study-is-essential): equipment and systems $1,651,000 |
 | Building & site works (month 1) | $2,300,000 | $ | assumption; the [MMCG Invest tunnel build example](https://www.mmcginvest.com/post/tunnel-car-wash-construction-cost-breakdown-and-why-a-feasibility-study-is-essential) shows $3.2M hard cost including site work for a larger site, the [Beancount.io car-wash bookkeeping guide](https://beancount.io/blog/2026/05/22/car-wash-bookkeeping-unlimited-wash-club-membership-deferred-revenue-asc-606-cost-per-car-water-power-chemicals-tunnel-equipment-15-year-macrs-cost-segregation-bonus-depreciation-churn-rate-guide) puts a new tunnel project at $3-7M including land |
 | Pay stations, signage & vacuums (month 1) | $150,000 | $ | assumption |
+| Land purchase (month 1; never depreciated, 0 = leased site) | $0 | $ | assumption (0 = leased site; enter the purchase price for an owned site: carried at cost, never depreciated) |
 | Equipment refresh & upgrades per year (from year 2) | $40,000 | $ | assumption |
 
 **Headcount**
@@ -146,8 +150,8 @@ revenue is modelled.
 | Driver | Base (sample) | Unit | Source |
 |---|---:|---|---|
 | Customer payment terms (receivable days) | 2 | days | assumption (card settlement) |
-| Inventory held (days of COGS) | 15 | days | assumption (chemicals on hand) |
-| Supplier payment terms (payable days) | 25 | days | assumption |
+| Inventory held (days of COGS) | 7 | days | assumption: the days apply to all cost of sales (also water, power and card fees, which are not stocked), so 7 days on the total is roughly 2-3 weeks of chemical stock |
+| Supplier payment terms (payable days) | 20 | days | assumption: chemical suppliers on about 30-day terms, utilities and card fees paid within days; blended 20 days on cost of sales |
 
 **Tax & depreciation**
 
@@ -168,20 +172,20 @@ independent challenger.
 
 ## What the defaults produce (plain-Python reference, 3 years, monthly)
 
-| Stage | Case | Revenue Y1 | Revenue Y3 | EBITDA margin Y1 → Y3 | Members Y3 | Washes per day Y3 | Lowest cash |
+| Stage | Case | Revenue Y1 | Revenue Y3 | EBITDA margin Y1 → Y3 | Members Y3 | Washes per day Y3 | Lowest month-end cash (36 months) |
 |---|---|---:|---:|---:|---:|---:|---:|
-| planning | Low | $723,754 | $1,373,353 | -74% → -2% | 1,222 | 346 | $-1,290,609 |
-| planning | Base | $1,180,182 | $2,080,277 | -10% → 29% | 2,082 | 467 | $189,921 |
-| planning | High | $1,713,972 | $3,028,027 | 22% → 49% | 3,238 | 599 | $851,183 |
-| early | Low | $1,256,806 | $1,520,633 | -6% → 6% | 1,417 | 390 | $142,282 |
-| early | Base | $1,783,692 | $2,295,297 | 23% → 34% | 2,383 | 522 | $546,161 |
-| early | High | $2,385,900 | $3,330,645 | 41% → 52% | 3,667 | 664 | $999,122 |
-| growing | Low | $1,601,853 | $1,668,956 | 6% → 3% | 1,642 | 433 | $191,658 |
-| growing | Base | $2,161,939 | $2,505,877 | 29% → 33% | 2,708 | 575 | $813,256 |
-| growing | High | $2,813,541 | $3,622,652 | 45% → 52% | 4,113 | 727 | $1,309,937 |
-| established | Low | $1,869,706 | $1,776,472 | 10% → 1% | 1,868 | 469 | $68,486 |
-| established | Base | $2,505,027 | $2,666,284 | 31% → 31% | 3,009 | 619 | $622,840 |
-| established | High | $3,241,131 | $3,849,143 | 47% → 51% | 4,496 | 779 | $1,187,754 |
+| planning | Low | $723,754 | $1,373,353 | -74% → -2% | 1,222 | 346 | $-1,288,612 |
+| planning | Base | $1,180,182 | $2,170,292 | -10% → 31% | 2,125 | 485 | $179,017 |
+| planning | High | $1,713,972 | $3,275,561 | 22% → 52% | 3,372 | 644 | $777,911 |
+| early | Low | $1,256,806 | $1,520,633 | -6% → 6% | 1,417 | 390 | $86,963 |
+| early | Base | $1,783,692 | $2,389,063 | 23% → 36% | 2,428 | 541 | $219,257 |
+| early | High | $2,385,900 | $3,587,019 | 41% → 55% | 3,807 | 711 | $252,103 |
+| growing | Low | $1,601,853 | $1,668,956 | 6% → 3% | 1,642 | 433 | $194,072 |
+| growing | Base | $2,161,939 | $2,603,394 | 29% → 35% | 2,754 | 595 | $444,377 |
+| growing | High | $2,813,541 | $3,842,676 | 45% → 54% | 4,233 | 767 | $478,731 |
+| established | Low | $1,869,706 | $1,776,472 | 10% → 1% | 1,868 | 469 | $108,737 |
+| established | Base | $2,505,027 | $2,730,994 | 31% → 33% | 3,040 | 633 | $142,174 |
+| established | High | $3,241,131 | $4,021,754 | 47% → 52% | 4,591 | 810 | $181,528 |
 
 Washes per day divide the year's washes by 348 operating days. Tunnel capacity at the defaults is about 850 washes per day, so the
 High case approaches it in year 3 of the mature stages. The planning Low case runs out of cash and the Checks sheet flags the
@@ -194,9 +198,11 @@ funding gap; Base cases are funded throughout.
 3. New members come from retail-to-plan conversion and direct sign-ups; marketing spend is a cost, not a driver of volume.
 4. Seasonality is a winter dip only; rain days are inside the average and no weather shock is modelled. Model month 1 = January.
 5. Labor is a fixed crew (FTE), not a function of washes; no hourly flexing.
-6. The site is leased; a land purchase is not modelled (put an owner-occupier's land cost into the lease line as an imputed rent, or into capex).
+6. Land is a single month-1 purchase (0 by default, a leased site); no sale-and-leaseback, no phased purchase.
 7. One blended depreciation life; no bonus depreciation or cost segregation, no state tax.
 8. Free vacuums, vending and fleet revenue are not separate revenue lines.
+9. No construction or pre-opening period: in the *planning* stage the capex, the crew, the lease and the first revenue all start in month 1.
+10. Retail volume grows at one rate per year after the ramp-up; no step changes (a competitor opening, road works).
 
 ## Questions for the CFO review
 
@@ -209,3 +215,7 @@ funding gap; Base cases are funded throughout.
 5. Is a site lease of $30,000 a month and $2.3 M of building and site works a fair planning default for an express tunnel on leased land?
 6. Should payroll be modelled as crew hours per wash rather than fixed FTE, so labor flexes with volume?
 7. Is a blended 12-year depreciation acceptable, or do you want equipment (7 years) and building (15-39 years) separately?
+8. New members convert from retail cars *demanded*, not cars actually washed, so the capacity limit does not reduce sign-ups. Is that acceptable,
+   or should conversion follow cars washed (it would make the roll-forward circular and needs a different construction)?
+9. Should the planning stage get a pre-opening period (construction months with capex and lease but no revenue)?
+10. Are working-capital days of 7 (stock) and 20 (suppliers) on total cost of sales reasonable, or should chemicals be modelled separately?

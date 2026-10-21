@@ -49,8 +49,8 @@ _COMMON = {
     "payroll_tax": (0.12, 0.12, 0.12),
     "wage_g": (0.03, 0.03, 0.03),
     "ar_days": (2, 2, 2),
-    "inv_days": (15, 15, 15),
-    "ap_days": (25, 25, 25),
+    "inv_days": (7, 7, 7),
+    "ap_days": (20, 20, 20),
     "dep_years": (12, 12, 12),
     "tax_rate": (0.21, 0.21, 0.21),
 }
@@ -59,6 +59,8 @@ _STAGES: dict[str, dict] = {
     "planning": {
         "drivers": {
             "cars_day": (200, 240, 280),
+            "cars_g": (0.0, 0.03, 0.06),
+            "capex_land": (0, 0, 0),
             "ramp_months": (12, 9, 7),
             "ramp_start": (0.35, 0.45, 0.55),
             "members_start": (150, 250, 350),
@@ -83,6 +85,8 @@ _STAGES: dict[str, dict] = {
     "early": {
         "drivers": {
             "cars_day": (210, 250, 290),
+            "cars_g": (0.0, 0.03, 0.06),
+            "capex_land": (0, 0, 0),
             "ramp_months": (6, 4, 3),
             "ramp_start": (0.65, 0.75, 0.85),
             "members_start": (900, 1100, 1300),
@@ -107,6 +111,8 @@ _STAGES: dict[str, dict] = {
     "growing": {
         "drivers": {
             "cars_day": (220, 260, 300),
+            "cars_g": (0.0, 0.03, 0.05),
+            "capex_land": (0, 0, 0),
             "ramp_months": (0, 0, 0),
             "ramp_start": (1, 1, 1),
             "members_start": (1500, 1800, 2100),
@@ -131,6 +137,8 @@ _STAGES: dict[str, dict] = {
     "established": {
         "drivers": {
             "cars_day": (220, 260, 300),
+            "cars_g": (0.0, 0.02, 0.04),
+            "capex_land": (0, 0, 0),
             "ramp_months": (0, 0, 0),
             "ramp_start": (1, 1, 1),
             "members_start": (2400, 2800, 3200),
@@ -145,7 +153,7 @@ _STAGES: dict[str, dict] = {
             "capex_site": (40000, 40000, 40000),
             "capex_pay": (10000, 10000, 10000),
             "capex_refresh": (80000, 80000, 80000),
-            "equity": (150000, 150000, 150000),
+            "equity": (250000, 250000, 250000),
             "loan_amount": (0, 0, 0),
             "loan_rate": (0, 0, 0),
             "loan_term_years": (1, 1, 1),
@@ -240,6 +248,7 @@ class CarWashTemplate(Template):
             DriverSpec(
                 "cars_day", "Retail cars per operating day at maturity (year 1)", "cars", "dec1", 0, 1e5, "asc", vol
             ),
+            DriverSpec("cars_g", "Retail cars growth per year", "%", "pct", -0.9, 5, "asc", vol),
             DriverSpec("days_open", "Operating days per month", "days", "dec1", 1, 31, section=vol),
             DriverSpec(
                 "ramp_months",
@@ -304,6 +313,15 @@ class CarWashTemplate(Template):
             DriverSpec("capex_site", "Building & site works (month 1)", "$", "usd", 0, 1e8, section=cx),
             DriverSpec("capex_pay", "Pay stations, signage & vacuums (month 1)", "$", "usd", 0, 1e8, section=cx),
             DriverSpec(
+                "capex_land",
+                "Land purchase (month 1; never depreciated, 0 = leased site)",
+                "$",
+                "usd",
+                0,
+                1e8,
+                section=cx,
+            ),
+            DriverSpec(
                 "capex_refresh", "Equipment refresh & upgrades per year (from year 2)", "$", "usd", 0, 1e8, section=cx
             ),
         ]
@@ -338,7 +356,7 @@ class CarWashTemplate(Template):
             Line(
                 "ret_demand",
                 "Retail cars demanded",
-                "={in:cars_day}*{in:days_open}*{mpp}*{ramp}*{season}",
+                "={in:cars_day}*(1+{in:cars_g})^({y}-1)*{in:days_open}*{mpp}*{ramp}*{season}",
                 "top",
                 "int",
             ),
@@ -441,6 +459,7 @@ class CarWashTemplate(Template):
             Line("capex_equip", "Tunnel equipment", "=IF({p}=1,{in:capex_equip},0)", "top"),
             Line("capex_site", "Building & site works", "=IF({p}=1,{in:capex_site},0)", "top"),
             Line("capex_pay", "Pay stations, signage & vacuums", "=IF({p}=1,{in:capex_pay},0)", "top"),
+            Line("capex_land", "Land (not depreciated)", "=IF({p}=1,{in:capex_land},0)", "top"),
             Line(
                 "capex_refresh",
                 "Equipment refresh & upgrades (first period of each year from year 2)",
@@ -450,7 +469,7 @@ class CarWashTemplate(Template):
             Line(
                 "capex",
                 "Capital spending",
-                "={capex_equip}+{capex_site}+{capex_pay}+{capex_refresh}",
+                "={capex_equip}+{capex_site}+{capex_pay}+{capex_land}+{capex_refresh}",
                 "top",
                 bold=True,
             ),
@@ -549,7 +568,7 @@ class CarWashTemplate(Template):
         for p in range(1, upto + 1):
             y = t.year_of(p)
             ramp = _ramp(d, p, t)
-            ret_dem = d["cars_day"] * d["days_open"] * t.mpp * ramp * _season(d, p, t)
+            ret_dem = d["cars_day"] * (1 + d["cars_g"]) ** (y - 1) * d["days_open"] * t.mpp * ramp * _season(d, p, t)
             new_conv = ret_dem * d["conv"]
             new_direct = d["mem_new"] * (1 + d["mem_g"]) ** (y - 1) * t.mpp * ramp
             new = new_conv + new_direct
@@ -562,7 +581,7 @@ class CarWashTemplate(Template):
         new = new_conv + new_direct
         avg = (m0 + m1) / 2
         season = _season(d, p, t)
-        ret_dem = d["cars_day"] * d["days_open"] * t.mpp * _ramp(d, p, t) * season
+        ret_dem = d["cars_day"] * (1 + d["cars_g"]) ** (y - 1) * d["days_open"] * t.mpp * _ramp(d, p, t) * season
         mem_dem = avg * d["wash_pm"] * season * t.mpp
         cap = d["cph"] * d["hours_day"] * d["cap_util"] * d["days_open"] * t.mpp
         demand = ret_dem + mem_dem
@@ -575,7 +594,8 @@ class CarWashTemplate(Template):
         rev = ret_cars * d["price"] * idx + ret_cars * d["addon"] * idx + rev_mem
         var_cost = -washes * (d["chem_car"] + d["water_gal"] / 1000 * d["water_rate"] + d["elec_car"]) * cidx
         refresh = d["capex_refresh"] if y > 1 and (p - 1) % t.ppy == 0 else 0.0
-        capex = refresh + (d["capex_equip"] + d["capex_site"] + d["capex_pay"] if p == 1 else 0.0)
+        land = d["capex_land"] if p == 1 else 0.0
+        capex = refresh + land + (d["capex_equip"] + d["capex_site"] + d["capex_pay"] if p == 1 else 0.0)
         return Top(
             rev=rev,
             cogs=var_cost - rev * d["card_pct"],
@@ -587,6 +607,7 @@ class CarWashTemplate(Template):
                 "mkt": -d["mkt"] * (1 + d["mkt_g"]) ** (y - 1) * t.mpp,
             },
             capex=capex,
+            land=land,
             kpis={
                 "members_close": m1,
                 "new_total": new,

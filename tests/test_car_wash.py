@@ -49,7 +49,8 @@ def test_stage_defaults_are_valid_ordered_and_funded(stage):
     for y in (1, 2, 3):
         assert low["rev"][y] < base["rev"][y] < high["rev"][y]
         assert 0 < base["gp"][y] / base["rev"][y] < 1
-    assert min(base["cash_close"].values()) > 0  # the Base case is funded; Low is the stress case
+    monthly = reference_run(b.values(2), b.roles, Timing("monthly", 3), CW.reference_top)
+    assert min(monthly["cash_close"]) > 0  # the Base case is funded in every month; Low is the stress case
 
 
 def test_ramp_up_is_linear_and_annual_is_the_mean_of_its_months(cw_brief):
@@ -127,6 +128,24 @@ def test_tunnel_capacity_caps_total_washes_and_scales_both_groups(cw_brief):
     assert share == pytest.approx(share_roomy, rel=0.05)
 
 
+def test_retail_cars_grow_each_year(cw_brief):
+    d = cw_brief.values(2)
+    s = run(with_values(cw_brief, **ROOMY, ramp_months=0, cars_g=0.1), g="annual")
+    assert s["ret_cars"][0] == pytest.approx(d["cars_day"] * d["days_open"] * 12)
+    assert s["ret_cars"][1] == pytest.approx(s["ret_cars"][0] * 1.1)
+    assert s["ret_cars"][2] == pytest.approx(s["ret_cars"][0] * 1.21)
+
+
+def test_land_is_not_depreciated(cw_brief):
+    b = with_values(cw_brief, capex_land=500_000, capex_refresh=0)
+    no_land = with_values(b, capex_land=0)
+    s, n = run(b, g="annual"), run(no_land, g="annual")
+    assert s["capex"][0] - n["capex"][0] == pytest.approx(500_000)
+    assert s["dep"] == pytest.approx(n["dep"])  # land adds no depreciation
+    full = run(with_values(b, dep_years=1), g="annual")
+    assert full["ppe_net"][-1] == pytest.approx(500_000)  # still carried at cost once the rest is written off
+
+
 def test_winter_dip_moves_volume_but_keeps_the_year(cw_brief):
     b = with_values(cw_brief, cph=1e4, winter_dip=0.3, ramp_months=0)
     flat = run(with_values(cw_brief, **ROOMY, ramp_months=0))
@@ -145,6 +164,15 @@ def test_monthly_and_annual_agree_where_volume_is_additive(stage):
     for y in (1, 2, 3):  # members: annual compounds churn and joins mid-year (same convention as fitness)
         assert a["members_close"][y] == pytest.approx(m["members_close"][y], rel=0.06)
         assert a["rev"][y] == pytest.approx(m["rev"][y], rel=0.08)
+
+
+def test_annual_is_approximate_with_a_winter_dip_during_the_ramp(cw_brief):
+    """Exact without seasonality (above); with a dip the ramp and the season interact, so only close."""
+    b = with_values(cw_brief, cph=1e4, winter_dip=0.3, ramp_months=18)
+    m, a = python_model(b, 2), python_model(b.with_options(granularity="annual"), 2)
+    for y in (1, 2, 3):
+        assert a["ret_cars"][y] == pytest.approx(m["ret_cars"][y], rel=0.05)
+    assert a["ret_cars"][1] != pytest.approx(m["ret_cars"][1], rel=1e-6)
 
 
 def test_capex_items_in_month_one_and_refresh_from_year_two(cw_brief):
@@ -204,6 +232,6 @@ def test_stage_defaults_pass_the_challenger(build, stage):
 
 @lo
 def test_a_binding_tunnel_and_a_winter_dip_pass_the_challenger(build, cw_brief):
-    brief = with_values(cw_brief, cph=60, winter_dip=0.3)
+    brief = with_values(cw_brief, cph=60, winter_dip=0.3, capex_land=600_000, cars_g=0.05)
     report = challenge(brief, build(brief))
     assert report["problems"] == []
