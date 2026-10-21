@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 
 from openpyxl.utils import get_column_letter as L
 
+from engine import charts as ch
 from engine import style as st
 from engine.builder import FIRST_COL, PURE_LINK, Block, Plan, StmtRow, _layout_block, q
 from engine.goals import NA, NOT_WITHIN, NOTHING_TO_PAY_BACK, modules_for
@@ -21,6 +22,8 @@ SHEETS = {"breakeven": "Break-even", "dcf": "Valuation"}
 #: rows shown as key totals (double underline, docs/WORKBOOK_STANDARD.md §4)
 KEY_TOTAL_LABELS = ("Funding surplus", "Enterprise value — average")
 INT = "0"
+BE_AXIS = '$#,##0,"K"'
+YEAR_FMT = '"Year "0'
 
 
 @dataclass
@@ -304,6 +307,29 @@ def _plan_dcf(pl: Plan) -> ModuleLayout:
     return lay
 
 
+def _breakeven_chart(ws, pl: Plan, lay: ModuleLayout) -> None:
+    """The one large chart (20 x 10.5 cm, standard section 3): revenue bars against the break-even revenue line."""
+    blk = pl.blocks["be"]
+    last = L(1 + pl.t.years)
+    sheet = q(lay.sheet)
+
+    def rng(row: int) -> str:
+        return f"{sheet}!$B${row}:${last}${row}"
+
+    rev, be_rev = blk.placed["rev"], blk.placed["be_rev"]
+    chart = ch.combo(
+        "Revenue vs break-even revenue (EBITDA = 0)",
+        rng(blk.year_row),
+        [ch.Ser(rng(rev), f"{sheet}!$A${rev}")],
+        [ch.Ser(rng(be_rev), f"{sheet}!$A${be_rev}")],
+        fmt=BE_AXIS,
+        cat_fmt=YEAR_FMT,
+        secondary=False,
+        size=ch.LARGE_CM,
+    )
+    ch.place(ws, chart, f"A{max(lay.notes) + 2}")
+
+
 def plan_modules(pl: Plan) -> None:
     mods = modules_for(pl.brief.tier)
     if "breakeven" in mods:
@@ -399,6 +425,8 @@ def write_modules(wb, pl: Plan) -> None:
                 ws.cell(row=row.row, column=max(4, len(row.values) + 2), value=row.note).font = st.font(st.GREY, size=9)
         for r, text in lay.notes.items():
             ws.cell(row=r, column=1, value=text).font = st.font(st.GREY, size=9, italic=True)
+        if lay.sheet == SHEETS["breakeven"]:
+            _breakeven_chart(ws, pl, lay)
         ws.column_dimensions["A"].width = 52
         for i in range(2, lay.width + 2):
             ws.column_dimensions[L(i)].width = max(ws.column_dimensions[L(i)].width or 0, 16)
