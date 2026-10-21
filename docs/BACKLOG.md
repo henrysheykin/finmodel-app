@@ -21,7 +21,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 > Customer login = passwordless magic link by email (ADR-006).
 
 ### E29 — Scenarios sheet, live Low / Base / High
-- status: TODO
+- status: IN_PROGRESS (2026-10-21) — branch E29-live-scenarios (dispatcher session)
 - Model: opus
 - depends: E26, E27
 - skills: xlsx, engineering:testing-strategy
