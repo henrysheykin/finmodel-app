@@ -36,8 +36,9 @@ def _span(ref):
 
 @pytest.mark.parametrize("tier", ["light", "full"])
 @pytest.mark.parametrize("years", [1, 3, 5])
-def test_breakeven_has_one_large_combo_chart(build, tier, years):
-    brief = _brief("saas", tier=tier, horizon_years=years)
+@pytest.mark.parametrize("granularity", ["monthly", "annual"])
+def test_breakeven_has_one_large_combo_chart(build, tier, years, granularity):
+    brief = _brief("saas", tier=tier, horizon_years=years, granularity=granularity)
     wb = load_workbook(build(brief))
     ws = wb["Break-even"]
     assert len(ws._charts) == 1
