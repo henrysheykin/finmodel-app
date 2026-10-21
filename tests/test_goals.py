@@ -99,6 +99,7 @@ def test_wizard_prefill_builds_valid_briefs_for_every_goal(goal, tier):
                 "Summary",
                 "Break-even",
                 "Valuation",
+                "KPIs",
                 "Inputs",
                 "P&L",
                 "Cash Flow",

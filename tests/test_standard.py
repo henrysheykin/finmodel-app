@@ -21,6 +21,7 @@ FULL = [
     "Summary",
     "Break-even",
     "Valuation",
+    "KPIs",
     "Inputs",
     "P&L",
     "Cash Flow",
@@ -46,7 +47,7 @@ def test_sheet_set_follows_the_tier_not_the_goal(tier, expected, goal):
 
 
 def test_sheet_order_annual_and_industry_sheets():
-    assert sheet_order("full", "Annual")[9] == "Annual"
+    assert sheet_order("full", "Annual")[10] == "Annual"
     assert sheet_order("light", returns=True) == [
         "Cover",
         "Dashboard",
@@ -57,7 +58,7 @@ def test_sheet_order_annual_and_industry_sheets():
         "Checks",
     ]
     re_full = plan(_brief("real_estate", tier="full"), TEMPLATES["real_estate"]).sheets
-    assert re_full.index("Returns") == re_full.index("Valuation") + 1
+    assert re_full.index("Returns") == re_full.index("KPIs") + 1  # industry sheets come after KPIs
 
 
 def test_module_drivers_follow_the_tier():

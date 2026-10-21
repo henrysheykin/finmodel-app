@@ -13,8 +13,8 @@ from __future__ import annotations
 
 from engine.brief import Brief, BriefError
 from engine.core import HC, Top, role_period
-from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
-from engine.templates.base import Template
+from engine.spec import DashChart, DashMetric, DriverSpec, KpiChart, Line, StmtRow, Timing
+from engine.templates.base import Template, div
 
 TECH = "tech"
 ROLES = [
@@ -150,8 +150,19 @@ class HomeServicesTemplate(Template):
     sample_desc = "Full workbook with technician capacity, booked jobs, maintenance plans and vans"
     sample_stage = "growing"
     kpi_title = "Home services metrics"
-    kpi_checked = {"jobs": "jobs", "tech_fte": "tech_fte", "plan_rev": "rev_plans", "cap_jobs": "cap_jobs"}
-    kpi_flows = ("jobs", "rev_plans", "cap_jobs")
+    kpi_checked = {
+        "jobs": "jobs",
+        "tech_fte": "tech_fte",
+        "plan_rev": "rev_plans",
+        "cap_jobs": "cap_jobs",
+        "rev_jobs": "rev_jobs",
+        "plan_m": "plan_m",
+        "rev": "rev",
+        "gp": "gp",
+        "ebitda": "ebitda",
+    }
+    kpi_derived = ("util", "rev_job", "rev_tech", "plan_share", "gm", "gp_job", "em")
+    kpi_flows = ("jobs", "rev_plans", "cap_jobs", "rev_jobs")
 
     def driver_specs(self) -> list[DriverSpec]:
         cap, dem, price, plans, cost = "Technician capacity", "Demand", "Prices", "Maintenance plans", "Costs"
@@ -348,7 +359,26 @@ class HomeServicesTemplate(Template):
             StmtRow("em", "EBITDA margin", "formula", "=IF({rev}=0,0,{ebitda}/{rev})", "pct"),
         ]
 
+    def kpi_charts(self, t: Timing) -> list[KpiChart]:
+        return [
+            KpiChart("Revenue and gross profit per job", bars=("rev_job", "gp_job")),
+            KpiChart("Plan members and plans share of revenue", bars=("plan_m",), lines=("plan_share",)),
+        ]
+
     # ------------------------------------------------------------------ python twin
+    def kpi_reference(self, ann: dict, d: dict, t: Timing) -> dict:
+        out: dict[str, dict] = {k: {} for k in self.kpi_derived}
+        for y in range(1, t.years + 1):
+            jobs, rev, gp = ann["jobs"][y], ann["rev"][y], ann["gp"][y]
+            out["util"][y] = div(jobs, ann["cap_jobs"][y])
+            out["rev_job"][y] = div(ann["rev_jobs"][y], jobs)
+            out["rev_tech"][y] = div(rev, ann["tech_fte"][y])
+            out["plan_share"][y] = div(ann["rev_plans"][y], rev)
+            out["gm"][y] = div(gp, rev)
+            out["gp_job"][y] = div(gp, jobs)
+            out["em"][y] = div(ann["ebitda"][y], rev)
+        return out
+
     def reference_top(self, d: dict, p: int, y: int, t: Timing, hc: HC) -> Top:
         fte, tech_cost = role_period(d, TECH, p, t)
         season = _season(p, t, d["peak_uplift"])
@@ -382,7 +412,14 @@ class HomeServicesTemplate(Template):
                 "card_fees": -rev * d["card_fee_pct"],
             },
             capex=capex,
-            kpis={"jobs": jobs, "tech_fte": fte, "rev_plans": rev_plans, "cap_jobs": cap},
+            kpis={
+                "jobs": jobs,
+                "tech_fte": fte,
+                "rev_plans": rev_plans,
+                "cap_jobs": cap,
+                "rev_jobs": rev_jobs,
+                "plan_m": plan_m,
+            },
         )
 
     # ------------------------------------------------------------------ defaults

@@ -76,13 +76,21 @@ def python_goal_model(brief: Brief, scenario: int) -> dict:
     dash = dashboard_reference(brief, d, series, t, out["cells"])
     out["cells"].update(dash["cells"])
     out["years"].update(dash["years"])
+    from engine.kpis import twin
+
+    out["years"].update(twin(brief, d, series, t))  # KPIs sheet (E31) and the Dashboard's industry lines
     if tpl.returns:
         out["cells"].update(returns_reference(d, series, t)["cells"])
     return out
 
 
-def _tolerance(name: str) -> float:
-    """Goal / Returns cell tolerance by name (``dscr_3`` → ``dscr``); money cells default to $1."""
+def _tolerance(name: str, exp=None) -> float:
+    """Goal / Returns cell tolerance by name (``dscr_3`` → ``dscr``); money cells default to $1.
+
+    KPI-sheet cells and the Dashboard's industry lines (E31) are ratios and unit figures: 1e-6, relative to the value.
+    """
+    if name.startswith(("kpi_", "dash_m_")):
+        return 1e-6 * max(1.0, abs(exp)) if isinstance(exp, int | float) else 0.0
     base = name.split(" ")[0]
     stem = re.sub(r"_\d+$", "", base)
     for key in (base, stem):
@@ -176,17 +184,17 @@ def challenge(brief: Brief | dict, model_path: str | Path) -> dict:
                             f"scenario {scen} year {y} {name}: workbook {v!r} vs python {exp:,.2f}"
                         )
                 out["years"][y] = got
-            if man.goal_cells or man.goal_years or man.dash_cells or man.dash_years:
+            if man.goal_cells or man.goal_years or man.dash_cells or man.dash_years or man.kpi_years:
                 gexp = python_goal_model(brief, scen)
                 checked = [(n, ref, gexp["cells"][n]) for n, ref in {**man.goal_cells, **man.dash_cells}.items()]
                 checked += [
                     (f"{n} year {y}", ref, gexp["years"][n][y])
-                    for n, refs in {**man.goal_years, **man.dash_years}.items()
+                    for n, refs in {**man.goal_years, **man.dash_years, **man.kpi_years}.items()
                     for y, ref in refs.items()
                 ]
                 for name, ref, exp in checked:
                     got = val(ref)
-                    if not _same(got, exp, _tolerance(name)):
+                    if not _same(got, exp, _tolerance(name, exp)):
                         report["problems"].append(f"scenario {scen} goal {name}: workbook {got!r} vs python {exp!r}")
                 out["goal"] = {n: val(ref) for n, ref in man.goal_cells.items()}
                 out["dash"] = {n: val(ref) for n, ref in man.dash_cells.items()}

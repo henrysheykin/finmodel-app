@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from engine.core import HC, Top
-from engine.spec import DashChart, DashMetric, DriverSpec, Line, Timing
-from engine.templates.base import Template
+from engine.spec import DashChart, DashMetric, DriverSpec, KpiChart, Line, StmtRow, Timing
+from engine.templates.base import Template, div
 
 
 class CafeTemplate(Template):
@@ -17,6 +17,8 @@ class CafeTemplate(Template):
     sample_desc = "Full workbook, three years, monthly detail"
     sample_stage = "early"
     kpi_title = "Cafe metrics"
+    kpi_checked = {"cust": "cust", "ticket": "ticket", "rev": "rev", "gp": "gp"}
+    kpi_derived = ("gm",)
 
     def default_brief(self, stage: str = "planning", **opts):
         """The cafe has one illustrative brief (engine/briefs/cafe.json) for every stage."""
@@ -85,9 +87,9 @@ class CafeTemplate(Template):
                 "={in:cust_full}*{ramp}*(1+{in:traffic_g})^({y}-1)",
                 "top",
                 "dec1",
-                agg="none",
+                agg="last",
             ),
-            Line("ticket", "Average ticket", "={in:ticket}*(1+{in:price_g})^({y}-1)", "top", "usd2", agg="none"),
+            Line("ticket", "Average ticket", "={in:ticket}*(1+{in:price_g})^({y}-1)", "top", "usd2", agg="last"),
             Line("days", "Operating days in period", "={in:days}*{mpp}", "top", "int", agg="none"),
             Line("rev", "Revenue", "={cust}*{ticket}*{days}", "top", bold=True, total=True),
             Line("cogs", "Food & beverage cost", "=-{rev}*{in:cogs_pct}", "top"),
@@ -113,6 +115,24 @@ class CafeTemplate(Template):
     def dashboard_chart(self, t: Timing) -> DashChart:
         return DashChart("Customers per day & average ticket", bars=("cust",), lines=("ticket",))
 
+    def kpi_rows(self, t: Timing) -> list[StmtRow]:
+        return [
+            StmtRow("cust", "Customers per day (year end)", "line", "cust", "dec1", bold=True),
+            StmtRow("ticket", "Average ticket (year end)", "line", "ticket", "usd2"),
+            StmtRow("rev", "Revenue", "line", "rev", bold=True),
+            StmtRow("gp", "Gross profit", "line", "gp"),
+            StmtRow("gm", "Gross margin", "formula", "=IF({rev}=0,0,{gp}/{rev})", "pct"),
+        ]
+
+    def kpi_charts(self, t: Timing) -> list[KpiChart]:
+        return [
+            KpiChart("Customers per day and average ticket", bars=("cust",), lines=("ticket",)),
+            KpiChart("Gross profit and gross margin", bars=("gp",), lines=("gm",)),
+        ]
+
+    def kpi_reference(self, ann: dict, d: dict, t: Timing) -> dict:
+        return {"gm": {y: div(ann["gp"][y], ann["rev"][y]) for y in range(1, t.years + 1)}}
+
     def reference_top(self, d: dict, p: int, y: int, t: Timing, hc: HC) -> Top:
         a, r = d["open_pct"], max(1, d["ramp_months"])
         if t.granularity == "monthly":
@@ -132,4 +152,5 @@ class CafeTemplate(Template):
                 "other": -d["other_opex"] * t.mpp,
             },
             capex=d["capex"] if p == 1 else 0.0,
+            kpis={"cust": cust, "ticket": ticket},
         )

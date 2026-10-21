@@ -16,7 +16,7 @@ from openpyxl.utils import get_column_letter as L
 
 from engine import charts as ch
 from engine import style as st
-from engine.builder import DASH_KPI_ROW, Plan, _rollup, _write_selector, q
+from engine.builder import Plan, _rollup, _write_selector, q
 from engine.spec import DashChart, DashMetric
 
 SHEET = "Dashboard"
@@ -24,7 +24,6 @@ LEFT = 6  # the left column is A:F (label + up to five years); G is the 2-wide g
 LAST_COL = 23  # W
 HDR = 11  # Core financials year header (numeric years, shown as "Year n"): the roll-ups read it
 CHART_ROW = 10  # charts: H10, P10, H27, P27
-KPI_ROW = DASH_KPI_ROW  # the template KPI table (Full) sits below the charts until E31 moves it to a KPIs sheet
 YEAR_FMT = '"Year "0'
 
 #: number formats (standard §4): $'000 on report sheets, millions on tiles
@@ -127,8 +126,6 @@ def plan_dashboard(pl: Plan) -> DashLayout:
         lay.fv[n] = r
         r += 1
     lay.end = r - 1
-    if lay.end >= KPI_ROW - 2:
-        raise ValueError(f"Dashboard left column ends at row {lay.end}; the KPI table starts at {KPI_ROW}")
     # --- manifest cells ---
     for n, key in (
         ("dash_rev", "rev"),
@@ -146,6 +143,8 @@ def plan_dashboard(pl: Plan) -> DashLayout:
         ("dash_cash", "cash"),
     ):
         lay.years[n] = {y: _ref(f"{L(1 + y)}{lay.core[key]}") for y in range(1, H + 1)}
+    for m, row in lay.metrics:  # industry lines: the challenger recomputes each one (KPI-table rows and grid lines)
+        lay.years[f"dash_m_{m.key}"] = {y: _ref(f"{L(1 + y)}{row}") for y in range(1, H + 1)}
     for i, (a, _b) in enumerate(TILES):
         lay.cells[f"dash_t{i + 1}"] = _ref(f"{a}7")
         lay.cells[f"dash_t{i + 1}_sub"] = _ref(f"{a}8")
@@ -320,7 +319,7 @@ def write_dashboard(wb, pl: Plan, verdict: str) -> None:
         )
     else:
         cagr = "CAGR n/a"
-    t5 = f'=IF({fv("gap")}>=0,"Covered by funding raised","Shortfall $"&TEXT(-{fv("gap")}/1000000,"0.0")&"M")'
+    t5 = f'=IF({fv("gap")}>=0,"Covered by funding raised",-{fv("gap")})'
     if full:
         t6 = ("ENTERPRISE VALUE (DCF)", f"={fv('ev_avg')}", TILE_M, "Average of 2 methods", None)
     else:
@@ -350,7 +349,7 @@ def write_dashboard(wb, pl: Plan, verdict: str) -> None:
             '"Net margin "0%;"Net margin "-0%;"Net margin "0%',
         ),
         ("LOWEST CASH BALANCE", f"={fv('low')}", TILE_M, f"={bref('low_p')}", f'"in {word} "0'),
-        ("FUNDING REQUIRED", f"={fv('required')}", TILE_M, t5, None),
+        ("FUNDING REQUIRED", f"={fv('required')}", TILE_M, t5, '"Shortfall "$#,##0.0,,"M"'),
         t6,
     ]
     for cols, (label, value, fmt, sub, sub_fmt) in zip(TILES, tiles, strict=True):

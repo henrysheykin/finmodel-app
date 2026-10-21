@@ -104,6 +104,20 @@ class DashChart:
 
 
 @dataclass(frozen=True)
+class KpiChart:
+    """One industry chart of the KPIs sheet: bars (and optional right-axis lines) from KPI-table row keys.
+
+    A key is a row key of the template's KPI table, or ``"r:<ratio>"`` for a row of the Financial ratios table
+    (``engine.kpis.RATIOS``). Unknown keys are dropped, so a default can name ratios a template does not have.
+    """
+
+    title: str
+    bars: tuple[str, ...]
+    lines: tuple[str, ...] = ()
+    stacked: bool = False
+
+
+@dataclass(frozen=True)
 class Timing:
     granularity: str
     years: int

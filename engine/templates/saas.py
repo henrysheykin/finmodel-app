@@ -10,8 +10,8 @@ from __future__ import annotations
 
 from engine.brief import Brief
 from engine.core import HC, Top
-from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
-from engine.templates.base import Template
+from engine.spec import DashChart, DashMetric, DriverSpec, KpiChart, Line, StmtRow, Timing
+from engine.templates.base import Template, div
 
 ROLES = [
     ("eng", "Engineering & product"),
@@ -140,8 +140,17 @@ class SaasTemplate(Template):
     sample_desc = "Full workbook with MRR, churn, CAC payback and runway"
     sample_stage = "early"
     kpi_title = "SaaS metrics"
-    kpi_checked = {"cust_end": "cust_close", "mrr_end": "mrr_close", "new_cust": "new_total"}
-    kpi_flows = ("new_total",)
+    kpi_checked = {
+        "cust_end": "cust_close",
+        "mrr_end": "mrr_close",
+        "new_cust": "new_total",
+        "lost": "churned",
+        "rev": "rev",
+        "gp": "gp",
+        "cash": "cash_close",
+    }
+    kpi_derived = ("arr", "arpa", "gm", "cac", "ltv", "ltv_cac", "payback")
+    kpi_flows = ("new_total", "churned")
 
     def driver_specs(self) -> list[DriverSpec]:
         return [
@@ -353,7 +362,27 @@ class SaasTemplate(Template):
             ),
         ]
 
+    def kpi_charts(self, t: Timing) -> list[KpiChart]:
+        return [
+            KpiChart("LTV ÷ CAC and CAC payback", bars=("ltv_cac",), lines=("payback",)),
+            KpiChart("New customers and customers lost", bars=("new_cust", "lost")),
+        ]
+
     # ------------------------------------------------------------------ python twin
+    def kpi_reference(self, ann: dict, d: dict, t: Timing) -> dict:
+        out: dict[str, dict] = {k: {} for k in self.kpi_derived}
+        for y in range(1, t.years + 1):
+            mrr, cust = ann["mrr_close"][y], ann["cust_close"][y]
+            arpa = div(mrr, cust)
+            gm = div(ann["gp"][y], ann["rev"][y])
+            cac = div(-ann["opex_mkt"][y], ann["new_total"][y])
+            ltv = div(arpa * gm, d["churn_m"])
+            margin = arpa * gm
+            out["arr"][y], out["arpa"][y], out["gm"][y], out["cac"][y] = mrr * 12, arpa, gm, cac
+            out["ltv"][y], out["ltv_cac"][y] = ltv, div(ltv, cac)
+            out["payback"][y] = 0.0 if margin <= 0 else cac / margin
+        return out
+
     def _path(self, d: dict, t: Timing, upto: int) -> list[dict]:
         """Customer and MRR roll-forward for periods 1..upto (plain Python)."""
         out = []
@@ -390,7 +419,12 @@ class SaasTemplate(Template):
             },
             capex=d["capex"] if p == 1 else 0.0,
             liabilities={"defrev": s["m1"] * d["annual_pct"] * 6},
-            kpis={"cust_close": s["c1"], "mrr_close": s["m1"], "new_total": s["new"]},
+            kpis={
+                "cust_close": s["c1"],
+                "mrr_close": s["m1"],
+                "new_total": s["new"],
+                "churned": s["c1"] - s["c0"] - s["new"],
+            },
         )
 
     # ------------------------------------------------------------------ defaults

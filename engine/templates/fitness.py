@@ -12,8 +12,8 @@ from __future__ import annotations
 
 from engine.brief import Brief
 from engine.core import HC, Top
-from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
-from engine.templates.base import Template
+from engine.spec import DashChart, DashMetric, DriverSpec, KpiChart, Line, StmtRow, Timing
+from engine.templates.base import Template, div
 
 ROLES = [
     ("manager", "Studio manager"),
@@ -154,8 +154,20 @@ class FitnessTemplate(Template):
     sample_desc = "Full workbook with members, cancellations, capacity, personal training and rent"
     sample_stage = "planning"
     kpi_title = "Membership metrics"
-    kpi_checked = {"members_end": "members_close", "new_m": "new_total", "lost_cap": "capped"}
-    kpi_flows = ("new_total", "capped")
+    kpi_checked = {
+        "members_end": "members_close",
+        "new_m": "new_total",
+        "lost_m": "churned",
+        "lost_cap": "capped",
+        "fee_m": "fee_now",
+        "rev": "rev",
+        "rev_mem": "rev_mem",
+        "new_paid": "new_mkt",
+        "gp": "gp",
+        "ebitda": "ebitda",
+    }
+    kpi_derived = ("cap_use", "mrr", "rev_extra", "cac", "gm", "churn", "ltv", "em", "rev_sqft")
+    kpi_flows = ("new_total", "capped", "churned", "rev_mem", "new_mkt")
 
     def driver_specs(self) -> list[DriverSpec]:
         mem, price, extra, cost = "Members", "Prices", "Personal training & retail", "Costs"
@@ -333,7 +345,29 @@ class FitnessTemplate(Template):
             StmtRow("rev_sqft", "Revenue per square foot", "formula", "=IF({in:sqft}=0,0,{rev}/{in:sqft})", "usd2"),
         ]
 
+    def kpi_charts(self, t: Timing) -> list[KpiChart]:
+        return [
+            KpiChart("Membership fees per month and EBITDA margin", bars=("mrr",), lines=("em",)),
+            KpiChart("New members, cancellations and joins lost", bars=("new_m", "lost_m", "lost_cap")),
+        ]
+
     # ------------------------------------------------------------------ python twin
+    def kpi_reference(self, ann: dict, d: dict, t: Timing) -> dict:
+        out: dict[str, dict] = {k: {} for k in self.kpi_derived}
+        for y in range(1, t.years + 1):
+            members, rev, gp = ann["members_close"][y], ann["rev"][y], ann["gp"][y]
+            gm = div(gp, rev)
+            out["cap_use"][y] = div(members, d["max_members"])
+            out["mrr"][y] = members * ann["fee_now"][y]
+            out["rev_extra"][y] = rev - ann["rev_mem"][y]
+            out["cac"][y] = div(-ann["opex_mkt"][y], ann["new_mkt"][y])
+            out["gm"][y] = gm
+            out["churn"][y] = d["churn_m"]
+            out["ltv"][y] = div(ann["fee_now"][y] * gm, d["churn_m"])
+            out["em"][y] = div(ann["ebitda"][y], rev)
+            out["rev_sqft"][y] = div(rev, d["sqft"])
+        return out
+
     def _path(self, d: dict, t: Timing, upto: int) -> list[dict]:
         out = []
         members = d["members_start"]
@@ -347,7 +381,15 @@ class FitnessTemplate(Template):
             uncapped = m0 * r + new if t.granularity == "monthly" else m0 * r**12 + new * r**6
             members = min(d["max_members"], uncapped)
             out.append(
-                {"m0": m0, "m1": members, "new": new, "new_mkt": new_mkt, "capped": uncapped - members, "mkt": mkt}
+                {
+                    "m0": m0,
+                    "m1": members,
+                    "new": new,
+                    "new_mkt": new_mkt,
+                    "capped": uncapped - members,
+                    "churned": uncapped - m0 - new,
+                    "mkt": mkt,
+                }
             )
         return out
 
@@ -375,7 +417,15 @@ class FitnessTemplate(Template):
                 "ga_other": -d["ga_other"] * t.mpp,
             },
             capex=d["capex"] if p == 1 else 0.0,
-            kpis={"members_close": s["m1"], "new_total": s["new"], "capped": s["capped"]},
+            kpis={
+                "members_close": s["m1"],
+                "new_total": s["new"],
+                "capped": s["capped"],
+                "churned": s["churned"],
+                "new_mkt": s["new_mkt"],
+                "fee_now": d["fee"] * idx,
+                "rev_mem": rev_mem,
+            },
         )
 
     # ------------------------------------------------------------------ defaults

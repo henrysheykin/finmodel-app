@@ -12,8 +12,8 @@ from __future__ import annotations
 
 from engine.brief import Brief, BriefError
 from engine.core import HC, Top, role_period
-from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
-from engine.templates.base import Template
+from engine.spec import DashChart, DashMetric, DriverSpec, KpiChart, Line, StmtRow, Timing
+from engine.templates.base import Template, div
 
 BILLABLE = ("senior", "staff")
 ROLES = [
@@ -139,8 +139,19 @@ class ServicesTemplate(Template):
     sample_desc = "Full workbook with utilisation, rates and receivables"
     sample_stage = "growing"
     kpi_title = "Services metrics"
-    kpi_checked = {"hours": "hours", "billable_fte": "billable_fte", "retainer": "rev_retainer"}
-    kpi_flows = ("hours", "rev_retainer")
+    kpi_checked = {
+        "hours": "hours",
+        "billable_fte": "billable_fte",
+        "retainer": "rev_retainer",
+        "hours_contr": "hours_contr",
+        "cap_hours": "cap_hours",
+        "fees_std": "fees_std",
+        "rev": "rev",
+        "gp": "gp",
+        "ar": "ar",
+    }
+    kpi_derived = ("hours_emp", "util", "contr_share", "retainer_share", "realised", "eff_rate", "rev_fte", "gm")
+    kpi_flows = ("hours", "rev_retainer", "hours_contr", "cap_hours", "fees_std")
 
     def driver_specs(self) -> list[DriverSpec]:
         cap, rates, mix, cost = "Billable capacity", "Rate card", "Retainer vs project", "Costs"
@@ -342,7 +353,28 @@ class ServicesTemplate(Template):
             StmtRow("ar", "Receivables (year end)", "line", "ar"),
         ]
 
+    def kpi_charts(self, t: Timing) -> list[KpiChart]:
+        return [
+            KpiChart("Effective rate and realisation", bars=("eff_rate",), lines=("realised",)),
+            KpiChart("Revenue per billable FTE and utilisation", bars=("rev_fte",), lines=("util",)),
+        ]
+
     # ------------------------------------------------------------------ python twin
+    def kpi_reference(self, ann: dict, d: dict, t: Timing) -> dict:
+        out: dict[str, dict] = {k: {} for k in self.kpi_derived}
+        for y in range(1, t.years + 1):
+            hours, contr, rev = ann["hours"][y], ann["hours_contr"][y], ann["rev"][y]
+            emp = hours - contr
+            out["hours_emp"][y] = emp
+            out["util"][y] = div(emp, ann["cap_hours"][y])
+            out["contr_share"][y] = div(contr, hours)
+            out["retainer_share"][y] = div(ann["rev_retainer"][y], rev)
+            out["realised"][y] = div(rev, ann["fees_std"][y])
+            out["eff_rate"][y] = div(rev, hours)
+            out["rev_fte"][y] = div(rev, ann["billable_fte"][y])
+            out["gm"][y] = div(ann["gp"][y], rev)
+        return out
+
     def reference_top(self, d: dict, p: int, y: int, t: Timing, hc: HC) -> Top:
         fte_s, cost_s = role_period(d, "senior", p, t)
         fte_c, cost_c = role_period(d, "staff", p, t)
@@ -366,7 +398,14 @@ class ServicesTemplate(Template):
                 "ga_other": -d["ga_other"] * t.mpp,
             },
             capex=d["capex"] if p == 1 else 0.0,
-            kpis={"hours": h_senior + h_staff + h_contr, "billable_fte": fte_s + fte_c, "rev_retainer": retainer},
+            kpis={
+                "hours": h_senior + h_staff + h_contr,
+                "billable_fte": fte_s + fte_c,
+                "rev_retainer": retainer,
+                "hours_contr": h_contr,
+                "cap_hours": (fte_s + fte_c) * per_fte_hours,
+                "fees_std": fees,
+            },
         )
 
     # ------------------------------------------------------------------ defaults

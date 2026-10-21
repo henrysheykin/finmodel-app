@@ -8,8 +8,8 @@ from __future__ import annotations
 
 from engine.brief import Brief
 from engine.core import HC, Top
-from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
-from engine.templates.base import Template
+from engine.spec import DashChart, DashMetric, DriverSpec, KpiChart, Line, StmtRow, Timing
+from engine.templates.base import Template, div
 
 ROLES = [
     ("ops", "Operations & fulfilment"),
@@ -162,8 +162,20 @@ class RetailTemplate(Template):
     sample_desc = "Full workbook with traffic, conversion, inventory and stores"
     sample_stage = "growing"
     kpi_title = "Retail metrics"
-    kpi_checked = {"orders": "orders", "stores_end": "stores", "online_sales": "online_sales"}
-    kpi_flows = ("orders", "online_sales")
+    kpi_checked = {
+        "visits": "visits",
+        "orders": "orders",
+        "repeat": "orders_repeat",
+        "online_sales": "online_sales",
+        "stores_end": "stores",
+        "store_sales": "store_sales",
+        "rev": "rev",
+        "gp": "gp",
+        "inv": "inv",
+    }
+    kpi_derived = ("repeat_share", "aov", "ads", "ads_pct", "gm", "cogs", "turns")
+    marketing_key = "ads"
+    kpi_flows = ("orders", "online_sales", "visits", "orders_repeat", "store_sales")
 
     def driver_specs(self) -> list[DriverSpec]:
         on, st, cost = "Online channel", "Store channel", "Costs"
@@ -346,7 +358,27 @@ class RetailTemplate(Template):
             ),
         ]
 
+    def kpi_charts(self, t: Timing) -> list[KpiChart]:
+        return [
+            KpiChart("Repeat orders, % of online orders", bars=("repeat_share",)),
+            KpiChart("Average order value and ad spend share", bars=("aov",), lines=("ads_pct",)),
+        ]
+
     # ------------------------------------------------------------------ python twin
+    def kpi_reference(self, ann: dict, d: dict, t: Timing) -> dict:
+        out: dict[str, dict] = {k: {} for k in self.kpi_derived}
+        for y in range(1, t.years + 1):
+            orders, online, rev = ann["orders"][y], ann["online_sales"][y], ann["rev"][y]
+            ads, cogs = -ann["opex_ads"][y], -ann["cogs"][y]
+            out["repeat_share"][y] = div(ann["orders_repeat"][y], orders)
+            out["aov"][y] = div(online, orders)
+            out["ads"][y] = ads
+            out["ads_pct"][y] = div(ads, online)
+            out["gm"][y] = div(ann["gp"][y], rev)
+            out["cogs"][y] = cogs
+            out["turns"][y] = div(cogs, ann["inv"][y])
+        return out
+
     def reference_top(self, d: dict, p: int, y: int, t: Timing, hc: HC) -> Top:
         if t.granularity == "monthly":
             season = 1 + d["q4_uplift"] if (p - 1) % 12 >= 10 else 1 - d["q4_uplift"] / 5
@@ -378,7 +410,14 @@ class RetailTemplate(Template):
                 "ga_other": -d["ga_other"] * t.mpp,
             },
             capex=capex,
-            kpis={"orders": orders, "stores": float(stores), "online_sales": online},
+            kpis={
+                "orders": orders,
+                "stores": float(stores),
+                "online_sales": online,
+                "store_sales": store_sales,
+                "visits": visits,
+                "orders_repeat": orders - orders / (1 + d["repeat_mult"]),
+            },
         )
 
     # ------------------------------------------------------------------ defaults

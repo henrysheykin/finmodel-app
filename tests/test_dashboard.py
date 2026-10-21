@@ -8,7 +8,7 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.utils import get_column_letter
 
 from engine import charts as ck
-from engine.builder import DASH_KPI_ROW, PURE_LINK, manifest_for, plan
+from engine.builder import PURE_LINK, manifest_for, plan
 from engine.challenger import challenge
 from engine.dashboard import CORE, LEFT, TILES
 from engine.goals import dashboard_reference
@@ -141,18 +141,21 @@ def test_four_charts_in_the_standard_grid(saas_dash):
     assert anchors == [(7, 9), (15, 9), (7, 26), (15, 26)]  # H10 P10 H27 P27
 
 
-def test_template_kpi_table_does_not_collide_with_the_layout(build):
+def test_template_kpi_table_moved_to_the_kpis_sheet(build):
+    """E31: the template's KPI table lives on the KPIs sheet; the Dashboard keeps its industry block (standard §2)."""
     brief = _brief("saas", tier="full")
-    ws = load_workbook(build(brief))["Dashboard"]
+    wb = load_workbook(build(brief))
     pl = plan(brief, get_template("saas"))
     kpi = pl.blocks["kpi"]
-    assert kpi.start_row == DASH_KPI_ROW == 47
-    assert pl.dash.end < kpi.start_row - 1
-    lab = _labels(ws)
-    for row in get_template("saas").kpi_rows(pl.t):  # every KPI row of the template is still there
-        assert lab[kpi.placed[row.key]] == row.label
-    assert _widths(ws)["B"] == 9  # and the KPI table keeps the grid widths
-    assert ws.cell(row=kpi.placed["arr"], column=2).number_format.startswith("[>=1000000]")
+    assert kpi.sheet == "KPIs"
+    lab = _labels(wb["Dashboard"])
+    for row in get_template("saas").kpi_rows(pl.t):
+        assert row.label in _labels(wb["KPIs"]).values()
+    assert "Runway at year-end burn (months; - = not burning)" not in lab.values()  # KPI-table-only row
+    assert max(lab) == pl.dash.end  # the Dashboard ends with Funding & valuation
+    for m, row in pl.dash.metrics:  # the industry block links to the KPIs sheet
+        if m.src.startswith("kpi:"):
+            assert wb["Dashboard"].cell(row=row, column=2).value == "=" + pl.stmt_cell("kpi", m.src[4:], 1)
 
 
 def test_light_dashboard_has_no_cf_bs_and_no_ev(build):
@@ -264,7 +267,7 @@ def test_twin_texts_and_cagr_rules():
     }
     d = {"equity": 1.0, "loan_amount": 2.0}
     out = dashboard_reference(brief, d, series, t, goal)["cells"]
-    assert out["dash_t5_sub"] == "Shortfall $1.3M"  # half rounds up, like the sheet's TEXT()
+    assert out["dash_t5_sub"] == 1_250_000.0  # numeric (shown as "Shortfall $1.3M" by the cell format): no rounding
     assert out["dash_t1_sub"] == 0.0  # flat revenue: CAGR 0
     assert out["dash_t6_first_sub"] == "Net income not positive within horizon"
     assert out["dash_fv_low_label"] == "Lowest cash balance (month 4)"
@@ -283,14 +286,18 @@ def test_twin_texts_and_cagr_rules():
 def test_manifest_lists_every_tile_and_funding_cell():
     for tier, ev in (("light", False), ("full", True)):
         brief = _brief("saas", tier=tier)
-        man = manifest_for(plan(brief, get_template("saas")), "")
+        pl = plan(brief, get_template("saas"))
+        man = manifest_for(pl, "")
         names = set(man.dash_cells)
         assert {f"dash_t{i}" for i in range(1, 6)} <= names and {f"dash_t{i}_sub" for i in range(1, 6)} <= names
         assert ("dash_fv_ev_avg" in names) is ev and ("dash_t6_ev" in names) is ev
         assert ("dash_t6_first" in names) is (not ev)
         assert {"dash_fv_equity", "dash_fv_loan", "dash_fv_required", "dash_fv_gap", "dash_fv_low"} <= names
         assert {"dash_fv_first", "dash_fv_payback", "dash_fv_low_label"} <= names
-        assert len(man.dash_years) == 13 and all(len(v) == brief.horizon_years for v in man.dash_years.values())
+        # 13 Core financials lines + one per industry line (E31: the challenger recomputes those too)
+        assert len(man.dash_years) == 13 + len(pl.dash.metrics) and all(
+            len(v) == brief.horizon_years for v in man.dash_years.values()
+        )
 
 
 def test_dashboard_error_range_joins_the_no_error_check(build):
