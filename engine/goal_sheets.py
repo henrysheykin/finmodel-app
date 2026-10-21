@@ -16,7 +16,9 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from engine import charts as ch
 from engine import style as st
 from engine.builder import FIRST_COL, PURE_LINK, Block, Plan, StmtRow, _layout_block, q
+from engine.dashboard import YEAR_FMT
 from engine.goals import NA, NOT_WITHIN, NOTHING_TO_PAY_BACK, modules_for
+from engine.kpis import AXIS
 from engine.spec import FORMATS
 
 SHEETS = {"breakeven": "Break-even", "dcf": "Valuation", "sources_uses": "Sources & Uses"}
@@ -25,8 +27,6 @@ SHEETS = {"breakeven": "Break-even", "dcf": "Valuation", "sources_uses": "Source
 SU_CHART_COLS = ("F", "O")
 KEY_TOTAL_LABELS = ("Funding surplus", "Enterprise value — average")
 INT = "0"
-BE_AXIS = '$#,##0,"K"'
-YEAR_FMT = '"Year "0'
 
 
 @dataclass
@@ -201,7 +201,8 @@ def _plan_breakeven(pl: Plan) -> ModuleLayout:
     end = max(blk.placed.values()) + 2
     lay.notes[end] = (
         "Simplification: cost of sales is treated as variable and operating expenses as fixed, so break-even "
-        "revenue = operating expenses ÷ gross margin."
+        "revenue = operating expenses ÷ gross margin. In a year with zero or negative gross margin there is no "
+        "break-even revenue (n/a); the chart line shows 0 there."
     )
     lay.width = max(3, 1 + pl.t.years)
     lay.error_range = f"{q(lay.sheet)}!$B$3:${L(max(3, 1 + pl.t.years))}${end}"
@@ -330,12 +331,12 @@ def _breakeven_chart(ws, pl: Plan, lay: ModuleLayout) -> None:
         rng(blk.year_row),
         [ch.Ser(rng(rev), f"{sheet}!$A${rev}")],
         [ch.Ser(rng(be_rev), f"{sheet}!$A${be_rev}")],
-        fmt=BE_AXIS,
+        fmt=AXIS["usd"],
         cat_fmt=YEAR_FMT,
         secondary=False,
         size=ch.LARGE_CM,
     )
-    ch.place(ws, chart, f"A{max(lay.notes) + 2}")
+    ch.place(ws, chart, f"A{max(lay.notes, default=max(blk.placed.values())) + 2}")
 
 
 # --------------------------------------------------------------------------- Sources & Uses (E30)
