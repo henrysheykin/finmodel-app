@@ -58,7 +58,12 @@ template automatically.
 
 ```bash
 python scripts/build_samples.py <key>         # writes samples/<key>-full.xlsx (Full, 3 years, monthly)
+                                              # and samples/<key>-full-5y.xlsx (Full, 5 years, monthly)
 ```
+
+Commit both files. `<key>-full-5y.xlsx` is the sample the template's business-model page (section 4) computes its
+tables from and offers for download; `tests/test_bizmodel.py` compares every table cell of every registered template
+with the rebuilt workbook and with this committed file.
 
 Write `docs/templates/<key>.md` (assumption memo with questions for the CFO at the end) and add the
 "CFO review" line to `docs/HUMAN_TODO.md` R1.
@@ -67,5 +72,14 @@ Write `docs/templates/<key>.md` (assumption memo with questions for the CFO at t
 
 - An SEO page in `content/seo/` (M track) once the CFO has signed off the template. Front matter and
   samples: `content/README.md`; `python scripts/build_samples.py --seo` builds any sample a page offers.
+- A business-model page `content/business-models/<key>.md` (`/business-models/<key>`, E35, ADR-014) and calculator
+  pages (`content/calculators/`, E34) **may go live before the CFO sign-off** (ADR-014 supersedes the line above for
+  these two page types): they explain the business and carry the line "Illustrative Base case of the sample model;
+  your model uses your numbers". Only the `/models/...` SEO pages, which sell the model, wait for the sign-off.
+  The page is Markdown with `{{table:<name>}}`, `{{chart:<name>}}` and `{{num:<table>.<row>[.<column>]}}`
+  placeholders, so every figure comes from the sample (`app/bizmodel.py`); an unknown placeholder fails the build.
+  Front matter: `slug: /business-models/<key>`, `title`, `description`, `keyword`, `template: <key>`,
+  `sample: <key>, full, monthly, 5 years`. Copy rules are enforced by `tests/test_bizmodel.py`: 900 to 1,500 words,
+  no `[UPPER]` placeholders except prices, and any `$` or `%` figure written by hand needs a source link in its sentence.
 - Announce a future industry early: add it to `PLANNED` and it appears in the wizard as
   "(coming soon)" without a template.
