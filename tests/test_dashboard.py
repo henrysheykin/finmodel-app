@@ -8,6 +8,7 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.utils import get_column_letter
 
 from engine import charts as ck
+from engine import kpis
 from engine.builder import PURE_LINK, manifest_for, plan
 from engine.challenger import challenge
 from engine.dashboard import CORE, LEFT, TILES
@@ -149,8 +150,9 @@ def test_template_kpi_table_moved_to_the_kpis_sheet(build):
     kpi = pl.blocks["kpi"]
     assert kpi.sheet == "KPIs"
     lab = _labels(wb["Dashboard"])
+    kpi_lab = _labels(wb["KPIs"])
     for row in get_template("saas").kpi_rows(pl.t):
-        assert row.label in "".join(f"{v}|" for v in _labels(wb["KPIs"]).values())  # ($) suffix on per-unit rows
+        assert kpi_lab[kpi.placed[row.key]] == kpis.row_label(pl.template, row)  # ($) suffix on per-unit rows
     assert "Runway at year-end burn (months; - = not burning)" not in lab.values()  # KPI-table-only row
     assert max(lab) == pl.dash.end  # the Dashboard ends with Funding & valuation
     for m, row in pl.dash.metrics:  # the industry block links to the KPIs sheet
