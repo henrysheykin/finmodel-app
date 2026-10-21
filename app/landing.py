@@ -19,7 +19,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response
 from markupsafe import Markup
 
-from app import calculators, seo, wizard, xlview
+from app import bizmodel, calculators, seo, wizard, xlview
 from app.emails import md_to_html
 from app.web import templates
 from engine.samples import parse_name
@@ -318,7 +318,13 @@ def robots(request: Request) -> PlainTextResponse:
 @router.get("/sitemap.xml", include_in_schema=False)
 def sitemap(request: Request) -> Response:
     base = request.app.state.services.cfg.public_base_url
-    paths = ["/"] + seo.sitemap_paths() + calculators.sitemap_paths() + [f"/{p}" for p in LEGAL_PAGES if legal_text(p)]
+    paths = (
+        ["/"]
+        + seo.sitemap_paths()
+        + bizmodel.sitemap_paths()
+        + calculators.sitemap_paths()
+        + [f"/{p}" for p in LEGAL_PAGES if legal_text(p)]
+    )
     urls = "".join(f"<url><loc>{html.escape(base + p)}</loc></url>" for p in paths)
     xml = f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>'
     return Response(xml, media_type="application/xml")
@@ -349,4 +355,8 @@ def llms(request: Request) -> PlainTextResponse:
     lines += ["", "## Calculators", ""]
     for calc in calculators.calculators().values():
         lines.append(f"- [{calc.h1}]({cfg.public_base_url}{calc.slug}): {calc.description}")
+    if bizmodel.pages():
+        lines += ["", f"## {bizmodel.SECTION_TITLE}", ""]
+        for page in bizmodel.pages().values():
+            lines.append(f"- [{page.h1}]({cfg.public_base_url}{page.slug}): {page.description}")
     return PlainTextResponse("\n".join(lines) + "\n")
