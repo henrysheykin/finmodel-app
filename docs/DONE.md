@@ -46,3 +46,4 @@ New lines go at the end of the table (protocol step 9).
 | E26 | Workbook standard: style kit v2, sheet set by tier, Cover | #44 | done 2026-10-20 |
 | E27 | Dashboard v2 and the chart kit | #45 | done 2026-10-20 |
 | E28 | Summary sheet (statements, selected year by month) | #46 | done 2026-10-20 |
+| E31 | KPIs & ratios sheet | #50 | done 2026-10-21 |

@@ -2,6 +2,13 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-21 · E · E31 KPIs & ratios sheet · DONE · https://github.com/henrysheykin/finmodel-app/pull/50
+  engine/kpis.py (Full only, after Valuation): ratios by year (growth, margins, payroll / marketing / opex %, current ratio, D/E,
+  ROA, ROE) with "n/a" guards, DuPont + in-file check (FAIL on mismatch, n/a when no comparable year), template KPI table moved
+  from the Dashboard ($'000, per-unit rows in $), blank Target input column, 4 charts (2 via new `kpi_charts` hook). Challenger
+  recomputes every ratio, DuPont leg, derived KPI and Dashboard industry line (≤ $1); wider `kpi_checked` in all 7 templates;
+  DASH_USD_K dropped; funding tile sub-line numeric. Implementer sonnet, reviewer opus PASS (2 rounds), CI green. Build +0.03 s.
+  For Henry: nothing. Note: PR #47 (E30) and branch E29 will need a merge of main (sheet order, test sheet lists).
 - 2026-10-20 · E · E28 Summary sheet (statements, selected year by month) · PR open (reviewer next) · https://github.com/henrysheykin/finmodel-app/pull/46
   engine/summary.py (Full only): IS / CF / BS with every year linked to the statements (left) and one selected year by month
   (INDEX into the Monthly grid, switch R2) on the right, 3 charts beside the blocks; annual models: years only, charts by year;

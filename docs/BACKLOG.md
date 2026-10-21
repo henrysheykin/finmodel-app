@@ -48,25 +48,6 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - done when: the check and the challenger pass in all templates (incl. real estate with a loan), monthly and
   annual, with N at its default, at 1 and above the horizon (capped).
 
-### E31 — KPIs & ratios sheet
-- status: IN_PROGRESS (2026-10-21)
-- Model: sonnet
-- depends: E27
-- skills: xlsx
-- do: ADR-013 §1, §3. Full only. Financial ratios (growth, margins, payroll / marketing / opex % of revenue,
-  current ratio, debt ÷ equity, ROA, ROE), DuPont (net margin × asset turnover × equity multiplier = ROE), the
-  template's KPI table moved here from the Dashboard, a blank "Target" input column, 4 charts 2×2 (margins,
-  ROA / ROE + two template charts via a hook). Ratios with a zero or negative denominator (equity ≤ 0, revenue = 0,
-  assets = 0) show "n/a". Challenger recomputes the ratios and the DuPont identity. From the E27 review: every KPI
-  row shown on the Dashboard's industry block and the KPIs sheet is recomputed by the challenger (add the missing
-  rows to each template's `kpi_checked` — SaaS ARR, LTV ÷ CAC; real estate NOI, occupancy, debt service, DSCR;
-  services utilisation, rate, revenue per FTE; home services utilisation, revenue per job; fitness capacity, MRR;
-  retail store sales; cafe's customers / ticket roll-ups and team FTE); drop the interim `DASH_USD_K` format
-  (standard $'000); compare tile sub-lines numerically (not the TEXT() rounding) so a value on an x.x5 boundary
-  cannot fail a model.
-- done when: all templates PASS; in-file check: DuPont product equals ROE in every year where both are defined
-  (years with "n/a" are skipped); a planning-stage model with negative equity passes.
-
 ### E32 — Break-even chart and Valuation layout
 - status: TODO
 - Model: sonnet
