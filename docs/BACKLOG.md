@@ -32,38 +32,6 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   formats to the standard, assumptions stay links to Inputs, no chart.
 - done when: chart present after recalc in both tiers; all templates PASS.
 
-### E34 — Calculator engine (ADR-014)
-- status: IN_PROGRESS (2026-10-21) — implementer agent of the dispatcher session
-- Model: sonnet
-- depends: —
-- skills: frontend-design, engineering:testing-strategy
-- do: site section `/calculators/` and `/calculators/<slug>`. A calculator is one spec file in
-  `content/calculators/<slug>.md`: front matter (slug, title, description 70–200 chars, keyword, optional template key —
-  without one the page shows the generic promotion block and the wizard opens without a preset — related calculators) + YAML-like blocks for `inputs` (key, label, unit, default, min, max, step, format),
-  `outputs` (key, label, formula, format, optional "highlight"), optional `table` (one input swept over values →
-  outputs) and `examples` (inputs → expected outputs), then the Markdown explanation. Formulas use a small safe
-  expression language (numbers, input / output keys, + − × ÷ ^, parentheses, comparisons, `min`, `max`, `round`,
-  `abs`, `if(cond, a, b)`), evaluated by `web/static/calc.js` and by a Python twin `app/calc_expr.py`, both hand-written parsers
-  (never `eval` / `Function` / `ast` execution); `round` is half away from zero in both; inputs are clamped to
-  min / max; any non-finite result (÷ 0, NaN, ∞, negative base ^ fraction) shows "—"; JS and Python must agree
-  within 1e-9 relative. Tests: every spec parses, every output key is
-  defined once with no cycles, every example matches in Python, and the JS evaluator gives the same results on
-  the same examples (node in CI via `actions/setup-node`, or the Playwright browser tests that
-  already run in CI — either way the parity test must run in CI, not skip). Page: inputs left, live
-  results right (mobile: stacked), the optional sensitivity table, the explanation, FAQ JSON-LD when the body has
-  a FAQ section, related calculators, and the **model promotion block** (partial template, data from the
-  template: title, what the full model adds with features per tier as ADR-013 sets them (Light never promised
-  statements or valuation), the sample download, CTA to the wizard on that template, the configured tier
-  prices (`app/config.py`, as tests/test_seo.py reads them)). Default input values
-  are "example values" unless cited. Index page grouped by industry; add both new sections to the sitemap and
-  llms.txt (not automatic); canonical per page; a calculator links to (never duplicates) the SEO guide on the same
-  topic; the E35 cited-figure copy check also runs on `content/calculators/`; design tokens of design v2 (no competitor palette). Ship three cafe
-  calculators as the reference specs: menu price (target food-cost %), food cost %, break-even covers per day.
-- review focus: parser safety (no code execution path, deep nesting / huge input handled), JS = Python parity.
-- done when: the three pages render and work without JS errors (Playwright test fills inputs, reads results);
-  Python and JS evaluators agree on every example; Lighthouse-style basics (title, description, canonical, h1,
-  no layout shift from the results panel); all tests green.
-
 ### E35 — Business-model pages engine (ADR-014)
 - status: IN_PROGRESS (2026-10-21) — implementer agent of the dispatcher session
 - Model: sonnet
@@ -125,7 +93,8 @@ One task per template, each one file + tests + sample + memo per `docs/templates
   preview (`app/xlview.py` + `web/static/landing.js`: new sheet set; charts shown as a labelled placeholder or a
   static rendering — keep it faithful to the file), wizard / landing / SEO / email copy that describes sheets or
   says the goal adds sheets, `docs/templates/*.md` (sheet list; real_estate.md keeps "Returns in both tiers"),
-  HUMAN_TODO R1 line for the new sheets
+  E29 review lows (a 1-year horizon in tests/test_scenarios.py; an edit of Inputs column B alone moves only Low;
+  Scenarios key drivers in $'000 or a §4 note; §3 note: Base pine, Low amber, High sage), HUMAN_TODO R1 line for the new sheets
   (Scenarios, Sources & Uses, ratios) and refresh `Documents\StartupModel-review` guidance in the RUNLOG.
 - done when: CI green with the new samples; landing tests pass; no copy promises sheets a tier does not have.
 

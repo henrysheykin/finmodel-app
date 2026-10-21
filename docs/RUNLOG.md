@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-21 · E · E34 Calculator engine (ADR-014) · DONE · https://github.com/henrysheykin/finmodel-app/pull/53
+  /calculators section: spec files in content/calculators/, hand-written JS + Python evaluators (no eval), Node parity test
+  in CI, model promotion block (tier features per ADR-013, configured prices), three cafe calculators. Implementer sonnet,
+  reviewer opus PASS (7 lows → follow-up PR). For Henry: optional read of the three cafe calculator texts.
 - 2026-10-21 · E · E29 Scenarios sheet, live Low / Base / High · DONE · [#52](https://github.com/henrysheykin/finmodel-app/pull/52)
   engine/scenarios.py: the period calculation copied 3× on a new "Scenario calc" sheet (Full, between Headcount and Checks),
   each copy reading Inputs B / C / D; Scenarios sheet: key drivers, 10 outputs Low / Base / High / Active, per-year tables,
