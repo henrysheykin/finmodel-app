@@ -380,6 +380,7 @@ def sheet_order(tier: str, grid_name: str = "Monthly", returns: bool = False) ->
         "Summary",
         "Break-even",
         "Valuation",
+        "Sources & Uses",
         "KPIs",
         *industry,
         "Inputs",

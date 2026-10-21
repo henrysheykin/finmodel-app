@@ -47,6 +47,8 @@ PRESENTATION = frozenset(
     {"Cover", "Dashboard", "Summary", "Scenarios", "Break-even", "Valuation", "Sources & Uses", "KPIs", "Returns"}
 )
 STATEMENTS = frozenset({"P&L", "Cash Flow", "Balance Sheet"})
+#: report sheets: links in ink, figures in $'000 (§4)
+REPORT_SHEETS = frozenset({"Cover", "Dashboard", "Summary", "Scenarios", "Sources & Uses", "KPIs"})
 
 
 def font(

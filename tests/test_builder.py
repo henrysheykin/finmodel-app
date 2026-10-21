@@ -29,6 +29,7 @@ def test_sheets_per_tier(build, cafe_brief):
         "Summary",
         "Break-even",
         "Valuation",
+        "Sources & Uses",
         "KPIs",
         "Inputs",
         "P&L",
@@ -39,7 +40,8 @@ def test_sheets_per_tier(build, cafe_brief):
         "Checks",
     ]
     annual = load_workbook(build(cafe_brief.with_options(granularity="annual"), "a.xlsx"))
-    assert annual.sheetnames[10] == "Annual"
+    names = annual.sheetnames
+    assert names[names.index("Balance Sheet") + 1] == "Annual"
     light = load_workbook(build(cafe_brief.with_options(tier="light"), "l.xlsx"))
     assert light.sheetnames == ["Cover", "Dashboard", "Break-even", "Inputs", "P&L", "Checks"]
     assert light["Dashboard"]["B4"].value == 2 and light["Inputs"]["B3"].value is None
@@ -71,11 +73,18 @@ def test_excel_rules(build, any_brief, tier, g, years):
                     assert not color.endswith("0000FF"), f"formula in blue at {ws.title}!{c.coordinate}"
     # the scenario selector, both tiers (ADR-013), and the Summary's detailed year (Full, monthly: E28)
     assert switches == ["Dashboard!B4"] + (["Summary!R2"] if tier == "full" and g == "monthly" else [])
+    pl = plan(brief, get_template(brief.template))
+    # the view settings docs/WORKBOOK_STANDARD.md §5 allows outside Inputs, pinned here by name
+    allowed = {("Sources & Uses", "su_n_in")}
+    views = {(m.sheet, m.local[name]) for m in pl.modules.values() for sheet, name in allowed if m.sheet == sheet}
+    declared = {(m.sheet, ref) for m in pl.modules.values() for ref in getattr(m, "inputs", {})}
+    assert declared <= views, declared - views
     for sheet, c in inputs:  # input fill only on typed numbers on Inputs (Low / Base / High) ...
-        if sheet == "KPIs":  # ... and the blank Target column of the KPIs sheet (E31, standard §5)
+        if sheet == "KPIs":  # ... the blank Target column of the KPIs sheet (E31, standard §5) ...
             assert c.value is None and c.column == 2 + brief.horizon_years, f"{sheet}!{c.coordinate}"
             continue
-        assert sheet == "Inputs" and c.column_letter in "BCD", f"{sheet}!{c.coordinate}"
+        on_inputs = sheet == "Inputs" and c.column_letter in "BCD"  # ... and declared views
+        assert on_inputs or (sheet, c.coordinate) in views, f"{sheet}!{c.coordinate}"
         assert not (isinstance(c.value, str) and c.value.startswith("=")), f"formula on input fill {c.coordinate}"
     assert formulas > 50
     inp = wb["Inputs"]

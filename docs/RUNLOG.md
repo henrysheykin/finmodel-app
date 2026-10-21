@@ -2,6 +2,10 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-21 · E · E30 Sources & Uses sheet · DONE · [#47](https://github.com/henrysheykin/finmodel-app/pull/47)
+  Full only, after Valuation: funding structure (equity / loan, shares, gearing, funding required and surplus from Break-even)
+  + doughnut; sources and uses of cash for the first N periods (input, default 12 months / 1 year, capped) + uses bar chart;
+  in-file check "Sources & uses balance"; challenger recomputes every amount at the default N. $'000, ink links (report sheet).
 - 2026-10-21 · E · E31 KPIs & ratios sheet · DONE · https://github.com/henrysheykin/finmodel-app/pull/50
   engine/kpis.py (Full only, after Valuation): ratios by year (growth, margins, payroll / marketing / opex %, current ratio, D/E,
   ROA, ROE) with "n/a" guards, DuPont + in-file check (FAIL on mismatch, n/a when no comparable year), template KPI table moved

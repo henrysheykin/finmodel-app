@@ -11,14 +11,18 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from openpyxl.utils import get_column_letter as L
+from openpyxl.worksheet.datavalidation import DataValidation
 
+from engine import charts as ch
 from engine import style as st
 from engine.builder import FIRST_COL, PURE_LINK, Block, Plan, StmtRow, _layout_block, q
 from engine.goals import NA, NOT_WITHIN, NOTHING_TO_PAY_BACK, modules_for
 from engine.spec import FORMATS
 
-SHEETS = {"breakeven": "Break-even", "dcf": "Valuation"}
+SHEETS = {"breakeven": "Break-even", "dcf": "Valuation", "sources_uses": "Sources & Uses"}
 #: rows shown as key totals (double underline, docs/WORKBOOK_STANDARD.md §4)
+#: chart columns on Sources & Uses: right of the tables (A–C) and the E spacer, 9 columns per chart
+SU_CHART_COLS = ("F", "O")
 KEY_TOTAL_LABELS = ("Funding surplus", "Enterprise value — average")
 INT = "0"
 
@@ -49,6 +53,10 @@ class ModuleLayout:
     notes: dict[int, str] = field(default_factory=dict)
     error_range: str = ""
     width: int = 6
+    #: input cells on the sheet (view settings, standard §5): cell -> (min, max) whole number
+    inputs: dict[str, tuple[int, int]] = field(default_factory=dict)
+    #: chart data rows for the sheet's charts
+    charts: dict[str, tuple[int, int]] = field(default_factory=dict)
 
 
 class _Sheet:
@@ -65,8 +73,9 @@ class _Sheet:
         self.lay.headers[self.r] = cols
         self.r += 1
 
-    def row(self, name: str, label: str, values, fmt="usd", checked=True, **kw) -> int:
-        if isinstance(values, str):
+    def row(self, name: str, label: str, values, fmt="usd", checked=True, also: tuple[str, ...] = (), **kw) -> int:
+        """One row; ``checked`` registers column B with the challenger, ``also`` further columns (``name_c``)."""
+        if not isinstance(values, dict):
             values = {"B": values}
         fmts = fmt if isinstance(fmt, dict) else dict.fromkeys(values, fmt)
         fmts = {c: FORMATS.get(f, f) for c, f in fmts.items()}
@@ -74,8 +83,8 @@ class _Sheet:
         for col in values:
             key = name if col == "B" else f"{name}_{col.lower()}"
             self.lay.local[key] = f"{col}{self.r}"
-            if checked and col == "B":
-                self.lay.cells[name] = f"{q(self.lay.sheet)}!B{self.r}"
+            if checked and (col == "B" or col in also):
+                self.lay.cells[key] = f"{q(self.lay.sheet)}!{col}{self.r}"
         self.r += 1
         return self.r - 1
 
@@ -304,12 +313,132 @@ def _plan_dcf(pl: Plan) -> ModuleLayout:
     return lay
 
 
+# --------------------------------------------------------------------------- Sources & Uses (E30)
+def su_default_periods(pl: Plan) -> int:
+    """Default length of the sources-and-uses period: 12 months, or 1 year in an annual model (capped)."""
+    return min(12 if pl.t.granularity == "monthly" else 1, pl.t.periods)
+
+
+def _plan_sources_uses(pl: Plan) -> ModuleLayout:
+    word, n = pl.t.period_word, pl.t.periods
+    lay = ModuleLayout(
+        "Sources & Uses",
+        "Sources and uses of funds",
+        "Live for the selected scenario. Where the money comes from and where it goes in the period set below.",
+    )
+    s = _Sheet(lay, 5)
+    gr, prow = pl.grid_range, _period_row(pl)
+    be = pl.modules["breakeven"]
+    s.section("Funding structure ($'000) — raised at the start of the plan")
+    s.header({"B": "Amount", "C": "Share"})
+    eq, ln = s.r, s.r + 1
+    tot = s.r + 2
+    share = f"=IF($B${tot}=0,0,B{{r}}/$B${tot})"
+    kc = {"B": "usdk", "C": "pct"}
+    s.row("su_equity", "Equity", {"B": _link(pl, "equity"), "C": share.format(r=eq)}, kc, also=("C",))
+    s.row("su_loan", "Debt (loan)", {"B": _link(pl, "loan_amount"), "C": share.format(r=ln)}, kc, also=("C",))
+    s.row(
+        "su_funding",
+        "Total funding",
+        {"B": f"=B{eq}+B{ln}", "C": f"=IF(B{tot}=0,0,1)"},
+        kc,
+        also=("C",),
+        bold=True,
+        total=True,
+    )
+    s.row(
+        "su_gearing",
+        "Gearing (debt ÷ equity)",
+        f'=IF(B{eq}<=0,IF(B{ln}>0,"{NA}",0),B{ln}/B{eq})',
+        "x",
+        note="n/a: debt without positive equity",
+    )
+    s.row(
+        "su_required",
+        "Funding required by the plan (Break-even sheet)",
+        f"={q(be.sheet)}!{be.local['required']}",
+        "usdk",
+    )
+    s.row("su_gap", "Funding surplus / (shortfall)", f"={q(be.sheet)}!{be.local['gap']}", "usdk", bold=True)
+    s.blank()
+    sec = s.r
+    s.section(f"Sources and uses of cash in the first {word}s ($'000)")
+    n_in = s.row(
+        "su_n_in",
+        f"Period covered ({word}s from the start)",
+        su_default_periods(pl),
+        INT,
+        checked=False,
+        note=f"1 to {n} (capped)",
+    )
+    nr = s.row("su_n", f"{word.capitalize()}s used", f"=MIN({n},MAX(1,ROUND(B{n_in},0)))", INT)
+    lay.inputs[f"B{n_in}"] = (1, n)
+    # the band follows the input: "… in the first 12 months ($'000)"
+    lay.sections[sec] = (
+        f'="Sources and uses of cash in the first "&$B${nr}&IF($B${nr}=1," {word}"," {word}s")&" ($\'000)"'
+    )
+    cap = f"$B${nr}"
+
+    def cum(key: str, sign: str = "") -> str:
+        return f"{sign}SUMPRODUCT(--({prow}<={cap}),{gr(key)})"
+
+    s.header({"A": "Sources", "B": "Amount", "C": "Share"})
+    first_src = s.r
+    src_tot = first_src + 3
+    pct = f"=IF($B${src_tot}=0,0,B{{r}}/$B${src_tot})"
+    rows_src = [
+        ("su_eq_in", "Equity raised", f"={cum('equity_in')}"),
+        ("su_draw", "Loan drawdowns", f"={cum('loan_draw')}"),
+        ("su_cfo_in", "Cash generated by operations", f"=MAX(0,{cum('cfo')})"),
+    ]
+    for i, (name, label, f) in enumerate(rows_src):
+        s.row(name, label, {"B": f, "C": pct.format(r=first_src + i)}, {"B": "usdk", "C": "pct"}, also=("C",))
+    s.row(
+        "su_sources",
+        "Total sources",
+        {"B": f"=SUM(B{first_src}:B{src_tot - 1})", "C": f"=IF(B{src_tot}=0,0,1)"},
+        {"B": "usdk", "C": "pct"},
+        also=("C",),
+        bold=True,
+        total=True,
+    )
+    s.blank()
+    s.header({"A": "Uses", "B": "Amount", "C": "Share"})
+    first_use = s.r
+    use_tot = first_use + 4
+    pct = f"=IF($B${use_tot}=0,0,B{{r}}/$B${use_tot})"
+    rows_use = [
+        ("su_cfo_out", "Cash used by operations", f"=MAX(0,-{cum('cfo')})"),
+        ("su_capex", "Capital spending", f"={cum('cfi', '-')}"),
+        ("su_repay", "Loan repayments", f"={cum('loan_repay', '-')}"),
+        ("su_cash_end", "Cash at the end of the period", f"=INDEX({gr('cash_close')},{cap})"),
+    ]
+    for i, (name, label, f) in enumerate(rows_use):
+        s.row(name, label, {"B": f, "C": pct.format(r=first_use + i)}, {"B": "usdk", "C": "pct"}, also=("C",))
+    s.row(
+        "su_uses",
+        "Total uses",
+        {"B": f"=SUM(B{first_use}:B{use_tot - 1})", "C": f"=IF(B{use_tot}=0,0,1)"},
+        {"B": "usdk", "C": "pct"},
+        also=("C",),
+        bold=True,
+        total=True,
+    )
+    s.row("su_diff", "Sources − uses (must be 0; opening cash is 0)", f"=B{src_tot}-B{use_tot}", "usdk", checked=False)
+    lay.charts = {"funding": (eq, ln), "uses": (first_use, use_tot - 1)}
+    lay.width = 3
+    lay.error_range = f"{q(lay.sheet)}!$B$3:$C${s.r}"
+    return lay
+
+
 def plan_modules(pl: Plan) -> None:
     mods = modules_for(pl.brief.tier)
     if "breakeven" in mods:
         pl.modules["breakeven"] = _plan_breakeven(pl)
     if "dcf" in mods:
         pl.modules["dcf"] = _plan_dcf(pl)
+    if "sources_uses" in mods:
+        pl.modules["sources_uses"] = _plan_sources_uses(pl)
 
 
 # --------------------------------------------------------------------------- checks
@@ -356,6 +485,14 @@ def module_checks(pl: Plan) -> list[tuple[str, str, str]]:
                 "(often a 1-year plan still carrying start-up spending)",
             ),
         ]
+    if "sources_uses" in pl.modules:
+        out.append(
+            (
+                "Sources & uses balance",
+                ok(f"ABS({ref('sources_uses', 'su_sources')}-{ref('sources_uses', 'su_uses')})<0.5"),
+                "Sources of funds = uses of funds (incl. cash at the end) for the Sources & Uses period",
+            )
+        )
     return out
 
 
@@ -387,9 +524,9 @@ def write_modules(wb, pl: Plan) -> None:
                 cell = ws[f"{col}{row.row}"]
                 cell.value = f
                 pct = row.fmt[col] == FORMATS["pct"]
-                cell.font = st.font(
-                    st.GREEN if PURE_LINK.match(f) else st.GREY if pct else "000000", bold=row.bold, italic=pct
-                )
+                link = isinstance(f, str) and PURE_LINK.match(f)
+                link_colour = st.INK if lay.sheet in st.REPORT_SHEETS else st.GREEN
+                cell.font = st.font(link_colour if link else st.GREY if pct else "000000", bold=row.bold, italic=pct)
                 cell.number_format = row.fmt[col]
                 if row.total:
                     cell.border = st.TOTAL_TOP
@@ -402,3 +539,40 @@ def write_modules(wb, pl: Plan) -> None:
         ws.column_dimensions["A"].width = 52
         for i in range(2, lay.width + 2):
             ws.column_dimensions[L(i)].width = max(ws.column_dimensions[L(i)].width or 0, 16)
+        for ref, (lo, hi) in lay.inputs.items():
+            st.input_cell(ws[ref])
+            dv = DataValidation(
+                type="whole",
+                operator="between",
+                formula1=str(lo),
+                formula2=str(hi),
+                showInputMessage=True,
+                promptTitle="Period",
+                prompt=f"A whole number from {lo} to {hi}",
+            )
+            ws.add_data_validation(dv)
+            dv.add(ref)
+        if lay.sheet == "Sources & Uses":
+            _su_charts(ws, lay)
+
+
+def _su_charts(ws, lay: ModuleLayout) -> None:
+    """Two standard charts side by side (docs/WORKBOOK_STANDARD.md §3), right of the tables."""
+    sh = q(lay.sheet)
+    (e, ln), (u0, u1) = lay.charts["funding"], lay.charts["uses"]
+    ws.column_dimensions["E"].width = 2
+    d = ch.doughnut(
+        "Funding structure",
+        f"{sh}!$A${e}:$A${ln}",
+        ch.Ser(f"{sh}!$B${e}:$B${ln}", "Funding"),
+        points=2,
+    )
+    b = ch.bar(
+        "Uses of funds",
+        f"{sh}!$A${u0}:$A${u1}",
+        [ch.Ser(f"{sh}!$B${u0}:$B${u1}", "Uses")],
+        horizontal=True,
+        labels=True,
+    )
+    for slot, chart in enumerate((d, b)):
+        ch.place(ws, chart, ch.slot_anchor(slot, 5, cols=SU_CHART_COLS))

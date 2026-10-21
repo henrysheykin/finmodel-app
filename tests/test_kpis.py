@@ -36,7 +36,8 @@ def saas(build):
 
 def test_sheet_position_and_light_has_none(build):
     full = plan(_brief("saas", tier="full"), get_template("saas")).sheets
-    assert full[full.index("Valuation") + 1] == "KPIs" and full[full.index("KPIs") + 1] == "Inputs"
+    # standard §1: … Valuation, Sources & Uses, KPIs, [industry sheets], Inputs …
+    assert full[full.index("Sources & Uses") + 1] == "KPIs" and full[full.index("KPIs") + 1] == "Inputs"
     assert "KPIs" not in plan(_brief("saas", tier="light"), get_template("saas")).sheets
     re_full = plan(_brief("real_estate", tier="full"), get_template("real_estate")).sheets
     assert re_full.index("Returns") == re_full.index("KPIs") + 1  # industry sheets come after KPIs (standard §1)
