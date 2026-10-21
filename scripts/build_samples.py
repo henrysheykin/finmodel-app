@@ -87,7 +87,10 @@ def main(argv: list[str]) -> int:
                 raise SystemExit(f"unknown template or sample name {arg!r}; templates: {sorted(TEMPLATES)}")
             specs.append(spec)
     if goal:  # one review file per template, whatever the sample names
-        specs = specs[:1]
+        first: dict[str, SampleSpec] = {}
+        for spec in specs:
+            first.setdefault(spec.key, spec)
+        specs = list(first.values())
     for spec in specs:
         print("wrote", build_sample(spec.key, goal, spec).relative_to(ROOT))
     return 0

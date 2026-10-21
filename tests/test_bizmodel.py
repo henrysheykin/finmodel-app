@@ -154,6 +154,7 @@ def _page(tmp_path: Path, body: str, name: str = "cafe", **meta) -> Path:
         "description": "d",
         "keyword": "k",
         "template": name,
+        "published": "2026-10-21",
         "sample": f"{name}, full, monthly, 5 years",
     } | meta
     path = tmp_path / f"{name}.md"
@@ -189,6 +190,10 @@ def test_page_front_matter_is_checked(tmp_path):
         bizmodel.load_page(_page(tmp_path, "# H\n", slug="/business-models/other"))
     with pytest.raises(ValueError, match="sample"):
         bizmodel.load_page(_page(tmp_path, "# H\n", sample="cafe, full, monthly, 3 years"))
+    with pytest.raises(ValueError, match="published"):
+        bizmodel.load_page(_page(tmp_path, "# H\n", published="21 Oct 2026"))
+    with pytest.raises(ValueError, match="earlier"):
+        bizmodel.load_page(_page(tmp_path, "# H\n", modified="2026-01-01"))
     with pytest.raises(ValueError, match="registered template"):
         bizmodel.load_page(_page(tmp_path, "# H\n", name="nope"))
 
@@ -208,10 +213,6 @@ def test_num_placeholders_read_the_data(tmp_path):
 
 
 # --------------------------------------------------------------------------- the cafe copy
-def _plain(md: str) -> str:
-    return bizmodel.PLACEHOLDER_RE.sub("", md)
-
-
 def test_content_files_are_named_after_registered_templates():
     assert PAGES, "ship at least the cafe page"
     assert {p.key for p in PAGES} == {f.stem for f in CONTENT.glob("*.md")} <= set(TEMPLATES)
@@ -227,10 +228,7 @@ def test_copy_rules(bp):
         assert tok.startswith("[PRICE"), f"{bp.key}: placeholder {tok} in the copy"
     assert 900 <= bp.words <= 1500, bp.words
     # a dollar or percent figure written by hand needs a source: its sentence carries an external link
-    sentences = re.split(r"(?<=[.!?])\s+|\n+", _plain(body))
-    for s in sentences:
-        if re.search(r"\$\s?\d|\d\s?%", s):
-            assert re.search(r"\]\(https?://", s), f"{bp.key}: unsourced figure in: {s!r}"
+    assert bizmodel.unsourced_figures(body) == [], bp.key
     # every table and chart is used once
     used = [m for m in bizmodel.placeholders(body) if m[0] in ("table", "chart")]
     assert len(used) == len(set(used))
@@ -239,9 +237,26 @@ def test_copy_rules(bp):
     assert "FinModelsLab" not in md
 
 
-def test_unsourced_figure_rule_would_fire():
-    sent = "Rent is about $4,500 a month."
-    assert re.search(r"\$\s?\d|\d\s?%", sent) and not re.search(r"\]\(https?://", sent)
+def test_unsourced_figure_rule_fires_on_a_bad_copy_file(tmp_path):
+    bad = tmp_path / "bad.md"
+    bad.write_text(
+        "# H\n\nRent is about $4,500 a month. Food cost is 33% of sales. Margins sit near 20 percent here.\n\n"
+        "A cited one is fine: the [guide](https://example.com/x) says $4,500 or 33% or 20 percent.\n\n"
+        "Data placeholders are fine: {{num:pnl.rev.y1}} and {{num:costs.cogs.y1}}.\n",
+        encoding="utf-8",
+    )
+    found = bizmodel.unsourced_figures(bad.read_text(encoding="utf-8"))
+    assert len(found) == 3 and found[0].startswith("Rent") and "33%" in found[1] and "20 percent" in found[2]
+
+
+def test_goal_review_builds_one_file_per_template(monkeypatch):
+    spec = importlib.util.spec_from_file_location("build_samples_goal", ROOT / "scripts" / "build_samples.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    built = []
+    monkeypatch.setattr(mod, "build_sample", lambda key, goal, sp: built.append((key, goal)) or ROOT / "samples" / "x")
+    assert mod.main(["--goal", "investor_pitch", "cafe", "saas"]) == 0
+    assert built == [("cafe", "investor_pitch"), ("saas", "investor_pitch")]
 
 
 # --------------------------------------------------------------------------- HTML
@@ -350,6 +365,8 @@ def test_json_ld_is_article_and_breadcrumbs(client):
     blocks = [json.loads(b) for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)]
     kinds = {b["@type"] for b in blocks}
     assert kinds == {"Article", "BreadcrumbList"}
+    article = next(b for b in blocks if b["@type"] == "Article")
+    assert article["datePublished"] == "2026-10-21" and article["dateModified"] >= article["datePublished"]
     crumbs = next(b for b in blocks if b["@type"] == "BreadcrumbList")
     assert [i["name"] for i in crumbs["itemListElement"]][:2] == ["Home", "Business models"]
     assert crumbs["itemListElement"][2]["item"] == "http://testserver/business-models/cafe"

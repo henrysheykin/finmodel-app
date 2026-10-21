@@ -99,8 +99,8 @@ The parity test needs `node`; locally it skips when node is missing, in CI (the 
 ## Business-model pages (`content/business-models/<template key>.md`)
 
 `/business-models/<key>` explains how a kind of business makes money; the `/models/…` pages above sell the model.
-Same front matter as SEO pages with `slug: /business-models/<key>`, `template: <key>` and
-`sample: <key>, full, monthly, 5 years` (the committed `samples/<key>-full-5y.xlsx`). The body is Markdown plus
+Same front matter as SEO pages with `slug: /business-models/<key>`, `template: <key>`, `published` and
+`modified` (YYYY-MM-DD, for the Article JSON-LD) and `sample: <key>, full, monthly, 5 years` (the committed `samples/<key>-full-5y.xlsx`). The body is Markdown plus
 placeholders on the numbers, so copy cannot drift from the model; an unknown placeholder fails the build:
 
 - `{{table:drivers}}`, `startup`, `pnl`, `costs`, `unit`, `breakeven` — a table on its own line;

@@ -5,6 +5,8 @@ description: How a neighborhood cafe makes money, with tables from a working fin
 keyword: how does a cafe make money
 secondary: [cafe business model, cafe start-up costs, cafe break-even point, coffee shop profit margin, cafe unit economics]
 template: cafe
+published: 2026-10-21
+modified: 2026-10-21
 sample: cafe, full, monthly, 5 years
 ---
 

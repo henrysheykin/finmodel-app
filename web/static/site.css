@@ -447,11 +447,12 @@ h1, h2, h3, dt, .brand, .plan__price { font-variant-numeric: normal; }
 
 .bm-chart {
   --bm-surface: #fff; --bm-text: var(--text-2); --bm-ink: var(--ink); --bm-grid: var(--rule); --bm-axis: var(--text-3);
-  --bm-s1: #2A9D7C; --bm-s2: #C98418; --bm-y1: #6DBBA0; --bm-y5: #1B7F66;
+  --bm-s1: var(--pine); --bm-s2: var(--input); --bm-y1: var(--focus); --bm-y5: var(--pine);
   margin: 24px 0;
 }
 :root[data-theme="dark"] .bm-chart {
   --bm-surface: var(--ink); --bm-text: var(--on-ink-2); --bm-ink: var(--on-ink); --bm-grid: var(--ink-rule); --bm-axis: var(--foot-text);
+  --bm-s1: var(--focus); --bm-s2: var(--tick-on-ink);
 }
 .bm-chart__scroll { overflow-x: auto; background: var(--bm-surface); border: 1px solid var(--panel-rule); border-radius: 8px; padding: 12px 8px 4px; }
 .bm-svg { display: block; width: 100%; min-width: 460px; height: auto; font-family: var(--body); font-size: 12px; font-variant-numeric: tabular-nums; }

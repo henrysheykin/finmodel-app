@@ -63,6 +63,7 @@ HORIZON_YEARS = 5
 TABLE_NAMES = ("drivers", "startup", "pnl", "costs", "unit", "breakeven")
 CHART_NAMES = ("revenue_costs", "cost_structure")
 
+DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 PLACEHOLDER_RE = re.compile(r"\{\{\s*([a-z]+)\s*:\s*([^{}]*?)\s*\}\}")
 NUM_RE = re.compile(r"^([a-z0-9_]+)\.([a-z0-9_]+)(?:\.([a-z0-9_]+))?(\|abs)?$")
 
@@ -586,7 +587,7 @@ def _t_unit(c: _Ctx) -> Table:
             cells = tuple(Cell(vals[y], at(pl.stmt_cell("kpi", r.key, y))) for y in range(1, H + 1))
             rows.append(Row(r.key, r.label, cells, _UNIT_FMT.get(r.fmt, r.fmt), bold=r.bold))
     title = pl.template.kpi_title + " by year"
-    return Table("unit", title, _year_cols(H), tuple(rows), row_header="Per unit")
+    return Table("unit", title, _year_cols(H), tuple(rows), row_header="Metric")
 
 
 def _t_breakeven(c: _Ctx) -> Table:
@@ -930,6 +931,8 @@ class BizPage:
     body: str  # rendered HTML with tables and charts in place
     words: int
     sample: SampleSpec
+    published: str = ""  # ISO date from the front matter
+    modified: str = ""
     meta: dict = field(default_factory=dict)
 
     @property
@@ -939,6 +942,21 @@ class BizPage:
     @property
     def template(self) -> str:
         return self.key
+
+
+#: a dollar amount or a percentage typed into the copy (``$4,500``, ``33%``, ``33 percent``)
+FIGURE_RE = re.compile(r"\$\s?\d|\d\s?%|\d\s?(?:percent|per cent)\b", re.I)
+EXTERNAL_LINK_RE = re.compile(r"\]\(https?://")
+
+
+def unsourced_figures(body_md: str) -> list[str]:
+    """Sentences of the copy that state a dollar or percent figure without an external source link.
+
+    ``{{num:...}}`` and the table and chart placeholders are data, not typed figures, so they are ignored.
+    """
+    plain = PLACEHOLDER_RE.sub("", body_md)
+    sentences = re.split(r"(?<=[.!?])\s+|\n+", plain)
+    return [s.strip() for s in sentences if FIGURE_RE.search(s) and not EXTERNAL_LINK_RE.search(s)]
 
 
 def strip_blocks(md: str) -> str:
@@ -959,6 +977,13 @@ def load_page(path: Path) -> BizPage:
         raise ValueError(f"{path.name}: template must be {key!r}")
     if seo.page_sample(meta) != sample_spec(key):
         raise ValueError(f"{path.name}: sample must be '{key}, full, monthly, {HORIZON_YEARS} years'")
+    published = meta.get("published", "")
+    modified = meta.get("modified", published)
+    for label, value in (("published", published), ("modified", modified)):
+        if not DATE_RE.match(value):
+            raise ValueError(f"{path.name}: front matter needs {label!r} as YYYY-MM-DD")
+    if modified < published:
+        raise ValueError(f"{path.name}: modified is earlier than published")
     model = compute(key)
     md, blocks = expand(body_md, model)
     rendered, h1 = seo.render_markdown(md)
@@ -982,6 +1007,8 @@ def load_page(path: Path) -> BizPage:
         body=rendered,
         words=words,
         sample=sample_spec(key),
+        published=published,
+        modified=modified,
         meta=meta,
     )
 
@@ -1037,6 +1064,8 @@ def structured_data(page: BizPage, base: str) -> list[dict]:
         "headline": page.h1,
         "description": page.description,
         "mainEntityOfPage": url,
+        "datePublished": page.published,
+        "dateModified": page.modified,
         "author": publisher,
         "publisher": publisher,
     }
