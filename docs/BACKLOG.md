@@ -49,7 +49,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
   annual, with N at its default, at 1 and above the horizon (capped).
 
 ### E31 — KPIs & ratios sheet
-- status: TODO
+- status: IN_PROGRESS (2026-10-21)
 - Model: sonnet
 - depends: E27
 - skills: xlsx
