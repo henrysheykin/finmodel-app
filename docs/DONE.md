@@ -50,3 +50,4 @@ New lines go at the end of the table (protocol step 9).
 | E30 | Sources & Uses sheet | [#47](https://github.com/henrysheykin/finmodel-app/pull/47) | done 2026-10-21 |
 | E29 | Scenarios sheet, live Low / Base / High | [#52](https://github.com/henrysheykin/finmodel-app/pull/52) | done 2026-10-21 |
 | E34 | Calculator engine (ADR-014) | #53 | done 2026-10-21 |
+| E35 | Business-model pages engine (ADR-014) | #55 | done 2026-10-21 |
