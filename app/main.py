@@ -153,6 +153,7 @@ def create_app(services: Services | None = None) -> FastAPI:
     app.mount("/static", StaticFiles(directory=str(STATIC)), name="static")
     from app.account_web import router as account_router
     from app.admin import router as admin_router
+    from app.calculators import router as calculators_router
     from app.landing import router as landing_router
     from app.seo import router as seo_router
     from app.web import router as web_router
@@ -162,6 +163,7 @@ def create_app(services: Services | None = None) -> FastAPI:
     app.include_router(admin_router)
     app.include_router(landing_router)
     app.include_router(seo_router)
+    app.include_router(calculators_router)
 
     def svc(request: Request) -> Services:
         return request.app.state.services
