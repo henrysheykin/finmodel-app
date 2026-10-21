@@ -530,7 +530,7 @@ def by_industry() -> list[tuple[str, list[Calculator]]]:
 
 # ---------- copy check ----------
 
-FIGURE_RE = re.compile(r"\$\s?(\d[\d,]*(?:\.\d+)?)|(\d[\d,]*(?:\.\d+)?)\s?%")
+FIGURE_RE = re.compile(r"\$\s?(\d+(?:,\d{3})*(?:\.\d+)?)|(\d+(?:,\d{3})*(?:\.\d+)?)\s?%")
 PLACEHOLDER_RE = re.compile(r"\[[A-Z][A-Z_]{2,}\]")
 
 

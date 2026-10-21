@@ -477,9 +477,13 @@ def test_model_promotion_block(client, services, calc):
     assert f"Light <span>{light}</span>" in block and f"Full <span>{full}</span>" in block
     start = f"/start?type={TEMPLATES[calc.template].business_types[0]}" if calc.template else "/start"
     assert f'href="{start}"' in block
-    assert "Get a Restaurant / cafe model built on your numbers" in block
-    sample = f"/samples/{calc.sample.filename}"
-    assert f'href="{sample}"' in block and client.get(sample).content[:2] == b"PK"
+    if calc.template:
+        assert f"Get a {TEMPLATES[calc.template].title} model built on your numbers" in block
+        sample = f"/samples/{calc.sample.filename}"
+        assert f'href="{sample}"' in block and client.get(sample).content[:2] == b"PK"
+    else:  # cross-industry calculators get the generic block without a sample download
+        assert "Get a financial model built on your numbers" in block
+        assert "Download the sample" not in block
     tiers = re.findall(r'<div class="promo__tier.*?</div>', block, re.S)
     light_block = next(t for t in tiers if "Light" in t)
     assert not re.search(r"statement|valuation|DCF|balance sheet|cash flow", light_block, re.I)
@@ -516,7 +520,10 @@ def test_unknown_calculator_is_404(client):
 
 def test_groups_are_by_industry_with_general_last():
     groups = C.by_industry()
-    assert groups[0][0] == "Restaurant / cafe" and len(groups[0][1]) >= 3
+    by_name = dict(groups)
+    assert len(by_name["Restaurant / cafe"]) >= 3
+    assert groups[-1][0] == "General" and len(groups[-1][1]) >= 4, "cross-industry calculators come last"
+    assert [g[0] for g in groups[:-1]] == sorted(g[0] for g in groups[:-1])
 
 
 # --------------------------------------------------------------------------- copy rules and design
