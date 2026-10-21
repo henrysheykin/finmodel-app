@@ -9,7 +9,7 @@ from openpyxl import load_workbook
 
 from engine.builder import plan
 from engine.challenger import challenge, python_goal_model, python_model
-from engine.core import reference_run
+from engine.core import LAND_LINE, reference_run
 from engine.goals import NA
 from engine.returns import irr, sign_changes
 from engine.spec import Timing
@@ -188,7 +188,10 @@ def test_other_templates_keep_straight_loans_and_no_returns_sheet(any_brief):
         assert "Returns" in pl.sheets and "loan_pmt" in pl.lines and "land" in pl.lines
     else:
         assert type(tpl).loan_style is Template.loan_style and "Returns" not in pl.sheets
-        assert "loan_pmt" not in pl.lines and "land" not in pl.lines
+        assert "loan_pmt" not in pl.lines
+        # land is optional for any template (ADR-011): present exactly when the template has a capex_land line
+        has_land = any(ln.key == LAND_LINE for ln in tpl.capex_lines(pl.t))
+        assert ("land" in pl.lines) == has_land
 
 
 def test_unknown_loan_style_is_refused(re_brief):
