@@ -38,8 +38,9 @@ def with_values(brief, **vals):
 @pytest.mark.parametrize("stage", STAGES)
 def test_stage_defaults_are_valid_ordered_and_funded(stage):
     b = SALON.default_brief(stage)
+    b = b.with_options(horizon_years=5)
     low, base, high = (python_model(b, s) for s in (1, 2, 3))
-    for y in (1, 2, 3):
+    for y in range(1, 6):
         assert low["rev"][y] < base["rev"][y] < high["rev"][y]
         assert 0 < base["gp"][y] / base["rev"][y] < 1
     assert min(base["cash_close"].values()) > 0  # the Base case is funded; Low is the stress case
