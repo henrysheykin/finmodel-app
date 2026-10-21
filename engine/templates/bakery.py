@@ -42,7 +42,6 @@ _COMMON = {
     "card_pct": (0.029, 0.028, 0.027),
     "payroll_tax": (0.12, 0.12, 0.12),
     "wage_g": (0.03, 0.03, 0.03),
-    "ar_days": (7, 7, 7),
     "inv_days": (3, 3, 3),
     "ap_days": (18, 18, 18),
     "dep_years": (7, 7, 7),
@@ -56,6 +55,7 @@ _STAGES: dict[str, dict] = {
             "ramp_months": (11, 9, 7),
             "open_pct": (0.4, 0.45, 0.5),
             "ws_accounts": (5, 6, 7),
+            "ar_days": (6, 6, 6),
             "rent": (8500, 8500, 8500),
             "utilities": (2800, 2800, 2800),
             "maint": (600, 600, 600),
@@ -68,8 +68,8 @@ _STAGES: dict[str, dict] = {
             "loan_term_years": (7, 7, 7),
         },
         "roles": {
-            "baker": (3, 42000, 1, 0.1),
-            "counter": (4.5, 30000, 1, 0.1),
+            "baker": (3, 42000, 1, 0.04),
+            "counter": (4.5, 30000, 1, 0.04),
             "manager": (1, 58000, 1, 0.0),
         },
     },
@@ -79,6 +79,7 @@ _STAGES: dict[str, dict] = {
             "ramp_months": (7, 6, 5),
             "open_pct": (0.6, 0.65, 0.7),
             "ws_accounts": (7.5, 9, 10.5),
+            "ar_days": (7, 7, 7),
             "rent": (9500, 9500, 9500),
             "utilities": (3200, 3200, 3200),
             "maint": (700, 700, 700),
@@ -91,8 +92,8 @@ _STAGES: dict[str, dict] = {
             "loan_term_years": (1, 1, 1),
         },
         "roles": {
-            "baker": (3.5, 42000, 1, 0.1),
-            "counter": (5, 30000, 1, 0.1),
+            "baker": (3.5, 42000, 1, 0.04),
+            "counter": (5, 30000, 1, 0.04),
             "manager": (1, 58000, 1, 0.0),
         },
     },
@@ -102,6 +103,7 @@ _STAGES: dict[str, dict] = {
             "ramp_months": (3, 2, 1),
             "open_pct": (0.85, 0.9, 0.95),
             "ws_accounts": (13, 16, 19),
+            "ar_days": (9, 9, 9),
             "rent": (12000, 12000, 12000),
             "utilities": (4000, 4000, 4000),
             "maint": (1000, 1000, 1000),
@@ -125,6 +127,7 @@ _STAGES: dict[str, dict] = {
             "ramp_months": (1, 1, 1),
             "open_pct": (1, 1, 1),
             "ws_accounts": (22, 26, 30),
+            "ar_days": (10, 10, 10),
             "rent": (16000, 16000, 16000),
             "utilities": (5600, 5600, 5600),
             "maint": (1600, 1600, 1600),
@@ -137,9 +140,9 @@ _STAGES: dict[str, dict] = {
             "loan_term_years": (1, 1, 1),
         },
         "roles": {
-            "baker": (8, 44000, 1, 0.03),
-            "counter": (10, 31000, 1, 0.03),
-            "manager": (3, 62000, 1, 0.0),
+            "baker": (7.5, 44000, 1, 0.03),
+            "counter": (9, 31000, 1, 0.03),
+            "manager": (2, 62000, 1, 0.0),
         },
     },
 }
@@ -194,8 +197,10 @@ class BakeryTemplate(Template):
             DriverSpec("ws_order", "Order value per account per week (year 1)", "$", "usd", 0, 1e6, "asc", whl),
             DriverSpec("ws_deliv_wk", "Deliveries per account per week", "#", "dec1", 0, 14, section=whl),
             DriverSpec("cost_drop", "Delivery cost per drop (driver, fuel, van)", "$", "usd2", 0, 1000, "desc", whl),
-            DriverSpec("ingr_pct", "Ingredients, % of retail sales", "%", "pct", 0, 1, "desc", cos),
-            DriverSpec("ws_ingr_pct", "Ingredients, % of wholesale sales", "%", "pct", 0, 1, "desc", cos),
+            DriverSpec(
+                "ingr_pct", "Ingredients of items sold, % of retail sales (excl. waste)", "%", "pct", 0, 1, "desc", cos
+            ),
+            DriverSpec("ws_ingr_pct", "Ingredients of items sold, % of wholesale sales", "%", "pct", 0, 1, "desc", cos),
             DriverSpec("waste_pct", "Retail production baked but not sold (waste)", "%", "pct", 0, 0.5, "desc", cos),
             DriverSpec("pack_pct", "Packaging, % of sales", "%", "pct", 0, 0.3, "desc", cos),
             DriverSpec("rent", "Rent per month", "$", "usd", 0, 1e7, section=cost),
@@ -248,11 +253,13 @@ class BakeryTemplate(Template):
             season = "=1"
         idx = "(1+{in:price_g})^({y}-1)"
         return ramp + [
-            Line("season", "Season factor (November-December peak)", season, "top", "dec1", agg="none"),
+            Line(
+                "season", "Season factor (November-December peak, added to the ramp)", season, "top", "dec1", agg="none"
+            ),
             Line(
                 "cust",
                 "Customers per day",
-                "={in:cust_full}*{ramp}*(1+{in:traffic_g})^({y}-1)*{season}",
+                "={in:cust_full}*(1+{in:traffic_g})^({y}-1)*MAX(0,{ramp}+{season}-1)",
                 "top",
                 "dec1",
                 agg="none",
@@ -330,7 +337,7 @@ class BakeryTemplate(Template):
             DashMetric("rev_retail", "Retail counter revenue", "kpi:rev_retail", "usdk"),
             DashMetric("rev_ws", "Wholesale revenue", "kpi:rev_ws", "usdk"),
             DashMetric("cust_day", "Customers per day (average)", "kpi:cust_day", "int"),
-            DashMetric("accounts", "Wholesale accounts (year end)", "kpi:accounts_end", "dec1"),
+            DashMetric("accounts", "Wholesale accounts", "kpi:accounts_end", "dec1"),
         ]
 
     def dashboard_chart(self, t: Timing) -> DashChart:
@@ -342,7 +349,9 @@ class BakeryTemplate(Template):
             StmtRow("tx", "Retail transactions", "line", "tx", "int", bold=True),
             StmtRow("cust_day", "Customers per day (average)", "formula", "=IF({days}=0,0,{tx}/{days})", "int"),
             StmtRow("ticket", "Average ticket", "formula", "=IF({tx}=0,0,{rev_retail}/{tx})", "usd2"),
-            StmtRow("accounts_end", "Wholesale accounts (year end)", "line", "accounts", "dec1"),
+            StmtRow(
+                "accounts_end", "Wholesale accounts (year end; annual model: year average)", "line", "accounts", "dec1"
+            ),
             StmtRow("rev", "Revenue", "line", "rev", bold=True),
             StmtRow("rev_retail", "Retail counter revenue", "line", "rev_retail"),
             StmtRow("rev_ws", "Wholesale revenue", "line", "rev_ws"),
@@ -403,7 +412,7 @@ class BakeryTemplate(Template):
         else:
             ramp = sum(min(1, a + (1 - a) * (12 * (y - 1) + k) / r) for k in range(12)) / 12
         season = _season(p, t, d["peak_uplift"])
-        cust = d["cust_full"] * ramp * (1 + d["traffic_g"]) ** (y - 1) * season
+        cust = d["cust_full"] * (1 + d["traffic_g"]) ** (y - 1) * max(0.0, ramp + season - 1)
         days = d["open_days"] * 52 / 12 * t.mpp
         tx = cust * days
         idx = (1 + d["price_g"]) ** (y - 1)

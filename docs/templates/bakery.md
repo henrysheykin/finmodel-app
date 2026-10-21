@@ -22,16 +22,20 @@ share of full traffic and ramps linearly to full traffic over a set number of mo
 template; annual columns use the exact average of the monthly ramp). Traffic and prices then grow once a year.
 Opening days = opening days per week × 52 ÷ 12 per month (so 6 days a week is 26 days a month).
 
-**Holiday peak.** In monthly models November and December are scaled by (1 + uplift) and the other ten months by
-(1 − uplift ÷ 5), so the year's retail sales are unchanged and annual columns agree with the sum of the months.
-The uplift applies to the retail counter only; set it to 0 to switch it off.
+**Holiday peak.** In monthly models a season factor is *added* to the ramp: customers per day = customers at full
+traffic × (ramp + season factor − 1), where the season factor is 1 + uplift in November and December and
+1 − uplift ÷ 5 in the other ten months. The twelve (factor − 1) terms sum to zero, so the peak moves sales between
+months but leaves the year's retail sales exactly unchanged, also in the ramp-up year; annual columns equal the sum of
+the months (tested for every stage, scenario and year). The peak is therefore a fixed share of *full* traffic, not of
+the ramped traffic (an opening-year bakery still gets a holiday crowd), and a month cannot go below zero customers.
+It applies to the retail counter only; set the uplift to 0 to switch it off.
 
 **Wholesale.** Accounts × order value per account per week × 52 ÷ 12 per month. Accounts at full ramp are a
 year-1 number that grows once a year; they follow the same opening ramp as the counter (a new bakery also needs
 time to win accounts). Order values rise with the yearly price increase. Wholesale does not depend on the
 counter's opening days: the bakery bakes and delivers on its own schedule.
 
-**Cost of sales.** (1) Ingredients: a separate % of retail and of wholesale sales (wholesale carries a lower price,
+**Cost of sales.** (1) Ingredients of the items sold, excluding waste: a separate % of retail and of wholesale sales (wholesale carries a lower price,
 so a higher ingredient share). (2) Waste: the share of retail production that is baked but not sold. If a share
 *w* of what is baked goes unsold, baking cost per unit sold is 1 ÷ (1 − *w*) times higher, so the model books
 retail ingredient cost × *w* ÷ (1 − *w*) as waste. Revenue is not reduced: waste is a cost, not lost sales.
@@ -51,13 +55,14 @@ yearly headcount growth: *bakers & production* (early-morning shifts; their sala
 budget from year 2, spread evenly over the months (so monthly and annual models spend the same). Depreciated
 straight line over the depreciation period.
 
-**Working capital.** Receivable days are small (counter sales are paid on the spot, wholesale accounts pay in
-~30 days: a blended 7 days); inventory is a few days of flour, butter and packaging; payables ~18 days. All apply
-to the whole cost of sales in the shared engine — see simplifications.
+**Working capital.** Receivable days apply to *revenue*: counter sales are paid on the spot and wholesale accounts
+pay in about 30 days, so the default is wholesale share × 30 days (6 / 7 / 9 / 10 days for planning / early / growing
+/ established, whose Year-3 Base wholesale shares are 20 / 24 / 32 / 35%). Inventory (a few days of flour, butter and
+packaging, 3 days) and payables (18 days) apply to the whole cost of sales in the shared engine — see simplifications.
 
 ## Bakery metrics table (Dashboard in Full, P&L sheet in Light)
 
-Opening days, retail transactions, customers per day, average ticket, wholesale accounts (year end), revenue,
+Opening days, retail transactions, customers per day, average ticket, wholesale accounts (year end; the annual model shows the year's average), revenue,
 retail counter revenue, wholesale revenue and its share, retail revenue per opening day, waste cost and waste
 as % of retail revenue, wholesale delivery cost, gross profit and margin, cost of sales, payroll, prime cost
 (cost of sales + payroll, % of revenue), EBITDA and EBITDA margin. Opening days, transactions, retail and
@@ -84,8 +89,8 @@ Source for every driver in the table: **assumption**, except where the Notes bel
 | Order value per account per week (year 1) | $ | $500 / $540 / $580 | same | same | same |
 | Deliveries per account per week | # | 5 | 5 | 5 | 5 |
 | Delivery cost per drop (driver, fuel, van) | $ | $9.50 / $9.00 / $8.50 | same | same | same |
-| Ingredients, % of retail sales | % | 25.5% / 24% / 22.5% | same | same | same |
-| Ingredients, % of wholesale sales | % | 34.5% / 33% / 31.5% | same | same | same |
+| Ingredients of items sold, % of retail sales (excl. waste) | % | 25.5% / 24% / 22.5% | same | same | same |
+| Ingredients of items sold, % of wholesale sales | % | 34.5% / 33% / 31.5% | same | same | same |
 | Retail production baked but not sold (waste) | % | 11% / 9% / 7% | same | same | same |
 | Packaging, % of sales | % | 3.7% / 3.5% / 3.3% | same | same | same |
 | Rent per month | $ | $8,500 | $9,500 | $12,000 | $16,000 |
@@ -101,54 +106,63 @@ Source for every driver in the table: **assumption**, except where the Notes bel
 | Equity raised at start | $ | $200,000 | $90,000 | $60,000 | $50,000 |
 | Loan drawn at start | $ | $150,000 | $0 | $80,000 | $0 |
 | Loan interest rate / term | % / years | 9% / 7 | none | 8.5% / 5 | none |
-| Receivable / inventory / payable days | days | 7 / 3 / 18 | same | same | same |
+| Receivable days (on revenue) | days | 6 | 7 | 9 | 10 |
+| Inventory / payable days (on cost of sales) | days | 3 / 18 | same | same | same |
 | Depreciation period for capex | years | 7 | 7 | 7 | 7 |
 | Income tax rate | % | 21% | 21% | 21% | 21% |
 
 | Role (Base; same in all scenarios) | Planning | Early | Growing | Established |
 |---|---|---|---|---|
-| Bakers & production | 3 FTE × $42,000, +10%/yr | 3.5 FTE × $42,000, +10%/yr | 5 FTE × $44,000, +6%/yr | 8 FTE × $44,000, +3%/yr |
-| Counter staff | 4.5 FTE × $30,000, +10%/yr | 5 FTE × $30,000, +10%/yr | 7 FTE × $31,000, +6%/yr | 10 FTE × $31,000, +3%/yr |
-| Manager | 1 FTE × $58,000 | 1 FTE × $58,000 | 1.5 FTE × $62,000 | 3 FTE × $62,000 |
+| Bakers & production | 3 FTE × $42,000, +4%/yr | 3.5 FTE × $42,000, +4%/yr | 5 FTE × $44,000, +6%/yr | 7.5 FTE × $44,000, +3%/yr |
+| Counter staff | 4.5 FTE × $30,000, +4%/yr | 5 FTE × $30,000, +4%/yr | 7 FTE × $31,000, +6%/yr | 9 FTE × $31,000, +3%/yr |
+| Manager | 1 FTE × $58,000 | 1 FTE × $58,000 | 1.5 FTE × $62,000 | 2 FTE × $62,000 |
+
+Yearly headcount growth is set close to traffic growth (3%/yr Base) in the planning and early stages; the growing
+stage's 6% is a deliberate step-up for a bakery that is adding wholesale volume.
 
 Notes on sources:
 
 - Ingredients, packaging, waste and the resulting gross margin (66–71%): **assumption**, sized so cost of sales
   lands near the 25–35% **benchmark** range (Base about 31–32% of revenue including waste and packaging).
-- Payroll: Base payroll including taxes is about 32–35% of revenue in the growing and established samples, in line
-  with the "close to 30%" labor **benchmark**; salary levels and FTE counts are **assumptions**, not wage data.
+- Payroll: Base payroll including taxes is 48 / 37 / 36% of revenue in years 1 / 2 / 3 of the planning sample,
+  37 / 33 / 33% (early), 38 / 37 / 37% (growing) and 36 / 34 / 33% (established). That is **above** the "close to
+  30%" labor **benchmark** (a vendor figure that may exclude owner pay and payroll taxes), so the samples are a
+  cautious, labour-heavy bakery; salary levels and FTE counts are **assumptions**, not wage data. See question 3.
 - Income tax 21%: **rule** (federal only; no state tax in the sample). Payroll taxes & benefits 12% of salary:
   **assumption** (employer Social Security and Medicare alone are 7.65%; the rest stands for unemployment tax,
   workers' compensation and a small benefits allowance).
 - Everything else (traffic, ticket, wholesale accounts and order values, delivery cost per drop, rent, utilities,
   capex, funding, working-capital days, depreciation): **assumption**. No published source is claimed.
-- The Base EBITDA margin of the growing and established samples (about 11–13%) is above the 5–10% net-margin
-  **benchmark** only because EBITDA is before depreciation, interest and tax.
+- Base EBITDA margin, years 1 → 3: planning -7% → 12%, early 8% → 17%, growing 9% → 12%, established 12% → 16%.
+  Part of the gap to the 5–10% net-margin **benchmark** is that EBITDA is before depreciation, interest and tax.
 
 ## What the defaults produce (plain-Python reference, 3 years, monthly)
 
 | Stage | Case | Revenue Y1 | Revenue Y3 | Gross margin Y3 | EBITDA margin Y1 → Y3 | Wholesale share Y3 | Cash Y3 |
 |---|---|---:|---:|---:|---:|---:|---:|
-| planning | Low | $591,167 | $904,455 | 67% | -28% → -7% | 17% | $-264,978 |
-| planning | Base | $745,571 | $1,112,644 | 69% | -7% → 8% | 20% | $124,833 |
-| planning | High | $914,999 | $1,356,442 | 71% | 9% → 21% | 23% | $488,803 |
-| early | Low | $902,212 | $1,129,031 | 66% | -4% → -0% | 21% | $5,787 |
-| early | Base | $1,068,379 | $1,386,283 | 69% | 8% → 13% | 24% | $381,138 |
-| early | High | $1,248,398 | $1,688,657 | 71% | 19% → 25% | 27% | $812,606 |
-| growing | Low | $1,334,440 | $1,502,898 | 66% | -3% → -3% | 27% | $-155,715 |
-| growing | Base | $1,578,046 | $1,890,163 | 68% | 9% → 12% | 32% | $411,594 |
-| growing | High | $1,838,520 | $2,351,962 | 70% | 19% → 24% | 35% | $1,044,063 |
-| established | Low | $2,013,440 | $2,223,953 | 66% | -4% → -3% | 31% | $-323,174 |
-| established | Base | $2,308,800 | $2,748,449 | 68% | 6% → 11% | 35% | $445,397 |
-| established | High | $2,627,040 | $3,370,556 | 70% | 15% → 22% | 39% | $1,283,235 |
+| planning | Low | $583,492 | $904,455 | 67% | -29% → -2% | 17% | $-208,967 |
+| planning | Base | $738,335 | $1,112,644 | 69% | -7% → 12% | 20% | $171,861 |
+| planning | High | $909,133 | $1,356,442 | 71% | 8% → 23% | 23% | $535,731 |
+| early | Low | $897,728 | $1,129,031 | 66% | -5% → 4% | 21% | $64,116 |
+| early | Base | $1,064,570 | $1,386,283 | 69% | 8% → 17% | 24% | $431,209 |
+| early | High | $1,245,309 | $1,688,657 | 71% | 18% → 27% | 27% | $862,983 |
+| growing | Low | $1,333,410 | $1,502,898 | 66% | -3% → -3% | 27% | $-165,923 |
+| growing | Base | $1,577,472 | $1,890,163 | 68% | 9% → 12% | 32% | $399,361 |
+| growing | High | $1,838,308 | $2,351,962 | 70% | 19% → 24% | 35% | $1,029,196 |
+| established | Low | $2,013,440 | $2,223,953 | 66% | 2% → 3% | 31% | $34,501 |
+| established | Base | $2,308,800 | $2,748,449 | 68% | 12% → 16% | 35% | $738,516 |
+| established | High | $2,627,040 | $3,370,556 | 70% | 20% → 27% | 39% | $1,570,709 |
 
 The Low case stacks every pessimistic value (fewer customers and accounts, lower ticket, higher ingredient, waste
 and delivery costs), so it is a stress case rather than a forecast; the planning, growing and established Low
-cases run out of cash, and the Checks sheet flags the funding gap. The Base case is funded in every stage.
+cases dip below zero cash (lowest balances -$209k, -$166k and -$9k), the early Low case stays barely positive
+($1k), and the Checks sheet flags the funding gap. The Base case is funded in every stage (lowest cash balance
+$18k planning, $110k early, $126k growing, $167k established).
 
 ## Simplifications to review
 
 1. Inventory and payable days apply to the whole cost of sales (shared engine); defaults are small (3 / 18 days).
+   Receivable days apply to revenue.
 2. Payroll sits in operating expenses, not in cost of sales, so "gross margin" here is after ingredients,
    waste and packaging only. Prime cost (cost of sales + payroll) is shown in the metrics table for comparison with
    restaurant-style benchmarks.
@@ -170,7 +184,8 @@ cases run out of cash, and the Checks sheet flags the funding gap. The Base case
 2. Should the ingredient defaults (24% of retail, 33% of wholesale) and a 9% waste share be the Base, given the
    25–35% cost-of-goods range quoted by the one public source we found?
 3. Should baker payroll be moved into cost of sales (as in many bakery P&Ls) instead of operating expenses, so
-   gross margin is comparable with the benchmarks that include labor?
+   gross margin is comparable with the benchmarks that include labor? And should the default staffing be leaner:
+   Base payroll is 33-38% of revenue from year 2, above the roughly 30% benchmark?
 4. Is a flat $9 per drop and 5 deliveries a week per account the right way to model delivery, or should it be
    a van (lease + driver FTE) with a capacity limit?
 5. Should wholesale accounts have their own ramp and churn, instead of sharing the counter's opening ramp?

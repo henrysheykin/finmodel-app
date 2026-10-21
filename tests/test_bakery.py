@@ -177,23 +177,24 @@ def test_capex_is_fit_out_then_yearly_replacement(bk_brief):
 
 
 # --------------------------------------------------------------------------- consistency
+@pytest.mark.parametrize("scen", [1, 2, 3])
+@pytest.mark.parametrize("uplift", [0.0, 0.2, 0.5])
 @pytest.mark.parametrize("stage", STAGES)
-def test_monthly_equals_annual_without_season(stage):
-    """The annual ramp factor is the exact average of the months, so only the holiday peak separates them."""
-    b = with_values(BAKERY.default_brief(stage), peak_uplift=0)
-    m, a = python_model(b, 2), python_model(b.with_options(granularity="annual"), 2)
+def test_monthly_equals_annual_every_year_including_year_1(stage, uplift, scen):
+    """The annual ramp factor is the exact average of the months and the holiday peak is added to the ramp, so
+    it moves sales within a year and nets to zero over any year, including the ramp-up year 1."""
+    b = with_values(BAKERY.default_brief(stage), peak_uplift=uplift)
+    m, a = python_model(b, scen), python_model(b.with_options(granularity="annual"), scen)
     for k in ("rev", "gp", "ebitda", "payroll_total", "rev_retail", "rev_ws", "tx", "waste", "deliv", "capex"):
         for y in (1, 2, 3):
             assert m[k][y] == pytest.approx(a[k][y], rel=1e-9, abs=0.01), (k, y)
 
 
-@pytest.mark.parametrize("stage", STAGES)
-def test_monthly_equals_annual_with_season(stage):
-    """The peak redistributes within a year (average factor 1), but the ramp makes it not exactly neutral."""
-    b = BAKERY.default_brief(stage)
-    m, a = python_model(b, 2), python_model(b.with_options(granularity="annual"), 2)
-    for y in (2, 3):
-        assert m["rev"][y] == pytest.approx(a["rev"][y], rel=0.002)
+def test_holiday_peak_is_neutral_over_the_ramp_up_year(bk_brief):
+    b = with_values(bk_brief, open_pct=0.4, ramp_months=9, ws_accounts=0)
+    peak, even = run(with_values(b, peak_uplift=0.3)), run(with_values(b, peak_uplift=0))
+    assert sum(peak["rev"][:12]) == pytest.approx(sum(even["rev"][:12]))
+    assert peak["rev"][10] > even["rev"][10] and peak["rev"][0] < even["rev"][0]
 
 
 @pytest.mark.parametrize("g", ["monthly", "annual"])
