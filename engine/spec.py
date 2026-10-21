@@ -26,6 +26,7 @@ from engine.brief import Brief, BriefError
 Fmt = Literal["usd", "usd2", "pct", "int", "dec1", "dec3", "days", "x"]
 FORMATS: dict[str, str] = {
     "usd": "$#,##0;($#,##0);-",
+    "usdk": '$#,##0,;($#,##0,);"-"',  # report sheets, $'000 (docs/WORKBOOK_STANDARD.md §4)
     "usd2": "$#,##0.00;($#,##0.00);-",
     "pct": "0.0%;(0.0%);-",
     "int": "#,##0;(#,##0);-",

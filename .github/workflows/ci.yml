@@ -24,6 +24,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends libreoffice-calc-nogui fonts-liberation
           soffice --version
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Node version (the calculator parity test runs web/static/calc.js and fails in CI without node)
+        run: node --version
       - name: Install package
         run: pip install -c constraints.txt -e ".[dev]"
       - name: Install Chromium for Playwright

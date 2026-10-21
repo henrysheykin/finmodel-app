@@ -19,8 +19,10 @@ FULL = [
     "Cover",
     "Dashboard",
     "Summary",
+    "Scenarios",
     "Break-even",
     "Valuation",
+    "Sources & Uses",
     "KPIs",
     "Inputs",
     "P&L",
@@ -28,6 +30,7 @@ FULL = [
     "Balance Sheet",
     "Monthly",
     "Headcount",
+    "Scenario calc",
     "Checks",
 ]
 
@@ -47,7 +50,8 @@ def test_sheet_set_follows_the_tier_not_the_goal(tier, expected, goal):
 
 
 def test_sheet_order_annual_and_industry_sheets():
-    assert sheet_order("full", "Annual")[10] == "Annual"
+    full = sheet_order("full", "Annual")
+    assert full[full.index("Balance Sheet") + 1] == "Annual"
     assert sheet_order("light", returns=True) == [
         "Cover",
         "Dashboard",

@@ -398,6 +398,8 @@ charts, break-even, valuation, sources & uses, ratios. Two prototype rounds on a
 - The scenario selector is Dashboard!B4 in both tiers (Light used Inputs!B3).
 - Scenarios shows Low / Base / High **live** (parallel calculation chains on the inputs' B / C / D columns),
   recomputed by the challenger like the active scenario.
+  The chains live on a calculation sheet "Scenario calc" (Full), placed between Headcount and Checks (E29,
+  2026-10-20; the only addition to the sheet order above).
 - Look: Arial 9, ink / pine palette (the site's identity, ADR-005; ends the navy bands in files), yellow input cells
   with blue figures, presentation sheets in $'000 with ink links, native charts in a two-column grid of one size.
 
@@ -409,3 +411,36 @@ charts, break-even, valuation, sources & uses, ratios. Two prototype rounds on a
 - Light → Full upgrade still never changes a figure (same calculation lines; Full adds sheets).
 - The R1 CFO reviews of template logic stay valid; the new sheets (Scenarios, Sources & Uses, ratios) get their
   own R1 line after E33.
+
+## ADR-014 — Local-business catalog: 10 new templates, business-model pages, calculators (2026-10-21, Henry)
+
+**Context.** Henry (2026-10-21): add 10 more local-business models; give every business model its own page that
+explains how the business makes money (revenue, costs, investment) backed by tables from the financial model; add
+interactive calculators per business idea (unit economics, menu price and similar, in the spirit of public
+single-purpose calculator sites), each promoting the full model and explaining why it is useful to the buyer.
+
+**Decision.**
+- Ten new templates, one file each (ADR-009, `docs/templates/ADDING_A_TEMPLATE.md`), all under ADR-013:
+  `bakery`, `salon` (hair salon / barbershop), `dental` (dental practice), `car_wash`, `laundromat`,
+  `childcare` (daycare centre), `food_truck`, `auto_repair`, `pet_care` (pet grooming & boarding),
+  `guest_house` (guest house / B&B). Each gets the R1 CFO-review line like every template.
+- New site section **/business-models/** (one page per template: 7 now, 10 more as their templates merge;
+  it explains the business, while the existing `/models/…` SEO pages sell the model — cross-linked, distinct
+  titles and canonicals): Markdown copy in
+  `content/business-models/` plus tables computed by the engine from the template's sample brief (Base case, the committed sample `<key>-full-5y.xlsx` the page offers) —
+  startup investment and funding need, revenue drivers, revenue and cost structure by year, unit economics,
+  break-even. The numbers come from the same plain-Python reference the challenger uses, so a page never shows a
+  figure the workbook would not; a test rebuilds every table and compares.
+- New site section **/calculators/**: each calculator is a declarative spec (inputs, outputs as formulas in a
+  small safe expression language, worked examples, explanation copy) rendered by one page template and one
+  vanilla-JS evaluator — no per-calculator code; both evaluators are hand-written parsers (no `eval`,
+  `Function` or `ast` execution). A Python twin of the evaluator runs every spec's
+  worked examples in CI, and the JS evaluator must give the same results. Every calculator page carries the
+  model promotion block (what the full model adds, the matching sample, a link to the wizard on that template).
+- Copy rules stay: no invented facts; market or benchmark figures only with a cited source, otherwise they are
+  labelled as the sample's assumptions. Pages go live before the CFO sign-off of the new templates (Henry's
+  request); they say the tables are an illustrative Base case of the sample model. This supersedes the "SEO page only after
+  the CFO sign-off" line of `docs/templates/ADDING_A_TEMPLATE.md` §4 for business-model and calculator pages.
+
+**Consequences.** BACKLOG E34 (calculator engine), E35 (business-model pages engine), E36–E45 (templates),
+M13–M16 (page and calculator content). No stack change; E34 / E35 add both sections to the sitemap and llms.txt.

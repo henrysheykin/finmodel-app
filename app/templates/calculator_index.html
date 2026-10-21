@@ -1,0 +1,27 @@
+{% extends "site_base.html" %}
+{% block title %}{{ title }} | StartupModel{% endblock %}
+{% block meta %}
+<meta name="description" content="{{ intro }}">
+<link rel="canonical" href="{{ base_url }}/calculators">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="StartupModel">
+<meta property="og:url" content="{{ base_url }}/calculators">
+<meta property="og:title" content="{{ title }}">
+<meta property="og:description" content="{{ intro }}">
+{% endblock %}
+{% block main %}
+<section class="doc seo">
+  <div class="wrap">
+    <h1>{{ title }}</h1>
+    <p>{{ intro }}</p>
+    {% for industry, items in groups %}
+    <h2>{{ industry }}</h2>
+    <ul class="index">
+      {% for c in items %}<li><a href="{{ c.slug }}">{{ c.h1 }}</a><span>{{ c.description }}</span></li>
+      {% endfor %}
+    </ul>
+    {% endfor %}
+    <p><a href="/models">Financial models</a> · <a href="/guides">Guides</a> · <a class="btn btn--sm" href="/start">Start a model, from {{ price_light }}</a></p>
+  </div>
+</section>
+{% endblock %}

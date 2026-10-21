@@ -13,3 +13,6 @@ var/
 /build/
 /dist/
 /evals/runs/
+
+# agent worktrees (Claude Code isolation)
+.claude/worktrees/
