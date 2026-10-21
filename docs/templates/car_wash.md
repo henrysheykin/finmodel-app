@@ -188,7 +188,7 @@ independent challenger.
 | established | High | $3,241,131 | $4,021,754 | 47% → 52% | 4,591 | 810 | $181,528 |
 
 Washes per day divide the year's washes by 348 operating days. Tunnel capacity at the defaults is about 850 washes per day, so the
-High case approaches it in year 3 of the mature stages. The planning Low case runs out of cash and the Checks sheet flags the
+High case reaches the capacity limit from year 3 (established) to year 5 (planning); see "washes lost" in the 5-year sample. The planning Low case runs out of cash and the Checks sheet flags the
 funding gap; Base cases are funded throughout.
 
 ## Simplifications to review
