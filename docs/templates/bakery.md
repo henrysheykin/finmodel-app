@@ -28,7 +28,8 @@ traffic × (ramp + season factor − 1), where the season factor is 1 + uplift i
 months but leaves the year's retail sales exactly unchanged, also in the ramp-up year; annual columns equal the sum of
 the months (tested for every stage, scenario and year). The peak is therefore a fixed share of *full* traffic, not of
 the ramped traffic (an opening-year bakery still gets a holiday crowd), and a month cannot go below zero customers.
-It applies to the retail counter only; set the uplift to 0 to switch it off.
+The holiday uplift may not exceed 5 × opening traffic (the brief is refused otherwise), which keeps that floor out
+of reach. It applies to the retail counter only; set the uplift to 0 to switch it off.
 
 **Wholesale.** Accounts × order value per account per week × 52 ÷ 12 per month. Accounts at full ramp are a
 year-1 number that grows once a year; they follow the same opening ramp as the counter (a new bakery also needs
@@ -103,7 +104,7 @@ Source for every driver in the table: **assumption**, except where the Notes bel
 | Equipment replacement per year (from year 2) | $ | $6,000 | $8,000 | $14,000 | $24,000 |
 | Payroll taxes & benefits, % of salary | % | 12% | 12% | 12% | 12% |
 | Wage growth per year | % | 3% | 3% | 3% | 3% |
-| Equity raised at start | $ | $200,000 | $90,000 | $60,000 | $50,000 |
+| Equity raised at start | $ | $230,000 | $90,000 | $60,000 | $130,000 |
 | Loan drawn at start | $ | $150,000 | $0 | $80,000 | $0 |
 | Loan interest rate / term | % / years | 9% / 7 | none | 8.5% / 5 | none |
 | Receivable days (on revenue) | days | 6 | 7 | 9 | 10 |
@@ -135,29 +136,41 @@ Notes on sources:
   capex, funding, working-capital days, depreciation): **assumption**. No published source is claimed.
 - Base EBITDA margin, years 1 → 3: planning -7% → 12%, early 8% → 17%, growing 9% → 12%, established 12% → 16%.
   Part of the gap to the 5–10% net-margin **benchmark** is that EBITDA is before depreciation, interest and tax.
+- Equity at start (planning $230k, early $90k, growing $60k with an $80k loan, established $130k): **assumption**,
+  sized so the Base case never has a negative month-end cash balance.
 
 ## What the defaults produce (plain-Python reference, 3 years, monthly)
 
 | Stage | Case | Revenue Y1 | Revenue Y3 | Gross margin Y3 | EBITDA margin Y1 → Y3 | Wholesale share Y3 | Cash Y3 |
 |---|---|---:|---:|---:|---:|---:|---:|
-| planning | Low | $583,492 | $904,455 | 67% | -29% → -2% | 17% | $-208,967 |
-| planning | Base | $738,335 | $1,112,644 | 69% | -7% → 12% | 20% | $171,861 |
-| planning | High | $909,133 | $1,356,442 | 71% | 8% → 23% | 23% | $535,731 |
+| planning | Low | $583,492 | $904,455 | 67% | -29% → -2% | 17% | $-178,967 |
+| planning | Base | $738,335 | $1,112,644 | 69% | -7% → 12% | 20% | $201,861 |
+| planning | High | $909,133 | $1,356,442 | 71% | 8% → 23% | 23% | $565,731 |
 | early | Low | $897,728 | $1,129,031 | 66% | -5% → 4% | 21% | $64,116 |
 | early | Base | $1,064,570 | $1,386,283 | 69% | 8% → 17% | 24% | $431,209 |
 | early | High | $1,245,309 | $1,688,657 | 71% | 18% → 27% | 27% | $862,983 |
 | growing | Low | $1,333,410 | $1,502,898 | 66% | -3% → -3% | 27% | $-165,923 |
 | growing | Base | $1,577,472 | $1,890,163 | 68% | 9% → 12% | 32% | $399,361 |
 | growing | High | $1,838,308 | $2,351,962 | 70% | 19% → 24% | 35% | $1,029,196 |
-| established | Low | $2,013,440 | $2,223,953 | 66% | 2% → 3% | 31% | $34,501 |
-| established | Base | $2,308,800 | $2,748,449 | 68% | 12% → 16% | 35% | $738,516 |
-| established | High | $2,627,040 | $3,370,556 | 70% | 20% → 27% | 39% | $1,570,709 |
+| established | Low | $2,013,440 | $2,223,953 | 66% | 2% → 3% | 31% | $114,501 |
+| established | Base | $2,308,800 | $2,748,449 | 68% | 12% → 16% | 35% | $818,516 |
+| established | High | $2,627,040 | $3,370,556 | 70% | 20% → 27% | 39% | $1,650,709 |
 
-The Low case stacks every pessimistic value (fewer customers and accounts, lower ticket, higher ingredient, waste
-and delivery costs), so it is a stress case rather than a forecast; the planning, growing and established Low
-cases dip below zero cash (lowest balances -$209k, -$166k and -$9k), the early Low case stays barely positive
-($1k), and the Checks sheet flags the funding gap. The Base case is funded in every stage (lowest cash balance
-$18k planning, $110k early, $126k growing, $167k established).
+Lowest month-end cash (monthly model, from the plain-Python reference; the same in 3 and 5 years for Base and High,
+because the minimum falls in the first year):
+
+| Stage | Low | Base | High |
+|---|---:|---:|---:|
+| planning | -$184k (month 34; -$307k by month 58 in a 5-year model) | $21k (month 9) | $88k (month 5) |
+| early | -$27k (month 7) | $24k (month 3) | $44k (month 1) |
+| growing | -$173k (month 34; -$362k by month 58 in a 5-year model) | $35k (month 1) | $46k (month 1) |
+| established | $44k (month 1) | $53k (month 1) | $63k (month 1) |
+
+The Base and High cases stay above zero in every month of every stage (tested for 3 and 5 years); the opening
+dip comes from fit-out and receivables paid before the first sales, which is why year-end cash alone would hide it
+and why the planning and established equity is $230k and $130k. The Low case stacks every pessimistic value (fewer
+customers and accounts, lower ticket, higher ingredient, waste and delivery costs), so it is a stress case rather
+than a forecast; planning, early and growing Low go negative and the Checks sheet flags the funding gap.
 
 ## Simplifications to review
 

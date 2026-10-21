@@ -11,7 +11,7 @@ Assumption memo: docs/templates/bakery.md.
 
 from __future__ import annotations
 
-from engine.brief import Brief
+from engine.brief import Brief, BriefError
 from engine.core import HC, Top
 from engine.spec import DashChart, DashMetric, DriverSpec, KpiChart, Line, StmtRow, Timing
 from engine.templates.base import Template, div
@@ -62,7 +62,7 @@ _STAGES: dict[str, dict] = {
             "ga_other": (1800, 1800, 1800),
             "capex": (240000, 240000, 240000),
             "capex_repl": (6000, 6000, 6000),
-            "equity": (200000, 200000, 200000),
+            "equity": (230000, 230000, 230000),
             "loan_amount": (150000, 150000, 150000),
             "loan_rate": (0.09, 0.09, 0.09),
             "loan_term_years": (7, 7, 7),
@@ -134,7 +134,7 @@ _STAGES: dict[str, dict] = {
             "ga_other": (4200, 4200, 4200),
             "capex": (60000, 60000, 60000),
             "capex_repl": (24000, 24000, 24000),
-            "equity": (50000, 50000, 50000),
+            "equity": (130000, 130000, 130000),
             "loan_amount": (0, 0, 0),
             "loan_rate": (0, 0, 0),
             "loan_term_years": (1, 1, 1),
@@ -212,6 +212,17 @@ class BakeryTemplate(Template):
             DriverSpec("capex", "Fit-out & equipment: ovens, mixers, cases", "$", "usd", 0, 1e8, section=cap),
             DriverSpec("capex_repl", "Equipment replacement per year (from year 2)", "$", "usd", 0, 1e8, section=cap),
         ]
+
+    def validate(self, brief: Brief) -> None:
+        super().validate(brief)
+        for scen, name in ((1, "low"), (2, "base"), (3, "high")):
+            d = brief.values(scen)
+            if d["peak_uplift"] > 5 * d["open_pct"] + 1e-12:
+                # the off-peak months sit at uplift/5 below the ramp: below that the month would go under zero
+                raise BriefError(
+                    f"template 'bakery': peak_uplift ({d['peak_uplift']}) must not exceed 5 x open_pct "
+                    f"({d['open_pct']}) in the {name} case, or the holiday peak would not net to zero over the year"
+                )
 
     # ------------------------------------------------------------------ formula lines
     def revenue_lines(self, t: Timing) -> list[Line]:

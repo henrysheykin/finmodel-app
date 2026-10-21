@@ -5,6 +5,7 @@ import itertools
 import pytest
 from openpyxl import load_workbook
 
+from engine.brief import BriefError
 from engine.challenger import challenge, python_model
 from engine.core import reference_run
 from engine.recalc import recalc
@@ -208,6 +209,23 @@ def test_balance_sheet_balances(bk_brief, g, scen):
 def test_waste_at_the_limit_is_guarded(bk_brief):
     s = run(with_values(bk_brief, waste_pct=0.5))
     assert all(v >= 0 for v in s["waste"])
+
+
+@pytest.mark.parametrize("years", [3, 5])
+@pytest.mark.parametrize("scen", [2, 3])
+@pytest.mark.parametrize("stage", STAGES)
+def test_base_and_high_cash_stays_positive_in_every_month(stage, scen, years):
+    """Year-end cash hides an opening dip (fit-out and receivables are paid before the first sales)."""
+    b = BAKERY.default_brief(stage)
+    s = reference_run(b.values(scen), b.roles, Timing("monthly", years), BAKERY.reference_top)
+    assert min(s["cash_close"]) > 0, (stage, scen, years, min(s["cash_close"]))
+
+
+def test_holiday_peak_cannot_exceed_five_times_the_opening_traffic(bk_brief):
+    """Off-peak months sit at uplift/5 below the ramp; a larger uplift would push a month below zero customers."""
+    BAKERY.validate(with_values(bk_brief, open_pct=0.2, peak_uplift=1.0))  # exactly 5 x opening traffic is allowed
+    with pytest.raises(BriefError, match="peak_uplift"):
+        BAKERY.validate(with_values(bk_brief, open_pct=0.1, peak_uplift=0.6))
 
 
 # --------------------------------------------------------------------------- LibreOffice + challenger
