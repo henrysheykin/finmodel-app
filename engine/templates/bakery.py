@@ -283,7 +283,7 @@ class BakeryTemplate(Template):
             Line(
                 "waste",
                 "Waste (retail production not sold, at ingredient cost)",
-                "=-{rev_retail}*{in:ingr_pct}*{in:waste_pct}/MAX(0.01,1-{in:waste_pct})",
+                "=-{rev_retail}*{in:ingr_pct}*{in:waste_pct}*100/MAX(1,100-100*{in:waste_pct})",
                 "top",
             ),
             Line("packaging", "Packaging", "=-{rev}*{in:pack_pct}", "top"),
@@ -412,7 +412,7 @@ class BakeryTemplate(Template):
         rev_ws = accounts * d["ws_order"] * idx * 52 / 12 * t.mpp
         rev = rev_retail + rev_ws
         ingredients = -(rev_retail * d["ingr_pct"] + rev_ws * d["ws_ingr_pct"])
-        waste = -rev_retail * d["ingr_pct"] * d["waste_pct"] / max(0.01, 1 - d["waste_pct"])
+        waste = -rev_retail * d["ingr_pct"] * d["waste_pct"] * 100 / max(1, 100 - 100 * d["waste_pct"])
         deliv = -accounts * d["ws_deliv_wk"] * 52 / 12 * t.mpp * d["cost_drop"]
         return Top(
             rev=rev,
