@@ -88,6 +88,7 @@ webhook, Resend domain).
       - [ ] Fitness studio / gym: sample `samples/fitness-full.xlsx`, memo `docs/templates/fitness.md` (questions at the end).
       - [ ] Real estate / rental property (incl. annuity mortgage, land, Returns sheet with IRR/NPV): sample
             `samples/real_estate-full.xlsx`, memo `docs/templates/real_estate.md` (questions at the end).
+      - [ ] Hair salon / barbershop: sample `samples/salon-full.xlsx` (+ `salon-full-5y.xlsx`), memo `docs/templates/salon.md` (questions at the end).
       - [ ] Goal modules (break-even, DCF valuation, investor summary — all templates): sample
             `samples/cafe-investor_pitch.xlsx`, memo `docs/templates/goal-modules.md` (questions at the end).
 - [ ] E35: open https://www.sba.gov/business-guide/plan-your-business/calculate-your-startup-costs once and confirm it is the
