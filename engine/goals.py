@@ -6,6 +6,8 @@ the Cover's purpose line.
 - ``breakeven`` (Light and Full) → **Break-even** sheet: uses and sources of funds up to the lowest cash point,
   funding surplus / shortfall after a minimum cash buffer, first period of positive EBITDA / net income,
   payback of the cash invested, and annual break-even revenue.
+- ``sources_uses`` (Full) → **Sources & Uses** sheet: funding structure and the sources and uses of cash over the
+  first N periods (E30).
 - ``dcf`` (Full) → **Valuation** sheet: unlevered free cash flow from the model, discounting at the
   WACC, terminal value by perpetual growth and by exit multiple, and a WACC × growth sensitivity table.
 
@@ -24,7 +26,7 @@ from engine.spec import DriverSpec, Line, Timing
 #: modules by tier (ADR-013, docs/WORKBOOK_STANDARD.md §1)
 MODULES: dict[str, tuple[str, ...]] = {
     "light": ("breakeven",),
-    "full": ("breakeven", "dcf"),
+    "full": ("breakeven", "dcf", "sources_uses"),
 }
 #: the Cover's purpose line by wizard goal
 PURPOSE: dict[str, str] = {
@@ -231,6 +233,14 @@ TOLERANCE = {
     "implied_mult": 1e-4,
     "implied_g": 1e-6,
     "cagr": 1e-6,
+    "su_gearing": 1e-6,
+    # Sources & Uses shares (column C)
+    **{
+        f"{k}_c": 1e-6
+        for k in ("su_equity", "su_loan", "su_funding", "su_eq_in", "su_draw", "su_cfo_in", "su_sources")
+        + ("su_cfo_out", "su_capex", "su_repay", "su_cash_end", "su_uses")
+    },
+    "su_n": 0,
     # periods must match exactly (a one-period slip is not "within $1")
     "low_p": 0.0,
     "first_ebitda": 0.0,
@@ -346,6 +356,44 @@ def reference(brief: Brief, d: dict, s: dict[str, list[float]], t: Timing) -> di
             implied_g=(tv_m * w - fcf[H]) / (tv_m + fcf[H]) if tv_m + fcf[H] != 0 else NA,
             sens_centre=ev_g,
         )
+    if "sources_uses" in mods:
+        k = min(12 if t.granularity == "monthly" else 1, n)  # the sheet's default period (goal_sheets)
+        cfo_k = sum(s["cfo"][:k])
+        eq, loan = d["equity"], d["loan_amount"]
+        funding = eq + loan
+        src = [eq, loan, max(0.0, cfo_k)]
+        use = [max(0.0, -cfo_k), -sum(s["cfi"][:k]), -sum(s["loan_repay"][:k]), s["cash_close"][k - 1]]
+        tot_s, tot_u = sum(src), sum(use)
+
+        def share(x: float, tot: float) -> float:
+            return x / tot if tot != 0 else 0.0
+
+        cells.update(
+            su_equity=eq,
+            su_loan=loan,
+            su_funding=funding,
+            su_equity_c=share(eq, funding),
+            su_loan_c=share(loan, funding),
+            su_funding_c=1.0 if funding != 0 else 0.0,
+            su_gearing=loan / eq if eq > 0 else (NA if loan > 0 else 0.0),
+            su_n=k,
+            su_eq_in=src[0],
+            su_draw=src[1],
+            su_cfo_in=src[2],
+            su_sources=tot_s,
+            su_cfo_out=use[0],
+            su_capex=use[1],
+            su_repay=use[2],
+            su_cash_end=use[3],
+            su_uses=tot_u,
+            su_sources_c=1.0 if tot_s != 0 else 0.0,
+            su_uses_c=1.0 if tot_u != 0 else 0.0,
+        )
+        names_s, names_u = ("su_eq_in", "su_draw", "su_cfo_in"), ("su_cfo_out", "su_capex", "su_repay", "su_cash_end")
+        cells.update({f"{k}_c": share(v, tot_s) for k, v in zip(names_s, src, strict=True)})
+        cells.update({f"{k}_c": share(v, tot_u) for k, v in zip(names_u, use, strict=True)})
+        if "breakeven" in mods:
+            cells.update(su_required=cells["required"], su_gap=cells["gap"])
     return {"cells": cells, "years": years}
 
 

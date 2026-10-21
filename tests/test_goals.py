@@ -29,7 +29,7 @@ BE_KEYS = {"cash_buffer"}
 def test_modules_per_tier():
     # ADR-013: the tier decides the modules; the goal only sets the Cover's purpose line
     assert modules_for("light") == ("breakeven",)
-    assert modules_for("full") == ("breakeven", "dcf")
+    assert modules_for("full") == ("breakeven", "dcf", "sources_uses")
     assert modules_for("investor_pitch") == ()
 
 
@@ -99,6 +99,7 @@ def test_wizard_prefill_builds_valid_briefs_for_every_goal(goal, tier):
                 "Summary",
                 "Break-even",
                 "Valuation",
+                "Sources & Uses",
                 "KPIs",
                 "Inputs",
                 "P&L",
