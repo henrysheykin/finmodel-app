@@ -16,8 +16,8 @@ from __future__ import annotations
 
 from engine.brief import Brief
 from engine.core import HC, Top
-from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
-from engine.templates.base import Template
+from engine.spec import DashChart, DashMetric, DriverSpec, KpiChart, Line, StmtRow, Timing
+from engine.templates.base import Template, div
 
 ROLES = [
     ("manager", "Site manager"),
@@ -193,13 +193,27 @@ class CarWashTemplate(Template):
         "washes": "washes",
         "ret_cars": "ret_cars",
         "mem_washes": "mem_washes",
-        "lost_w": "lost_washes",
         "cap_washes": "cap_washes",
+        "lost_w": "lost_washes",
         "rev": "rev",
         "rev_mem": "rev_mem",
+        "var_cost": "var_cost",
         "gp": "gp",
         "ebitda": "ebitda",
     }
+    kpi_derived = (
+        "churn",
+        "mem_share",
+        "washes_day",
+        "cap_use",
+        "rev_retail",
+        "mem_rev_share",
+        "rev_per_wash",
+        "rev_per_member_wash",
+        "var_per_wash",
+        "gm",
+        "em",
+    )
     kpi_flows = (
         "new_total",
         "churned",
@@ -209,6 +223,7 @@ class CarWashTemplate(Template):
         "lost_washes",
         "cap_washes",
         "rev_mem",
+        "var_cost",
     )
 
     def driver_specs(self) -> list[DriverSpec]:
@@ -484,12 +499,12 @@ class CarWashTemplate(Template):
                 "=IF({mem_washes}=0,0,{rev_mem}/{mem_washes})",
                 "usd2",
             ),
-            StmtRow("var_cost", "Chemicals, water & electricity", "line", "var_cost", neg=True),
+            StmtRow("var_cost", "Chemicals, water & electricity", "line", "var_cost"),
             StmtRow(
                 "var_per_wash",
                 "Chemicals, water & electricity per wash",
                 "formula",
-                "=IF({washes}=0,0,{var_cost}/{washes})",
+                "=IF({washes}=0,0,-{var_cost}/{washes})",
                 "usd2",
             ),
             StmtRow("gp", "Gross profit", "line", "gp"),
@@ -499,6 +514,34 @@ class CarWashTemplate(Template):
         ]
 
     # ------------------------------------------------------------------ python twin
+    def kpi_charts(self, t: Timing) -> list[KpiChart]:
+        return [
+            KpiChart(
+                "Retail and member washes, tunnel capacity used",
+                bars=("ret_cars", "mem_washes"),
+                lines=("cap_use",),
+                stacked=True,
+            ),
+            KpiChart("Revenue split and EBITDA margin", bars=("rev_retail", "rev_mem"), lines=("em",), stacked=True),
+        ]
+
+    def kpi_reference(self, ann: dict, d: dict, t: Timing) -> dict:
+        out: dict[str, dict] = {k: {} for k in self.kpi_derived}
+        for y in range(1, t.years + 1):
+            washes, rev = ann["washes"][y], ann["rev"][y]
+            out["churn"][y] = d["churn_m"]
+            out["mem_share"][y] = div(ann["mem_washes"][y], washes)
+            out["washes_day"][y] = div(washes, d["days_open"] * 12)
+            out["cap_use"][y] = div(washes, ann["cap_washes"][y])
+            out["rev_retail"][y] = rev - ann["rev_mem"][y]
+            out["mem_rev_share"][y] = div(ann["rev_mem"][y], rev)
+            out["rev_per_wash"][y] = div(rev, washes)
+            out["rev_per_member_wash"][y] = div(ann["rev_mem"][y], ann["mem_washes"][y])
+            out["var_per_wash"][y] = div(-ann["var_cost"][y], washes)
+            out["gm"][y] = div(ann["gp"][y], rev)
+            out["em"][y] = div(ann["ebitda"][y], rev)
+        return out
+
     def _members(self, d: dict, t: Timing, upto: int) -> tuple[float, float, float, float]:
         """(opening, closing, new_conv, new_direct) members of period ``upto``; replays the roll-forward."""
         r = 1 - d["churn_m"]
@@ -554,6 +597,7 @@ class CarWashTemplate(Template):
                 "lost_washes": demand - washes,
                 "cap_washes": cap,
                 "rev_mem": rev_mem,
+                "var_cost": var_cost,
             },
         )
 
