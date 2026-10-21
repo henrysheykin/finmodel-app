@@ -48,3 +48,4 @@ New lines go at the end of the table (protocol step 9).
 | E28 | Summary sheet (statements, selected year by month) | #46 | done 2026-10-20 |
 | E31 | KPIs & ratios sheet | #50 | done 2026-10-21 |
 | E30 | Sources & Uses sheet | [#47](https://github.com/henrysheykin/finmodel-app/pull/47) | done 2026-10-21 |
+| E29 | Scenarios sheet, live Low / Base / High | PR_E29 | done 2026-10-21 |

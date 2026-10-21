@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-21 · E · E29 Scenarios sheet, live Low / Base / High · DONE · PR_E29
+  engine/scenarios.py: the period calculation copied 3× on a new "Scenario calc" sheet (Full, between Headcount and Checks),
+  each copy reading Inputs B / C / D; Scenarios sheet: key drivers, 10 outputs Low / Base / High / Active, per-year tables,
+  4 line charts 2×2; check "Scenarios: Active = selected scenario"; challenger recomputes every Low / Base / High cell.
+  Build time per Full monthly 5-year model: build 0.4→1.0 s, LibreOffice recalc 2.0→2.6 s (formulas ×3.3). ADR-013 note added.
 - 2026-10-21 · E · E30 Sources & Uses sheet · DONE · [#47](https://github.com/henrysheykin/finmodel-app/pull/47)
   Full only, after Valuation: funding structure (equity / loan, shares, gearing, funding required and surplus from Break-even)
   + doughnut; sources and uses of cash for the first N periods (input, default 12 months / 1 year, capped) + uses bar chart;

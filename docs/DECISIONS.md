@@ -398,6 +398,8 @@ charts, break-even, valuation, sources & uses, ratios. Two prototype rounds on a
 - The scenario selector is Dashboard!B4 in both tiers (Light used Inputs!B3).
 - Scenarios shows Low / Base / High **live** (parallel calculation chains on the inputs' B / C / D columns),
   recomputed by the challenger like the active scenario.
+  The chains live on a calculation sheet "Scenario calc" (Full), placed between Headcount and Checks (E29,
+  2026-10-20; the only addition to the sheet order above).
 - Look: Arial 9, ink / pine palette (the site's identity, ADR-005; ends the navy bands in files), yellow input cells
   with blue figures, presentation sheets in $'000 with ink links, native charts in a two-column grid of one size.
 

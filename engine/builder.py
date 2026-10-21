@@ -67,6 +67,10 @@ class GridPlan:
     rows: dict[str, int] = field(default_factory=dict)
     sections: dict[int, str] = field(default_factory=dict)
     end_row: int = 0
+    #: a scenario chain (engine/scenarios.py): its own line rows and the Inputs column it reads (B / C / D);
+    #: the model's own grids leave these unset (line rows from the plan, the Active column E)
+    line_at: dict[str, tuple[str, int]] | None = None
+    input_col: str = "E"
 
 
 @dataclass
@@ -89,6 +93,9 @@ class Manifest:
     summary_years: dict[str, dict[int, str]] = field(default_factory=dict)
     #: KPIs (E31): every ratio, DuPont cell and derived KPI-table row per year (Light: the derived rows only)
     kpi_years: dict[str, dict[int, str]] = field(default_factory=dict)
+    #: Scenarios (E29, Full): outputs ``<name>_<1|2|3|a>`` and per-year cells ``<metric>_<1|2|3>``
+    scen_cells: dict[str, str] = field(default_factory=dict)
+    scen_years: dict[str, dict[int, str]] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return self.__dict__.copy()
@@ -116,6 +123,8 @@ class Plan:
     summary: object = None
     #: KPIs layout (engine/kpis.py, Full only), filled by ``plan``
     kpis: object = None
+    #: Scenarios layout and the three scenario chains (engine/scenarios.py, Full only), filled by ``plan``
+    scen: object = None
 
     # ---- references ------------------------------------------------------
     def period_cell(self, key: str, p: int, from_sheet: str, absolute: bool = False) -> str:
@@ -145,14 +154,15 @@ class Plan:
         r = b.placed[key]
         return f"{q(b.sheet)}!$B${r}:${L(1 + self.t.years)}${r}"
 
-    def render(self, ln: Line, p: int, sheet: str) -> str:
+    def render(self, ln: Line, p: int, sheet: str, grid: GridPlan | None = None) -> str:
         text = ln.first if (p == 1 and ln.first is not None) else ln.formula
-        grid = next(g for g in self.grids if g.sheet == sheet)
+        grid = grid or next(g for g in self.grids if g.sheet == sheet)
+        at = grid.line_at if grid.line_at is not None else self.line_at
 
         def sub(m: re.Match) -> str:
             tok = m.group(1)
             if tok.startswith("in:"):
-                return self.input_ref(tok[3:])
+                return self.input_col(tok[3:], grid.input_col)
             if tok == "p":
                 return f"{L(FIRST_COL + p - 1)}${grid.period_row}"
             if tok == "y":
@@ -163,11 +173,13 @@ class Plan:
             mm = re.fullmatch(r"([a-z0-9_]+)\[(-\d+)\]", tok)
             if mm:
                 key, off = mm.group(1), int(mm.group(2))
-            if key not in self.line_at:
+            if key not in at:
                 raise KeyError(f"line {ln.key!r} references unknown line {key!r}")
             if p + off < 1:
                 raise ValueError(f"line {ln.key!r} looks before period 1; give it a `first` formula")
-            return self.period_cell(key, p + off, sheet)
+            at_sheet, row = at[key]
+            ref = f"{L(FIRST_COL + p + off - 1)}{row}"
+            return ref if at_sheet == sheet else f"{q(at_sheet)}!{ref}"
 
         return TOKEN.sub(sub, text)
 
@@ -366,6 +378,9 @@ def plan(brief: Brief, tpl: Template) -> Plan:
     from engine.kpis import plan_kpis
 
     plan_kpis(pl)  # Full only
+    from engine.scenarios import plan_scenarios
+
+    pl.scen = plan_scenarios(pl)  # Full only
     return pl
 
 
@@ -378,6 +393,7 @@ def sheet_order(tier: str, grid_name: str = "Monthly", returns: bool = False) ->
         "Cover",
         "Dashboard",
         "Summary",
+        "Scenarios",
         "Break-even",
         "Valuation",
         "Sources & Uses",
@@ -389,6 +405,7 @@ def sheet_order(tier: str, grid_name: str = "Monthly", returns: bool = False) ->
         "Balance Sheet",
         grid_name,
         "Headcount",
+        "Scenario calc",
         "Checks",
     ]
 
@@ -516,7 +533,7 @@ def _write_grid(wb: Workbook, pl: Plan, g: GridPlan, title: str, sub: str) -> No
         if ln.total:
             lab.border = st.TOTAL_TOP
         for p in range(1, n + 1):
-            f = pl.render(ln, p, g.sheet)
+            f = pl.render(ln, p, g.sheet, g)
             c = ws.cell(row=r, column=FIRST_COL + p - 1, value=f)
             c.font = st.font(st.GREEN if PURE_LINK.match(f) else st.GREY if pct else "000000", bold=ln.bold, italic=pct)
             c.number_format = FORMATS[ln.fmt]
@@ -692,6 +709,11 @@ def _write_checks(wb: Workbook, pl: Plan) -> str:
         err_terms.append(f"SUMPRODUCT(--ISERROR({pl.summary.error_range}))")
     if pl.kpis:
         err_terms.append(f"SUMPRODUCT(--ISERROR({pl.kpis.error_range}))")
+    if pl.scen:
+        for g in pl.scen.grids.values():
+            rng = f"{q(g.sheet)}!${L(FIRST_COL)}${g.period_row}:${L(FIRST_COL + pl.t.periods - 1)}${g.end_row}"
+            err_terms.append(f"SUMPRODUCT(--ISERROR({rng}))")
+        err_terms.append(f"SUMPRODUCT(--ISERROR({pl.scen.error_range}))")
     checks.append(
         (
             "No error values",
@@ -719,6 +741,17 @@ def _write_checks(wb: Workbook, pl: Plan) -> str:
                 dupont_result(pl),
                 "Net margin × asset turnover × equity multiplier equals return on equity every year; "
                 "n/a = no year where both are defined (a one-sided n/a is a FAIL)",
+            )
+        )
+    if pl.scen:
+        from engine.scenarios import active_check
+
+        checks.append(
+            (
+                "Scenarios: Active = selected scenario",
+                ok(active_check(pl)),
+                "On the Scenarios sheet the live model (Active) equals the Low / Base / High column chosen on the "
+                "Dashboard for every output",
             )
         )
     if "bs" in pl.blocks:
@@ -780,6 +813,7 @@ SHEET_DESC = {
     "Monthly": "Month-by-month engine of the model",
     "Annual": "Year-by-year engine of the model",
     "Headcount": "Team and payroll",
+    "Scenario calc": "Low, Base and High calculated side by side for the Scenarios sheet",
     "Checks": "Live integrity checks and the overall verdict",
 }
 SUMMARY_DESC_ANNUAL = "Income statement, cash flow and balance sheet — every year, with charts"
@@ -787,7 +821,7 @@ GROUPS = (
     ("Presentation", st.PRESENTATION),
     ("Inputs", {"Inputs"}),
     ("Statements", st.STATEMENTS),
-    ("Calculations", {"Monthly", "Annual", "Headcount"}),
+    ("Calculations", {"Monthly", "Annual", "Headcount", "Scenario calc"}),
     ("Control", {"Checks"}),
 )
 
@@ -921,6 +955,8 @@ def manifest_for(pl: Plan, verdict: str) -> Manifest:
         {k: dict(v) for k, v in pl.dash.years.items()},
         {k: dict(v) for k, v in pl.summary.cells.items()} if pl.summary else {},
         _kpi_years(pl),
+        dict(pl.scen.cells) if pl.scen else {},
+        {k: dict(v) for k, v in pl.scen.years.items()} if pl.scen else {},
     )
 
 
@@ -953,13 +989,18 @@ def build(brief: Brief, tpl: Template, out_path: str | Path, built_on: date | No
         from engine.kpis import write_kpis
 
         write_kpis(wb, pl)
+    if pl.scen:
+        from engine.scenarios import write_scenarios
+
+        write_scenarios(wb, pl)
     _write_cover(wb, pl, verdict, built_on or date.today())
     if pl.modules:
         from engine.goal_sheets import write_modules
 
         write_modules(wb, pl)
     for ws in wb.worksheets:
-        st.finish_sheet(ws, landscape=ws.title != "Cover", zoom=90 if ws.title in ("Monthly", "Headcount") else 100)
+        zoom = 90 if ws.title in ("Monthly", "Headcount", "Scenario calc") else 100
+        st.finish_sheet(ws, landscape=ws.title != "Cover", zoom=zoom)
         ws.sheet_view.tabSelected = ws.title == "Cover"
     wb.active = 0
     wb.properties.creator = ""

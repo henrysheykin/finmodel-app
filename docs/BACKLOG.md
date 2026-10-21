@@ -13,7 +13,7 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 ## Track E — Engineering (daily)
 
 > **Priority (Henry, 2026-10-21, ADR-014):** in parallel with the workbook standard: E34, E35 and the templates
-> E36–E45 (any order, one per PR). Workbook standard: E29, E30 (PR #47), E32, then E33 after all of them (E31 done).
+> E36–E45 (any order, one per PR). Workbook standard: E32, then E33 (E29, E30, E31 done).
 >
 > **Earlier priority (Henry, 2026-10-20):** workbook standard v1 (ADR-013, `docs/WORKBOOK_STANDARD.md`): E26, E27, E28 (done) →
 > E30, E31, E32 (any order) → E29 → E33. E23 still waits on the OpenAI key (A1).
@@ -22,22 +22,6 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 > Earlier: **E23** (waits on the OpenAI key, A1). (E25 OpenAI done #41; E24 done #42.) All earlier E tasks are done (`docs/DONE.md`).
 > New industries are one file each (ADR-009, `docs/templates/ADDING_A_TEMPLATE.md`; follow E21/E22, Model: sonnet).
 > Customer login = passwordless magic link by email (ADR-006).
-
-### E29 — Scenarios sheet, live Low / Base / High
-- status: IN_PROGRESS (2026-10-21) — branch E29-live-scenarios (dispatcher session)
-- Model: opus
-- depends: E26, E27
-- skills: xlsx, engineering:testing-strategy
-- do: ADR-013 §1. Full only. Parallel calculation chains for scenarios 1/2/3 that read the inputs' B / C / D
-  columns directly (e.g. one "Scenario calc" grid sheet with three stacked copies of the annual-relevant lines,
-  generated from the same Line formulas with a scenario-specific `{in:…}` resolver). Scenarios sheet: key drivers
-  table (template hook), outputs Low / Base / High / Active, per-year tables (revenue, EBITDA, net income, cash),
-  4 charts 2×2. Challenger: recompute every Low / Base / High cell with the Python reference for that scenario,
-  independent of the selector.
-- done when: changing an input on Inputs updates all three columns after recalc; the Active column equals the
-  matching scenario column for each selector value; challenger covers it; all templates PASS; build time per
-  model measured and noted in the RUNLOG (worker budget).
-
 
 ### E32 — Break-even chart and Valuation layout
 - status: IN_PROGRESS (2026-10-21)

@@ -27,6 +27,7 @@ def test_sheets_per_tier(build, cafe_brief):
         "Cover",
         "Dashboard",
         "Summary",
+        "Scenarios",
         "Break-even",
         "Valuation",
         "Sources & Uses",
@@ -37,6 +38,7 @@ def test_sheets_per_tier(build, cafe_brief):
         "Balance Sheet",
         "Monthly",
         "Headcount",
+        "Scenario calc",
         "Checks",
     ]
     annual = load_workbook(build(cafe_brief.with_options(granularity="annual"), "a.xlsx"))
