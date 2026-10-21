@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-21 · E · E39 Car wash template (express tunnel + memberships) · DONE · https://github.com/henrysheykin/finmodel-app/pull/57
+  engine/templates/car_wash.py: retail cars/day × price with ramp and growth, unlimited members (adds − churn) × fee, tunnel
+  capacity cap, cost per wash, optional owned land (ADR-011, not depreciated); samples full + full-5y. Reviewer opus PASS after
+  fixes (monthly cash low in memo, cars_g, land, working-capital days). test_real_estate land check generalised per ADR-011.
+  For Henry: R1 CFO review (HUMAN_TODO).
 - 2026-10-21 · E · E37 Salon template (hair salon / barbershop) · DONE · https://github.com/henrysheykin/finmodel-app/pull/56
   engine/templates/salon.py: chairs × utilisation × hours × services/hour × price, retail attach, chair rent from renters,
   commission + payroll tax in cost of sales; E31 KPI hooks; samples full + full-5y. Implementer sonnet, reviewer opus PASS after

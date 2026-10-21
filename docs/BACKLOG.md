@@ -45,7 +45,6 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 |---|---|---|---|---|
 | E36 | `bakery` | Bakery (retail counter + wholesale) | daily customers × ticket, wholesale accounts × order, production waste % | IN_PROGRESS (2026-10-21) |
 | E38 | `dental` | Dental practice | operatories × patient visits × fee per visit, hygiene recall, insurance mix / collection rate | IN_PROGRESS (2026-10-21) |
-| E39 | `car_wash` | Car wash (express + memberships) | cars per day × price, unlimited-plan members × fee, chemicals & utilities per car | IN_PROGRESS (2026-10-21) |
 | E40 | `laundromat` | Laundromat (self-service + wash & fold) | machines × turns per day × price, wash & fold lbs × price, utilities per cycle | IN_PROGRESS (2026-10-21) |
 | E41 | `childcare` | Childcare / daycare centre | licensed capacity × enrollment % × tuition, staff-to-child ratio payroll | TODO |
 | E42 | `food_truck` | Food truck | service days × meals per day × ticket, events / catering, food cost %, permits | TODO |

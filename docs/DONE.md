@@ -52,3 +52,4 @@ New lines go at the end of the table (protocol step 9).
 | E34 | Calculator engine (ADR-014) | #53 | done 2026-10-21 |
 | E35 | Business-model pages engine (ADR-014) | #55 | done 2026-10-21 |
 | E37 | Template: hair salon / barbershop | #56 | done 2026-10-21 |
+| E39 | Template: car wash | #57 | done 2026-10-21 |
