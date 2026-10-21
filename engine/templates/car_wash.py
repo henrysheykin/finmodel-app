@@ -164,7 +164,7 @@ def _ramp(d: dict, p: int, t: Timing) -> float:
     j0 = (p - 1) * t.mpp  # months elapsed before the period
     n = max(0.0, min(float(t.mpp), months - j0))  # months of the period still on the ramp
     s = d["ramp_start"]
-    return (n * s + (1 - s) / months * (n * j0 + n * (n - 1) / 2) + t.mpp - n) / t.mpp
+    return (n * s + (1 - s) / max(1, months) * (n * j0 + n * (n - 1) / 2) + t.mpp - n) / t.mpp
 
 
 def _season(d: dict, p: int, t: Timing) -> float:
@@ -320,7 +320,7 @@ class CarWashTemplate(Template):
         cidx = "(1+{in:cost_g})^({y}-1)"
         ramp = (
             "=IF({in:ramp_months}<=0,1,({ramp_n}*{in:ramp_start}"
-            "+(1-{in:ramp_start})/{in:ramp_months}*({ramp_n}*({p}-1)*{mpp}+{ramp_n}*({ramp_n}-1)/2)"
+            "+(1-{in:ramp_start})/MAX(1,{in:ramp_months})*({ramp_n}*({p}-1)*{mpp}+{ramp_n}*({ramp_n}-1)/2)"
             "+{mpp}-{ramp_n})/{mpp})"
         )
         return [
@@ -383,7 +383,7 @@ class CarWashTemplate(Template):
             Line(
                 "served",
                 "Share of demand the tunnel can wash",
-                "=IF({ret_demand}+{mem_demand}<=0,1,MIN(1,{cap_washes}/({ret_demand}+{mem_demand})))",
+                "=MIN(1,{cap_washes}/MAX(1,{ret_demand}+{mem_demand}))",
                 "top",
                 "pct",
                 agg="none",
@@ -566,7 +566,7 @@ class CarWashTemplate(Template):
         mem_dem = avg * d["wash_pm"] * season * t.mpp
         cap = d["cph"] * d["hours_day"] * d["cap_util"] * d["days_open"] * t.mpp
         demand = ret_dem + mem_dem
-        share = 1.0 if demand <= 0 else min(1.0, cap / demand)
+        share = min(1.0, cap / max(1.0, demand))
         ret_cars, mem_washes = ret_dem * share, mem_dem * share
         washes = ret_cars + mem_washes
         idx = (1 + d["price_g"]) ** (y - 1)
