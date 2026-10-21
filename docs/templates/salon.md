@@ -83,13 +83,13 @@ Monthly and annual versions give the same figures: nothing in the model is seaso
 | Depreciation / income tax | 7 years / 21% | | assumption (21% is the US federal corporate rate) |
 | Equity / loan | $150,000 / $70,000 at 8% over 5 years | $ | assumption |
 
-## Salon metrics table (Dashboard in Full, P&L sheet in Light)
+## Salon metrics table (KPIs sheet in Full, P&L sheet in Light; the Dashboard shows three of the rows)
 
 Styling chairs (year end), chairs rented, bookable and booked chair hours, chair utilisation, services performed,
 revenue and its three parts (services, retail, chair rent), revenue per service, retail as % of service revenue,
-service revenue per employed chair, chair rent per rented chair per month, gross margin, EBITDA margin. Chairs,
-hours, services and the three revenue parts are recomputed by the independent challenger; the ratios are
-formulas on those rows.
+service revenue per employed chair, chair rent per rented chair per month, gross profit and margin, EBITDA and
+margin. Every row is recomputed by the independent challenger (line rows from the reference series, ratio rows from
+a plain-Python twin). The two KPIs-sheet charts show services with chair utilisation, and revenue by source.
 
 ## What the defaults produce (plain-Python reference, 3 years, monthly)
 

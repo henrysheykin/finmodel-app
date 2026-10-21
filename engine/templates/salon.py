@@ -15,8 +15,8 @@ from __future__ import annotations
 
 from engine.brief import Brief
 from engine.core import HC, Top
-from engine.spec import DashChart, DashMetric, DriverSpec, Line, StmtRow, Timing
-from engine.templates.base import Template
+from engine.spec import DashChart, DashMetric, DriverSpec, KpiChart, Line, StmtRow, Timing
+from engine.templates.base import Template, div
 
 ROLES = [
     ("manager", "Salon manager"),
@@ -188,7 +188,11 @@ class SalonTemplate(Template):
         "rev_svc": "rev_svc",
         "rev_retail": "rev_retail",
         "rev_chair": "rev_chair",
+        "rev": "rev",
+        "gp": "gp",
+        "ebitda": "ebitda",
     }
+    kpi_derived = ("util", "ticket", "retail_share", "rev_emp_chair", "rent_chair", "gm", "em")
     kpi_flows = ("hours_avail", "hours_booked", "services", "rev_svc", "rev_retail", "rev_chair")
 
     def driver_specs(self) -> list[DriverSpec]:
@@ -406,7 +410,27 @@ class SalonTemplate(Template):
             StmtRow("em", "EBITDA margin", "formula", "=IF({rev}=0,0,{ebitda}/{rev})", "pct"),
         ]
 
+    def kpi_charts(self, t: Timing) -> list[KpiChart]:
+        return [
+            KpiChart("Services performed and chair utilisation", bars=("services",), lines=("util",)),
+            KpiChart("Revenue by source", bars=("rev_svc", "rev_retail", "rev_chair"), stacked=True),
+        ]
+
     # ------------------------------------------------------------------ python twin
+    def kpi_reference(self, ann: dict, d: dict, t: Timing) -> dict:
+        out: dict[str, dict] = {k: {} for k in self.kpi_derived}
+        for y in range(1, t.years + 1):
+            rev, svc = ann["rev"][y], ann["rev_svc"][y]
+            chairs, rented = ann["chairs_total"][y], ann["chairs_rented"][y]
+            out["util"][y] = div(ann["hours_booked"][y], ann["hours_avail"][y])
+            out["ticket"][y] = div(svc, ann["services"][y])
+            out["retail_share"][y] = div(ann["rev_retail"][y], svc)
+            out["rev_emp_chair"][y] = div(svc, chairs - rented)
+            out["rent_chair"][y] = div(ann["rev_chair"][y], rented) / 12
+            out["gm"][y] = div(ann["gp"][y], rev)
+            out["em"][y] = div(ann["ebitda"][y], rev)
+        return out
+
     def reference_top(self, d: dict, p: int, y: int, t: Timing, hc: HC) -> Top:
         idx = (1 + d["price_g"]) ** (y - 1)
         chairs = d["chairs"] + d["chairs_add"] * (y - 1)
