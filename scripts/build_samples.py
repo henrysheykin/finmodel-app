@@ -1,15 +1,16 @@
 """Build the downloadable sample workbooks from the template catalog.
 
-    python scripts/build_samples.py            # <key>-full for every template with a sample_title
-    python scripts/build_samples.py fitness    # one template (<key>-full)
+    python scripts/build_samples.py            # <key>-full and <key>-full-5y for every template with a sample_title
+    python scripts/build_samples.py fitness    # one template (<key>-full and <key>-full-5y)
     python scripts/build_samples.py cafe-light cafe-full-5y   # named samples (engine/samples.py grammar)
-    python scripts/build_samples.py --seo      # every sample the content/seo pages offer (E16)
+    python scripts/build_samples.py --seo      # every sample the content/seo and content/business-models pages offer
     python scripts/build_samples.py --goal investor_pitch cafe   # goal-module review file (E07)
 
 Each sample is the template's ``sample_stage`` defaults built with the options its name encodes
 (default: Full, monthly, 3 years), recalculated in LibreOffice and checked by the challenger. A sample
 that fails is not written. Output: samples/<name>.xlsx, served at /samples/<name>.xlsx (the landing
-page links to /samples/<key>.xlsx, an alias of <key>-full).
+page links to /samples/<key>.xlsx, an alias of <key>-full). <key>-full-5y is the sample every business-model
+page of app/bizmodel.py computes its tables from and offers (E35).
 With ``--goal``: samples/<key>-<goal>.xlsx with the goal modules (for review; not served).
 """
 
@@ -55,13 +56,18 @@ def build_sample(key: str, goal: str = "", spec: SampleSpec | None = None) -> Pa
 
 
 def seo_samples() -> list[SampleSpec]:
-    from app.seo import pages  # imported late: the app is not needed for plain sample builds
+    from app import bizmodel, seo  # imported late: the app is not needed for plain sample builds
 
     seen: dict[str, SampleSpec] = {}
-    for page in pages().values():
+    for page in [*seo.pages().values(), *bizmodel.pages().values()]:
         if page.sample:
             seen.setdefault(page.sample.name, page.sample)
     return list(seen.values())
+
+
+def default_samples(key: str) -> list[SampleSpec]:
+    """``<key>-full`` (landing page, 3 years) and ``<key>-full-5y`` (business-model page, 5 years)."""
+    return [SampleSpec(key=key), SampleSpec(key=key, horizon_years=5)]
 
 
 def main(argv: list[str]) -> int:
@@ -73,10 +79,18 @@ def main(argv: list[str]) -> int:
     else:
         specs = []
         for arg in argv or [k for k, t in TEMPLATES.items() if t.sample_title]:
-            spec = SampleSpec(key=arg) if arg in TEMPLATES else parse_name(arg)
+            if arg in TEMPLATES:
+                specs += default_samples(arg)
+                continue
+            spec = parse_name(arg)
             if spec is None:
                 raise SystemExit(f"unknown template or sample name {arg!r}; templates: {sorted(TEMPLATES)}")
             specs.append(spec)
+    if goal:  # one review file per template, whatever the sample names
+        first: dict[str, SampleSpec] = {}
+        for spec in specs:
+            first.setdefault(spec.key, spec)
+        specs = list(first.values())
     for spec in specs:
         print("wrote", build_sample(spec.key, goal, spec).relative_to(ROOT))
     return 0
