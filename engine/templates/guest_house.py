@@ -456,7 +456,7 @@ class GuestHouseTemplate(Template):
         ]
 
     def dashboard_chart(self, t: Timing) -> DashChart:
-        return DashChart("Room-nights sold & occupancy", bars=("stays",), lines=("occ_rate",))
+        return DashChart("Guest stays & occupancy", bars=("stays",), lines=("occ_rate",))
 
     def kpi_rows(self, t: Timing) -> list[StmtRow]:
         return [
@@ -499,7 +499,7 @@ class GuestHouseTemplate(Template):
     def kpi_charts(self, t: Timing) -> list[KpiChart]:
         return [
             KpiChart("Occupied room-nights and occupancy", bars=("nights",), lines=("occ_rate",)),
-            KpiChart("ADR and RevPAR", bars=("adr_eff", "revpar"), lines=("em",)),
+            KpiChart("ADR, RevPAR and EBITDA margin", bars=("adr_eff", "revpar"), lines=("em",)),
         ]
 
     # ------------------------------------------------------------------ python twin

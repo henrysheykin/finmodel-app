@@ -146,16 +146,16 @@ revenue per stay, gross margin and EBITDA margin. Every line item is recomputed 
 
 | Stage | Case | Revenue Y1 | Revenue Y3 | EBITDA margin Y1 → Y3 | Occupancy Y3 | Lowest month-end cash (36 months) |
 |---|---|---:|---:|---|---:|---:|
-| planning | Low | $151,574 | $267,935 | -62% → -10% | 50% | $-230,147 |
+| planning | Low | $151,574 | $267,935 | -62% → -10% | 50% | ($230,147) |
 | planning | Base | $274,944 | $416,906 | 4% → 27% | 65% | $22,904 |
 | planning | High | $386,298 | $542,083 | 29% → 42% | 74% | $54,906 |
-| early | Low | $234,080 | $267,935 | -47% → -40% | 50% | $-238,068 |
+| early | Low | $234,080 | $267,935 | -47% → -40% | 50% | ($238,068) |
 | early | Base | $356,074 | $416,906 | -2% → 6% | 65% | $79,435 |
 | early | High | $457,981 | $542,083 | 20% → 26% | 74% | $103,339 |
-| growing | Low | $365,617 | $372,966 | -8% → -13% | 58% | $-48,573 |
+| growing | Low | $365,617 | $372,966 | -8% → -13% | 58% | ($48,573) |
 | growing | Base | $497,120 | $548,702 | 20% → 22% | 71% | $149,002 |
 | growing | High | $599,293 | $687,671 | 34% → 38% | 79% | $154,253 |
-| established | Low | $471,803 | $481,286 | 0% → -5% | 62% | $-39,506 |
+| established | Low | $471,803 | $481,286 | 0% → -5% | 62% | ($39,506) |
 | established | Base | $632,476 | $698,102 | 25% → 27% | 75% | $39,503 |
 | established | High | $756,887 | $859,485 | 38% → 41% | 82% | $45,913 |
 
@@ -167,10 +167,11 @@ on; the Low cases of every stage run out of cash and the Checks sheet flags the 
 1. One ADR for all rooms; no room types, weekday / weekend rates, minimum stays or last-minute discounting. Occupancy is an
    average, not a booking-by-booking calendar.
 2. Season: one simple peak (June-August) with the other nine months giving it back; a southern-hemisphere, ski or two-peak
-   property needs its own profile.
+   property needs its own profile. Model month 1 is treated as January for the season.
 3. Demand is exogenous (occupancy %); marketing spend is a cost, not a driver of bookings. No cancellations, no-shows or
    refunds.
-4. OTA mix is one share and one commission rate; direct bookings carry no cost besides card fees.
+4. OTA mix is one share and one commission rate; direct bookings carry no cost besides card fees. Card fees apply to all
+   revenue, including OTA bookings where the OTA may collect payment (see CFO question 4).
 5. Staff are fixed headcounts, not tied to occupancy. The owner's own labour is not separated unless entered as the host role.
 6. Breakfast & extras is a spend per occupied room-night (guests per room are not modelled); no restaurant, events, spa or
    tourist-tax pass-through (occupancy taxes collected for the government are excluded from revenue).
@@ -183,7 +184,8 @@ on; the Low cases of every stage run out of cash and the Checks sheet flags the 
 1. Are rooms × occupancy × ADR the right drivers, or should room types (standard / suite) with their own rates be separate?
 2. Is the summer-only seasonal shape (June-August +25 %, other months about -8 %) acceptable, or should the user enter a 12-month profile?
 3. Are $155 ADR, 62 % occupancy and a 2.2-night stay fair planning defaults? (All are assumptions; none has a citable source.)
-4. Should OTA commission apply to a share of room revenue (as built) or to the whole of it, and should it also cover breakfast?
+4. Should OTA commission apply to a share of room revenue (as built) or to the whole of it, and should it also cover breakfast? Card fees are charged on all revenue, OTA bookings included; should they apply only to
+   direct room revenue and extras?
 5. Should cleaning be per stay (as built) or per room-night, and should housekeeping staff flex with occupancy instead of being fixed?
 6. Is a land share on the purchase and a 15-year blended life acceptable, or do you want building and furnishings depreciated separately?
 7. Should the owned-property case add a Returns sheet (sale at the horizon, IRR) like the real-estate template?
