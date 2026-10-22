@@ -57,7 +57,7 @@ _COMMON = {
     "pay_pct": (0.028, 0.025, 0.022),
     "payroll_tax": (0.12, 0.12, 0.12),
     "wage_g": (0.03, 0.03, 0.03),
-    "ar_days": (13, 13, 13),
+    "ar_days": (12, 12, 12),
     "inv_days": (3, 3, 3),
     "ap_days": (11, 11, 11),
     "dep_years": (10, 10, 10),
@@ -71,6 +71,7 @@ _STAGES: dict[str, dict] = {
             "cap_add": (0, 0, 0),
             "enr_full": (0.78, 0.85, 0.9),
             "enr_start": (0.15, 0.2, 0.25),
+            "kids_start": (0, 0, 0),
             "ramp_months": (18, 12, 9),
             "mkt": (2500, 2500, 2500),
             "insurance": (1800, 1800, 1800),
@@ -99,6 +100,7 @@ _STAGES: dict[str, dict] = {
             "cap_add": (0, 0, 0),
             "enr_full": (0.78, 0.85, 0.9),
             "enr_start": (0.4, 0.5, 0.55),
+            "kids_start": (24, 30, 33),
             "ramp_months": (12, 9, 6),
             "mkt": (2500, 2500, 2500),
             "insurance": (1800, 1800, 1800),
@@ -127,6 +129,7 @@ _STAGES: dict[str, dict] = {
             "cap_add": (0, 10, 15),
             "enr_full": (0.8, 0.87, 0.92),
             "enr_start": (0.6, 0.7, 0.75),
+            "kids_start": (54, 63, 67.5),
             "ramp_months": (6, 4, 3),
             "mkt": (3000, 3000, 3000),
             "insurance": (2600, 2600, 2600),
@@ -155,6 +158,7 @@ _STAGES: dict[str, dict] = {
             "cap_add": (0, 0, 0),
             "enr_full": (0.82, 0.88, 0.92),
             "enr_start": (0.82, 0.88, 0.92),
+            "kids_start": (98.4, 105.6, 110.4),
             "ramp_months": (0, 0, 0),
             "mkt": (2000, 2000, 2000),
             "insurance": (3400, 3400, 3400),
@@ -204,8 +208,8 @@ def _places(d: dict, y: int) -> float:
 
 
 def _kids_end(d: dict, m: int) -> float:
-    """Children enrolled in model month ``m`` (0 before opening)."""
-    return 0.0 if m <= 0 else _places(d, (m + 11) // 12) * _enr_end(d, m)
+    """Children enrolled in model month ``m`` (month 0 = the children already enrolled at the start)."""
+    return d["kids_start"] if m <= 0 else _places(d, (m + 11) // 12) * _enr_end(d, m)
 
 
 def _teachers(kids: float, ratio: float) -> int:
@@ -217,7 +221,7 @@ class ChildcareTemplate(Template):
     key = "childcare"
     title = "Childcare / daycare centre"
     business_types = ("childcare",)
-    order = 130
+    order = 160
     key_numbers = ("cap", "enr_full", "tuit_inf", "tuit_pre", "subsidy_share", "rent_sqft", "equity")
     sample_title = "Childcare centre"
     sample_desc = "Full workbook with licensed places, enrolment ramp, staff ratios, subsidies and the build-out"
@@ -254,6 +258,15 @@ class ChildcareTemplate(Template):
             DriverSpec("enr_start", "Enrolment in month 1, % of licensed places", "%", "pct", 0, 1, "asc", cap),
             DriverSpec(
                 "ramp_months", "Months to reach full enrolment", "months", "int", 0, 60, "desc", cap, integer=True
+            ),
+            DriverSpec(
+                "kids_start",
+                "Children already enrolled at start (they pay no registration fee)",
+                "#",
+                "dec1",
+                0,
+                5000,
+                section=cap,
             ),
             DriverSpec("days_open", "Operating days per month", "days", "int", 1, 31, section=cap),
             DriverSpec(
@@ -397,7 +410,7 @@ class ChildcareTemplate(Template):
                 "=MAX(0,{enr_end_kids}-{enr_end_kids[-1]})+{enrolled}*{in:turnover}*{mpp}/12",
                 "top",
                 "dec1",
-                first="=MAX(0,{enr_end_kids})+{enrolled}*{in:turnover}*{mpp}/12",
+                first="=MAX(0,{enr_end_kids}-{in:kids_start})+{enrolled}*{in:turnover}*{mpp}/12",
             ),
             Line(
                 "tch_inf",

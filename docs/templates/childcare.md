@@ -1,6 +1,6 @@
 # Childcare / daycare centre template — assumption memo
 
-Template key `childcare` (`engine/templates/childcare.py`, wizard order 130). Samples: `samples/childcare-full.xlsx`
+Template key `childcare` (`engine/templates/childcare.py`, wizard order 160). Samples: `samples/childcare-full.xlsx`
 (stage *planning*: a new 60-place centre, Full tier, monthly, 3 years) and `samples/childcare-full-5y.xlsx`; rebuild
 with `python scripts/build_samples.py childcare`.
 
@@ -25,9 +25,10 @@ yearly tuition increase. A share of the children is paid by a subsidy / voucher 
 tuition (states usually pay below the market rate); the other children pay list tuition less sibling and staff
 discounts. Subsidy payments are a separate revenue line so the dependence on public money is visible.
 
-**Registration fees.** One fee per new child. New children = the rise in enrolment over the period (the opening fill and
-the ramp-up; places added in year 2+ fill the same way) plus the children who leave and are replaced (turnover % a year
-× average enrolment).
+**Registration fees.** One fee per new child. New children = the rise in enrolment over the period above the *children already enrolled at
+start* (the opening fill and the ramp-up; places added in year 2+ fill the same way) plus the children who leave and are
+replaced (turnover % a year × average enrolment). Children already in the centre at the start pay no registration fee:
+0 in the planning stage, and in the other stages the enrolment at the start (licensed places × month-1 enrolment).
 
 **Staffing by ratio.** Teachers on the floor, per band = children enrolled in the band ÷ children per teacher, rounded up
 to whole teachers (`ROUNDUP`). Teachers hired = teachers on the floor × a *coverage factor*, because the centre is open
@@ -49,8 +50,9 @@ built out and equipped, plus the playground. From year 2: build-out and furnitur
 yearly equipment replacement per licensed place. Depreciated over 10 years. Equity and an optional loan at the start.
 
 **Working capital.** Receivable days are a blend: the subsidy share of children is paid about 45 days late, parents pay
-by card or ACH within about 2 days, so `ar_days` = 25% × 45 + 75% × 2 = 12.75, entered as 13 (the engine applies one
-receivable-days driver to all revenue; if you change the subsidy share, change the receivable days with it;
+by card or ACH within about 2 days, and the engine applies one receivable-days driver to **all** revenue, so the blend is weighted by the subsidy payments'
+share of revenue (about 23% in the Base case: 25% of children at 85% of list tuition, after discounts and with
+registration fees): `ar_days` = 23% × 45 + 77% × 2 ≈ 11.9, entered as 12 (if you change the subsidy share or rate, change the receivable days with it;
 `test_receivable_days_blend_parent_and_subsidy_collection` checks the defaults). Tuition billed in advance is not
 modelled as deferred revenue (conservative). Inventory and payables are taken on **total** cost of sales in
 `engine/core.py`, and about four fifths of the centre's cost of sales is teacher pay, which is never stocked. Real stock is
@@ -58,17 +60,19 @@ about two weeks of food and supplies, which are about 19% of cost of sales (esta
 ≈ 2.7, entered as 3 inventory days. Payables: wages are paid about 7 days in arrears, suppliers about 30 days:
 (7 × 81% + 30 × 19%) ≈ 11 payable days.
 
-Monthly and annual workbooks give identical revenue, registrations and capex in every year. Teachers are rounded up per
-period, so while enrolment is still ramping up, an annual model (one rounding per year) is close to, not equal to,
-the monthly one: in the Base case up to about 5% of revenue on teacher cost in year 1 (planning stage), and nothing from
-the first year with full enrolment (established: nothing; the tests assert this, `tests/test_childcare.py`). Use monthly
-granularity for a new centre.
+Monthly and annual workbooks give identical revenue, registrations, food, supplies, operating costs and capex in every
+year. The only difference is teacher payroll: teachers are rounded up per period, so while enrolment is still ramping up
+an annual model (one rounding per year) can differ from the monthly one by less than one teacher per band (in the Base
+case up to about 5% of revenue in year 1 of the planning stage), and gross profit and EBITDA move by exactly that amount.
+From the first year with full enrolment the two are identical (established: every year; the tests assert all of this,
+`tests/test_childcare.py`). Use monthly granularity for a new centre.
 
 ## Drivers (Base value in the planning sample; the other stages are in the template file)
 
 | Driver | Base | Unit | Source |
 |---|---:|---|---|
 | Licensed places at start | 60 (growing 90, established 120) | # | assumption |
+| Children already enrolled at start | 0 (planning); early 30, growing 63, established 105.6 (= places × month-1 enrolment; Low and High follow their own month-1 enrolment) | # | assumption; these children pay no registration fee |
 | Licensed places added each year (from year 2) | 0 (growing stage: Low 0, Base 10, High 15) | # | assumption |
 | Places for infants & toddlers | 35% | % | assumption |
 | Enrolment once full | 85% (Low 78%, High 90%) | % of places | assumption (centres typically run below 100% because of age-mix and holiday gaps) |
@@ -86,7 +90,7 @@ granularity for a new centre.
 | Children per teacher, infants & toddlers | 6 | # | assumption. Licensing ratios differ by state and age; 6 is a blend of infants (about 4) and toddlers (about 6 to 8). Replace with your state's rule |
 | Children per teacher, preschool | 12 | # | assumption (state rules range from about 10 to 15 for 3 to 5 year olds) |
 | Coverage factor | 1.20 (Low 1.25, High 1.15) | x | assumption (opening hours of 10 to 11 hours against an 8-hour shift, breaks, leave) |
-| Teacher salary per FTE per year | $35,000 (Low $36,500, High $33,500) | $ | [BLS](https://www.bls.gov/ooh/personal-care-and-service/childcare-workers.htm): childcare workers median $34,980 a year and [preschool teachers](https://www.bls.gov/ooh/education-training-and-library/preschool-teachers.htm) $38,140 (May 2025); the default is a blend of lead teachers and aides |
+| Teacher salary per FTE per year | $35,000 (Low $36,500, High $33,500) | $ | [BLS](https://www.bls.gov/ooh/personal-care-and-service/childcare-workers.htm): childcare workers median $34,980 a year and [preschool teachers](https://www.bls.gov/ooh/education-training-and-library/preschool-teachers.htm) $38,140 (May 2025); the default is close to the childcare-worker median, below the preschool-teacher median, so it suits a staff of mostly aides and assistant teachers; raise it for a staff of lead teachers |
 | Food per child per operating day | $4.00 (Low $4.20, High $3.80) | $ | assumption |
 | Supplies & activities per child per month | $30 (Low $33, High $27) | $ | assumption |
 | Food, supplies & utilities cost increase | 3% | % | assumption |
@@ -106,7 +110,7 @@ granularity for a new centre.
 | Equipment replacement per place per year | $150 | $ | assumption |
 | Staff (planning) | director 1 FTE $62,000; office 0.5 FTE $38,000; cook 0.5 FTE $34,000 | | director: [BLS](https://www.bls.gov/ooh/management/preschool-and-childcare-center-directors.htm) preschool and childcare center directors median $59,300 (May 2025); others assumption |
 | Payroll taxes & benefits / wage growth | 12% / 3% | % | assumption |
-| Receivable / inventory / payable days | 13 / 3 / 11 | days | assumption, derived above |
+| Receivable / inventory / payable days | 12 / 3 / 11 | days | assumption, derived above |
 | Depreciation / income tax | 10 years / 21% | | assumption (21% is the US federal corporate rate) |
 | Equity / loan | $450,000 / $250,000 at 8% over 10 years | $ | assumption |
 
@@ -122,24 +126,24 @@ challenger. The two KPIs-sheet charts show children enrolled with occupancy, and
 
 | Stage | Case | Revenue Y1 | Revenue Y3 | EBITDA margin Y1 → Y3 | Children enrolled, end Y3 | Lowest month-end cash |
 |---|---|---:|---:|---:|---:|---:|
-| planning | Low | $267,943 | $633,417 | -85% → -14% | 47 | -$322,872 |
-| planning | Base | $419,706 | $747,148 | -30% → 8% | 51 | $64,092 |
-| planning | High | $567,744 | $861,698 | 1% → 18% | 54 | $173,337 |
-| early | Low | $448,288 | $633,417 | -35% → -14% | 47 | -$242,873 |
-| early | Base | $591,080 | $747,148 | -5% → 8% | 51 | $54,951 |
-| early | High | $717,123 | $861,698 | 13% → 18% | 54 | $103,185 |
-| growing | Low | $867,099 | $974,488 | -12% → -11% | 72 | -$232,374 |
-| growing | Base | $1,048,974 | $1,403,386 | 6% → 11% | 96 | $91,677 |
-| growing | High | $1,200,527 | $1,764,678 | 21% → 28% | 110 | $177,445 |
-| established | Low | $1,277,466 | $1,331,800 | -3% → -5% | 98 | -$156,535 |
-| established | Base | $1,474,070 | $1,547,037 | 12% → 11% | 106 | $45,087 |
-| established | High | $1,650,864 | $1,761,693 | 25% → 25% | 110 | $55,530 |
+| planning | Low | $267,943 | $633,417 | -85% → -14% | 47 | -$321,112 |
+| planning | Base | $419,706 | $747,148 | -30% → 8% | 51 | $66,124 |
+| planning | High | $567,744 | $861,698 | 1% → 18% | 54 | $175,224 |
+| early | Low | $445,888 | $633,417 | -36% → -14% | 47 | -$243,513 |
+| early | Base | $586,580 | $747,148 | -6% → 8% | 51 | $52,240 |
+| early | High | $710,523 | $861,698 | 12% → 18% | 54 | $99,286 |
+| growing | Low | $861,699 | $974,488 | -13% → -11% | 72 | -$235,067 |
+| growing | Base | $1,039,524 | $1,403,386 | 5% → 11% | 96 | $88,152 |
+| growing | High | $1,187,027 | $1,764,678 | 20% → 28% | 110 | $175,397 |
+| established | Low | $1,267,626 | $1,331,800 | -4% → -5% | 98 | -$161,442 |
+| established | Base | $1,458,230 | $1,547,037 | 11% → 11% | 106 | $43,488 |
+| established | High | $1,628,784 | $1,761,693 | 24% → 25% | 110 | $52,179 |
 
 The lowest cash is the lowest **month-end** balance over the 3 years. Base is funded in every month in all four
 stages. The Low case stacks every pessimistic value (slower fill, lower enrolment and tuition, higher wages, rent and
 food, a lower subsidy rate), so it is a stress case and runs out of cash; the Checks sheet flags the funding gap. In the
-Base case a mature centre earns a gross margin of about 50% after teacher pay, food and supplies (teacher payroll is 40 to
-42% of revenue; with the director, office and kitchen roles total labour is about 56 to 57%, and rent plus utilities and
+Base case a mature centre earns a gross margin of about 47 to 50% after teacher pay, food and supplies (teacher payroll is
+40 to 43% of revenue; with the director, office and kitchen roles total labour is about 56 to 57%, and rent plus utilities and
 cleaning about 14%).
 
 ## Simplifications to review
@@ -159,7 +163,13 @@ cleaning about 14%).
    for existing places and fills at the same enrolment %.
 8. Rent is a net rent per square foot of the floor area; no tenant improvement allowance, no property tax and no
    utilities spike for a larger centre beyond the per-square-foot rate.
-9. Owned premises are not modelled (no land line); a centre that buys its building needs the property template.
+9. The planning stage has no pre-opening period: rent, staff and the build-out all start in month 1 while only 20% of
+   the places are enrolled, so the first months show a deeper loss and cash dip than a real opening (a lease with a
+   rent-free fit-out period, or hires timed to enrolment, would soften it). The director, office and kitchen roles can be
+   started later with their "first month on payroll" driver.
+10. Insurance, licensing, software and other G&A are flat monthly amounts: they do not grow with the yearly cost
+    increase or with places added (set the stage's amounts for the size you expect); marketing grows only at its own rate.
+11. Owned premises are not modelled (no land line); a centre that buys its building needs the property template.
 
 ## Questions for the CFO review
 

@@ -67,19 +67,25 @@ def test_monthly_and_annual_revenue_agree_exactly(stage):
 
 
 @pytest.mark.parametrize("stage", STAGES)
-def test_monthly_and_annual_costs_agree_once_enrolment_is_full(stage):
-    """Teachers are rounded up per period, so while the ramp is running the annual model (one rounding per year)
-    is close (within 6% of revenue) but not equal; once enrolment is full within a year the two are identical."""
+def test_monthly_and_annual_differ_only_by_teacher_rounding(stage):
+    """Teachers are rounded up per period, so an annual model (one rounding per year) can differ from the monthly
+    one only on teacher payroll, and by less than one teacher per band; every other line is identical. Once enrolment
+    is full within a year the two are identical."""
     b = CC.default_brief(stage)
     d = b.values(2)
     m, a = python_model(b, 2), python_model(b.with_options(granularity="annual"), 2)
     for y in (1, 2, 3):
-        on_ramp = d["ramp_months"] > 12 * (y - 1)
-        for k in ("gp", "ebitda", "teach_pay"):
-            if on_ramp:
-                assert abs(m[k][y] - a[k][y]) < 0.06 * m["rev"][y], (k, y)
-            else:
-                assert m[k][y] == pytest.approx(a[k][y], abs=0.01), (k, y)
+        for k in ("rev", "rev_tuition", "rev_sub", "rev_reg", "new_kids", "child_months", "capex", "opex_total"):
+            assert m[k][y] == pytest.approx(a[k][y], abs=0.01), (k, y)
+        dt = a["teach_pay"][y] - m["teach_pay"][y]
+        assert a["cogs"][y] - m["cogs"][y] == pytest.approx(dt, abs=0.01)  # food and supplies are exact
+        assert a["gp"][y] - m["gp"][y] == pytest.approx(dt, abs=0.01)
+        assert a["ebitda"][y] - m["ebitda"][y] == pytest.approx(dt, abs=0.01)
+        band_year = d["coverage"] * d["wage_teach"] * (1 + d["payroll_tax"]) * (1 + d["wage_g"]) ** (y - 1)
+        assert abs(dt) <= 2 * band_year + 0.01  # less than one teacher per band
+        assert abs(dt) < 0.06 * m["rev"][y]  # sanity: well inside 6% of revenue
+        if d["ramp_months"] <= 12 * (y - 1):
+            assert dt == pytest.approx(0, abs=0.01), y
 
 
 def test_enrolment_ramps_in_a_straight_line_from_the_start_level_to_full():
@@ -130,7 +136,7 @@ def test_tuition_rises_with_the_yearly_increase():
 
 
 def test_registration_fees_follow_new_children():
-    b = with_values(CC.default_brief("established"), cap_add=0, turnover=0.24)
+    b = with_values(CC.default_brief("established"), cap_add=0, turnover=0.24, kids_start=0)
     d = b.values(2)
     s = run(b, years=2)
     full = d["cap"] * d["enr_full"]
@@ -139,6 +145,30 @@ def test_registration_fees_follow_new_children():
     assert s["rev_reg"][1] == pytest.approx(s["new_kids"][1] * d["reg_fee"])
     none = run(with_values(b, reg_fee=0))
     assert max(none["rev_reg"]) == 0
+
+
+def test_children_already_enrolled_at_start_pay_no_registration_fee():
+    b = with_values(CC.default_brief("established"), cap_add=0, turnover=0.24, ramp_months=0)
+    d = b.values(2)
+    full = d["cap"] * d["enr_full"]
+    for kids_start, fill in ((0, full), (full / 2, full / 2), (full, 0), (full * 2, 0)):
+        s = run(with_values(b, kids_start=kids_start))
+        assert s["new_kids"][0] == pytest.approx(fill + full * 0.24 / 12), kids_start
+        assert s["rev_reg"][0] == pytest.approx(s["new_kids"][0] * d["reg_fee"])
+    # monthly and annual agree on the opening-year fee income
+    half = with_values(b, kids_start=full / 2)
+    m, a = python_model(half, 2), python_model(half.with_options(granularity="annual"), 2)
+    assert m["new_kids"][1] == pytest.approx(a["new_kids"][1])
+
+
+@pytest.mark.parametrize("stage", STAGES)
+def test_stage_defaults_start_with_the_children_already_in_the_centre(stage):
+    d = CC.default_brief(stage).values(2)
+    expected = 0 if stage == "planning" else d["cap"] * d["enr_start"]
+    assert d["kids_start"] == pytest.approx(expected)
+    for scen in (1, 3):
+        v = CC.default_brief(stage).values(scen)
+        assert v["kids_start"] == pytest.approx(0 if stage == "planning" else v["cap"] * v["enr_start"])
 
 
 @pytest.mark.parametrize(
@@ -225,9 +255,14 @@ def test_opening_capex_builds_only_places_not_ready():
 
 @pytest.mark.parametrize("stage", STAGES)
 def test_receivable_days_blend_parent_and_subsidy_collection(stage):
-    """ar_days = subsidy share x 45-day subsidy lag + the rest x 2 days of card / ACH settlement (rounded)."""
-    d = CC.default_brief(stage).values(2)
-    assert d["ar_days"] == pytest.approx(d["subsidy_share"] * 45 + (1 - d["subsidy_share"]) * 2, abs=0.5)
+    """ar_days applies to total revenue: the subsidy payments' share of revenue x 45 days of subsidy lag plus the rest
+    x 2 days of card / ACH settlement, rounded."""
+    b = CC.default_brief(stage)
+    d = b.values(2)
+    m = python_model(b, 2)
+    share = m["rev_sub"][2] / m["rev"][2]
+    assert 0.2 < share < 0.26
+    assert d["ar_days"] == pytest.approx(share * 45 + (1 - share) * 2, abs=0.5)
 
 
 @pytest.mark.parametrize("g", ["monthly", "annual"])
