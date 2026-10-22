@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-22 · E · E45 Guest house / B&B template · DONE · https://github.com/henrysheykin/finmodel-app/pull/61
+  engine/templates/guest_house.py: rooms × nights × occupancy (ramp, season, cap 100 %) × ADR, breakfast and extras, cleaning
+  per stay, OTA commission, housekeeper payroll; property loan as an annuity (level payment, second annuity template after real
+  estate). CI fix: length of stay 1–60 nights, divided by MAX(1, …); loan test now follows loan_style, annuity set pinned.
+  Reviewer opus PASS. For Henry: R1 CFO review (HUMAN_TODO).
 - 2026-10-22 · E · E44 Pet grooming & boarding template · DONE · https://github.com/henrysheykin/finmodel-app/pull/60
   engine/templates/pet_care.py: grooms/day capped by the lower of tables and groomer FTE capacity × price, retail per groom; boarding
   runs × nights × occupancy (cap 100 %, Jun–Aug + Dec peak netting to zero) × nightly rate; groomer base + commission in cost of sales;
