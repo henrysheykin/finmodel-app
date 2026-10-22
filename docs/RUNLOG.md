@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-22 · E · E44 Pet grooming & boarding template · DONE · https://github.com/henrysheykin/finmodel-app/pull/60
+  engine/templates/pet_care.py: grooms/day capped by the lower of tables and groomer FTE capacity × price, retail per groom; boarding
+  runs × nights × occupancy (cap 100 %, Jun–Aug + Dec peak netting to zero) × nightly rate; groomer base + commission in cost of sales;
+  tables/tubs, kennel build-out, optional land; samples full + full-5y; memo with 11 CFO questions. Implementer sonnet, reviewer opus
+  PASS, 3 lows fixed (ramp × season gap bounded by a test and sized in the memo). For Henry: R1 CFO review (HUMAN_TODO).
 - 2026-10-22 · E · E43 Auto repair shop template · DONE · https://github.com/henrysheykin/finmodel-app/pull/59
   engine/templates/auto_repair.py: repair orders × billed hours, capped by the lower of bays and technicians; labor at an
   effective rate, parts revenue per billed hour × parts margin, shop supplies fee; technician payroll in cost of sales; lifts,
