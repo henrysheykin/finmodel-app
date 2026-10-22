@@ -92,6 +92,7 @@ webhook, Resend domain).
       - [ ] Car wash (express tunnel + memberships): sample `samples/car_wash-full.xlsx` (+ `car_wash-full-5y.xlsx`), memo `docs/templates/car_wash.md` (questions at the end).
       - [ ] Auto repair shop (bays, technician hours, labor rate, parts margin): sample `samples/auto_repair-full.xlsx` (+ `auto_repair-full-5y.xlsx`), memo `docs/templates/auto_repair.md` (questions at the end).
       - [ ] Pet grooming & boarding (grooming stations, groomers, kennel runs, occupancy, nightly rate): sample `samples/pet_care-full.xlsx` (+ `pet_care-full-5y.xlsx`), memo `docs/templates/pet_care.md` (questions at the end).
+      - [ ] Guest house / bed and breakfast (rooms, occupancy, ADR, breakfast, cleaning per stay, annuity property loan): sample `samples/guest_house-full.xlsx` (+ `guest_house-full-5y.xlsx`), memo `docs/templates/guest_house.md` (questions at the end).
       - [ ] Goal modules (break-even, DCF valuation, investor summary — all templates): sample
             `samples/cafe-investor_pitch.xlsx`, memo `docs/templates/goal-modules.md` (questions at the end).
 - [ ] E35: open https://www.sba.gov/business-guide/plan-your-business/calculate-your-startup-costs once and confirm it is the
