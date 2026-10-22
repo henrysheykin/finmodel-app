@@ -1,4 +1,4 @@
-"""Guest house / bed and breakfast template: rooms x occupancy x average daily rate, breakfast & extras, annuity property loan.
+"""Guest house / B&B template: rooms x occupancy x ADR, breakfast & extras, annuity property loan.
 
 Room-nights sold = rooms x calendar nights x occupancy. Occupancy = occupancy at maturity x (1 + occupancy growth)
 ^(year-1) x an opening ramp x, in monthly models, a simple season (June-August busier, the other nine months give it
