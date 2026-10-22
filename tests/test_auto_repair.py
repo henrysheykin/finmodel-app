@@ -159,6 +159,16 @@ def test_monthly_and_annual_agree_where_volume_is_additive(stage):
             assert m[k][y] == pytest.approx(a[k][y], abs=0.01), (k, y)
 
 
+@pytest.mark.parametrize("ramp", [12, 18])
+def test_monthly_and_annual_agree_through_the_ramp(ramp):
+    b = with_values(AR.default_brief("planning"), bays=100, tech_eff=3, ramp_months=ramp)
+    m, a = python_model(b, 2), python_model(b.with_options(granularity="annual"), 2)
+    assert m["billed"][1] < m["billed"][2]
+    for k in ("billed", "ro", "rev", "cogs"):
+        for y in (1, 2, 3):
+            assert m[k][y] == pytest.approx(a[k][y], abs=0.01), (k, y)
+
+
 def test_capex_scales_with_bays_in_month_one_and_refresh_from_year_two(ar_brief):
     d = ar_brief.values(2)
     s = run(ar_brief)

@@ -15,7 +15,8 @@ For independent general mechanical repair (brakes, maintenance, diagnostics), no
 **Demand.** Repair orders per operating day at maturity (growing at the *orders growth per year*) × operating days per month ×
 a ramp-up factor × billed labor hours per repair order = billed hours demanded. The ramp rises in a straight line from
 *volume in month 1* to 100 % over *months to reach mature volume* (0 = already mature); an annual model uses the mean of the
-months in the year, so annual and monthly volumes agree exactly. No seasonality is modelled.
+months in the year, so annual and monthly volumes agree exactly while capacity does not bind (if a limit starts to
+bind partway through a ramp year, the annual model caps the year's mean instead of each month). No seasonality is modelled.
 
 **Capacity: two limits, the lower one binds.**
 - *Bay limit* = service bays × billed hours one bay can carry per operating day × operating days.
@@ -86,8 +87,6 @@ tool refresh amount at the start of every year from year 2. One blended deprecia
 |---|---:|---|---|
 | Shop supplies & waste disposal cost, % of labor revenue | 3.5% | % | assumption |
 | Comebacks & warranty rework, % of labor revenue | 3% | % | assumption |
-| Card processing fees, % of revenue | 3% | % | assumption (typical US card-acceptance cost) |
-| Cost increase per year (insurance, software & other) | 3% | % | assumption |
 
 **Shop costs**
 
@@ -99,6 +98,8 @@ tool refresh amount at the start of every year from year 2. One blended deprecia
 | Shop software, diagnostic subscriptions, utilities & other G&A per month | $9,000 | $ | assumption |
 | Marketing budget per month (year 1) | $7,000 | $ | assumption (opening-heavy, falls in year 2) |
 | Marketing budget growth per year | -20% | % | assumption |
+| Card processing fees, % of revenue | 3% | % | assumption (typical US card-acceptance cost) |
+| Cost increase per year (insurance, software & other) | 3% | % | assumption |
 
 **Capital spending**
 

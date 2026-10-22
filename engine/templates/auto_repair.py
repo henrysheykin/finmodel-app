@@ -289,10 +289,6 @@ class AutoRepairTemplate(Template):
                 "desc",
                 cost,
             ),
-            DriverSpec("card_pct", "Card processing fees, % of revenue", "%", "pct", 0, 0.2, "desc", cost),
-            DriverSpec(
-                "cost_g", "Cost increase per year (insurance, software & other)", "%", "pct", -0.5, 1, "desc", cost
-            ),
             DriverSpec("rent", "Shop rent or land cost per month", "$", "usd", 0, 1e7, section=fix),
             DriverSpec("rent_g", "Rent increase per year", "%", "pct", 0, 0.5, section=fix),
             DriverSpec(
@@ -309,6 +305,10 @@ class AutoRepairTemplate(Template):
             ),
             DriverSpec("mkt", "Marketing budget per month (year 1)", "$", "usd", 0, 1e7, section=fix),
             DriverSpec("mkt_g", "Marketing budget growth per year", "%", "pct", -0.9, 5, "asc", fix),
+            DriverSpec("card_pct", "Card processing fees, % of revenue", "%", "pct", 0, 0.2, "desc", fix),
+            DriverSpec(
+                "cost_g", "Cost increase per year (insurance, software & other)", "%", "pct", -0.5, 1, "desc", fix
+            ),
             DriverSpec("capex_bay", "Lift & bay equipment per bay (month 1)", "$", "usd", 0, 1e7, section=cx),
             DriverSpec("capex_diag", "Diagnostic tools & scan equipment (month 1)", "$", "usd", 0, 1e8, section=cx),
             DriverSpec("capex_fit", "Leasehold improvements & signage (month 1)", "$", "usd", 0, 1e8, section=cx),
@@ -475,7 +475,7 @@ class AutoRepairTemplate(Template):
 
     def kpi_rows(self, t: Timing) -> list[StmtRow]:
         return [
-            StmtRow("tech_fte", "Technicians (FTE, year end)", "line", "tech_fte", "dec1", bold=True),
+            StmtRow("tech_fte", "Technicians (FTE)", "line", "tech_fte", "dec1", bold=True),
             StmtRow("ro", "Repair orders completed", "line", "ro", "int", bold=True),
             StmtRow("billed_h", "Billed labor hours", "line", "billed", "int", bold=True),
             StmtRow("cap_h", "Billed-hour capacity (lower of bays and technicians)", "line", "cap_hours", "int"),
