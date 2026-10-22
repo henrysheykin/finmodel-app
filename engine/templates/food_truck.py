@@ -37,7 +37,6 @@ _COMMON = {
     "pack": (0.5, 0.45, 0.4),
     "card_pct": (0.031, 0.029, 0.027),
     "cost_g": (0.04, 0.03, 0.025),
-    "capex_pos": (3000, 3000, 3000),
     "payroll_tax": (0.12, 0.12, 0.12),
     "wage_g": (0.03, 0.03, 0.03),
     "ar_days": (3, 3, 3),
@@ -70,10 +69,11 @@ _STAGES: dict[str, dict] = {
             "mkt": (800, 700, 600),
             "mkt_g": (0.0, 0.0, 0.0),
             "ga_other": (380, 350, 320),
+            "capex_pos": (3000, 3000, 3000),
             "capex_truck": (95000, 95000, 95000),
             "capex_build": (40000, 40000, 40000),
             "capex_refresh": (2500, 2500, 2500),
-            "equity": (100000, 100000, 100000),
+            "equity": (115000, 115000, 115000),
             "loan_amount": (90000, 90000, 90000),
             "loan_rate": (0.09, 0.09, 0.09),
             "loan_term_years": (5, 5, 5),
@@ -106,6 +106,7 @@ _STAGES: dict[str, dict] = {
             "mkt": (750, 650, 550),
             "mkt_g": (0.0, 0.0, 0.0),
             "ga_other": (380, 350, 320),
+            "capex_pos": (0, 0, 0),
             "capex_truck": (95000, 95000, 95000),
             "capex_build": (40000, 40000, 40000),
             "capex_refresh": (3000, 3000, 3000),
@@ -142,6 +143,7 @@ _STAGES: dict[str, dict] = {
             "mkt": (1300, 1200, 1100),
             "mkt_g": (0.03, 0.03, 0.03),
             "ga_other": (650, 600, 550),
+            "capex_pos": (0, 0, 0),
             "capex_truck": (95000, 95000, 95000),
             "capex_build": (40000, 40000, 40000),
             "capex_refresh": (3500, 3500, 3500),
@@ -178,6 +180,7 @@ _STAGES: dict[str, dict] = {
             "mkt": (1700, 1500, 1300),
             "mkt_g": (0.03, 0.03, 0.03),
             "ga_other": (950, 850, 750),
+            "capex_pos": (0, 0, 0),
             "capex_truck": (95000, 95000, 95000),
             "capex_build": (40000, 40000, 40000),
             "capex_refresh": (4000, 4000, 4000),
@@ -221,7 +224,7 @@ class FoodTruckTemplate(Template):
     key = "food_truck"
     title = "Food truck"
     business_types = ("food_truck",)
-    order = 140
+    order = 150
     key_numbers = ("street_days", "meals_day", "ticket", "events_pm", "food_pct", "capex_truck", "equity")
     sample_title = "Food truck"
     sample_desc = "Full workbook with street service days, meals per day, events and catering, food cost and commissary"
@@ -353,7 +356,15 @@ class FoodTruckTemplate(Template):
             ),
             DriverSpec("capex_truck", "Truck purchase, each", "$", "usd", 0, 1e7, section=cx),
             DriverSpec("capex_build", "Kitchen build-out, equipment & wrap, per truck", "$", "usd", 0, 1e7, section=cx),
-            DriverSpec("capex_pos", "POS hardware & smallwares (month 1)", "$", "usd", 0, 1e7, section=cx),
+            DriverSpec(
+                "capex_pos",
+                "POS hardware & smallwares (month 1; 0 if already in place)",
+                "$",
+                "usd",
+                0,
+                1e7,
+                section=cx,
+            ),
             DriverSpec(
                 "capex_refresh", "Equipment refresh per truck per year (from year 2)", "$", "usd", 0, 1e7, section=cx
             ),
@@ -482,8 +493,8 @@ class FoodTruckTemplate(Template):
             Line("capex_pos", "POS hardware & smallwares", "=IF({p}=1,{in:capex_pos},0)", "top"),
             Line(
                 "capex_refresh",
-                "Equipment refresh (first period of each year from year 2)",
-                f"=IF({later},{{in:capex_refresh}}*{{trucks_total}},0)",
+                "Equipment refresh (first period of each year from year 2; trucks already running)",
+                f"=IF({later},{{in:capex_refresh}}*({{trucks_total}}-{{in:trucks_add}}),0)",
                 "top",
             ),
             Line(
@@ -597,7 +608,9 @@ class FoodTruckTemplate(Template):
         else:
             capex = 0.0
         if later:
-            capex += d["trucks_add"] * (d["capex_truck"] + d["capex_build"]) + d["capex_refresh"] * trucks
+            capex += d["trucks_add"] * (d["capex_truck"] + d["capex_build"]) + d["capex_refresh"] * (
+                trucks - d["trucks_add"]
+            )
         return Top(
             rev=rev,
             cogs=cogs,

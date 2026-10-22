@@ -37,7 +37,7 @@ def with_values(brief, **vals):
 
 
 def test_registered_with_wizard_hooks():
-    assert FT.order == 140 and FT.business_types == ("food_truck",)
+    assert FT.order == 150 and FT.business_types == ("food_truck",)
     assert "equity" in FT.key_numbers and 5 <= len(FT.key_numbers) <= 8
     assert FT.dashboard_metrics(Timing("monthly", 3)) and FT.dashboard_chart(Timing("monthly", 3))
 
@@ -131,6 +131,10 @@ def test_trucks_added_each_year_scale_volume_and_capex(ft_brief):
     assert s["capex"][0] == pytest.approx(d["capex_pos"])  # the early stage owns its truck
     assert s["capex"][1] == pytest.approx(d["capex_truck"] + d["capex_build"])
     assert s["capex"][2] == pytest.approx(d["capex_truck"] + d["capex_build"])
+    # the yearly refresh covers the trucks already running, not the one bought that year
+    r = run(with_values(b, capex_refresh=2000), g="annual")
+    assert r["capex"][1] == pytest.approx(d["capex_truck"] + d["capex_build"] + 2000 * 1)
+    assert r["capex"][2] == pytest.approx(d["capex_truck"] + d["capex_build"] + 2000 * 2)
 
 
 def test_capex_month_one_then_refresh_per_truck_from_year_two():

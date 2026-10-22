@@ -41,17 +41,16 @@ licences, insurance and truck maintenance, each *per truck per month*; fuel, pro
 days); POS and ordering software; marketing; accounting, bank fees and other G&A. Fixed costs rise with the cost increase.
 
 **Capex and funding.** Month 1: trucks to buy × (truck purchase + build-out) plus POS hardware and smallwares. From year 2: trucks added
-× (purchase + build-out) and a yearly equipment refresh per truck. A truck already owned (stages early to established) is not bought
-again (*trucks to buy in month 1* = 0). One blended depreciation life. Equity and an optional equipment / vehicle loan at the start
+× (purchase + build-out) and a yearly equipment refresh per truck already running. A truck already owned (stages early to established) is not bought
+again (*trucks to buy in month 1* = 0), and neither is the POS (hardware is $0 after the planning stage; enter an upgrade if you plan one). The yearly refresh covers the trucks already running, so a truck bought in a year is not refreshed in that year. One blended depreciation life. Equity and an optional equipment / vehicle loan at the start
 (the standard equal-principal loan).
 
 **Working capital.** Receivables are card settlement plus a few invoiced catering jobs. Inventory and payables are taken on **total**
-cost of sales by the engine; food and packaging are about 88 % of it (the rest is card and event fees, which are not stocked), so 3 days
+cost of sales (including card and event fees) by the engine; food and packaging are about 88 % of it (the rest is card and event fees, which are not stocked), so 3 days
 of cost of sales is roughly 3-4 days of perishable food and dry goods. Suppliers are paid weekly.
 
 **People.** Headcount is entered as roles and does not move with the truck count by itself. If you add trucks (*trucks added each
-year*), raise the cook and cashier headcount growth to match. The stage defaults are consistent: about 1.2 cook and 1.0 cashier FTE
-per truck, plus the owner.
+year*), raise the cook and cashier headcount growth to match. The stage defaults are consistent: 1.2-1.5 cooks and 1.0-1.3 cashiers per truck (more service days per truck in later stages), plus the owner.
 
 ## Drivers (Base value of the sample = stage *planning*)
 
@@ -121,8 +120,8 @@ per truck, plus the owner.
 | Trucks to buy and build out in month 1 | 1 | # | assumption (0 when the truck is already owned) |
 | Truck purchase, each | $95,000 | $ | assumption (a used step van or trailer; new builds cost more) |
 | Kitchen build-out, equipment & wrap, per truck | $40,000 | $ | assumption |
-| POS hardware & smallwares (month 1) | $3,000 | $ | assumption |
-| Equipment refresh per truck per year (from year 2) | $2,500 | $ | assumption |
+| POS hardware & smallwares (month 1) | $3,000 | $ | assumption (planning stage only; 0 in the other stages, where the POS is already in place) |
+| Equipment refresh per truck per year (from year 2, trucks already running) | $2,500 | $ | assumption |
 
 **Headcount**
 
@@ -142,7 +141,7 @@ per truck, plus the owner.
 
 | Driver | Base (sample) | Unit | Source |
 |---|---:|---|---|
-| Equity raised at start | $100,000 | $ | assumption (sized so the Base case never runs out of cash) |
+| Equity raised at start | $115,000 | $ | assumption (sized so the Base case never runs out of cash) |
 | Loan drawn at start | $90,000 | $ | assumption (equipment / vehicle loan for the truck; set 0 for none) |
 | Loan interest rate per year | 9% | % | assumption |
 | Loan repayment term | 5 years | years | assumption (equal principal payments) |
@@ -153,7 +152,7 @@ per truck, plus the owner.
 |---|---:|---|---|
 | Customer payment terms (receivable days) | 3 | days | assumption (card settlement plus a few invoiced catering jobs on about 15-day terms) |
 | Inventory held (days of cost of sales) | 3 | days | assumption: the days apply to all cost of sales, of which about 88 % is food and packaging |
-| Supplier payment terms (payable days) | 7 | days | assumption (weekly distributor terms; card fees are settled at once) |
+| Supplier payment terms (payable days) | 7 | days | assumption: weekly distributor terms; the days apply to total cost of sales including card fees, so the real supplier credit on food is somewhat longer |
 | Depreciation period for capex | 7 | years | assumption, blended (vehicle and kitchen equipment) |
 | Income tax rate | 21% | % | assumption (US federal corporate rate; state tax not modelled) |
 
@@ -165,7 +164,7 @@ of cash (shown in the Checks sheet); Base is funded in every month in all four s
 
 | Stage | Trucks | Street days / truck / month | Meals / street day | Ticket | Food cost | Owner / cook / cashier FTE | Funding |
 |---|---:|---:|---:|---:|---:|---|---|
-| planning | 1 (bought) | 18 | 88 | $14.00 | 33.0% | 1 / 1.2 / 1.0 | $100k equity + $90k loan |
+| planning | 1 (bought) | 18 | 88 | $14.00 | 33.0% | 1 / 1.2 / 1.0 | $115k equity + $90k loan |
 | early | 1 (owned) | 19 | 90 | $14.00 | 32.5% | 1 / 1.2 / 1.0 | $35k equity |
 | growing | 2 | 20 | 85 | $14.50 | 31.5% | 1 / 3.0 / 2.6 | $40k equity |
 | established | 3 | 20 | 88 | $14.50 | 30.5% | 1 / 4.6 / 3.9 | $40k equity |
@@ -184,22 +183,21 @@ payroll, % of revenue), gross margin and EBITDA margin. Every line item is recom
 
 | Stage | Case | Revenue Y1 | Revenue Y3 | EBITDA margin Y1 → Y3 | Meals Y3 | Lowest month-end cash (36 months) |
 |---|---|---:|---:|---:|---:|---:|
-| planning | Low | $181,040 | $254,228 | -39% → -16% | 18,912 | $-174,741 |
-| planning | Base | $273,896 | $358,461 | -3% → 9% | 24,135 | $9,872 |
-| planning | High | $370,257 | $484,865 | 17% → 26% | 29,716 | $43,192 |
-| early | Low | $234,427 | $272,730 | -17% → -11% | 20,280 | $-71,954 |
-| early | Base | $319,268 | $382,286 | 7% → 13% | 25,739 | $22,685 |
-| early | High | $412,797 | $514,486 | 22% → 28% | 31,542 | $31,602 |
-| growing | Low | $570,900 | $593,964 | -5% → -7% | 42,600 | $-87,841 |
-| growing | Base | $730,800 | $828,665 | 12% → 15% | 53,869 | $34,797 |
-| growing | High | $914,940 | $1,111,125 | 25% → 30% | 65,856 | $42,921 |
-| established | Low | $896,652 | $932,877 | -1% → -3% | 65,952 | $-47,091 |
-| established | Base | $1,141,920 | $1,295,092 | 15% → 18% | 83,095 | $35,801 |
-| established | High | $1,423,764 | $1,729,809 | 28% → 33% | 101,284 | $48,469 |
+| planning | Low | $181,040 | $254,228 | -39% → -16% | 18,912 | $-159,741 |
+| planning | Base | $273,896 | $358,461 | -3% → 9% | 24,135 | $24,872 |
+| planning | High | $370,257 | $484,865 | 17% → 26% | 29,716 | $58,192 |
+| early | Low | $234,427 | $272,730 | -17% → -11% | 20,280 | $-68,954 |
+| early | Base | $319,268 | $382,286 | 7% → 13% | 25,739 | $25,685 |
+| early | High | $412,797 | $514,486 | 22% → 28% | 31,542 | $34,594 |
+| growing | Low | $570,900 | $593,964 | -5% → -7% | 42,600 | $-84,841 |
+| growing | Base | $730,800 | $828,665 | 12% → 15% | 53,869 | $37,790 |
+| growing | High | $914,940 | $1,111,125 | 25% → 30% | 65,856 | $45,913 |
+| established | Low | $896,652 | $932,877 | -1% → -3% | 65,952 | $-44,112 |
+| established | Base | $1,141,920 | $1,295,092 | 15% → 18% | 83,095 | $38,794 |
+| established | High | $1,423,764 | $1,729,809 | 28% → 33% | 101,284 | $51,462 |
 
 Planning Base, year 1: revenue $273,896 (street $230,846, events $43,050 = 16 %), food and packaging $99,189, payroll $118,496, EBITDA
--$7,306; capex $138,000 in month 1. The planning Base case keeps only $9,872 of cash at its lowest month-end: tight, as is usual for a
-new truck.
+-$7,306; capex $138,000 in month 1. The planning Base case keeps $24,872 of cash at its lowest month-end, about one month of costs.
 
 Monthly and annual versions agree to the dollar for revenue, cost of sales, payroll, capex and EBITDA when there is no winter dip
 (tested for all four stages). With a dip the season and the ramp interact in year 1, so the annual version is close (within 5 %) but
