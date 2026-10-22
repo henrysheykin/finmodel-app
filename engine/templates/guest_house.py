@@ -1,4 +1,4 @@
-"""Guest house / B&B template: rooms x occupancy x average daily rate, breakfast & extras, annuity property loan.
+"""Guest house / bed and breakfast template: rooms x occupancy x average daily rate, breakfast & extras, annuity property loan.
 
 Room-nights sold = rooms x calendar nights x occupancy. Occupancy = occupancy at maturity x (1 + occupancy growth)
 ^(year-1) x an opening ramp x, in monthly models, a simple season (June-August busier, the other nine months give it
@@ -196,11 +196,11 @@ def _season(d: dict, p: int, t: Timing) -> float:
 
 class GuestHouseTemplate(Template):
     key = "guest_house"
-    title = "Guest house / B&B"
+    title = "Guest house / bed and breakfast"
     business_types = ("guest_house",)
     order = 140
     key_numbers = ("rooms", "adr", "occ", "capex_buy", "loan_amount", "loan_rate", "equity")
-    sample_title = "Guest house / B&B"
+    sample_title = "Guest house / bed and breakfast"
     sample_desc = "Full workbook with rooms, occupancy, daily rate, breakfast, cleaning per stay and the property loan"
     sample_stage = "planning"
     loan_style = "annuity"
