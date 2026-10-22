@@ -99,8 +99,8 @@ def test_stays_are_room_nights_over_length_of_stay_and_guarded(gh_brief):
     longer = run(with_values(gh_brief, **ROOMY, los=d["los"] * 2))
     assert longer["stays"][3] == pytest.approx(s["stays"][3] / 2)
     assert longer["cogs"][3] > s["cogs"][3]  # fewer stays, less cleaning cost, so the cost of sales is less negative
-    zero = run(with_values(gh_brief, **ROOMY, los=0))
-    assert all(v == 0 for v in zero["stays"])
+    floor = run(with_values(gh_brief, **ROOMY, los=1))
+    assert floor["stays"] == pytest.approx(floor["room_nights"])  # a stay is at least one night
 
 
 def test_cost_of_sales_is_housekeeping_ota_extras_cleaning_and_supplies(gh_brief):
@@ -217,7 +217,7 @@ def test_balance_sheet_balances(gh_brief, g, scen):
 
 
 def test_degenerate_inputs_are_guarded(gh_brief):
-    s = run(with_values(gh_brief, rooms=1, occ=0, ramp_months=0, los=0))
+    s = run(with_values(gh_brief, rooms=1, occ=0, ramp_months=0, los=1))
     assert all(v == 0 for v in s["room_nights"]) and all(v == 0 for v in s["stays"])
     assert all(v == 0 for v in s["rev"])
 

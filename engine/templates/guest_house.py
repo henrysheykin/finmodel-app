@@ -252,7 +252,7 @@ class GuestHouseTemplate(Template):
                 section=rm,
             ),
             DriverSpec("nights_m", "Calendar nights per month", "nights", "dec1", 28, 31, section=rm),
-            DriverSpec("los", "Average length of stay", "nights", "dec1", 0.5, 60, "asc", rm),
+            DriverSpec("los", "Average length of stay", "nights", "dec1", 1, 60, "asc", rm),
             DriverSpec("adr", "Average daily rate per occupied room (year 1)", "$", "usd2", 0, 1e5, "asc", pr),
             DriverSpec("price_g", "Rate increase per year (rooms and extras)", "%", "pct", -0.5, 1, "asc", pr),
             DriverSpec(
@@ -370,7 +370,7 @@ class GuestHouseTemplate(Template):
             Line(
                 "stays",
                 "Guest stays (room-nights ÷ average length of stay)",
-                "=IF({in:los}<=0,0,{room_nights}/{in:los})",
+                "={room_nights}/MAX(1,{in:los})",
                 "top",
                 "int",
             ),
@@ -522,7 +522,7 @@ class GuestHouseTemplate(Template):
         avail = d["rooms"] * d["nights_m"] * t.mpp
         occ = min(1.0, d["occ"] * (1 + d["occ_g"]) ** (y - 1) * _ramp(d, p, t) * _season(d, p, t))
         nights = avail * occ
-        stays = 0.0 if d["los"] <= 0 else nights / d["los"]
+        stays = nights / max(1.0, d["los"])
         idx = (1 + d["price_g"]) ** (y - 1)
         cidx = (1 + d["cost_g"]) ** (y - 1)
         rev_room = nights * d["adr"] * idx

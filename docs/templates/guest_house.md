@@ -23,7 +23,7 @@ same year (annual models see only the mean ramp); with no ramp, or no uplift, th
 **Revenue.** Room revenue = occupied room-nights × average daily rate (ADR). Breakfast & extras revenue = occupied room-nights ×
 a spend per night. Both rise once a year with the rate increase.
 
-**Stays and cleaning.** Stays = occupied room-nights ÷ average length of stay (0 if the length is 0). Cleaning and linen is a cost
+**Stays and cleaning.** Stays = occupied room-nights ÷ average length of stay (a stay is at least one night: the input is 1–60, and the formula divides by MAX(1, length)). Cleaning and linen is a cost
 per stay (turnover work scales with arrivals, not with nights), so longer stays lower it.
 
 **Cost of sales.** Housekeeping payroll (Headcount sheet, with payroll taxes and wage growth); OTA / booking commission = room
