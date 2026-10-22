@@ -28,7 +28,7 @@
       <h2 id="cta-title">Build the {{ template_title | lower }} model on your own numbers</h2>
       <p>The tables above are an illustrative Base case. Answer a short brief and receive an Excel workbook with live formulas, Low, Base and High cases and a Checks sheet, recalculated independently before delivery. Light {{ price_light }}, Full {{ price_full }}, one payment, full refund within 7 days.</p>
       <div class="cta__row">
-        <a class="btn" href="{{ start_href }}">Start a {{ template_title | lower }} model</a>
+        <a class="btn" href="{{ start_href }}">Start your {{ template_title | lower }} model</a>
         {% if sample %}<a class="btn btn--ghost" href="/samples/{{ sample.filename }}" download>Download the sample (.xlsx)</a>{% endif %}
       </div>
       {% if sample %}<p class="cta__note">The sample is the file every figure on this page comes from: Full tier, {{ sample.horizon_years }} years, {{ sample.granularity }}, Base case selected.</p>{% endif %}

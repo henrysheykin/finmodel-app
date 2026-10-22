@@ -223,6 +223,10 @@ class CarWashTemplate(Template):
         "em",
     )
     kpi_flows = (
+        "capex_equip",
+        "capex_site",
+        "capex_pay",
+        "capex_refresh",
         "new_total",
         "churned",
         "washes",
@@ -609,6 +613,10 @@ class CarWashTemplate(Template):
             capex=capex,
             land=land,
             kpis={
+                "capex_equip": d["capex_equip"] if p == 1 else 0.0,
+                "capex_site": d["capex_site"] if p == 1 else 0.0,
+                "capex_pay": d["capex_pay"] if p == 1 else 0.0,
+                "capex_refresh": refresh,
                 "members_close": m1,
                 "new_total": new,
                 "churned": m1 - m0 - new,
