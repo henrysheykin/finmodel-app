@@ -28,7 +28,7 @@ Building and site works, pay stations, chemicals, water, electricity, marketing 
 
 Retail revenue is the number of cars per day times the price per wash plus add-ons. The model starts the site at a share of its mature traffic, builds up over a set number of months, and applies a winter dip in monthly models. Membership revenue is a different kind of income. Each member pays the monthly fee whatever they use, so the member count matters more than the number of visits. Members join from a share of retail customers and from direct sign-ups, and a share cancels each month.
 
-In the sample the site washes {{num:unit.washes_day.y1}} cars per operating day in year 1, using {{num:unit.cap_use.y1}} of the tunnel's capacity, and {{num:unit.washes_day.y5}} per day by year 5. Members grow from {{num:unit.members.y1}} at the end of year 1 to {{num:unit.members.y5}} at the end of year 5, so unlimited plan fees go from {{num:unit.mem_rev_share.y1}} of revenue to {{num:unit.mem_rev_share.y5}}. Revenue is {{num:pnl.rev.y1}} in year 1 and {{num:pnl.rev.y5}} in year 5.
+In the sample the site performs {{num:unit.washes_day.y1}} washes per operating day in year 1 (retail and member washes together), using {{num:unit.cap_use.y1}} of the tunnel's capacity, and {{num:unit.washes_day.y5}} per day by year 5. Members grow from {{num:unit.members.y1}} at the end of year 1 to {{num:unit.members.y5}} at the end of year 5, so unlimited plan fees go from {{num:unit.mem_rev_share.y1}} of revenue to {{num:unit.mem_rev_share.y5}}. Revenue is {{num:pnl.rev.y1}} in year 1 and {{num:pnl.rev.y5}} in year 5.
 
 {{chart:revenue_costs}}
 
@@ -42,7 +42,7 @@ The fixed costs are the real weight. Site payroll is {{num:costs.payroll.y1}} of
 
 {{chart:cost_structure}}
 
-EBITDA is a loss of {{num:pnl.ebitda.y1|abs}} in year 1 and {{num:pnl.ebitda.y5}} in year 5. Below EBITDA, depreciation of the equipment and building and interest on the loan are large, so net income turns positive later than EBITDA.
+EBITDA is a loss of {{num:pnl.ebitda.y1|abs}} in year 1, turns positive at {{num:pnl.ebitda.y2}} in year 2 and reaches {{num:pnl.ebitda.y5}} in year 5. Below EBITDA, depreciation of the equipment and building and interest on the loan are large, so net income turns positive later than EBITDA.
 
 {{table:pnl}}
 
@@ -74,7 +74,7 @@ Break-even revenue is operating expenses divided by gross margin: {{num:breakeve
 
 - **Slow traffic ramp.** The lease, payroll and loan payments start before the tunnel is busy.
 - **Member churn.** Cancellations have to be replaced to hold the member base.
-- **Heavy member use.** Unlimited plans cost more per wash when members visit often.
+- **Heavy member use.** A member pays a flat fee, so frequent visits earn less per wash and cost more per member in chemicals, water and electricity.
 - **Weather.** The sample includes a winter dip, and a harsher season would be worse.
 - **Heavy debt.** Loan repayments are fixed and the funding gap is thin.
 
@@ -92,7 +92,7 @@ It charges per wash and for monthly unlimited plans. Chemicals, water and electr
 
 ### Why do car washes sell memberships?
 
-A member pays every month whether or not they visit, which makes revenue more predictable. The trade-off is that frequent visitors earn less per wash.
+A member pays every month whether or not they visit, which makes revenue more predictable. The trade-off is that a frequent visitor earns less per wash and costs more per member, because the fee stays the same while each visit uses chemicals, water and electricity.
 
 ### How much does it cost to build an express car wash?
 

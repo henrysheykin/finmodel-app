@@ -68,7 +68,7 @@ The first month with positive EBITDA is {{num:breakeven.first_ebitda}} and the f
 
 {{table:breakeven}}
 
-Break-even revenue is operating expenses divided by gross margin: {{num:breakeven.be_rev_y1}} in year 1 against revenue of {{num:pnl.rev.y1}}. That threshold moves with the commission rate, product and supply costs, rent and staff payroll. Utilisation and price do not change the threshold. They decide how soon revenue reaches it, which is why the opening ramp matters so much.
+Break-even revenue is operating expenses divided by gross margin: {{num:breakeven.be_rev_y1}} in year 1 against revenue of {{num:pnl.rev.y1}}. That threshold moves with the commission rate, product and supply costs, rent and staff payroll. Utilisation and price change it only slightly, because backbar supplies are a fixed amount per service and chair rent carries no cost of sales. They mainly decide how soon revenue reaches the threshold, which is why the opening ramp matters so much.
 
 ## Key risks
 

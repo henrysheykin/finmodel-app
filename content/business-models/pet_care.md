@@ -12,7 +12,7 @@ sample: pet_care, full, monthly, 5 years
 
 # How a pet grooming and boarding business makes money
 
-A pet care business usually sells two services under one roof. Grooming sells appointments: a groomer works on one animal at a time, so the capacity of the shop is the number of grooms it can finish in a day. Boarding sells nights: a kennel run is either occupied or empty, so the capacity is the number of runs times the calendar nights. Retail products sell on top of both. This page walks through that arithmetic for one illustrative business, using tables and charts from a working five-year financial model.
+This sample combines two services under one roof. Grooming sells appointments: a groomer works on one animal at a time, so the capacity of the shop is the number of grooms it can finish in a day. Boarding sells nights: a kennel run is either occupied or empty, so the capacity is the number of runs times the calendar nights. Retail products sell on top of both. This page walks through that arithmetic for one illustrative business, using tables and charts from a working five-year financial model.
 
 Every figure here comes from the sample workbook you can download at the end of the page. They are the sample's assumptions, not market benchmarks, so read them as a worked example rather than a forecast for your own business.
 
@@ -56,7 +56,7 @@ Equity and a loan bring in {{num:startup.sources}}, which is a surplus of {{num:
 
 ## Unit economics: the groom and the run-night
 
-Grooming is measured per appointment. Revenue per groom, including retail, is {{num:unit.groom_ticket.y1}} in year 1, and revenue per groomer is {{num:unit.rev_groomer.y1}}. Boarding is measured per available run-night, which combines occupancy and price: the sample earns {{num:unit.revpan.y1}} for each run-night available in year 1, rising to {{num:unit.revpan.y5}} in year 5. An empty run earns nothing, so occupancy matters as much as the nightly rate.
+Grooming is measured per appointment. Revenue per groom, including retail, is {{num:unit.groom_ticket.y1}} in year 1, and total revenue per groomer is {{num:unit.rev_groomer.y1}} (all revenue, including boarding and retail, divided by groomer FTE). Boarding is measured per available run-night, which combines occupancy and price: the sample earns {{num:unit.revpan.y1}} for each run-night available in year 1, rising to {{num:unit.revpan.y5}} in year 5. An empty run earns nothing, so occupancy matters as much as the nightly rate.
 
 {{table:unit}}
 
@@ -68,7 +68,7 @@ The first month with positive EBITDA is {{num:breakeven.first_ebitda}} and the f
 
 {{table:breakeven}}
 
-Break-even revenue is operating expenses divided by gross margin: {{num:breakeven.be_rev_y1}} in year 1 against revenue of {{num:pnl.rev.y1}}. The threshold moves with the margin on sales, rent and payroll. Appointment volume, occupancy and prices decide how soon revenue gets there.
+Break-even revenue is operating expenses divided by gross margin: {{num:breakeven.be_rev_y1}} in year 1 against revenue of {{num:pnl.rev.y1}}. The threshold moves with rent, payroll and the margin on sales. Appointment volume, occupancy and prices change the gross margin only a little, from {{num:pnl.gm.y1}} in year 1 to {{num:pnl.gm.y5}} in year 5, so they mainly decide how soon revenue reaches it.
 
 ## Key risks
 
@@ -94,7 +94,7 @@ It sells grooming appointments, nightly boarding and retail products. Groomers, 
 
 It is the share of available run-nights that are booked. A run that is empty for a night earns nothing for that night.
 
-### Why do grooming and boarding work well together?
+### How does the sample treat grooming and boarding?
 
 They use different resources. Grooming needs groomers and stations, while boarding needs runs and attendants. The model treats them as separate revenue streams, so you can see what each contributes.
 

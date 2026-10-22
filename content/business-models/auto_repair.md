@@ -68,7 +68,7 @@ The first month with positive EBITDA is {{num:breakeven.first_ebitda}} and the f
 
 {{table:breakeven}}
 
-Break-even revenue is operating expenses divided by gross margin. In year 1 it is {{num:breakeven.be_rev_y1}}, higher than revenue of {{num:pnl.rev.y1}}, because the year 1 gross margin is low while the shop is still filling. By year 5 the threshold falls to {{num:breakeven.be_rev_y5}} as the gross margin improves. The threshold moves with the parts margin, technician pay, rent and overhead. Order volume and the labor rate decide how soon revenue gets there.
+Break-even revenue is operating expenses divided by gross margin. In year 1 it is {{num:breakeven.be_rev_y1}}, higher than revenue of {{num:pnl.rev.y1}}, because the year 1 gross margin is low while the shop is still filling. By year 5 the threshold falls to {{num:breakeven.be_rev_y5}} as the gross margin improves. Technician pay is fixed in cost of sales, so more billed hours and a higher labor rate raise the gross margin and lower the break-even revenue. A lower parts margin, higher technician pay, rent or overhead push it up. Order volume also decides how soon revenue reaches it.
 
 ## Key risks
 
@@ -92,7 +92,7 @@ It bills technician hours at a labor rate and sells parts at a margin. Technicia
 
 ### What is an effective labor rate?
 
-It is the revenue earned per billed hour, after discounts and unbilled time. It can differ from the posted rate.
+It is the revenue earned per billed hour, after discounts. It can differ from the posted rate.
 
 ### What limits how much a shop can earn?
 
