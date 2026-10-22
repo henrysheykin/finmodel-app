@@ -12,7 +12,7 @@ sample: bakery, full, monthly, 5 years
 
 # How a bakery makes money
 
-A bakery turns flour, butter and early mornings into products people buy every day. It usually has two kinds of customer. Walk-in customers pay at the counter, one small ticket at a time. Wholesale accounts, such as cafes and restaurants, place a regular weekly order. The counter brings a higher price per item and daily traffic, while wholesale brings volume that is planned in advance. This page walks through that arithmetic for one illustrative bakery, using tables and charts from a working five-year financial model.
+A bakery turns flour, butter and early mornings into products people buy every day. The sample has two kinds of customer. Walk-in customers pay at the counter, one small ticket at a time. Wholesale accounts, such as cafes and restaurants, place a regular weekly order. The counter brings daily traffic and a ticket paid on the spot, while wholesale brings volume that is planned in advance. This page walks through that arithmetic for one illustrative bakery, using tables and charts from a working five-year financial model.
 
 Every figure here comes from the sample workbook you can download at the end of the page. They are the sample's assumptions, not market benchmarks, so read them as a worked example rather than a forecast for your own bakery.
 
@@ -60,7 +60,7 @@ The retail unit is the transaction: {{num:unit.tx.y1}} of them in year 1 at an a
 
 {{table:unit}}
 
-Bakeries often look at prime cost, the sum of cost of sales and payroll as a share of revenue. In the sample it is {{num:unit.prime.y1}} in year 1 and {{num:unit.prime.y5}} in year 5. What is left must pay for rent, utilities and everything else, so prime cost is a quick test of whether the recipe, the staffing and the prices work together.
+A common check is prime cost, the sum of cost of sales and payroll as a share of revenue. In the sample it is {{num:unit.prime.y1}} in year 1 and {{num:unit.prime.y5}} in year 5. What is left must pay for rent, utilities and everything else, so prime cost is a quick test of whether the recipe, the staffing and the prices work together.
 
 ## Break-even: when the bakery pays for itself
 
@@ -68,7 +68,7 @@ The sample is profitable from the start: the first month with positive EBITDA is
 
 {{table:breakeven}}
 
-Break-even revenue is operating expenses divided by gross margin: {{num:breakeven.be_rev_y1}} in year 1 against revenue of {{num:pnl.rev.y1}}. The threshold moves with ingredient cost, waste, payroll and rent. A lower waste rate or a higher margin on wholesale lowers it. Customer counts and the ticket decide how far above the threshold the bakery sits.
+Break-even revenue is operating expenses divided by gross margin: {{num:breakeven.be_rev_y1}} in year 1 against revenue of {{num:pnl.rev.y1}}. The threshold moves with ingredient cost, waste, payroll and rent. A lower waste rate or a lower ingredient share lowers it. Customer counts and the ticket decide how far above the threshold the bakery sits.
 
 ## Key risks
 

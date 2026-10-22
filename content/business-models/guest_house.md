@@ -18,7 +18,7 @@ Every figure here comes from the sample workbook you can download at the end of 
 
 ## What the sample assumes
 
-The sample has {{num:drivers.rooms.base}} lettable rooms. At maturity they are occupied {{num:drivers.occ.base}} of the nights, and the average daily rate (ADR) per occupied room is {{num:drivers.adr.base}}. The owner buys the building for {{num:drivers.capex_buy.base}}, funded by a {{num:drivers.loan_amount.base}} loan at {{num:drivers.loan_rate.base}} interest and {{num:drivers.equity.base}} of equity. The table shows each driver with a Low, Base and High value.
+The sample has {{num:drivers.rooms.base}} lettable rooms. At maturity they are occupied {{num:drivers.occ.base}} of the nights, and the average daily rate (ADR) per occupied room is {{num:drivers.adr.base}}. The owner buys the building for {{num:drivers.capex_buy.base}}. A {{num:drivers.loan_amount.base}} loan at {{num:drivers.loan_rate.base}} interest and {{num:drivers.equity.base}} of equity pay for the purchase and also for the start-up costs: fit-out, the furnishing reserve and the early losses. The table shows each driver with a Low, Base and High value.
 
 {{table:drivers}}
 
@@ -66,7 +66,7 @@ The first month with positive EBITDA is {{num:breakeven.first_ebitda}} and the f
 
 {{table:breakeven}}
 
-Break-even revenue is operating expenses divided by gross margin: {{num:breakeven.be_rev_y1}} in year 1 against revenue of {{num:pnl.rev.y1}}. It moves with the booking commission, cleaning and housekeeping costs, and the fixed costs of the building. Occupancy and rate decide how soon revenue reaches it, and how far above it the guest house sits.
+Break-even revenue is operating expenses divided by gross margin: {{num:breakeven.be_rev_y1}} in year 1 against revenue of {{num:pnl.rev.y1}}. Housekeeping, cleaning per stay and supplies per night sit in cost of sales, so they are largely fixed or per-stay costs. A fuller house and a higher rate therefore raise the gross margin, from {{num:pnl.gm.y1}} in year 1 to {{num:pnl.gm.y5}} in year 5, and keep the threshold flat even as costs grow. A higher booking commission, higher cleaning cost or higher fixed costs of the building push it up.
 
 ## Key risks
 
