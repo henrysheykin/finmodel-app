@@ -90,6 +90,7 @@ webhook, Resend domain).
             `samples/real_estate-full.xlsx`, memo `docs/templates/real_estate.md` (questions at the end).
       - [ ] Hair salon / barbershop: sample `samples/salon-full.xlsx` (+ `salon-full-5y.xlsx`), memo `docs/templates/salon.md` (questions at the end).
       - [ ] Car wash (express tunnel + memberships): sample `samples/car_wash-full.xlsx` (+ `car_wash-full-5y.xlsx`), memo `docs/templates/car_wash.md` (questions at the end).
+      - [ ] Auto repair shop (bays, technician hours, labor rate, parts margin): sample `samples/auto_repair-full.xlsx` (+ `auto_repair-full-5y.xlsx`), memo `docs/templates/auto_repair.md` (questions at the end).
       - [ ] Goal modules (break-even, DCF valuation, investor summary — all templates): sample
             `samples/cafe-investor_pitch.xlsx`, memo `docs/templates/goal-modules.md` (questions at the end).
 - [ ] E35: open https://www.sba.gov/business-guide/plan-your-business/calculate-your-startup-costs once and confirm it is the
