@@ -238,6 +238,7 @@ EXPECTED_ROWS = {  # E27 review: every KPI row shown on the Dashboard industry b
     "pet_care": {"grooms", "groom_use", "occ_rate", "revpan"},
     "guest_house": {"occ_rate", "adr_eff", "revpar", "stays"},
     "salon": {"util", "services", "ticket"},
+    "dental": {"pat_end", "util_doc", "prod_visit", "coll_rate"},
     "food_truck": {"meals", "rev_day", "event_share", "prime"},
 }
 

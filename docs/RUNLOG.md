@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-22 · E · E38 Dental practice template · DONE · https://github.com/henrysheykin/finmodel-app/pull/63
+  engine/templates/dental.py: operatories × visits × production, hygiene recall from the active patient base, new patients and
+  attrition, collections after PPO write-off and bad debt, associates on a share of collections; Base cash-positive every month.
+  Reviewer opus PASS after fixes (5-year headcount within rooms/chairs, wages-only benchmark, associate double-count guard).
+  For Henry: R1 CFO review (HUMAN_TODO) — staff cost above the cited benchmark, owner pay inside EBITDA.
 - 2026-10-22 · E · no ready task (E32 PR #51, E38 PR #63, E42 PR #65 active in other sessions; E40, E41 IN_PROGRESS without continue:; E33 waits on E32; E23 NEEDS_HENRY A1) · early exit
 - 2026-10-22 · M · M13 Business-model pages, 7 industries · DONE · https://github.com/henrysheykin/finmodel-app/pull/58
   content/business-models/ for cafe, saas, retail, services, home services, fitness, real estate (1,200–1,500 words, figures via
