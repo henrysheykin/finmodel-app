@@ -209,7 +209,10 @@ def _places(d: dict, y: int) -> float:
 
 def _kids_end(d: dict, m: int) -> float:
     """Children enrolled in model month ``m`` (month 0 = the children already enrolled at the start)."""
-    return d["kids_start"] if m <= 0 else _places(d, (m + 11) // 12) * _enr_end(d, m)
+    if m <= 0:  # children already in the centre, at most the month-1 enrolment (the rest would be new)
+        first = d["enr_full"] if d["ramp_months"] <= 0 else min(d["enr_start"], d["enr_full"])
+        return min(d["kids_start"], d["cap"] * first)
+    return _places(d, (m + 11) // 12) * _enr_end(d, m)
 
 
 def _teachers(kids: float, ratio: float) -> int:
@@ -410,7 +413,11 @@ class ChildcareTemplate(Template):
                 "=MAX(0,{enr_end_kids}-{enr_end_kids[-1]})+{enrolled}*{in:turnover}*{mpp}/12",
                 "top",
                 "dec1",
-                first="=MAX(0,{enr_end_kids}-{in:kids_start})+{enrolled}*{in:turnover}*{mpp}/12",
+                first=(
+                    "=MAX(0,{enr_end_kids}-MIN({in:kids_start},"
+                    "{cap_total}*IF({in:ramp_months}<=0,{in:enr_full},{enr_s})))"
+                    "+{enrolled}*{in:turnover}*{mpp}/12"
+                ),
             ),
             Line(
                 "tch_inf",

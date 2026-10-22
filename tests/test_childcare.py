@@ -161,6 +161,21 @@ def test_children_already_enrolled_at_start_pay_no_registration_fee():
     assert m["new_kids"][1] == pytest.approx(a["new_kids"][1])
 
 
+def test_kids_start_above_month_one_enrolment_counts_the_same_monthly_and_annual():
+    """Children already enrolled beyond the month-1 level are capped at it, so the ramp fill-up is counted once."""
+    b = CC.default_brief("planning")  # ramp of 12 months from 20% of 60 places
+    d = b.values(2)
+    month_one = d["cap"] * d["enr_start"]
+    for kids_start in (month_one / 2, month_one, 30, 55):
+        b2 = with_values(b, kids_start=kids_start)
+        m, a = python_model(b2, 2), python_model(b2.with_options(granularity="annual"), 2)
+        for k in ("new_kids", "rev_reg", "rev"):
+            for y in (1, 2, 3):
+                assert m[k][y] == pytest.approx(a[k][y], abs=0.01), (kids_start, k, y)
+    capped, at_level = run(with_values(b, kids_start=55)), run(with_values(b, kids_start=month_one))
+    assert capped["new_kids"][0] == pytest.approx(at_level["new_kids"][0])
+
+
 @pytest.mark.parametrize("stage", STAGES)
 def test_stage_defaults_start_with_the_children_already_in_the_centre(stage):
     d = CC.default_brief(stage).values(2)

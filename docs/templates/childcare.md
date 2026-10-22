@@ -27,7 +27,7 @@ discounts. Subsidy payments are a separate revenue line so the dependence on pub
 
 **Registration fees.** One fee per new child. New children = the rise in enrolment over the period above the *children already enrolled at
 start* (the opening fill and the ramp-up; places added in year 2+ fill the same way) plus the children who leave and are
-replaced (turnover % a year × average enrolment). Children already in the centre at the start pay no registration fee:
+replaced (turnover % a year × average enrolment). Children already in the centre at the start (capped at the month-1 enrolment, so a number above it is treated as that) pay no registration fee:
 0 in the planning stage, and in the other stages the enrolment at the start (licensed places × month-1 enrolment).
 
 **Staffing by ratio.** Teachers on the floor, per band = children enrolled in the band ÷ children per teacher, rounded up
@@ -72,7 +72,7 @@ From the first year with full enrolment the two are identical (established: ever
 | Driver | Base | Unit | Source |
 |---|---:|---|---|
 | Licensed places at start | 60 (growing 90, established 120) | # | assumption |
-| Children already enrolled at start | 0 (planning); early 30, growing 63, established 105.6 (= places × month-1 enrolment; Low and High follow their own month-1 enrolment) | # | assumption; these children pay no registration fee |
+| Children already enrolled at start | 0 (planning); early 30, growing 63, established 105.6 (= places × month-1 enrolment; Low and High follow their own month-1 enrolment) | # | assumption; these children pay no registration fee. It does **not** follow the month-1 enrolment automatically: if you change the places or the month-1 enrolment, change this number with them |
 | Licensed places added each year (from year 2) | 0 (growing stage: Low 0, Base 10, High 15) | # | assumption |
 | Places for infants & toddlers | 35% | % | assumption |
 | Enrolment once full | 85% (Low 78%, High 90%) | % of places | assumption (centres typically run below 100% because of age-mix and holiday gaps) |
