@@ -172,12 +172,23 @@ class BakeryTemplate(Template):
         "rev": "rev",
         "rev_retail": "rev_retail",
         "rev_ws": "rev_ws",
-        "waste_k": "waste",
-        "deliv_k": "deliv",
         "gp": "gp",
         "ebitda": "ebitda",
     }
-    kpi_derived = ("cust_day", "ticket", "ws_share", "rev_day", "waste_share", "gm", "cogs_k", "pay_k", "prime", "em")
+    kpi_derived = (
+        "cust_day",
+        "ticket",
+        "ws_share",
+        "rev_day",
+        "waste_k",
+        "waste_share",
+        "deliv_k",
+        "gm",
+        "cogs_k",
+        "pay_k",
+        "prime",
+        "em",
+    )
     kpi_unit_rows = ("rev_day",)
     kpi_flows = ("days", "tx", "rev_retail", "rev_ws", "waste", "deliv")
 
@@ -408,6 +419,8 @@ class BakeryTemplate(Template):
             out["ws_share"][y] = div(ann["rev_ws"][y], rev)
             out["rev_day"][y] = div(rev_retail, ann["days"][y])
             out["waste_share"][y] = div(ann["waste"][y], rev_retail)
+            out["waste_k"][y] = ann["waste"][y]
+            out["deliv_k"][y] = ann["deliv"][y]
             out["gm"][y] = div(ann["gp"][y], rev)
             out["cogs_k"][y] = cogs
             out["pay_k"][y] = payroll
