@@ -2,6 +2,11 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-22 · E · E43 Auto repair shop template · DONE · https://github.com/henrysheykin/finmodel-app/pull/59
+  engine/templates/auto_repair.py: repair orders × billed hours, capped by the lower of bays and technicians; labor at an
+  effective rate, parts revenue per billed hour × parts margin, shop supplies fee; technician payroll in cost of sales; lifts,
+  diagnostic tools, optional land as capex; samples full + full-5y; memo. Reviewer opus PASS, 3 lows fixed. CI test job hit the
+  30-min cap at 89% with no failure → timeout raised to 45 min (suite now ~30 min). For Henry: R1 CFO review (HUMAN_TODO).
 - 2026-10-21 · E · E39 Car wash template (express tunnel + memberships) · DONE · https://github.com/henrysheykin/finmodel-app/pull/57
   engine/templates/car_wash.py: retail cars/day × price with ramp and growth, unlimited members (adds − churn) × fee, tunnel
   capacity cap, cost per wash, optional owned land (ADR-011, not depreciated); samples full + full-5y. Reviewer opus PASS after
