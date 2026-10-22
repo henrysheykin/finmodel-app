@@ -103,7 +103,7 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 - done when: 7 pages render; the E35 copy test passes (placeholders, cited figures, 900–1,500 words).
 
 ### M14 — Business-model pages, the 10 new industries
-- status: TODO
+- status: IN_PROGRESS (2026-10-22) — dispatcher session agents
 - Model: sonnet
 - depends: E35, E36–E45 (each page after its template)
 - skills: as M13
