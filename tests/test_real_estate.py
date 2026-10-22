@@ -9,12 +9,11 @@ from openpyxl import load_workbook
 
 from engine.builder import plan
 from engine.challenger import challenge, python_goal_model, python_model
-from engine.core import reference_run
+from engine.core import LAND_LINE, LOAN_STYLES, reference_run
 from engine.goals import NA
 from engine.returns import irr, sign_changes
 from engine.spec import Timing
-from engine.templates import get_template, planned
-from engine.templates.base import Template
+from engine.templates import TEMPLATES, get_template, planned
 
 RE = get_template("real_estate")
 STAGES = ["planning", "early", "growing", "established"]
@@ -181,14 +180,24 @@ def test_returns_needs_its_drivers(re_brief):
         plan(b, Broken())
 
 
-def test_other_templates_keep_straight_loans_and_no_returns_sheet(any_brief):
+def test_annuity_loans_are_a_deliberate_choice():
+    # property businesses repay a level-payment mortgage; every other template keeps the straight loan
+    assert {k for k, t in TEMPLATES.items() if t.loan_style == "annuity"} == {"real_estate", "guest_house"}
+
+
+def test_loan_lines_follow_loan_style_and_returns_only_for_real_estate(any_brief):
     tpl = get_template(any_brief.template)
     pl = plan(any_brief, tpl)
+    assert tpl.loan_style in LOAN_STYLES
+    # an annuity template (real estate, guest house) gets the level-payment line; straight ones never do
+    assert ("loan_pmt" in pl.lines) == (tpl.loan_style == "annuity")
     if tpl.key == "real_estate":
-        assert "Returns" in pl.sheets and "loan_pmt" in pl.lines and "land" in pl.lines
+        assert "Returns" in pl.sheets and tpl.loan_style == "annuity" and "land" in pl.lines
     else:
-        assert type(tpl).loan_style is Template.loan_style and "Returns" not in pl.sheets
-        assert "loan_pmt" not in pl.lines and "land" not in pl.lines
+        assert "Returns" not in pl.sheets
+        # land is optional for any template (ADR-011): present exactly when the template has a capex_land line
+        has_land = any(ln.key == LAND_LINE for ln in tpl.capex_lines(pl.t))
+        assert ("land" in pl.lines) == has_land
 
 
 def test_unknown_loan_style_is_refused(re_brief):

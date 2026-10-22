@@ -30,71 +30,9 @@ Skill names are as shown in the session's skill list (prefixes may differ:
 - skills: xlsx
 - do: ADR-013 §1. Break-even: one large chart (revenue bars + break-even revenue line). Valuation: layout and
   formats to the standard, assumptions stay links to Inputs, no chart.
+- note (E35, 2026-10-21): Break-even changes alter the committed `<key>-full-5y.xlsx` samples — rebuild them
+  (`python scripts/build_samples.py`), or tests/test_bizmodel.py fails by design.
 - done when: chart present after recalc in both tiers; all templates PASS.
-
-### E34 — Calculator engine (ADR-014)
-- status: IN_PROGRESS (2026-10-21) — implementer agent of the dispatcher session
-- Model: sonnet
-- depends: —
-- skills: frontend-design, engineering:testing-strategy
-- do: site section `/calculators/` and `/calculators/<slug>`. A calculator is one spec file in
-  `content/calculators/<slug>.md`: front matter (slug, title, description 70–200 chars, keyword, optional template key —
-  without one the page shows the generic promotion block and the wizard opens without a preset — related calculators) + YAML-like blocks for `inputs` (key, label, unit, default, min, max, step, format),
-  `outputs` (key, label, formula, format, optional "highlight"), optional `table` (one input swept over values →
-  outputs) and `examples` (inputs → expected outputs), then the Markdown explanation. Formulas use a small safe
-  expression language (numbers, input / output keys, + − × ÷ ^, parentheses, comparisons, `min`, `max`, `round`,
-  `abs`, `if(cond, a, b)`), evaluated by `web/static/calc.js` and by a Python twin `app/calc_expr.py`, both hand-written parsers
-  (never `eval` / `Function` / `ast` execution); `round` is half away from zero in both; inputs are clamped to
-  min / max; any non-finite result (÷ 0, NaN, ∞, negative base ^ fraction) shows "—"; JS and Python must agree
-  within 1e-9 relative. Tests: every spec parses, every output key is
-  defined once with no cycles, every example matches in Python, and the JS evaluator gives the same results on
-  the same examples (node in CI via `actions/setup-node`, or the Playwright browser tests that
-  already run in CI — either way the parity test must run in CI, not skip). Page: inputs left, live
-  results right (mobile: stacked), the optional sensitivity table, the explanation, FAQ JSON-LD when the body has
-  a FAQ section, related calculators, and the **model promotion block** (partial template, data from the
-  template: title, what the full model adds with features per tier as ADR-013 sets them (Light never promised
-  statements or valuation), the sample download, CTA to the wizard on that template, the configured tier
-  prices (`app/config.py`, as tests/test_seo.py reads them)). Default input values
-  are "example values" unless cited. Index page grouped by industry; add both new sections to the sitemap and
-  llms.txt (not automatic); canonical per page; a calculator links to (never duplicates) the SEO guide on the same
-  topic; the E35 cited-figure copy check also runs on `content/calculators/`; design tokens of design v2 (no competitor palette). Ship three cafe
-  calculators as the reference specs: menu price (target food-cost %), food cost %, break-even covers per day.
-- review focus: parser safety (no code execution path, deep nesting / huge input handled), JS = Python parity.
-- done when: the three pages render and work without JS errors (Playwright test fills inputs, reads results);
-  Python and JS evaluators agree on every example; Lighthouse-style basics (title, description, canonical, h1,
-  no layout shift from the results panel); all tests green.
-
-### E35 — Business-model pages engine (ADR-014)
-- status: IN_PROGRESS (2026-10-21) — implementer agent of the dispatcher session
-- Model: sonnet
-- depends: —
-- skills: dataviz, frontend-design
-- do: section `/business-models/` and `/business-models/<slug>`: Markdown in `content/business-models/<key>.md`
-  (front matter as SEO pages + `template`) with table placeholders `{{table:<name>}}`, chart placeholders
-  `{{chart:<name>}}` and inline figures `{{num:<table>.<cell>}}` — every model figure in the prose uses `num`, so a
-  sample rebuild never leaves a stale number. Tables computed by `app/bizmodel.py` from the template's sample brief (Base scenario,
-  stage = `sample_stage`, Full, monthly, 5 years — exactly the sample `<key>-full-5y.xlsx`, which this task adds
-  to the built and committed samples for every template; the page offers that file and the test compares against it) through the engine's plain-Python reference (`reference_run`,
-  `annualise`, `engine/goals.py` break-even / funding): `drivers` (key numbers Low / Base / High with units),
-  `startup` (capital spending lines by item, then the Break-even funding lines exactly as the workbook labels
-  them: capital spending up to the lowest cash point, operating cash burn, loan repayments, cash buffer, funding
-  required, sources, surplus / shortfall),
-  `pnl` (revenue, cost of sales, gross margin, operating expenses by line, EBITDA, net income — 5 years),
-  `costs` (year-1 and year-5 cost structure as % of revenue), `unit` (the template's KPI rows, annual),
-  `breakeven` (first EBITDA-positive month, lowest cash month, funding required, payback). Charts as inline SVG
-  (revenue vs costs by year; cost structure bars) from the same data. Cached per template; a test rebuilds the
-  sample workbook, recalculates it and checks every table cell against the workbook (within $1). Page: H1, intro,
-  the tables with a caption "Illustrative Base case of the sample model — your model uses your numbers", the
-  sample download, CTA to the wizard, links to the industry's calculators (by `template`) and SEO page. Index page
-  with one card per template; sitemap + llms.txt; JSON-LD Article + breadcrumbs. Copy test for `content/business-models/`: no unknown placeholders, no
-  `[UPPER]` placeholders except prices, every `$` or `%` figure outside a placeholder sits in a sentence with an
-  external link, 900–1,500 words. Update `docs/templates/ADDING_A_TEMPLATE.md` §4 (business-model and calculator
-  pages may go live before the CFO sign-off, ADR-014). `/business-models/<key>` explains the business; the
-  `/models/…` SEO pages sell the model — cross-link them, distinct titles and canonicals. Ship one reference page
-  (`cafe`) with real copy.
-- review focus: every page figure equals the committed 5-year sample (no tolerance looser than $1).
-- done when: the cafe page renders with all six tables and both charts; the table-vs-workbook test passes for
-  every registered template; all tests green.
 
 ### E36–E45 — Ten local-business templates (ADR-014)
 One task per template, each one file + tests + sample + memo per `docs/templates/ADDING_A_TEMPLATE.md`
@@ -106,15 +44,10 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 | id | key | business | revenue drivers (minimum) | status |
 |---|---|---|---|---|
 | E36 | `bakery` | Bakery (retail counter + wholesale) | daily customers × ticket, wholesale accounts × order, production waste % | IN_PROGRESS (2026-10-21) |
-| E37 | `salon` | Hair salon / barbershop | chairs × utilisation × services per hour × price, retail product attach, commission vs chair rent | IN_PROGRESS (2026-10-21) |
 | E38 | `dental` | Dental practice | operatories × patient visits × fee per visit, hygiene recall, insurance mix / collection rate | IN_PROGRESS (2026-10-21) |
-| E39 | `car_wash` | Car wash (express + memberships) | cars per day × price, unlimited-plan members × fee, chemicals & utilities per car | IN_PROGRESS (2026-10-21) |
-| E40 | `laundromat` | Laundromat (self-service + wash & fold) | machines × turns per day × price, wash & fold lbs × price, utilities per cycle | TODO |
-| E41 | `childcare` | Childcare / daycare centre | licensed capacity × enrollment % × tuition, staff-to-child ratio payroll | TODO |
-| E42 | `food_truck` | Food truck | service days × meals per day × ticket, events / catering, food cost %, permits | TODO |
-| E43 | `auto_repair` | Auto repair shop | bays × billed hours × labor rate, parts revenue × margin, technician productivity | TODO |
-| E44 | `pet_care` | Pet grooming & boarding | grooms per day × price, kennel runs × occupancy × nightly rate | TODO |
-| E45 | `guest_house` | Guest house / B&B | rooms × occupancy × ADR, breakfast / extras, cleaning per stay, property loan (annuity) | TODO |
+| E40 | `laundromat` | Laundromat (self-service + wash & fold) | machines × turns per day × price, wash & fold lbs × price, utilities per cycle | IN_PROGRESS (2026-10-21) |
+| E41 | `childcare` | Childcare / daycare centre | licensed capacity × enrollment % × tuition, staff-to-child ratio payroll | IN_PROGRESS (2026-10-21) |
+| E42 | `food_truck` | Food truck | service days × meals per day × ticket, events / catering, food cost %, permits | IN_PROGRESS (2026-10-21) |
 
 ### E33 — Roll-out: samples, golden tests, site, copy
 - status: TODO
@@ -125,7 +58,8 @@ One task per template, each one file + tests + sample + memo per `docs/templates
   preview (`app/xlview.py` + `web/static/landing.js`: new sheet set; charts shown as a labelled placeholder or a
   static rendering — keep it faithful to the file), wizard / landing / SEO / email copy that describes sheets or
   says the goal adds sheets, `docs/templates/*.md` (sheet list; real_estate.md keeps "Returns in both tiers"),
-  HUMAN_TODO R1 line for the new sheets
+  E29 review lows (a 1-year horizon in tests/test_scenarios.py; an edit of Inputs column B alone moves only Low;
+  Scenarios key drivers in $'000 or a §4 note; §3 note: Base pine, Low amber, High sage), HUMAN_TODO R1 line for the new sheets
   (Scenarios, Sources & Uses, ratios) and refresh `Documents\StartupModel-review` guidance in the RUNLOG.
 - done when: CI green with the new samples; landing tests pass; no copy promises sheets a tier does not have.
 
@@ -156,7 +90,7 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 > (opt) for search intent, `docs` (opt) for structure.
 
 ### M13 — Business-model pages, existing 7 industries
-- status: TODO
+- status: IN_PROGRESS (2026-10-22) — dispatcher session agents
 - Model: sonnet
 - depends: E35
 - skills: small-business:seo-ai-visibility (opt), dataviz (opt)
@@ -168,7 +102,7 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 - done when: 7 pages render; the E35 copy test passes (placeholders, cited figures, 900–1,500 words).
 
 ### M14 — Business-model pages, the 10 new industries
-- status: TODO
+- status: IN_PROGRESS (2026-10-22) — dispatcher session agents
 - Model: sonnet
 - depends: E35, E36–E45 (each page after its template)
 - skills: as M13
@@ -177,7 +111,7 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 - done when: 10 pages render; copy test passes.
 
 ### M15 — Calculators, existing industries + cross-industry
-- status: TODO
+- status: IN_PROGRESS (2026-10-22) — dispatcher session agents
 - Model: sonnet
 - depends: E34
 - skills: as M13, frontend-design (opt)
@@ -192,7 +126,7 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 - done when: all specs pass the E34 tests; pages render; examples hand-checked in the PR description.
 
 ### M16 — Calculators, the 10 new industries
-- status: TODO
+- status: IN_PROGRESS (2026-10-22) — dispatcher session agents
 - Model: sonnet
 - depends: E34, E36–E45 (each after its template)
 - skills: as M15

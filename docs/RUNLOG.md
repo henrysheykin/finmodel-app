@@ -2,6 +2,39 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-22 · E · no ready task (E32, E36, E38, E40, E41, E42 IN_PROGRESS in other sessions; E33 waits on E32; E23 NEEDS_HENRY A1) · early exit
+- 2026-10-22 · E · E45 Guest house / B&B template · DONE · https://github.com/henrysheykin/finmodel-app/pull/61
+  engine/templates/guest_house.py: rooms × nights × occupancy (ramp, season, cap 100 %) × ADR, breakfast and extras, cleaning
+  per stay, OTA commission, housekeeper payroll; property loan as an annuity (level payment, second annuity template after real
+  estate). CI fix: length of stay 1–60 nights, divided by MAX(1, …); loan test now follows loan_style, annuity set pinned.
+  Reviewer opus PASS. For Henry: R1 CFO review (HUMAN_TODO).
+- 2026-10-22 · E · E44 Pet grooming & boarding template · DONE · https://github.com/henrysheykin/finmodel-app/pull/60
+  engine/templates/pet_care.py: grooms/day capped by the lower of tables and groomer FTE capacity × price, retail per groom; boarding
+  runs × nights × occupancy (cap 100 %, Jun–Aug + Dec peak netting to zero) × nightly rate; groomer base + commission in cost of sales;
+  tables/tubs, kennel build-out, optional land; samples full + full-5y; memo with 11 CFO questions. Implementer sonnet, reviewer opus
+  PASS, 3 lows fixed (ramp × season gap bounded by a test and sized in the memo). For Henry: R1 CFO review (HUMAN_TODO).
+- 2026-10-22 · E · E43 Auto repair shop template · DONE · https://github.com/henrysheykin/finmodel-app/pull/59
+  engine/templates/auto_repair.py: repair orders × billed hours, capped by the lower of bays and technicians; labor at an
+  effective rate, parts revenue per billed hour × parts margin, shop supplies fee; technician payroll in cost of sales; lifts,
+  diagnostic tools, optional land as capex; samples full + full-5y; memo. Reviewer opus PASS, 3 lows fixed. CI test job hit the
+  30-min cap at 89% with no failure → timeout raised to 45 min (suite now ~30 min). For Henry: R1 CFO review (HUMAN_TODO).
+- 2026-10-21 · E · E39 Car wash template (express tunnel + memberships) · DONE · https://github.com/henrysheykin/finmodel-app/pull/57
+  engine/templates/car_wash.py: retail cars/day × price with ramp and growth, unlimited members (adds − churn) × fee, tunnel
+  capacity cap, cost per wash, optional owned land (ADR-011, not depreciated); samples full + full-5y. Reviewer opus PASS after
+  fixes (monthly cash low in memo, cars_g, land, working-capital days). test_real_estate land check generalised per ADR-011.
+  For Henry: R1 CFO review (HUMAN_TODO).
+- 2026-10-21 · E · E37 Salon template (hair salon / barbershop) · DONE · https://github.com/henrysheykin/finmodel-app/pull/56
+  engine/templates/salon.py: chairs × utilisation × hours × services/hour × price, retail attach, chair rent from renters,
+  commission + payroll tax in cost of sales; E31 KPI hooks; samples full + full-5y. Implementer sonnet, reviewer opus PASS after
+  fixes (inventory days, growing-stage chairs, flat marketing growth, 5-year stage test). For Henry: R1 CFO review (HUMAN_TODO).
+- 2026-10-21 · E · E35 Business-model pages engine (ADR-014) · DONE · https://github.com/henrysheykin/finmodel-app/pull/55
+  /business-models/ from content/business-models/*.md ({{table}}, {{chart}}, {{num}}): six tables + two SVG charts from the
+  sample brief via the reference, every cell checked against the rebuilt and the committed <key>-full-5y.xlsx (all templates);
+  cafe page; copy rule (cited figures, 900–1,500 words). Reviewer opus PASS + 6 lows fixed. For Henry: glance at the SBA link.
+- 2026-10-21 · E · E34 Calculator engine (ADR-014) · DONE · https://github.com/henrysheykin/finmodel-app/pull/53
+  /calculators section: spec files in content/calculators/, hand-written JS + Python evaluators (no eval), Node parity test
+  in CI, model promotion block (tier features per ADR-013, configured prices), three cafe calculators. Implementer sonnet,
+  reviewer opus PASS (7 lows → follow-up PR). For Henry: optional read of the three cafe calculator texts.
 - 2026-10-21 · E · E29 Scenarios sheet, live Low / Base / High · DONE · [#52](https://github.com/henrysheykin/finmodel-app/pull/52)
   engine/scenarios.py: the period calculation copied 3× on a new "Scenario calc" sheet (Full, between Headcount and Checks),
   each copy reading Inputs B / C / D; Scenarios sheet: key drivers, 10 outputs Low / Base / High / Active, per-year tables,
@@ -39,30 +72,3 @@ Newest first. One entry per scheduled run: date · track · task · result · PR
   scenarios, 0 errors) → approved. docs/WORKBOOK_STANDARD.md + ADR-013 (sheets by tier, goal = Cover line, live Scenarios,
   ink/pine look, yellow inputs), CLAUDE.md Excel rules, D12 closed, E26–E33 queued (priority note in BACKLOG).
   Reference: design/workbook-standard-v1-prototype.xlsx + scripts/prototypes/standard_v1/. Review folder on Henry's PC: Documents\StartupModel-review.
-- 2026-10-19 · P · weekly PM review · STATUS.md rewritten
-  E 24/25 done, M 12/12 closed (3 cancelled); no open PRs, CI on main green, startup-model.com /healthz 0.1.0.
-  No stuck tasks (nothing IN_PROGRESS); only E23 open, NEEDS_HENRY (A1). E and M scheduled tasks are switched off since 2026-10-18.
-  For Henry: R1 sign-offs are the critical path to live payments; then VAT (G1.1), G1.6, G1.8–G1.9; A1 + switch E back on for E23.
-
-- 2026-10-18 · E · E24 derived goal defaults + fallback usage · DONE · https://github.com/henrysheykin/finmodel-app/pull/42
-  `merge` recomputes `cash_buffer` (3 months of costs) after the model's changes unless the model moved it or the customer locked it;
-  echoed-unchanged keys don't count; derived value clamped to its range [0, 1e9]. Usage of calls already made is kept on every fallback (`exc.usage`).
-  6 new tests; CI green; reviewer PASS (medium clamp + 2 lows fixed before merge). For Henry: nothing new; E23 still waits on A1 (OpenAI key). Next E: none ready besides E23.
-- 2026-10-18 · E · E25 brief builder on OpenAI · DONE · https://github.com/henrysheykin/finmodel-app/pull/41
-  OpenAI Responses API over httpx (Chat Completions can't do function calls with reasoning on gpt-6; astra can't turn it off):
-  strict forced `submit_brief`, reasoning low, store=false, usage uncached/cached/cache-write; no retry on 4xx except 429.
-  BRIEF_MODELS gpt-6-luna / gpt-6.1-sol / gpt-6-astra; OPENAI_API_KEY; E23 prices from the OpenAI pricing page (2026-10-18), reference astra;
-  fixtures re-recorded, privacy.md names OpenAI. 1017 tests local, CI green, reviewer PASS. For Henry: A1 (key in Railway + cloud env for E23). Next E: E24 (E23 waits on the key).
-- 2026-10-18 · E · interactive with Henry: LLM provider → OpenAI (replace Anthropic) · ADR-012
-  New E25 (Model: opus) first in track E: OpenAI client, OPENAI_API_KEY, E23 on gpt-6-luna / gpt-6.1-sol / gpt-6-astra, privacy.md. A1 now = OpenAI key.
-- 2026-10-18 · E · E23 brief-model eval · harness merged, NEEDS_HENRY (live run) · https://github.com/henrysheykin/finmodel-app/pull/40
-  `evals/brief_model_eval.py`: 60 committed cases (6 industries × 10) → prefill → E08 builder → validate → worker build + challenger;
-  per model pass share, mean/p95 s, $/order from per-request usage × prices (pricing page 2026-10-18, Haiku >100k surcharge);
-  recommendation = cheapest with pass ≥ opus and p95 ≤ 15 s; replay/record modes; 88 tests on fixtures. Memo skeleton, results pending:
-  no ANTHROPIC_API_KEY in the sandbox → HUMAN_TODO A1. Skill product-self-knowledge not installed (prices from the docs page). Next E: E24.
-- 2026-10-18 · E · E08 brief builder (Claude API) · DONE · https://github.com/henrysheykin/finmodel-app/pull/39
-  `engine/brief_builder.py`: prefill brief + customer notes → one forced `submit_brief` tool call that may only change
-  driver Low/Base/High (structure, roles, typed key numbers locked); Brief + template validation; errors back as tool_result,
-  2 retries, 15 s deadline, no retry on 4xx, then prefill fallback; no call without notes; formula-like text neutralised.
-  httpx Messages API client (no SDK dependency). 21 fixture cases → valid briefs, all build + challenger PASS; 4 fallback cases.
-  OFF by default: Henry sets ANTHROPIC_API_KEY + BRIEF_MODEL (A1, after E23). Skill product-self-knowledge not installed. Follow-up E24.

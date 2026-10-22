@@ -88,8 +88,15 @@ webhook, Resend domain).
       - [ ] Fitness studio / gym: sample `samples/fitness-full.xlsx`, memo `docs/templates/fitness.md` (questions at the end).
       - [ ] Real estate / rental property (incl. annuity mortgage, land, Returns sheet with IRR/NPV): sample
             `samples/real_estate-full.xlsx`, memo `docs/templates/real_estate.md` (questions at the end).
+      - [ ] Hair salon / barbershop: sample `samples/salon-full.xlsx` (+ `salon-full-5y.xlsx`), memo `docs/templates/salon.md` (questions at the end).
+      - [ ] Car wash (express tunnel + memberships): sample `samples/car_wash-full.xlsx` (+ `car_wash-full-5y.xlsx`), memo `docs/templates/car_wash.md` (questions at the end).
+      - [ ] Auto repair shop (bays, technician hours, labor rate, parts margin): sample `samples/auto_repair-full.xlsx` (+ `auto_repair-full-5y.xlsx`), memo `docs/templates/auto_repair.md` (questions at the end).
+      - [ ] Pet grooming & boarding (grooming stations, groomers, kennel runs, occupancy, nightly rate): sample `samples/pet_care-full.xlsx` (+ `pet_care-full-5y.xlsx`), memo `docs/templates/pet_care.md` (questions at the end).
+      - [ ] Guest house / bed and breakfast (rooms, occupancy, ADR, breakfast, cleaning per stay, annuity property loan): sample `samples/guest_house-full.xlsx` (+ `guest_house-full-5y.xlsx`), memo `docs/templates/guest_house.md` (questions at the end).
       - [ ] Goal modules (break-even, DCF valuation, investor summary — all templates): sample
             `samples/cafe-investor_pitch.xlsx`, memo `docs/templates/goal-modules.md` (questions at the end).
+- [ ] E35: open https://www.sba.gov/business-guide/plan-your-business/calculate-your-startup-costs once and confirm it is the
+      SBA start-up cost guide (the only external link on the cafe business-model page; the agents could not fetch it).
 - [x] R2 Lawyer review of legal drafts — n/a: Henry cancelled M08 (2026-10-17); legal texts are his to provide.
 
 ## Go-live (v0.1.0, E18 — step by step with checks: `docs/RUNBOOK_GO_LIVE.md`)

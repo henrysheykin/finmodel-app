@@ -1,0 +1,59 @@
+{% extends "site_base.html" %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block meta %}
+<meta name="description" content="{{ page.description }}">
+<link rel="canonical" href="{{ base_url }}{{ page.slug }}">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StartupModel">
+<meta property="og:url" content="{{ base_url }}{{ page.slug }}">
+<meta property="og:title" content="{{ page.h1 }}">
+<meta property="og:description" content="{{ page.description }}">
+<meta name="twitter:card" content="summary">
+{% for ld in ld_json %}<script type="application/ld+json">{{ ld }}</script>
+{% endfor %}
+{% endblock %}
+{% block main %}
+<article class="doc seo bm">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/business-models">{{ section_title }}</a></li>
+        <li aria-current="page">{{ page.h1 }}</li>
+      </ol>
+    </nav>
+    {{ body }}
+
+    <aside class="cta pad" aria-labelledby="cta-title">
+      <h2 id="cta-title">Build the {{ template_title | lower }} model on your own numbers</h2>
+      <p>The tables above are an illustrative Base case. Answer a short brief and receive an Excel workbook with live formulas, Low, Base and High cases and a Checks sheet, recalculated independently before delivery. Light {{ price_light }}, Full {{ price_full }}, one payment, full refund within 7 days.</p>
+      <div class="cta__row">
+        <a class="btn" href="{{ start_href }}">Start a {{ template_title | lower }} model</a>
+        {% if sample %}<a class="btn btn--ghost" href="/samples/{{ sample.filename }}" download>Download the sample (.xlsx)</a>{% endif %}
+      </div>
+      {% if sample %}<p class="cta__note">The sample is the file every figure on this page comes from: Full tier, {{ sample.horizon_years }} years, {{ sample.granularity }}, Base case selected.</p>{% endif %}
+    </aside>
+
+    {% if calculators or model_pages %}
+    <nav class="related" aria-labelledby="related-title">
+      <h2 id="related-title">Keep going</h2>
+      {% if calculators %}
+      <h3>Calculators</h3>
+      <ul>
+        {% for c in calculators %}<li><a href="{{ c.slug }}">{{ c.title }}</a></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if model_pages %}
+      <h3>Financial model for this business</h3>
+      <ul>
+        {% for p in model_pages %}<li><a href="{{ p.slug }}">{{ p.h1 }}</a></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      <p><a href="/business-models">All business models</a></p>
+    </nav>
+    {% endif %}
+  </div>
+</article>
+{% endblock %}
