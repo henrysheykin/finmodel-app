@@ -2,6 +2,17 @@
 
 Newest first. One entry per scheduled run: date · track · task · result · PR · notes for Henry.
 
+- 2026-10-22 · M · M13 Business-model pages, 7 industries · DONE · https://github.com/henrysheykin/finmodel-app/pull/58
+  content/business-models/ for cafe, saas, retail, services, home services, fitness, real estate (1,200–1,500 words, figures via
+  {{num}}, SBA/IRS links only). Reviewer opus PASS + 13 copy fixes (claims checked against the template drivers).
+- 2026-10-22 · M · M15 Calculators batch 1 · DONE · https://github.com/henrysheykin/finmodel-app/pull/62
+  23 calculators (cafe 3, SaaS 3, retail 3, services 2, home services 2, fitness 2, real estate 4, cross-industry 4), worked
+  examples hand-checked, two cited benchmarks only (LTV:CAC, DSCR). Reviewer opus PASS + 7 copy fixes.
+- 2026-10-22 · E · E36 Bakery template (retail counter + wholesale) · DONE · https://github.com/henrysheykin/finmodel-app/pull/54
+  engine/templates/bakery.py: daily customers × ticket with a year-neutral holiday peak, wholesale accounts × weekly order,
+  waste on unsold production, delivery; Base cash-positive every month; app/bizmodel.py reads kpi_reference for KPI rows.
+  Reviewer opus: FAIL → fixes (memo figures from the twin, monthly = annual incl. year 1, established headcount, equity) → PASS.
+  For Henry: R1 CFO review (HUMAN_TODO).
 - 2026-10-22 · E · no ready task (E32, E36, E38, E40, E41, E42 IN_PROGRESS in other sessions; E33 waits on E32; E23 NEEDS_HENRY A1) · early exit
 - 2026-10-22 · E · E45 Guest house / B&B template · DONE · https://github.com/henrysheykin/finmodel-app/pull/61
   engine/templates/guest_house.py: rooms × nights × occupancy (ramp, season, cap 100 %) × ADR, breakfast and extras, cleaning
@@ -40,35 +51,3 @@ Newest first. One entry per scheduled run: date · track · task · result · PR
   each copy reading Inputs B / C / D; Scenarios sheet: key drivers, 10 outputs Low / Base / High / Active, per-year tables,
   4 line charts 2×2; check "Scenarios: Active = selected scenario"; challenger recomputes every Low / Base / High cell.
   Build time per Full monthly 5-year model: build 0.4→1.0 s, LibreOffice recalc 2.0→2.6 s (formulas ×3.3). ADR-013 note added.
-- 2026-10-21 · E · E30 Sources & Uses sheet · DONE · [#47](https://github.com/henrysheykin/finmodel-app/pull/47)
-  Full only, after Valuation: funding structure (equity / loan, shares, gearing, funding required and surplus from Break-even)
-  + doughnut; sources and uses of cash for the first N periods (input, default 12 months / 1 year, capped) + uses bar chart;
-  in-file check "Sources & uses balance"; challenger recomputes every amount at the default N. $'000, ink links (report sheet).
-- 2026-10-21 · E · E31 KPIs & ratios sheet · DONE · https://github.com/henrysheykin/finmodel-app/pull/50
-  engine/kpis.py (Full only, after Valuation): ratios by year (growth, margins, payroll / marketing / opex %, current ratio, D/E,
-  ROA, ROE) with "n/a" guards, DuPont + in-file check (FAIL on mismatch, n/a when no comparable year), template KPI table moved
-  from the Dashboard ($'000, per-unit rows in $), blank Target input column, 4 charts (2 via new `kpi_charts` hook). Challenger
-  recomputes every ratio, DuPont leg, derived KPI and Dashboard industry line (≤ $1); wider `kpi_checked` in all 7 templates;
-  DASH_USD_K dropped; funding tile sub-line numeric. Implementer sonnet, reviewer opus PASS (2 rounds), CI green. Build +0.03 s.
-  For Henry: nothing. Note: PR #47 (E30) and branch E29 will need a merge of main (sheet order, test sheet lists).
-- 2026-10-20 · E · E28 Summary sheet (statements, selected year by month) · PR open (reviewer next) · https://github.com/henrysheykin/finmodel-app/pull/46
-  engine/summary.py (Full only): IS / CF / BS with every year linked to the statements (left) and one selected year by month
-  (INDEX into the Monthly grid, switch R2) on the right, 3 charts beside the blocks; annual models: years only, charts by year;
-  1-year horizon works. New check "Summary ties to statements" + Summary range in "No error values"; challenger covers the
-  links; test: Dashboard Core financials = statement cells every year. For Henry: nothing.
-- 2026-10-20 · E · E27 Dashboard v2 and the chart kit · PR open (reviewer next) · https://github.com/henrysheykin/finmodel-app/pull/45
-  engine/charts.py (bar, hbar, line, combo with secondary axis, doughnut; 14.2 × 8.3 cm grid slots; value-only data labels) +
-  engine/dashboard.py: selector + checks verdict, 6 tiles, Core financials rolled up from grid lines (Light too), industry block
-  from the new Template hooks `dashboard_metrics` / `dashboard_chart` (all 7 templates), Funding & valuation, 4 charts; KPI table
-  moved to row 47. Challenger recomputes every tile, Funding & valuation cell and Core line (`goals.dashboard_reference`).
-  Also: ink report links, pine "Scenario shown", italic grey % lines on grid and module sheets. For Henry: nothing.
-- 2026-10-20 · E · E26 workbook standard: style kit v2, sheet set by tier, Cover · DONE · https://github.com/henrysheykin/finmodel-app/pull/44
-  engine/style.py v2 (ink/pine, Arial 9, yellow inputs, view-switch fill, tab colours, print setup, ◂ Contents links);
-  sheets by tier (Light: Cover, Dashboard, Break-even, Inputs, P&L, Checks; Full adds Valuation, statements, grid, Headcount);
-  modules by tier, investor Summary retired, goal → Cover purpose line; selector Dashboard!B4 in both tiers; stored pre-ADR
-  briefs completed at build (tested). Interim Dashboard until E27. Samples not rebuilt yet (E33).
-- 2026-10-20 · E · interactive with Henry: workbook standard v1 (ADR-013) · PR_LINK
-  Henry's reference model analysed; two prototype rounds on a real SaaS engine workbook (16,964 engine cells equal in all 3
-  scenarios, 0 errors) → approved. docs/WORKBOOK_STANDARD.md + ADR-013 (sheets by tier, goal = Cover line, live Scenarios,
-  ink/pine look, yellow inputs), CLAUDE.md Excel rules, D12 closed, E26–E33 queued (priority note in BACKLOG).
-  Reference: design/workbook-standard-v1-prototype.xlsx + scripts/prototypes/standard_v1/. Review folder on Henry's PC: Documents\StartupModel-review.

@@ -56,3 +56,6 @@ New lines go at the end of the table (protocol step 9).
 | E43 | Template: auto repair shop | #59 | done 2026-10-22 |
 | E44 | Template: pet grooming & boarding | #60 | done 2026-10-22 |
 | E45 | Template: guest house / B&B | #61 | done 2026-10-22 |
+| E36 | Template: bakery | #54 | done 2026-10-22 |
+| M15 | Calculators, existing industries + cross-industry | #62 | done 2026-10-22 |
+| M13 | Business-model pages, existing 7 industries | #58 | done 2026-10-22 |

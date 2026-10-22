@@ -2,6 +2,38 @@
 
 Older entries moved out of `docs/RUNLOG.md` (newest first). Same format.
 
+- 2026-10-21 · E · E30 Sources & Uses sheet · DONE · [#47](https://github.com/henrysheykin/finmodel-app/pull/47)
+  Full only, after Valuation: funding structure (equity / loan, shares, gearing, funding required and surplus from Break-even)
+  + doughnut; sources and uses of cash for the first N periods (input, default 12 months / 1 year, capped) + uses bar chart;
+  in-file check "Sources & uses balance"; challenger recomputes every amount at the default N. $'000, ink links (report sheet).
+- 2026-10-21 · E · E31 KPIs & ratios sheet · DONE · https://github.com/henrysheykin/finmodel-app/pull/50
+  engine/kpis.py (Full only, after Valuation): ratios by year (growth, margins, payroll / marketing / opex %, current ratio, D/E,
+  ROA, ROE) with "n/a" guards, DuPont + in-file check (FAIL on mismatch, n/a when no comparable year), template KPI table moved
+  from the Dashboard ($'000, per-unit rows in $), blank Target input column, 4 charts (2 via new `kpi_charts` hook). Challenger
+  recomputes every ratio, DuPont leg, derived KPI and Dashboard industry line (≤ $1); wider `kpi_checked` in all 7 templates;
+  DASH_USD_K dropped; funding tile sub-line numeric. Implementer sonnet, reviewer opus PASS (2 rounds), CI green. Build +0.03 s.
+  For Henry: nothing. Note: PR #47 (E30) and branch E29 will need a merge of main (sheet order, test sheet lists).
+- 2026-10-20 · E · E28 Summary sheet (statements, selected year by month) · PR open (reviewer next) · https://github.com/henrysheykin/finmodel-app/pull/46
+  engine/summary.py (Full only): IS / CF / BS with every year linked to the statements (left) and one selected year by month
+  (INDEX into the Monthly grid, switch R2) on the right, 3 charts beside the blocks; annual models: years only, charts by year;
+  1-year horizon works. New check "Summary ties to statements" + Summary range in "No error values"; challenger covers the
+  links; test: Dashboard Core financials = statement cells every year. For Henry: nothing.
+- 2026-10-20 · E · E27 Dashboard v2 and the chart kit · PR open (reviewer next) · https://github.com/henrysheykin/finmodel-app/pull/45
+  engine/charts.py (bar, hbar, line, combo with secondary axis, doughnut; 14.2 × 8.3 cm grid slots; value-only data labels) +
+  engine/dashboard.py: selector + checks verdict, 6 tiles, Core financials rolled up from grid lines (Light too), industry block
+  from the new Template hooks `dashboard_metrics` / `dashboard_chart` (all 7 templates), Funding & valuation, 4 charts; KPI table
+  moved to row 47. Challenger recomputes every tile, Funding & valuation cell and Core line (`goals.dashboard_reference`).
+  Also: ink report links, pine "Scenario shown", italic grey % lines on grid and module sheets. For Henry: nothing.
+- 2026-10-20 · E · E26 workbook standard: style kit v2, sheet set by tier, Cover · DONE · https://github.com/henrysheykin/finmodel-app/pull/44
+  engine/style.py v2 (ink/pine, Arial 9, yellow inputs, view-switch fill, tab colours, print setup, ◂ Contents links);
+  sheets by tier (Light: Cover, Dashboard, Break-even, Inputs, P&L, Checks; Full adds Valuation, statements, grid, Headcount);
+  modules by tier, investor Summary retired, goal → Cover purpose line; selector Dashboard!B4 in both tiers; stored pre-ADR
+  briefs completed at build (tested). Interim Dashboard until E27. Samples not rebuilt yet (E33).
+- 2026-10-20 · E · interactive with Henry: workbook standard v1 (ADR-013) · PR_LINK
+  Henry's reference model analysed; two prototype rounds on a real SaaS engine workbook (16,964 engine cells equal in all 3
+  scenarios, 0 errors) → approved. docs/WORKBOOK_STANDARD.md + ADR-013 (sheets by tier, goal = Cover line, live Scenarios,
+  ink/pine look, yellow inputs), CLAUDE.md Excel rules, D12 closed, E26–E33 queued (priority note in BACKLOG).
+  Reference: design/workbook-standard-v1-prototype.xlsx + scripts/prototypes/standard_v1/. Review folder on Henry's PC: Documents\StartupModel-review.
 - 2026-10-19 · P · weekly PM review · STATUS.md rewritten
   E 24/25 done, M 12/12 closed (3 cancelled); no open PRs, CI on main green, startup-model.com /healthz 0.1.0.
   No stuck tasks (nothing IN_PROGRESS); only E23 open, NEEDS_HENRY (A1). E and M scheduled tasks are switched off since 2026-10-18.

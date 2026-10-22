@@ -43,7 +43,6 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 
 | id | key | business | revenue drivers (minimum) | status |
 |---|---|---|---|---|
-| E36 | `bakery` | Bakery (retail counter + wholesale) | daily customers × ticket, wholesale accounts × order, production waste % | IN_PROGRESS (2026-10-21) |
 | E38 | `dental` | Dental practice | operatories × patient visits × fee per visit, hygiene recall, insurance mix / collection rate | IN_PROGRESS (2026-10-21) |
 | E40 | `laundromat` | Laundromat (self-service + wash & fold) | machines × turns per day × price, wash & fold lbs × price, utilities per cycle | IN_PROGRESS (2026-10-21) |
 | E41 | `childcare` | Childcare / daycare centre | licensed capacity × enrollment % × tuition, staff-to-child ratio payroll | IN_PROGRESS (2026-10-21) |
@@ -89,18 +88,6 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 > everything else is "the sample's assumption". Skills: use web research for sources, `small-business:seo-ai-visibility`
 > (opt) for search intent, `docs` (opt) for structure.
 
-### M13 — Business-model pages, existing 7 industries
-- status: IN_PROGRESS (2026-10-22) — dispatcher session agents
-- Model: sonnet
-- depends: E35
-- skills: small-business:seo-ai-visibility (opt), dataviz (opt)
-- do: `content/business-models/<key>.md` for cafe (refine the E35 reference page), saas, retail, services,
-  home_services, fitness, real_estate: how the business makes money, revenue model and drivers, cost structure,
-  startup investment and funding, unit economics, break-even and what moves it, risks, how to use the model
-  (Low / Base / High), FAQ. Uses every table placeholder; 900–1,500 words each; links to the industry's SEO page and
-  calculators.
-- done when: 7 pages render; the E35 copy test passes (placeholders, cited figures, 900–1,500 words).
-
 ### M14 — Business-model pages, the 10 new industries
 - status: IN_PROGRESS (2026-10-22) — dispatcher session agents
 - Model: sonnet
@@ -109,21 +96,6 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 - do: as M13 for bakery, salon, dental, car_wash, laundromat, childcare, food_truck, auto_repair, pet_care,
   guest_house. Ship in batches as templates merge.
 - done when: 10 pages render; copy test passes.
-
-### M15 — Calculators, existing industries + cross-industry
-- status: IN_PROGRESS (2026-10-22) — dispatcher session agents
-- Model: sonnet
-- depends: E34
-- skills: as M13, frontend-design (opt)
-- do: spec files (with worked examples and 400–900 words of explanation: what it computes, formula in words,
-  how to read the result, typical mistakes, FAQ) for: cafe / restaurant (table turnover revenue, recipe cost,
-  prime cost — beyond the three E34 ones), SaaS (LTV ÷ CAC, MRR growth & churn, runway), retail (markup vs margin,
-  inventory turnover, store break-even), services (billable utilisation & rate, project price), home services
-  (job price, technician capacity), fitness (membership break-even, churn → members), real estate (cap rate,
-  cash-on-cash, DSCR, mortgage payment), cross-industry (break-even, startup cost, loan payment, payback).
-  Every page ends with the model promotion block (E34) and explains what the calculator cannot do that the model
-  does (time, cash, scenarios, lender-ready statements).
-- done when: all specs pass the E34 tests; pages render; examples hand-checked in the PR description.
 
 ### M16 — Calculators, the 10 new industries
 - status: IN_PROGRESS (2026-10-22) — dispatcher session agents
