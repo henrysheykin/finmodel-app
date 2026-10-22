@@ -91,7 +91,7 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 > (opt) for search intent, `docs` (opt) for structure.
 
 ### M13 — Business-model pages, existing 7 industries
-- status: TODO
+- status: IN_PROGRESS (2026-10-22) — dispatcher session agents
 - Model: sonnet
 - depends: E35
 - skills: small-business:seo-ai-visibility (opt), dataviz (opt)
@@ -112,7 +112,7 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 - done when: 10 pages render; copy test passes.
 
 ### M15 — Calculators, existing industries + cross-industry
-- status: TODO
+- status: IN_PROGRESS (2026-10-22) — dispatcher session agents
 - Model: sonnet
 - depends: E34
 - skills: as M13, frontend-design (opt)
@@ -127,7 +127,7 @@ One task per template, each one file + tests + sample + memo per `docs/templates
 - done when: all specs pass the E34 tests; pages render; examples hand-checked in the PR description.
 
 ### M16 — Calculators, the 10 new industries
-- status: TODO
+- status: IN_PROGRESS (2026-10-22) — dispatcher session agents
 - Model: sonnet
 - depends: E34, E36–E45 (each after its template)
 - skills: as M15
