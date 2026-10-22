@@ -239,6 +239,10 @@ class PetCareTemplate(Template):
         "em",
     )
     kpi_flows = (
+        "capex_tables",
+        "capex_runs",
+        "capex_fit",
+        "capex_refresh",
         "grooms",
         "groom_cap",
         "lost_grooms",
@@ -675,6 +679,10 @@ class PetCareTemplate(Template):
             capex=capex,
             land=land,
             kpis={
+                "capex_tables": d["tables"] * d["capex_table"] if p == 1 else 0.0,
+                "capex_runs": d["runs"] * d["capex_run"] if p == 1 else 0.0,
+                "capex_fit": d["capex_fit"] if p == 1 else 0.0,
+                "capex_refresh": refresh,
                 "grooms": grooms,
                 "groom_cap": cap,
                 "lost_grooms": demand - grooms,

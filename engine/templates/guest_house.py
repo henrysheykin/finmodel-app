@@ -216,7 +216,17 @@ class GuestHouseTemplate(Template):
         "ebitda": "ebitda",
     }
     kpi_derived = ("occ_rate", "adr_eff", "revpar", "trevpar", "extras_share", "rev_stay", "gm", "em")
-    kpi_flows = ("room_nights", "avail_nights", "stays", "rev_room", "rev_extras")
+    kpi_flows = (
+        "capex_buy",
+        "capex_rooms",
+        "capex_fit",
+        "capex_ffe",
+        "room_nights",
+        "avail_nights",
+        "stays",
+        "rev_room",
+        "rev_extras",
+    )
 
     def driver_specs(self) -> list[DriverSpec]:
         rm, pr, cs, fx, cx = (
@@ -536,7 +546,8 @@ class GuestHouseTemplate(Template):
             - nights * d["supplies_night"] * cidx
         )
         buy = d["capex_buy"] if p == 1 else 0.0
-        capex = buy + d["rooms"] * d["ffe_room"] / 12 * cidx * t.mpp
+        ffe = d["rooms"] * d["ffe_room"] / 12 * cidx * t.mpp
+        capex = buy + ffe
         if p == 1:
             capex += d["rooms"] * d["capex_room"] + d["capex_fit"]
         return Top(
@@ -556,6 +567,10 @@ class GuestHouseTemplate(Template):
             capex=capex,
             land=buy * d["land_pct"],
             kpis={
+                "capex_buy": buy,
+                "capex_rooms": d["rooms"] * d["capex_room"] if p == 1 else 0.0,
+                "capex_fit": d["capex_fit"] if p == 1 else 0.0,
+                "capex_ffe": ffe,
                 "room_nights": nights,
                 "avail_nights": avail,
                 "stays": stays,

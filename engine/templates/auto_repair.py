@@ -214,7 +214,19 @@ class AutoRepairTemplate(Template):
         "gm",
         "em",
     )
-    kpi_flows = ("billed", "ro", "cap_hours", "lost_hours", "rev_labor", "rev_parts", "parts_cost")
+    kpi_flows = (
+        "capex_lifts",
+        "capex_diag",
+        "capex_fit",
+        "capex_refresh",
+        "billed",
+        "ro",
+        "cap_hours",
+        "lost_hours",
+        "rev_labor",
+        "rev_parts",
+        "parts_cost",
+    )
 
     def driver_specs(self) -> list[DriverSpec]:
         dem, cap, price, parts, cost, fix, cx = (
@@ -574,6 +586,10 @@ class AutoRepairTemplate(Template):
             capex=capex,
             land=land,
             kpis={
+                "capex_lifts": d["bays"] * d["capex_bay"] if p == 1 else 0.0,
+                "capex_diag": d["capex_diag"] if p == 1 else 0.0,
+                "capex_fit": d["capex_fit"] if p == 1 else 0.0,
+                "capex_refresh": refresh,
                 "billed": billed,
                 "ro": ro_demand * served,
                 "cap_hours": cap,
