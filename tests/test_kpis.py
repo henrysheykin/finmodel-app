@@ -225,6 +225,7 @@ def test_reference_shows_n_a_for_zero_or_negative_denominators():
 
 # --------------------------------------------------------------------------- KPI rows the challenger recomputes
 EXPECTED_ROWS = {  # E27 review: every KPI row shown on the Dashboard industry block and named in the E31 task
+    "childcare": {"occ", "enr_end", "rev_child", "care_pct"},
     "saas": {"arr", "ltv_cac", "cust_end"},
     "real_estate": {"noi", "occ", "ds", "dscr"},
     "services": {"util", "eff_rate", "rev_fte", "hours"},
@@ -238,7 +239,7 @@ EXPECTED_ROWS = {  # E27 review: every KPI row shown on the Dashboard industry b
     "pet_care": {"grooms", "groom_use", "occ_rate", "revpan"},
     "guest_house": {"occ_rate", "adr_eff", "revpar", "stays"},
     "salon": {"util", "services", "ticket"},
-    "childcare": {"occ", "enr_end", "rev_child", "care_pct"},
+    "dental": {"pat_end", "util_doc", "prod_visit", "coll_rate"},
 }
 
 

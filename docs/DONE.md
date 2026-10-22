@@ -59,3 +59,4 @@ New lines go at the end of the table (protocol step 9).
 | E36 | Template: bakery | #54 | done 2026-10-22 |
 | M15 | Calculators, existing industries + cross-industry | #62 | done 2026-10-22 |
 | M13 | Business-model pages, existing 7 industries | #58 | done 2026-10-22 |
+| E38 | Template: dental practice | #63 | done 2026-10-22 |

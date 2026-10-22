@@ -94,6 +94,7 @@ webhook, Resend domain).
       - [ ] Pet grooming & boarding (grooming stations, groomers, kennel runs, occupancy, nightly rate): sample `samples/pet_care-full.xlsx` (+ `pet_care-full-5y.xlsx`), memo `docs/templates/pet_care.md` (questions at the end).
       - [ ] Guest house / bed and breakfast (rooms, occupancy, ADR, breakfast, cleaning per stay, annuity property loan): sample `samples/guest_house-full.xlsx` (+ `guest_house-full-5y.xlsx`), memo `docs/templates/guest_house.md` (questions at the end).
       - [ ] Bakery (retail counter + wholesale): sample `samples/bakery-full.xlsx` (+ `bakery-full-5y.xlsx`), memo `docs/templates/bakery.md` (questions at the end).
+      - [ ] Dental practice: sample `samples/dental-full.xlsx` (+ `dental-full-5y.xlsx`), memo `docs/templates/dental.md` (questions at the end).
       - [ ] Goal modules (break-even, DCF valuation, investor summary — all templates): sample
             `samples/cafe-investor_pitch.xlsx`, memo `docs/templates/goal-modules.md` (questions at the end).
 - [ ] E35: open https://www.sba.gov/business-guide/plan-your-business/calculate-your-startup-costs once and confirm it is the
