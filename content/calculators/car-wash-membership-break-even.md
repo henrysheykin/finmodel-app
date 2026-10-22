@@ -93,7 +93,7 @@ An unlimited wash plan turns a car wash into a subscription business: monthly re
   format: money
 - key: be_members
   label: Members needed to break even
-  formula: max(fixed - retail_contrib, 0) / max(contrib, 0)
+  formula: if(fixed - retail_contrib <= 0, 0, (fixed - retail_contrib) / max(contrib, 0))
   format: int
   highlight: true
   note: Round up in practice.
@@ -129,6 +129,9 @@ outputs: contrib, be_members, profit_now
 - name: Single washes cover the fixed costs
   inputs: fixed=20000, plan_price=25, visits=3.5, var_wash=0.9, fee_pct=3, retail_washes=2500, retail_price=10, members_now=300
   expect: contrib=21.1, retail_contrib=22750, be_members=0, mrr=7500, profit_now=9080, mrr_share=23.076923
+- name: Single washes cover the fixed costs and members lose money
+  inputs: fixed=20000, plan_price=10, visits=15, var_wash=0.9, fee_pct=3, retail_washes=2200, retail_price=11, members_now=300
+  expect: contrib=-3.8, retail_contrib=22220, be_members=0, mrr=3000, profit_now=1080, mrr_share=11.029412
 - name: Members who cost more than they pay
   inputs: fixed=38000, plan_price=10, visits=15, var_wash=0.9, fee_pct=3, retail_washes=2200, retail_price=11, members_now=1800
   expect: contrib=-3.8, retail_contrib=22220, be_members=—, mrr=18000, profit_now=-22620, mrr_share=42.654028
@@ -183,4 +186,4 @@ Yes. Their contribution is taken off the fixed costs before the members needed a
 
 ### Why does the result show a dash?
 
-If a member costs as much as the plan brings in, or more, each new member adds nothing, so no number of members breaks even.
+If single washes do not cover the fixed costs and a member costs as much as the plan brings in, or more, each new member adds nothing, so no number of members breaks even. If single washes alone cover the fixed costs, the answer is 0 members.

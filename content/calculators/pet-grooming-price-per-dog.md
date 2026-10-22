@@ -201,7 +201,7 @@ It prices one groom at a time. It does not know how many dogs you will book, how
 
 ### Should I charge by breed or by weight?
 
-Either. Time is what drives cost, and coat type often matters as much as size. Use the calculator with the minutes you actually spend on each type of dog.
+Either. Time is what drives cost, and coat type can matter as much as size. Use the calculator with the minutes you actually spend on each type of dog.
 
 ### How do I price add-ons?
 

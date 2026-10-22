@@ -161,7 +161,7 @@ The parts margin is 31.0%, not 45%. The markup is the profit as a share of the c
 
 The blended gross profit per order says what each car that comes in contributes to the rent, the service writers and everything else. The mix between labor and parts changes it. In the second example a labor-heavy order of 5 hours with $60 of parts earns $474 of gross profit and a margin of 64.6%, because most of the sale is labor. In the third, a parts-heavy order with 1 hour and $480 of parts at a markup of 20% earns $175 on a sale of $691, a margin of 25.3%: the parts margin is 16.7%, and the order carries a lot of money but little profit.
 
-The table shows what the markup on parts does to the parts margin, the profit per order and the profit per month. Parts pricing is where shops differ most, and it is also where customers compare most. A markup that suits a cheap part may not suit an expensive one, so some shops use a sliding scale. Test yours on the typical orders you handle.
+The table shows what the markup on parts does to the parts margin, the profit per order and the profit per month. A markup that suits a cheap part may not suit an expensive one, so some shops use a sliding scale. Test yours on the typical orders you handle, and compare the prices a customer can see with those of other shops in your area.
 
 ## Typical mistakes
 
@@ -187,7 +187,7 @@ It depends on the part, the supplier and your market. Treat it as your own assum
 
 ### Is labor or parts more profitable?
 
-Labor usually earns a higher margin, parts a lower margin on a larger sale. The calculator shows both on your numbers.
+It depends on your rates and markups. Labor earns a margin on a smaller sale and parts a margin on a larger one; the calculator shows the margin and the profit of both on your numbers.
 
 ### Why does the result show a dash?
 

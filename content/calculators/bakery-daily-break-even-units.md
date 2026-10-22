@@ -137,13 +137,13 @@ The calculator works out what a unit sold earns after the units that were not so
 4. **Units to sell per day** = units per month ÷ days open.
 5. **Units to bake per day** = units to sell per day ÷ (1 − share not sold).
 
-With the starting numbers (example values, not benchmarks) a unit costs $1.35 to make, and with 6% not sold each unit sold costs $1.44. At an average price of $3.90 the contribution is $2.46. Fixed costs of $21,000 need 8,523 units a month, which is 328 a day over 26 days, or $1,278 of sales a day. To sell 328 units the bakery must bake 349. Today it sells 520 units a day, which is 37.0% above the break-even, and earns a profit of $12,311 a month.
+With the starting numbers (example values, not benchmarks) a unit costs $1.35 to make, and with 6% not sold each unit sold costs $1.44. At an average price of $3.90 the contribution is $2.46. Fixed costs of $21,000 need 8,523 units a month, which is 328 a day over 26 days, or $1,278 of sales a day. To sell 328 units the bakery must bake 349. Today it sells 520 units a day, so sales could fall by 37.0% before the bakery reaches break-even, and it earns a profit of $12,311 a month.
 
 ## How to read the result
 
 The margin of safety is how far sales can fall before the bakery loses money. The starting bakery can lose more than a third of its volume, while the wholesale-heavy bakery in the third example sells 855 units a day to break even and sells 950, a cushion of only 10.0%. Its average price is $2.40, so each unit sold leaves $1.42, and the large fixed costs of $34,000 need a lot of units.
 
-The table changes the average price by a few percent either way. Because the fixed costs are spread over a small contribution, a small change in price changes the break-even by much more than the change in price. If the bakery sells at a blended price, check how the mix of counter and wholesale units shifts it.
+The table changes the average price by a few percent either way. Because the fixed costs are spread over a small contribution, a small change in price changes the break-even by more than the change in price: in the starting case, by roughly one and a half to two times as much. If the bakery sells at a blended price, check how the mix of counter and wholesale units shifts it.
 
 ## Typical mistakes
 

@@ -113,6 +113,7 @@ A boarding kennel sells nights, and a night that is not sold is gone for good. T
   label: Occupancy needed to break even
   formula: fixed / (available * max(rate + addon - var_night, 0)) * 100
   format: percent
+  note: Above 100% means the kennels cannot cover the fixed costs at this rate.
 ```
 
 ```table

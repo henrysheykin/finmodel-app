@@ -155,7 +155,7 @@ With the starting numbers (example values, not benchmarks) a night at $135 less 
 
 ## How to read the result
 
-The cushion is the number to watch. A house that is 3 points above break-even loses money if a few bookings fall through. The table shows how the break-even occupancy and the profit move with the rate; usually a small rise in the rate buys more cushion than the same effort spent on filling rooms.
+The cushion is the number to watch. A house that is 3 points above break-even loses money if a few bookings fall through. The table shows how the break-even occupancy and the profit move with the rate; compare what a change in the rate does with what the same change in occupancy would do on your numbers.
 
 The second example is a house of 14 rooms at $95 with fixed costs of $24,000 and a 15% commission. Each occupied night contributes $68.75, so it needs 83.1% occupancy and sells 60%, and its rate would have to be $126.16 to break even at that occupancy. The third example has a rate of $60: each night contributes $33.80, and the occupancy needed is 205.5%. A figure above 100% means the rooms cannot cover the fixed costs at that rate, however full they are; the rate or the costs must change.
 
@@ -169,7 +169,7 @@ The second example is a house of 14 rooms at $95 with fixed costs of $24,000 and
 
 ## What this calculator cannot do
 
-It treats the month as steady. It does not show how the rate and occupancy change through the year, the build-up after opening, repairs, seasonal staffing or the cash needed for the property. A financial model for a guest house does this month by month with the financing and cash flow, runs Low / Base / High scenarios, and ends in lender-ready statements with a Checks sheet. For the revenue per room that goes with these figures, use the [ADR, occupancy and RevPAR calculator](/calculators/guest-house-adr-occupancy-revpar).
+It treats the month as steady. It does not show how occupancy changes through the year, the build-up after opening, repairs, the property loan or the cash needed for the property. The financial model for a guest house builds occupancy by month with a June to August season and the opening ramp, adds yearly rate growth, repairs and the loan with the cash flow, runs Low / Base / High scenarios, and ends in lender-ready statements with a Checks sheet. For the revenue per room that goes with these figures, use the [ADR, occupancy and RevPAR calculator](/calculators/guest-house-adr-occupancy-revpar).
 
 ## FAQ {#faq}
 

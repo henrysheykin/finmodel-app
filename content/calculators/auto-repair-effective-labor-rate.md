@@ -146,7 +146,7 @@ With the starting numbers (example values, not benchmarks) five technicians paid
 
 The gap between the posted rate and the effective rate is the money that leaks out between the sign and the invoice. Three leaks matter: time paid but not on a repair order (waiting for parts, cleaning, training), the speed of the technicians against book time, and the labor you discount or give away. The table shows how steeply the effective rate depends on the first: every step of the share of time on repair orders moves the billed hours, the rate and the profit together.
 
-The last line turns the gap into a price. To earn $120 for every paid hour in the starting case, the posted rate would have to be $143.04. That is not a recommendation to raise the rate by that much; it shows the size of the leak. Fixing the leaks is often easier than raising the rate, and the rate you can charge depends on your market.
+The last line turns the gap into a price. To earn $120 for every paid hour in the starting case, the posted rate would have to be $143.04. That is not a recommendation to raise the rate by that much; it shows the size of the leak. Compare the cost of fixing each leak with the effect of a higher rate, and remember that the rate you can charge depends on your market.
 
 The other examples show the contrast. A shop with a posted rate of $135 that works slower than book time, at 92 hours billed per 100 worked, with 75% of time on repair orders and 8% of labor discounted, earns an effective $85.70 per paid hour, and would need a posted rate of $212.67 to earn $135. A very efficient shop with a rate of $110 and 125 hours billed per 100 worked earns $118.80 per paid hour, more than its posted rate.
 
