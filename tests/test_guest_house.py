@@ -103,6 +103,11 @@ def test_stays_are_room_nights_over_length_of_stay_and_guarded(gh_brief):
     assert floor["stays"] == pytest.approx(floor["room_nights"])  # a stay is at least one night
 
 
+def test_length_of_stay_below_one_night_is_rejected(gh_brief):
+    with pytest.raises(BriefError, match="los"):
+        GH.validate(with_values(gh_brief, los=0.5))
+
+
 def test_cost_of_sales_is_housekeeping_ota_extras_cleaning_and_supplies(gh_brief):
     d = gh_brief.values(2)
     s = run(with_values(gh_brief, **ROOMY))

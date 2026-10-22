@@ -13,7 +13,7 @@ from engine.core import LAND_LINE, LOAN_STYLES, reference_run
 from engine.goals import NA
 from engine.returns import irr, sign_changes
 from engine.spec import Timing
-from engine.templates import get_template, planned
+from engine.templates import TEMPLATES, get_template, planned
 
 RE = get_template("real_estate")
 STAGES = ["planning", "early", "growing", "established"]
@@ -178,6 +178,11 @@ def test_returns_needs_its_drivers(re_brief):
     )
     with pytest.raises(ValueError, match="exit_cap"):
         plan(b, Broken())
+
+
+def test_annuity_loans_are_a_deliberate_choice():
+    # property businesses repay a level-payment mortgage; every other template keeps the straight loan
+    assert {k for k, t in TEMPLATES.items() if t.loan_style == "annuity"} == {"real_estate", "guest_house"}
 
 
 def test_loan_lines_follow_loan_style_and_returns_only_for_real_estate(any_brief):
