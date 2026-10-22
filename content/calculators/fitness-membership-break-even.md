@@ -78,7 +78,7 @@ A gym covers its rent and staff whether ten members or a thousand turn up. Each 
   format: number1
   highlight: true
 - key: be_util
-  label: Share of capacity that is
+  label: Share of capacity needed to break even
   formula: be_members / capacity * 100
   format: percent
 - key: gap
@@ -145,7 +145,7 @@ The other examples show how different the businesses are. A boutique studio with
 - **Mixing prices.** If you sell monthly, annual and drop-in passes, enter the average dues per member per month.
 - **Forgetting the cost per member.** Payment fees, cleaning and supplies add up as members do.
 - **Leaving out the owner's pay.** If you work in the gym, include a wage in the fixed costs.
-- **Ignoring seasonality.** Membership usually dips in summer and peaks in the new year. Use a typical month, or run the numbers for the weakest months too.
+- **Ignoring seasonality.** If your membership is seasonal, use a typical month, or run the numbers for the weakest months too.
 
 ## What this calculator cannot do
 

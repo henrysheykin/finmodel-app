@@ -117,7 +117,7 @@ outputs: net_burn, runway, cash_12
 
 With the starting numbers (example values, not benchmarks) the company has $400,000, collects $30,000 a month and pays out $60,000, so the net burn is $30,000 and the runway is 13.3 months. If a fundraise takes 6 months, the company should start about 7.3 months from now, because the money has to arrive before the cash runs out, not on the day it does.
 
-The simple runway assumes that nothing changes. Revenue usually grows, so the calculator adds a second view: cash after 12 months, with revenue growing at the monthly rate you enter and costs held flat. At 4% growth the company ends the year with $130,774 and revenue of $46,184 in month 12, up from $30,000. That does not mean the runway is longer than 13.3 months in every case; it means that if the growth assumption holds and costs stay flat, the company does not run out within the year. The growth is your assumption, so test it against what you have actually achieved.
+The simple runway assumes that nothing changes. Revenue usually grows, so the calculator adds a second view: cash after 12 months, with revenue growing at the monthly rate you enter and costs held flat. At 4% growth the company has $130,774 of cash at the end of the year, and revenue of $46,184 in month 12, up from $30,000. Cash can dip lower in between, so the figure is a year-end balance, not the lowest point. That does not mean the runway is longer than 13.3 months in every case; it means that if the growth assumption holds and costs stay flat, the company does not run out within the year. The growth is your assumption, so test it against what you have actually achieved.
 
 ## How to read the result
 

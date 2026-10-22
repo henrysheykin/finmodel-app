@@ -106,10 +106,10 @@ A quote that covers only the hours on site and the materials loses money, becaus
   formula: price - cost
   format: money
 - key: per_hour
-  label: Price per hour on site
+  label: Price per hour of job time
   formula: price / hours
   format: money
-  note: The quote divided by the hours on site, for one person.
+  note: The quote divided by the hours on site, whatever the crew size.
 ```
 
 ```table
@@ -145,13 +145,13 @@ The calculator builds the quote from the full cost of the visit and then adds th
 
 The division in the last step is deliberate. A margin is a share of the price, so adding 30% to the cost earns less than 30% of the quote. Dividing by (1 − margin) makes the profit exactly the share of the price you set.
 
-With the starting numbers (example values, not benchmarks) two workers spend 3 hours on site and 0.75 hours travelling and loading, which is 7.50 paid hours at $38 an hour. The materials cost $140, the vehicle $18 and the share of overhead $35, so the job costs $478. To keep a margin of 30% the quote is $683 and the profit on the job is $205. Divided by the 3 hours on site, the price is $228 per hour on site for one person. That is much higher than the labor cost of $38, and it is not greed: it is what pays for travel, materials, the van, the office and the profit.
+With the starting numbers (example values, not benchmarks) two workers spend 3 hours on site and 0.75 hours travelling and loading, which is 7.50 paid hours at $38 an hour. The materials cost $140, the vehicle $18 and the share of overhead $35, so the job costs $478. To keep a margin of 30% the quote is $683 and the profit on the job is $205. Divided by the 3 hours on site, the price is $228 per hour of job time, whatever the crew size. That is much higher than the labor cost of $38, and it is not greed: it is what pays for travel, materials, the van, the office and the profit.
 
 ## How to read the result
 
-The price per hour on site is the number to compare with what customers expect to pay. It looks high because the hour on site carries the hours before and after it, and the overhead. If customers will not pay it, look for the cause: the travel hours, the crew size or the overhead share, rather than cutting the margin first.
+The price per hour of job time is the number to compare with what customers expect to pay. It looks high because the hour on site carries the hours before and after it, and the overhead. If customers will not pay it, look for the cause: the travel hours, the crew size or the overhead share, rather than cutting the margin first.
 
-The sensitivity table shows the cost, the quote and the profit for jobs of different lengths. Short jobs carry a larger share of fixed per-visit costs such as travel and the overhead share, so their price per hour is higher. A minimum call-out fee exists for that reason. The one-person service call in the second example takes 1.5 hours on site and costs $141, so it needs a quote of $235 at a margin of 40%, which gives a profit of $94 and $157 per hour on site. A day-long job for a crew of three costs $2,337, with a quote of $3,116 and a profit of $779.
+The sensitivity table shows the cost, the quote and the profit for jobs of different lengths. Short jobs carry a larger share of fixed per-visit costs such as travel and the overhead share, so their price per hour is higher. A minimum call-out fee exists for that reason. The one-person service call in the second example takes 1.5 hours on site and costs $141, so it needs a quote of $235 at a margin of 40%, which gives a profit of $94 and $157 per hour of job time. A day-long job for a crew of three costs $2,337, with a quote of $3,116 and a profit of $779.
 
 ## Typical mistakes
 
@@ -182,4 +182,4 @@ Yes. It is before any sales tax.
 
 ### Why does the price per hour show a dash?
 
-If the hours on site are zero, a price per hour on site cannot be worked out.
+If the hours on site are zero, a price per hour of job time cannot be worked out.

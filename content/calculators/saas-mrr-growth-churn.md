@@ -159,7 +159,7 @@ Other cases on this page show the extremes. With no new customers and 5% churn, 
 
 ## What this calculator cannot do
 
-It rolls one revenue line forward with constant assumptions. It cannot link new MRR to the marketing spend that produces it, hold prices or plans apart, or show what the growth costs in cash. A financial model does: monthly revenue by plan, churn and expansion as separate drivers, costs and headcount, cash and the balance sheet, and Low / Base / High scenarios so you can see what happens if churn is worse than planned. It also carries a Checks sheet and statements an investor or lender can read. The [LTV to CAC calculator](/calculators/saas-ltv-cac) covers the cost of winning customers, and the [runway calculator](/calculators/saas-runway) the cash.
+It rolls one revenue line forward with constant assumptions. It cannot link new MRR to the marketing spend that produces it, or show what the growth costs in cash. A financial model does: monthly revenue by channel, churn and expansion as separate drivers, costs and headcount, cash and the balance sheet, and Low / Base / High scenarios so you can see what happens if churn is worse than planned. It also carries a Checks sheet and statements an investor or lender can read. The [LTV to CAC calculator](/calculators/saas-ltv-cac) covers the cost of winning customers, and the [runway calculator](/calculators/saas-runway) the cash.
 
 ## FAQ {#faq}
 

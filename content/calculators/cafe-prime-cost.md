@@ -152,7 +152,7 @@ The two other examples on this page show the range. A quiet month with $38,000 o
 
 ## What this calculator cannot do
 
-It looks at one period that has already happened. It cannot say what next quarter looks like, how a new hire, a price change or a second site changes the figures, or whether you have the cash to cover a slow month. A financial model does: months and years, cash flow, Low / Base / High scenarios for sales and wages, lender-ready statements and a Checks sheet that flags errors. The [restaurant break-even guide](/guides/restaurant-break-even-analysis) covers how prime cost fits into the plan, and the [recipe cost calculator](/calculators/cafe-recipe-cost) works on the food side.
+It looks at one period that has already happened. It cannot say what next quarter looks like, how a new hire or a price change affects the figures, or whether you have the cash to cover a slow month. A financial model does: months and years, cash flow, Low / Base / High scenarios for sales and wages, lender-ready statements and a Checks sheet that flags errors. The [restaurant break-even guide](/guides/restaurant-break-even-analysis) covers how prime cost fits into the plan, and the [recipe cost calculator](/calculators/cafe-recipe-cost) works on the food side.
 
 ## FAQ {#faq}
 
