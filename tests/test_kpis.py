@@ -234,6 +234,7 @@ EXPECTED_ROWS = {  # E27 review: every KPI row shown on the Dashboard industry b
     "cafe": {"cust", "ticket"},
     "car_wash": {"members_end", "washes_day", "cap_use", "rev_per_wash"},
     "auto_repair": {"billed_h", "cap_use", "rev_ro", "rev_hour"},
+    "pet_care": {"grooms", "groom_use", "occ_rate", "revpan"},
     "salon": {"util", "services", "ticket"},
 }
 
