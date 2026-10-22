@@ -69,7 +69,7 @@ _STAGES: dict[str, dict] = {
             "rent_psf": (32, 30, 28),
             "pat_start": (100, 150, 200),
             "ref_new": (14, 18, 22),
-            "ref_g": (0.2, 0.3, 0.4),
+            "ref_g": (0.1, 0.2, 0.3),
             "mkt": (8000, 8000, 8000),
             "mkt_g": (-0.1, 0.0, 0.1),
             "cpnp": (240, 220, 200),
@@ -84,16 +84,16 @@ _STAGES: dict[str, dict] = {
             "ga_other": (1500, 1500, 1500),
             "ops_equipped": (0, 0, 0),
             "capex_img": (70000, 70000, 70000),
-            "equity": (400000, 400000, 400000),
+            "equity": (450000, 450000, 450000),
             "loan_amount": (450000, 450000, 450000),
             "loan_rate": (0.09, 0.09, 0.09),
             "loan_term_years": (10, 10, 10),
         },
         "roles": {
-            "owner": (1, 120000, 1, 0.0),
-            HYG: (0.6, 95000, 3, 0.6),
-            "asst": (1.5, 44000, 1, 0.3),
-            "front": (1, 40000, 1, 0.3),
+            "owner": (1, 150000, 1, 0.0),
+            HYG: (0.8, 95000, 3, 0.25),
+            "asst": (1.5, 44000, 1, 0.15),
+            "front": (1, 40000, 1, 0.15),
             "mgr": (0, 65000, 1, 0.0),
         },
     },
@@ -349,6 +349,18 @@ class DentalTemplate(Template):
     def validate(self, brief: Brief) -> None:
         if HYG not in {r.key for r in brief.roles}:
             raise BriefError("template 'dental' needs the 'hyg' (hygienists) role")
+        assoc = [d for d in brief.drivers if d.key == "assoc_share"]
+        if any(max(d.low, d.base, d.high) > 0 for d in assoc):
+            clash = [
+                r.key
+                for r in brief.roles
+                if r.key != "owner" and any(w in f"{r.key} {r.title}".lower() for w in ("assoc", "dentist", "doctor"))
+            ]
+            if clash:
+                raise BriefError(
+                    f"associate dentists are paid through 'assoc_share' and 'assoc_pct'; remove the payroll role(s) "
+                    f"{clash} or set 'assoc_share' to 0, otherwise they are paid twice"
+                )
         super().validate(brief)
 
     # ------------------------------------------------------------------ formula lines
@@ -449,7 +461,7 @@ class DentalTemplate(Template):
         return [
             Line(
                 "payroll",
-                "Staff payroll (owner dentist, hygienists, assistants, front desk)",
+                "Staff payroll (owner dentist, hygienists, assistants, front desk, office manager)",
                 "={payroll_total}",
                 "top",
                 section="Operating expenses",

@@ -50,8 +50,23 @@ def test_stage_defaults_scale_with_capacity(stage):
     """Space, rooms and staff go with the number of chairs."""
     d = DENTAL.default_brief(stage).values(2)
     assert 340 <= d["sqft"] / (d["ops"] + d["hyg_ops"]) <= 450  # sq ft per room, a plausible suite
-    assert d["hyg_ops"] >= d["hyg_fte"] * (1 + d["hyg_fte_g"]) ** 2 - 1  # rooms for the hygienists on staff by year 3
-    assert d["asst_fte"] >= 0.5 * d["ops"]  # assistants for the doctor chairs
+    assert d["asst_fte"] >= 0.5 * d["ops"]  # assistants for the doctor chairs in year 1
+    for y in range(1, 6):  # every year of a five-year horizon: headcount growth never outruns rooms and chairs
+        grow = {k: d[f"{k}_fte"] * (1 + d[f"{k}_fte_g"]) ** (y - 1) for k in ("hyg", "asst", "front")}
+        assert grow["hyg"] <= d["hyg_ops"] + 0.25, (stage, y, grow)  # a hygienist needs a hygiene room
+        assert grow["asst"] <= 1.5 * d["ops"], (stage, y, grow)  # at most 1.5 assistants per doctor chair
+        assert grow["front"] <= 0.75 * d["ops"] + 1, (stage, y, grow)
+
+
+@pytest.mark.parametrize("stage", STAGES)
+def test_base_margin_does_not_collapse_over_five_years(stage):
+    """Staffing that outgrows the chairs would show as a falling margin; Base EBITDA margin must not fall year on year
+    once the practice has opened (year 2 onward) by more than a few points."""
+    s = python_model(DENTAL.default_brief(stage).with_options(horizon_years=5), 2)
+    em = [s["ebitda"][y] / s["rev"][y] for y in range(1, 6)]
+    for y in range(1, 5):
+        assert em[y] >= em[y - 1] - 0.03, (stage, em)
+    assert min(em[1:]) > 0.05, (stage, em)
 
 
 def test_cost_ratios_improve_with_scale():
@@ -203,11 +218,12 @@ def test_annual_approximates_monthly_with_attrition_and_capacity(stage):
     """Annual columns compound the monthly loss rate and let the year's new patients join mid-year; the chair and
     hygiene caps bind month by month. So annual and monthly agree closely, not to the dollar."""
     b = DENTAL.default_brief(stage)
+    b = b.with_options(horizon_years=5)
     m, a = python_model(b, 2), python_model(b.with_options(granularity="annual"), 2)
-    for y in (1, 2, 3):
-        assert a["pat_close"][y] == pytest.approx(m["pat_close"][y], rel=0.03), (stage, y)
-        assert a["rev"][y] == pytest.approx(m["rev"][y], rel=0.07), (stage, y)
-        assert a["prod"][y] == pytest.approx(m["prod"][y], rel=0.07), (stage, y)
+    for y in range(1, 6):
+        assert a["pat_close"][y] == pytest.approx(m["pat_close"][y], rel=0.02), (stage, y)
+        assert a["rev"][y] == pytest.approx(m["rev"][y], rel=0.02), (stage, y)
+        assert a["prod"][y] == pytest.approx(m["prod"][y], rel=0.02), (stage, y)
 
 
 @pytest.mark.parametrize("g", ["monthly", "annual"])
@@ -238,3 +254,17 @@ def test_late_hygienist_has_no_hygiene_capacity_before_start(dental_brief):
     s = run(b)
     assert s["cap_hyg"][5] == pytest.approx(0)
     assert s["cap_hyg"][6] > 0
+
+
+def test_associates_are_not_paid_twice(dental_brief):
+    """Associate dentists are paid through assoc_share / assoc_pct; a payroll role for them would double count."""
+    d = dental_brief.model_dump()
+    d["roles"].append({"key": "associate", "title": "Associate dentist"})
+    for suffix, v in (("fte", 1), ("salary", 120000), ("start", 1), ("fte_g", 0)):
+        d["drivers"].append({"key": f"associate_{suffix}", "low": v, "base": v, "high": v})
+    both = dental_brief.model_validate(d)
+    with pytest.raises(BriefError, match="paid twice"):
+        DENTAL.validate(both)
+    off = with_values(both, assoc_share=0)  # salaried associates are fine when nobody is paid on collections
+    DENTAL.validate(off)
+    DENTAL.validate(dental_brief)  # the owner dentist role is not an associate

@@ -30,7 +30,7 @@ fitness and SaaS convention).
 Insurance mix turns it into revenue: PPO patients (share of production) are written down by the in-network fee
 schedule, and a small share of the net is never collected. *Revenue = collections* = production − PPO write-offs −
 bad debt. The KPI table shows collections ÷ gross production (about 85 % at Base). This ratio is lower than the
-"collection ratio" dental consultants quote (collections ÷ net production, usually 97–99 %), because the base here is
+"collection ratio" dental consultants quote (collections ÷ net production, commonly said to be 97–99 %: a rule of thumb that is an *assumption* here, not sourced), because the base here is
 gross production before the PPO write-off.
 
 **Cost of sales.** Dental supplies (% of gross production), lab fees (% of doctor production; hygiene needs no lab)
@@ -73,8 +73,8 @@ Low / High values are in the code (`engine/templates/dental.py`); Low stacks eve
 | Hygiene visits per hygienist per working day | 8 | visits | assumption: one-hour recall appointments in an 8-hour day |
 | Working days per month | 18 | days | assumption: four and a half days a week less holidays and CE |
 | Active patients at start | 150 / 1,500 / 3,000 / 4,200 | # | assumption (a new practice starts with founder-referred patients) |
-| Referral & walk-in new patients per month | 18 / 20 / 24 / 20 | # | assumption; growth per year 30 % / 10 % / 6 % / 3 % |
-| Marketing budget per month | $8,000 / 5,500 / 7,000 / 8,000 | $ | about 4 % of collections in the trading stages (22 % in the first year of a start-up); benchmark range 3–5 % ([DentiMax overhead report](https://dentimax.com/dental-office-overhead-percentages/), secondary source) |
+| Referral & walk-in new patients per month | 18 / 20 / 24 / 20 | # | assumption; growth per year 20 % / 10 % / 6 % / 3 % |
+| Marketing budget per month | $8,000 / 5,500 / 7,000 / 8,000 | $ | 6.0 % / 4.3 % / 3.6 % of year-1 collections in the early / growing / established stages (22 % in the first year of a start-up); benchmark range 3–5 % ([DentiMax overhead report](https://dentimax.com/dental-office-overhead-percentages/), secondary source) |
 | Marketing cost per new patient | $220 / 220 / 210 / 200 | $ | assumption (falls with scale and reputation) |
 | Active patients lost per month | 1.5 % / 1.5 % / 1.4 % / 1.3 % | % | assumption (about 15–17 % a year) |
 | Doctor visits per active patient per year | 1.15 | visits | assumption |
@@ -103,19 +103,22 @@ Low / High values are in the code (`engine/templates/dental.py`); Low stacks eve
 | Operatories already equipped at start | 0 / 7 / 10 / 13 | # | assumption |
 | Imaging & IT at start | $70,000 / 30,000 / 60,000 / 0 | $ | assumption: digital radiography, panoramic or CBCT |
 | Equipment refresh, % of collections | 1.5 % | % | assumption |
-| Owner dentist salary | $120k / 150k / 180k / 200k | $ | ADA HPI: general-practitioner owner net income about $200,000 ([Dental Economics on ADA HPI data](https://www.dentaleconomics.com/macro-op-ed/industry-news/news/55332389/ada-study-reveals-dentists-revenue-net-income-and-hours-worked-in-2025is-the-profession-struggling)); lower while the practice builds |
+| Owner dentist salary | $150k / 150k / 180k / 200k | $ | ADA HPI: general-practitioner owner net income about $200,000 ([Dental Economics on ADA HPI data](https://www.dentaleconomics.com/macro-op-ed/industry-news/news/55332389/ada-study-reveals-dentists-revenue-net-income-and-hours-worked-in-2025is-the-profession-struggling)); lower while the practice builds |
 | Hygienist salary per FTE | $95k–98k | $ | U.S. median pay $98,100 (May 2025), [BLS Occupational Outlook Handbook](https://www.bls.gov/ooh/healthcare/dental-hygienists.htm); many hygienists work part time, so this is a full-time equivalent |
 | Dental assistant / front desk / office manager salary | $44–46k / $40–42k / $65–72k | $ | assumption |
 | Payroll taxes & benefits | 10 % | % | assumption (light for a practice that offers benefits) |
 | Wage growth | 3 % | % | assumption |
 | Depreciation | 7 years | years | assumption |
 | Income tax | 21 % | % | U.S. federal corporate rate; state tax not modelled |
-| Equity / loan | planning $400k / $450k (10 yr, 9 %); early $100k / $60k; growing $100k / $150k; established $150k / – | $ | assumption, sized so that Base cash stays positive in every month |
+| Equity / loan | planning $450k / $450k (10 yr, 9 %); early $100k / $60k; growing $100k / $150k; established $150k / – | $ | assumption, sized so that Base cash stays positive in every month |
 
 For orientation, ADA Health Policy Institute data reported by Dental Economics put general-practitioner dentist
-gross billings near $698,000 a year and net income near $200,000 (2020–2024 average). That is *per dentist*; the
-sample practice (growing stage, Base) collects about $2.0 million in year 1 with an owner dentist and an associate
-producing the doctor visits, so it is within the same range per dentist.
+gross billings near $698,000 a year and net income near $200,000 (2020–2024 average). That is *per dentist*, and the
+model does not count dentists. Read the growing sample (Base, $1.98 million of collections in year 1) as an owner
+plus one associate and it is about **$1.0 million of collections per dentist**; the established stage ($2.64 million)
+is about $0.9–1.3 million for two to three dentists. That is **above** the cited $698,000 (a national average that
+includes part-time and solo owners), so the productivity defaults (4 doctor visits per operatory per day, $330 per
+doctor visit, 8 hygiene visits per hygienist per day) are on the high side of that benchmark. See question 8.
 
 ## What the defaults produce (plain-Python reference, 3 years, monthly)
 
@@ -127,9 +130,9 @@ stages.
 
 | Stage | Case | Collections Y1 | Collections Y3 | EBITDA margin Y1 → Y3 | Patients Y3 | Doctor chair use Y3 | Lowest month-end cash |
 |---|---|---:|---:|---:|---:|---:|---:|
-| planning | Low (stress) | $326,893 | $770,760 | -73% → -8% | 1,308 | 75% | $-373,003 (month 36) |
-| planning | Base | $431,955 | $1,161,188 | -32% → 23% | 1,795 | 97% | $61,148 (month 19) |
-| planning | High | $550,806 | $1,418,361 | -5% → 35% | 2,369 | 100% | $218,269 (month 11) |
+| planning | Low (stress) | $326,893 | $743,194 | -88% → -6% | 1,260 | 72% | $-378,728 (month 36) |
+| planning | Base | $432,231 | $1,107,397 | -44% → 24% | 1,729 | 94% | $43,912 (month 20) |
+| planning | High | $557,829 | $1,322,739 | -12% → 34% | 2,281 | 100% | $222,971 (month 13) |
 | early | Low (stress) | $838,802 | $1,028,190 | -11% → -8% | 1,746 | 71% | $-277,027 (month 36) |
 | early | Base | $1,091,038 | $1,455,364 | 13% → 20% | 2,194 | 87% | $90,794 (month 1) |
 | early | High | $1,346,550 | $1,876,019 | 28% → 35% | 2,715 | 100% | $105,605 (month 1) |
@@ -151,7 +154,7 @@ The High case is an optimistic stack (EBITDA margins of about 35 %); treat it as
 
 **Monthly versus annual.** The two granularities agree closely, not exactly: attrition compounding, mid-year joining
 and the capacity caps (which bind month by month) interact. At Base the annual model's collections differ from the
-monthly one by +0.6 % to -0.6 % in every year of every stage (the tests allow 7 %). With no attrition and no binding
+monthly one by +0.8 % to -0.9 % in every year of every stage (the tests check all five years of a five-year horizon and allow 2 %). With no attrition and no binding
 capacity they agree to the cent (`test_monthly_and_annual_agree_exactly_without_attrition_or_binding_capacity`).
 
 ## KPI table (Dashboard in Full, P&L sheet in Light)
@@ -173,14 +176,20 @@ ratio rows through `kpi_reference`.
 5. Rent has no escalator; other costs do not inflate except payroll (wage growth). Build-out financing is a plain loan.
 6. Dentist capacity is not modelled separately from chairs; assume dentists are staffed to the chairs (the owner's
    salary is a role, associates are paid on collections).
-7. Staff cost is high against published benchmarks (below): the sample practice has hygiene at about 40 % of hygiene
-   collections.
+7. Staff cost is high against published benchmarks (question 1): the sample practice has hygiene at about 40 % of
+   hygiene collections.
+8. No dentist count and no cap on dentist time: dentists are assumed to be staffed to the chairs. Associates are paid on
+   collections, so do not also add an associate payroll role while the associate share is above zero (the template
+   refuses that combination). For EBITDA before owner pay, add back the owner role's payroll.
 
 ## Questions for the CFO review
 
-1. Staff cost at Base (growing) is about 48 % of collections with the owner dentist and about 38 % without, against a
-   24–26 % staff benchmark (DentiMax, secondary source, which probably excludes dentists and may price hygiene
-   lower). Should the default staffing or hygienist productivity (8 visits a day) be changed?
+1. Staff wages at Base (growing, year 1) are about 34.5 % of collections excluding the owner dentist (38 % with 10 %
+   payroll taxes & benefits; 48 % including the owner), against a 24–26 % staff benchmark (DentiMax, secondary
+   source, which probably excludes dentists). The main driver is the assistants: 4.5 FTE are about 10 % of
+   collections in wages (11 % with taxes), ahead of front desk (6 %) and the office manager (3 %); hygienists are
+   about 15 %. Should assistants per chair (0.75 per doctor operatory here) or hygienist productivity (8 visits a
+   day) be changed?
 2. Is it right to treat the owner dentist as a market-rate salary inside EBITDA, or should the headline be EBITDA
    before owner compensation, as buyers and lenders usually quote?
 3. Is "collections ÷ gross production" (about 85 %) a clear label for the PPO mix, or should the model show net
@@ -190,3 +199,6 @@ ratio rows through `kpi_reference`.
 5. Should operatories be addable in year 2 or 3 (with space and capex), since capacity binds around 90–100 % in Y3?
 6. Are the High margins (about 35 %) too generous for a default upside case?
 7. Is 7-year depreciation right for operatory equipment and fit-out together?
+8. Collections per dentist are about $1.0 million in the growing sample against the cited $698,000 gross billings per
+   general-practitioner dentist (national average). Should visits per chair or fees be lowered so the defaults sit
+   nearer the benchmark, or is a busy, well-run practice the right starting point?
