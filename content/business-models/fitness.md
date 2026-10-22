@@ -34,7 +34,7 @@ Then comes the ceiling. In the sample the studio ends year 1 with {{num:unit.mem
 
 ## Costs: the fixed building
 
-Rent is the dominant cost. It stays at {{num:drivers.rent.base}} a month however many members you have, so in year 1 it takes {{num:costs.rent.y1}} of revenue and by year 5 only {{num:costs.rent.y5}}. Staff payroll follows the same pattern, at {{num:costs.payroll.y1}} falling to {{num:costs.payroll.y5}}. Marketing, utilities, maintenance, booking software and insurance are smaller. Cost of sales, which in the sample covers instructors, trainer payouts and the cost of retail goods, is {{num:costs.cogs.y1}} of revenue in year 1.
+Rent and payroll are the two big fixed costs. Rent stays at {{num:drivers.rent.base}} a month however many members you have, so in year 1 it takes {{num:costs.rent.y1}} of revenue and by year 5 only {{num:costs.rent.y5}}. Staff payroll is slightly larger in year 1 and follows the same pattern, at {{num:costs.payroll.y1}} falling to {{num:costs.payroll.y5}}. Marketing, utilities, maintenance, booking software and insurance are smaller. Cost of sales, which in the sample covers instructors, trainer payouts and the cost of retail goods, is {{num:costs.cogs.y1}} of revenue in year 1.
 
 {{table:costs}}
 
@@ -66,7 +66,7 @@ The first month with positive EBITDA is {{num:breakeven.first_ebitda}} and the f
 
 {{table:breakeven}}
 
-Break-even revenue is operating expenses divided by gross margin, and for year 1 it is {{num:breakeven.be_rev_y1}} against revenue of {{num:pnl.rev.y1}}, so year 1 sits below break-even. Break-even moves when you change the fee, the cancellation rate, the speed of the opening ramp, and above all the rent.
+Break-even revenue is operating expenses divided by gross margin, and for year 1 it is {{num:breakeven.be_rev_y1}} against revenue of {{num:pnl.rev.y1}}, so year 1 sits below break-even. The break-even revenue figure moves with the fee, the gross margin and above all the fixed costs of rent and staff. The cancellation rate and the speed of the opening ramp do not change that threshold. They change how soon revenue reaches it, and how much cash you spend before it does.
 
 ## Key risks
 
@@ -78,7 +78,7 @@ Break-even revenue is operating expenses divided by gross margin, and for year 1
 
 ## How to use Low, Base and High
 
-Each driver has three values, and a switch on the Dashboard of the workbook picks the case for the whole model. Base is your best estimate. Low is a cautious case with fewer starting members, a lower fee and higher cancellations. High is a good case.
+Each driver has three values, and a switch in cell B4 on the Dashboard of the workbook (1 for Low, 2 for Base, 3 for High) picks the case for the whole model. Base is your best estimate. Low is a cautious case with fewer starting members, a lower fee and higher cancellations. High is a good case.
 
 In the sample, the fee ranges from {{num:drivers.fee.low}} to {{num:drivers.fee.high}} a month, and monthly cancellations from {{num:drivers.churn_m.high}} to {{num:drivers.churn_m.low}}. Set the switch to Low and look at the lowest cash balance. If it goes negative, the plan needs more funding, a cheaper space or a faster ramp.
 
@@ -94,7 +94,7 @@ Members who leave have to be replaced, and finding new members costs marketing m
 
 ### How many members does a studio need to break even?
 
-It depends on your rent, staff and fee. The model finds the break-even revenue from your own cost structure, and you can divide it by the fee to translate it into members.
+It depends on your rent, staff and fee. The model finds the break-even revenue from your own cost structure, and you can translate it into members by dividing it by twelve times the revenue per member per month (the fee plus extras such as training and retail).
 
 ### What limits a studio's growth?
 

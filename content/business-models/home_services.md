@@ -26,7 +26,7 @@ Wages, vehicles, insurance, rent, price increases and the loan sit in the same I
 
 ## Revenue: leads, jobs and ticket size
 
-Revenue starts with leads. Marketing spend divided by the cost per lead gives the number of enquiries. A share of them book a job, and each job brings in the average ticket. That chain is why a home services owner watches three numbers closely: cost per lead, booking rate and ticket. Repeat and referral jobs add to the leads you pay for. Capacity is the second limit. Even with plenty of leads, a company can complete only as many jobs as its technicians have time for.
+Revenue starts with leads. Marketing spend divided by the cost per lead gives the number of enquiries. A share of them book a job, and each job brings in the average ticket. That chain is why a home services owner watches three numbers closely: cost per lead, booking rate and ticket. Repeat and referral jobs add to the jobs that paid leads bring, without extra lead cost. Capacity is the second limit. Even with plenty of leads, a company can complete only as many jobs as its technicians have time for.
 
 In the sample the company completes {{num:unit.jobs.y1}} jobs in year 1 against a capacity of {{num:unit.cap_jobs.y1}}, which is {{num:unit.util.y1}} technician utilisation. Revenue is {{num:pnl.rev.y1}} in year 1 and {{num:pnl.rev.y5}} in year 5. Part of it is recurring: maintenance plan members pay a fixed fee, and in year 1 the plans bring in {{num:unit.plan_rev.y1}}, or {{num:unit.plan_share.y1}} of revenue.
 
@@ -66,7 +66,7 @@ The first month with positive EBITDA is {{num:breakeven.first_ebitda}} and the f
 
 {{table:breakeven}}
 
-Break-even revenue is operating expenses divided by gross margin. In year 1 that is {{num:breakeven.be_rev_y1}} against revenue of {{num:pnl.rev.y1}}. It moves when you change the ticket, the number of jobs per technician, the cost of leads and the share of leads that book.
+Break-even revenue is operating expenses divided by gross margin. In year 1 that is {{num:breakeven.be_rev_y1}} against revenue of {{num:pnl.rev.y1}}. The break-even revenue figure moves with the ticket, materials cost, technician wages and overhead. The cost per lead and the booking rate decide how many jobs your marketing budget buys, so they change how soon revenue reaches that threshold rather than the threshold itself.
 
 ## Key risks
 
@@ -78,7 +78,7 @@ Break-even revenue is operating expenses divided by gross margin. In year 1 that
 
 ## How to use Low, Base and High
 
-Each driver has three values, and a switch on the Dashboard of the workbook picks the case for the whole model. Base is your best estimate. Low is a cautious case with a smaller ticket, fewer jobs per day and costlier leads. High is a good case.
+Each driver has three values, and a switch in cell B4 on the Dashboard of the workbook (1 for Low, 2 for Base, 3 for High) picks the case for the whole model. Base is your best estimate. Low is a cautious case with a smaller ticket, fewer jobs per day and costlier leads. High is a good case.
 
 In the sample, the ticket ranges from {{num:drivers.ticket.low}} to {{num:drivers.ticket.high}} and the booking rate from {{num:drivers.booking.low}} to {{num:drivers.booking.high}}. Set the switch to Low and look at EBITDA and the lowest cash balance. If the company still pays its way, you have a plan you can defend.
 

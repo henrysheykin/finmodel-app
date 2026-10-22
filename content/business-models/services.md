@@ -66,7 +66,7 @@ The first month with positive EBITDA is {{num:breakeven.first_ebitda}} and the f
 
 {{table:breakeven}}
 
-Break-even revenue is operating expenses divided by gross margin. In year 1 that is {{num:breakeven.be_rev_y1}} against revenue of {{num:pnl.rev.y1}}. Break-even moves with utilisation, the rate you actually collect, the pay of the people you hire before they are fully booked, and how quickly clients pay.
+Break-even revenue is operating expenses divided by gross margin. In year 1 that is {{num:breakeven.be_rev_y1}} against revenue of {{num:pnl.rev.y1}}. The break-even revenue figure moves with the gross margin and the non-billable overhead. Utilisation, the rate you actually collect and hires who are not yet fully booked all change the gross margin. Payment terms do not change the threshold, but they change how much cash you need while you work towards it.
 
 ## Key risks
 
@@ -78,7 +78,7 @@ Break-even revenue is operating expenses divided by gross margin. In year 1 that
 
 ## How to use Low, Base and High
 
-Each driver has three values, and a switch on the Dashboard of the workbook picks the case for the whole model. Base is your best estimate. Low is a cautious case with lower rates and less utilisation. High is a good case.
+Each driver has three values, and a switch in cell B4 on the Dashboard of the workbook (1 for Low, 2 for Base, 3 for High) picks the case for the whole model. Base is your best estimate. Low is a cautious case with lower rates and less utilisation. High is a good case.
 
 In the sample, the consultant rate ranges from {{num:drivers.staff_rate.low}} to {{num:drivers.staff_rate.high}} an hour, and utilisation from {{num:drivers.staff_util.low}} to {{num:drivers.staff_util.high}}. Set the switch to Low and see what happens to EBITDA and the lowest cash balance. If Low still covers the team, the plan is robust.
 
@@ -98,7 +98,7 @@ Staff are paid every month, but clients often pay weeks after the invoice. The g
 
 ### Is a retainer better than a project?
 
-Retainers repeat and are easier to forecast, while projects can be larger but end. Most firms use a mix, and the model lets you set the retainer share.
+Retainers repeat and are easier to forecast, while projects can be larger but end. A firm can combine both, and the model lets you set the retainer share.
 
 ## Next steps
 

@@ -81,7 +81,7 @@ Break-even revenue treats food and beverage cost as variable and operating expen
 
 ## How to use Low, Base and High
 
-Every driver in the model has three values, and a single switch on the Dashboard chooses which set the whole workbook uses. Base is your best estimate. Low is a cautious case, with fewer customers, a smaller ticket and higher food cost. High is a good case.
+Every driver in the model has three values, and a single switch in cell B4 on the Dashboard (1 for Low, 2 for Base, 3 for High) chooses which set the whole workbook uses. Base is your best estimate. Low is a cautious case, with fewer customers, a smaller ticket and higher food cost. High is a good case.
 
 In the sample, customers at full traffic range from {{num:drivers.cust_full.low}} to {{num:drivers.cust_full.high}} a day, and the average ticket from {{num:drivers.ticket.low}} to {{num:drivers.ticket.high}}. Open the downloaded workbook, set the switch to Low and see how the funding requirement and the break-even month move. If Low still works, you have a plan you can defend. If it does not, you know which number to work on first.
 

@@ -12,7 +12,7 @@ sample: saas, full, monthly, 5 years
 
 # How a SaaS company makes money
 
-A software-as-a-service company sells access instead of a one-off product. Customers pay a subscription every month or every year, so revenue arrives in small, repeating amounts. That is attractive, but it also means the cost of winning a customer is paid today while the money comes back slowly. This page walks through that arithmetic for one illustrative startup, using tables and charts from a working five-year financial model.
+A software-as-a-service company sells access instead of a one-off product. Customers pay a subscription every month or every year, so revenue arrives in small, repeating amounts. That is attractive, but it also means the cost of winning a customer is paid today while the money comes back over the following months. This page walks through that arithmetic for one illustrative startup, using tables and charts from a working five-year financial model.
 
 Every figure here comes from the sample workbook you can download at the end of the page. They are the sample's assumptions, not market benchmarks, so read them as a worked example of how the pieces fit together rather than a forecast for your own product.
 
@@ -42,7 +42,7 @@ The expense sits above the gross profit line. People build the product, sell it 
 
 {{chart:cost_structure}}
 
-In this sample the hiring plan runs ahead of revenue. EBITDA is a loss of {{num:pnl.ebitda.y1|abs}} in year 1 and a loss of {{num:pnl.ebitda.y5|abs}} in year 5, so the company never reaches profit inside the five-year window. That is not a prediction about SaaS in general. It shows what happens when headcount grows faster than recurring revenue, and it is exactly what a model should make visible before you commit to a hiring plan.
+In this sample the hiring plan runs ahead of revenue. EBITDA is a loss of {{num:pnl.ebitda.y1|abs}} in year 1 and a loss of {{num:pnl.ebitda.y5|abs}} in year 5, so the company never reaches profit inside the five-year window. That is not a prediction about SaaS in general. The cause is visible in the P&L: payroll is {{num:costs.payroll.y1}} of year 1 revenue, and every year it adds more dollars than gross profit does. Gross profit rises from {{num:pnl.gp.y1}} in year 1 to {{num:pnl.gp.y5}} in year 5, while payroll rises from {{num:pnl.payroll.y1|abs}} to {{num:pnl.payroll.y5|abs}}. A model should make that visible before you commit to a hiring plan.
 
 {{table:pnl}}
 
@@ -52,7 +52,7 @@ A software startup has little to buy up front. The sample spends only {{num:star
 
 {{table:startup}}
 
-Equity of {{num:startup.equity}} covers only part of that, so the last row shows a shortfall of {{num:startup.gap|abs}}. The year-end cash line in the unit table shows the same story: {{num:unit.cash.y1}} at the end of year 1, {{num:unit.cash.y3}} in year 3 and below zero ({{num:unit.cash.y4}}) in year 4. In practice a founder reads this as a runway test: either raise more, cut the plan, or reach profit sooner. The U.S. Small Business Administration has a [guide to funding options](https://www.sba.gov/business-guide/plan-your-business/fund-your-business) that covers the non-venture routes, such as loans, grants and crowdfunding.
+Equity of {{num:startup.equity}} covers only part of that, so the last row shows a shortfall of {{num:startup.gap|abs}}. The year-end cash line in the unit table shows the same story: {{num:unit.cash.y1}} at the end of year 1, {{num:unit.cash.y3}} in year 3 and below zero in year 4, at minus {{num:unit.cash.y4|abs}}. In practice a founder reads this as a runway test: either raise more, cut the plan, or reach profit sooner. The U.S. Small Business Administration has a [guide to funding options](https://www.sba.gov/business-guide/plan-your-business/fund-your-business) that covers loans, investors (including venture capital), grants and crowdfunding.
 
 ## Unit economics: what one customer is worth
 
@@ -62,7 +62,7 @@ The sample's paid CAC is {{num:drivers.cac.base}} per customer in the Base case,
 
 {{table:unit}}
 
-Short payback and low churn are healthy. They do not by themselves make a company profitable, though. The table shows both strong unit economics and a large operating loss, because the fixed cost of the team is paid before the customers arrive.
+Short payback is healthy, but it does not by itself make a company profitable. The table shows strong unit economics next to a large operating loss, because the cost of the team is paid before the customers arrive.
 
 ## Break-even: when the company pays for itself
 
@@ -70,7 +70,7 @@ The model shows several break-even points, because "break-even" means different 
 
 {{table:breakeven}}
 
-Break-even revenue is operating expenses divided by gross margin. For year 1 that is {{num:breakeven.be_rev_y1}} against revenue of {{num:pnl.rev.y1}}. By year 5 it is {{num:breakeven.be_rev_y5}}, because the cost base has grown. Break-even moves when you change four things: price, churn, how fast you hire, and how much you spend on paid acquisition.
+Break-even revenue is operating expenses divided by gross margin. For year 1 that is {{num:breakeven.be_rev_y1}} against revenue of {{num:pnl.rev.y1}}. By year 5 it is {{num:breakeven.be_rev_y5}}, because the cost base has grown. The break-even revenue figure moves with price, hosting and support cost, how fast you hire and how much you spend on paid acquisition. Churn and sign-up speed do not change that threshold. They change how long it takes revenue to reach it, and how much cash you burn on the way.
 
 ## Key risks
 
@@ -81,7 +81,7 @@ Break-even revenue is operating expenses divided by gross margin. For year 1 tha
 
 ## How to use Low, Base and High
 
-Each driver has three values, and a switch on the Dashboard of the workbook picks the case for the whole model. Base is your best estimate. Low is a cautious case with fewer sign-ups and more churn. High is a good case.
+Each driver has three values, and a switch in cell B4 on the Dashboard of the workbook (1 for Low, 2 for Base, 3 for High) picks the case for the whole model. Base is your best estimate. Low is a cautious case with fewer sign-ups and more churn. High is a good case.
 
 In the sample, the price per customer ranges from {{num:drivers.arpa.low}} to {{num:drivers.arpa.high}} a month, and monthly churn from {{num:drivers.churn_m.high}} to {{num:drivers.churn_m.low}}. Switch to Low and look at the lowest cash balance, then switch to High and see how far the runway extends. The gap between the two tells you which assumption to test first with real customers.
 
@@ -98,10 +98,6 @@ Churn is applied to every customer every month. Reducing it keeps customers long
 ### How much money does a SaaS startup need?
 
 It depends mostly on payroll and how long it takes to reach profit. The model finds the lowest cash point in the plan and adds a buffer, so the answer comes from your own hiring plan and growth assumptions.
-
-### Is a SaaS model different from a normal financial model?
-
-The statements are the same, but revenue is built from customers and MRR rather than from a single sales line, and churn, CAC and payback sit alongside the P&L.
 
 ## Next steps
 

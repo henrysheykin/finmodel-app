@@ -22,13 +22,13 @@ The sample buys a building for {{num:drivers.price.base}} with {{num:drivers.uni
 
 {{table:drivers}}
 
-Closing costs, the land share of the price, rent growth, cost inflation and selling costs sit in the same Inputs sheet and follow the same three-case pattern.
+Other income per unit, closing costs, the land share of the price, rent growth, cost inflation and selling costs sit in the same Inputs sheet and follow the same three-case pattern.
 
 ## Revenue: units, rent and vacancy
 
-Rental revenue is simple. Multiply the number of units by the average monthly rent and by twelve to get gross potential rent, which is what the building would collect if every unit were rented all year. Then take off vacancy and credit loss, the rent you do not collect, and you have effective gross income.
+Rental revenue is simple. Multiply the number of units by the average monthly rent and by twelve to get gross potential rent, which is what the building would collect if every unit were rented all year. Then take off vacancy and credit loss, the rent you do not collect, and add other income such as parking, laundry and fees. The result is effective gross income.
 
-In the sample gross potential rent is {{num:unit.gpr.y1}} in year 1 and vacancy takes {{num:unit.vac.y1|abs}} of it, leaving revenue of {{num:pnl.rev.y1}}. Rents rise each year, so revenue reaches {{num:pnl.rev.y5}} by year 5. Economic occupancy, meaning the share of potential rent actually collected, is {{num:unit.occ.y1}}.
+In the sample gross potential rent is {{num:unit.gpr.y1}} in year 1 and vacancy takes {{num:unit.vac.y1|abs}} of it, and other income is added on top, which is why revenue of {{num:pnl.rev.y1}} is a little higher than potential rent less vacancy would give. Rents rise each year, so revenue reaches {{num:pnl.rev.y5}} by year 5. Economic occupancy, meaning the share of potential rent actually collected, is {{num:unit.occ.y1}}.
 
 {{chart:revenue_costs}}
 
@@ -54,7 +54,7 @@ A loan of {{num:startup.loan}} and equity of {{num:startup.equity}} bring in {{n
 
 ## Unit economics: NOI per unit and debt service
 
-For a landlord the unit is the apartment. NOI per unit is {{num:unit.noi_unit.y1}} in year 1 and {{num:unit.noi_unit.y5}} in year 5. The ratio of NOI to purchase price, sometimes called the going-in cap rate, is {{num:unit.yield.y1}} in year 1 and {{num:unit.yield.y5}} in year 5.
+For a landlord the unit is the apartment. NOI per unit is {{num:unit.noi_unit.y1}} in year 1 and {{num:unit.noi_unit.y5}} in year 5. The ratio of NOI to purchase price is {{num:unit.yield.y1}} in year 1, which is the going-in cap rate, and it rises to {{num:unit.yield.y5}} in year 5 as rents grow.
 
 {{table:unit}}
 
@@ -73,12 +73,12 @@ Break-even revenue in this table is operating expenses divided by gross margin, 
 - **Higher vacancy.** A few empty units can erase the margin for debt service.
 - **Rising interest rates.** A floating or refinanced loan can cost much more.
 - **Unplanned repairs.** A reserve helps, but a big failure can exceed it.
-- **Property tax and insurance increases.** They are costs you cannot negotiate.
+- **Property tax and insurance increases.** They are largely outside the owner's control.
 - **Exit assumptions.** A higher cap rate at sale means a lower sale price.
 
 ## How to use Low, Base and High
 
-Each driver has three values, and a switch on the Dashboard of the workbook picks the case for the whole model. Base is your best estimate. Low is a cautious case with lower rent, higher vacancy and a higher exit cap rate. High is a good case.
+Each driver has three values, and a switch in cell B4 on the Dashboard of the workbook (1 for Low, 2 for Base, 3 for High) picks the case for the whole model. Base is your best estimate. Low is a cautious case with lower rent, higher vacancy and a higher exit cap rate. High is a good case.
 
 In the sample, rent ranges from {{num:drivers.rent.low}} to {{num:drivers.rent.high}} a month, and vacancy from {{num:drivers.vacancy.high}} to {{num:drivers.vacancy.low}}. Set the switch to Low and check whether NOI still covers debt service and how the lowest cash balance moves.
 

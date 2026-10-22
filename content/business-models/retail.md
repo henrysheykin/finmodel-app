@@ -26,7 +26,7 @@ Return rates, repeat buying, shipping costs, store openings, payroll and the loa
 
 ## Revenue: traffic, conversion and order value
 
-Online revenue is a chain of three numbers: visitors, the share that buy, and how much each order is worth. Paid ads add visitors on top of the free ones. Stores add a separate stream, and repeat customers add orders without any extra acquisition cost. Small changes in the conversion rate or the order value feed straight through the chain, so they matter more than most owners expect.
+Online orders come from two places. Free traffic turns into orders at the conversion rate, and the model buys further orders with the ad budget, dividing it by the cost per order. Each order is then worth the average order value. Stores add a separate stream, and repeat customers add orders without any extra acquisition cost. Small changes in the conversion rate or the order value feed straight through to revenue.
 
 In the Base case net sales are {{num:pnl.rev.y1}} in year 1 and {{num:pnl.rev.y5}} in year 5. In year 1 the website brings in {{num:unit.online.y1}} of gross sales from {{num:unit.orders.y1}} orders, and the stores bring in {{num:unit.store.y1}}. The number of stores grows from {{num:unit.stores.y1}} at the end of year 1 to {{num:unit.stores.y5}} at the end of year 5.
 
@@ -66,7 +66,7 @@ In the sample the first month with positive EBITDA is {{num:breakeven.first_ebit
 
 {{table:breakeven}}
 
-Break-even revenue is operating expenses divided by gross margin. In year 1 that is {{num:breakeven.be_rev_y1}} against net sales of {{num:pnl.rev.y1}}, so sales can fall by roughly the gap between the two before the business stops covering its costs. What moves break-even: product cost, order value, the cost of ads per order, and the fixed costs of staff and stores.
+Break-even revenue is operating expenses divided by gross margin. In year 1 that is {{num:breakeven.be_rev_y1}} against net sales of {{num:pnl.rev.y1}}, so sales can fall by roughly the gap between the two before the business stops covering its costs. The break-even revenue figure moves with product cost and with operating costs such as staff, stores and the ad budget. Traffic, conversion and order value change how soon sales reach it.
 
 ## Key risks
 
@@ -78,7 +78,7 @@ Break-even revenue is operating expenses divided by gross margin. In year 1 that
 
 ## How to use Low, Base and High
 
-Every driver has three values, and a switch on the Dashboard of the workbook picks the case for the whole model. Base is your best estimate. Low is a cautious case with fewer visits, lower conversion and higher product cost. High is a good case.
+Every driver has three values, and a switch in cell B4 on the Dashboard of the workbook (1 for Low, 2 for Base, 3 for High) picks the case for the whole model. Base is your best estimate. Low is a cautious case with fewer visits, lower conversion and higher product cost. High is a good case.
 
 In the sample, conversion ranges from {{num:drivers.conv.low}} to {{num:drivers.conv.high}} and the order value from {{num:drivers.aov.low}} to {{num:drivers.aov.high}}. Set the switch to Low and see how the funding requirement and the lowest cash balance move. If Low still works you have a plan you can defend; if not, you know which number to work on first.
 
