@@ -34,7 +34,7 @@ In the Base case revenue is {{num:pnl.rev.y1}} in year 1 and {{num:pnl.rev.y5}} 
 
 ## Costs: what is variable and what is not
 
-Costs fall into two groups. Food and beverage cost moves with sales: it is {{num:costs.cogs.y1}} of revenue in both years, so each extra ticket brings the same margin. Marketing in the sample is also a fixed share of revenue.
+Costs fall into two groups. Food and beverage cost moves with sales: it is {{num:costs.cogs.y1}} of revenue in both years, so each extra ticket brings the same margin. Marketing in the sample is also a fixed share of revenue. The [food cost percentage calculator](/calculators/cafe-food-cost-percent) shows how that share comes out of a single recipe, and the [menu price calculator](/calculators/cafe-menu-price) works backwards from a target.
 
 Rent, payroll and utilities do not move with sales. They are the reason a quiet first year can leave almost nothing: payroll alone takes {{num:costs.payroll.y1}} of year 1 revenue and falls to {{num:costs.payroll.y5}} by year 5 simply because revenue grows into a similar headcount. The same effect shrinks rent from {{num:costs.rent.y1}} of revenue to {{num:costs.rent.y5}}.
 
@@ -70,13 +70,34 @@ Break-even has several meanings, and the model shows each of them separately. Th
 
 {{table:breakeven}}
 
-Break-even revenue treats food and beverage cost as variable and operating expenses as fixed, so it is operating expenses divided by gross margin. In year 1 that is {{num:breakeven.be_rev_y1}} against revenue of {{num:pnl.rev.y1}}. It is a simple test, but it shows how far sales can fall before the cafe stops covering its fixed costs.
+Break-even revenue treats food and beverage cost as variable and operating expenses as fixed, so it is operating expenses divided by gross margin. In year 1 that is {{num:breakeven.be_rev_y1}} against revenue of {{num:pnl.rev.y1}}. It is a simple test, but it shows how far sales can fall before the cafe stops covering its fixed costs. To turn it into customers, try the [break-even covers calculator](/calculators/cafe-break-even-covers), and see the [restaurant break-even guide](/guides/restaurant-break-even-analysis) for a worked example.
+
+## Key risks
+
+- **Slow ramp.** Rent and payroll start on day one while traffic builds over months.
+- **Food cost drift.** Supplier prices rise faster than menu prices.
+- **Fixed costs.** Rent and a minimum crew do not shrink when a week is quiet.
+- **Under-funding.** The startup table is the early warning: a negative last row means the plan needs more money or less spending.
 
 ## How to use Low, Base and High
 
-Every driver in the model has three values, and a single switch on the Dashboard chooses which set the whole workbook uses. Base is your best estimate. Low is a cautious case, with fewer customers, a smaller ticket and higher food cost. High is a good case.
+Every driver in the model has three values, and a single switch in cell B4 on the Dashboard (1 for Low, 2 for Base, 3 for High) chooses which set the whole workbook uses. Base is your best estimate. Low is a cautious case, with fewer customers, a smaller ticket and higher food cost. High is a good case.
 
 In the sample, customers at full traffic range from {{num:drivers.cust_full.low}} to {{num:drivers.cust_full.high}} a day, and the average ticket from {{num:drivers.ticket.low}} to {{num:drivers.ticket.high}}. Open the downloaded workbook, set the switch to Low and see how the funding requirement and the break-even month move. If Low still works, you have a plan you can defend. If it does not, you know which number to work on first.
+
+## Frequently asked questions
+
+### How does a cafe make money?
+
+It sells drinks and food for more than they cost to make. The margin on each ticket pays for rent, staff and overhead, and the rest is profit.
+
+### How much does it cost to open a cafe?
+
+It depends on the site, the fit-out and the equipment. The model adds up capital spending, the cash burned before cash reaches its lowest point and a buffer, so the answer comes from your own plan.
+
+### What is a good food cost percentage?
+
+It depends on the menu and the price point, so use your own recipes as the starting point. The food cost calculator linked above shows how a single recipe feeds the number.
 
 ## Next steps
 
