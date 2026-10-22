@@ -509,6 +509,11 @@ def _resolve_kpis(c: _Ctx) -> Callable[[str], dict[int, float] | None]:
     tpl, H = c.pl.template, c.H
     rows = {r.key: r for r in tpl.kpi_rows(c.t)}
     cache: dict[str, dict[int, float] | None] = {}
+    # the template's own reference for derived rows (what the challenger trusts): it already carries the displayed sign
+    try:
+        derived = tpl.kpi_reference(annualise(c.series, c.t, tpl.kpi_flows), c.d, c.t)
+    except (KeyError, ZeroDivisionError, ValueError):
+        derived = {}
 
     def series_for(src: str) -> list[float] | None:
         if src in c.series:
@@ -525,7 +530,10 @@ def _resolve_kpis(c: _Ctx) -> Callable[[str], dict[int, float] | None]:
         out: dict[int, float] | None = None
         if row is not None and row.kind == "line":
             vals, line = series_for(row.src), c.pl.lines.get(row.src)
-            if vals is not None and line is not None and line.agg in ("sum", "last", "first"):
+            ref = derived.get(key)
+            if ref and all(isinstance(ref.get(y), int | float) for y in range(1, H + 1)):
+                out = {y: float(ref[y]) for y in range(1, H + 1)}
+            elif vals is not None and line is not None and line.agg in ("sum", "last", "first"):
                 sign = -1.0 if row.neg else 1.0
                 out = {y: sign * c.annual(vals, y, line.agg) for y in range(1, H + 1)}
         elif row is not None and row.kind == "formula":
