@@ -12,7 +12,7 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45  # LibreOffice matrix of every template; 25-30 min on 2026-10-22
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
