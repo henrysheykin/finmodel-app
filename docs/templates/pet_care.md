@@ -29,7 +29,8 @@ growth)^(year-1) × ramp × season, **capped at 100 %** (a run can only be sold 
 occupancy. The season (monthly models only) raises June, July, August and December by the *peak-season uplift* and lowers the
 other eight months by half of it, so the year's average is unchanged; annual models use 1. Because the ramp and the season are
 both monthly shapes, a monthly model that ramps up through a peak season differs slightly from the annual model for the same
-year (annual models see only the mean ramp). With no ramp, or no uplift, monthly and annual agree exactly while no cap binds.
+year (annual models see only the mean ramp): at the defaults about 1-1.5 % of boarded nights and under 1 % of revenue in
+the ramp year (planning stage), nil once the ramp ends. With no ramp, or no uplift, monthly and annual agree exactly while no cap binds.
 
 **Revenue.** Grooming revenue = grooms × average price per groom. Boarding revenue = boarded run-nights × average nightly rate.
 Retail revenue = grooms × retail sales per groom (shampoo, treats, accessories). Prices, nightly rate and retail spend rise once
@@ -210,3 +211,5 @@ flags the funding gap; Base cases are funded throughout.
 8. Is a blended 8-year depreciation acceptable, or do you want tables / dryers and the kennel build-out separately?
 9. Are working-capital days of 6 (stock) and 25 (suppliers) on total cost of sales reasonable?
 10. Should the planning stage get a pre-opening period (build-out months with capex and rent but no revenue)?
+11. In the planning, early and growing stages the Low case runs out of cash (flagged on Checks). Should Low equity be sized to
+    stay funded, or is a visible funding gap the right stress signal?

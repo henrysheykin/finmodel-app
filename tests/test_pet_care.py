@@ -191,6 +191,17 @@ def test_monthly_and_annual_agree_through_the_ramp(ramp):
             assert m[k][y] == pytest.approx(a[k][y], abs=0.01), (k, y)
 
 
+@pytest.mark.parametrize("ramp", [10, 18])
+def test_annual_is_close_with_a_season_during_the_ramp(ramp):
+    """Exact without a season (above); with one the ramp and the season interact in year 1, so only close."""
+    b = with_values(PC.default_brief("planning"), peak_uplift=0.2, ramp_months=ramp)
+    m, a = python_model(b, 2), python_model(b.with_options(granularity="annual"), 2)
+    for k in ("nights", "rev"):
+        assert a[k][1] == pytest.approx(m[k][1], rel=0.03), k
+        assert a[k][1] != pytest.approx(m[k][1], rel=1e-6), k
+        assert a[k][3] == pytest.approx(m[k][3], abs=0.01), k  # ramp over: additive again
+
+
 def test_capex_scales_in_month_one_and_refresh_from_year_two(pc_brief):
     d = pc_brief.values(2)
     s = run(pc_brief)
