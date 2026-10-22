@@ -206,11 +206,11 @@ def _season(d: dict, p: int, t: Timing) -> float:
 
 class PetCareTemplate(Template):
     key = "pet_care"
-    title = "Pet grooming & boarding"
+    title = "Pet grooming and boarding"
     business_types = ("pet_care",)
     order = 130
     key_numbers = ("grooms_day", "groom_price", "runs", "occ", "night_rate", "rent", "equity")
-    sample_title = "Pet grooming & boarding"
+    sample_title = "Pet grooming and boarding"
     sample_desc = "Full workbook with grooming tables and groomers, kennel runs, occupancy, nightly rate and the lease"
     sample_stage = "planning"
     kpi_title = "Pet care metrics"

@@ -1,4 +1,4 @@
-# Pet grooming & boarding template — assumption memo
+# Pet grooming and boarding template — assumption memo
 
 Template key `pet_care` (`engine/templates/pet_care.py`). Samples: `samples/pet_care-full.xlsx` (stage *planning*: a new
 shop with 4 grooming stations and 30 kennel runs, Full tier, monthly, 3 years) and `samples/pet_care-full-5y.xlsx` (same,
